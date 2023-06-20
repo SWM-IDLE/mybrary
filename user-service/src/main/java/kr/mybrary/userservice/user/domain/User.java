@@ -1,0 +1,51 @@
+package kr.mybrary.userservice.user.domain;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Builder
+@Table(name = "USERS")
+@AllArgsConstructor
+public class User extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long id;
+    @Column(unique = true)
+    private String loginId;
+    @Column(nullable = false,  unique = true)
+    private String nickname;
+    @Column(nullable = false)
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    @Column(unique = true)
+    private String socialId;
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+    private String refreshToken;
+
+    @Column(unique = true)
+    private String email;
+    private String introduction;
+    private String profileImageUrl;
+
+    // 주소, 직장, 직장 공개 여부, 성별, 생년월일, 학력, 본인인증 여부 추가 예정
+
+    public void authorizeUser() {
+        this.role = Role.USER;
+    }
+
+//    public void passwordEncode(PasswordEncoder passwordEncoder) {
+//        this.password = passwordEncoder.encode(this.password);
+//    }
+//
+//    public void updateRefreshToken(String updateRefreshToken) {
+//        this.refreshToken = updateRefreshToken;
+//    }
+
+}
