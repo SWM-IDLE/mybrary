@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/components/divider_row.dart';
-import 'package:mybrary/components/input_text.dart';
-import 'package:mybrary/components/login_button.dart';
+import 'package:mybrary/components/login/login_box_component.dart';
+import 'package:mybrary/components/login/login_button.dart';
+import 'package:mybrary/components/login/login_input_component.dart';
+import 'package:mybrary/components/login/login_logo_component.dart';
 import 'package:mybrary/constants/color.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -14,32 +15,24 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Expanded(
-                child: _Logo(),
+              Expanded(
+                child: Logo(),
               ),
               Expanded(
                 flex: 4,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 15.0, vertical: 20.0),
-                  decoration: BoxDecoration(
-                    color: LOGIN_BACKGROUND_COLOR.withOpacity(0.5),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(10.0),
-                    ),
-                  ),
-                  child: const _LoginForm(),
+                child: LoginBox(
+                  signWidget: _LoginForm(),
                 ),
               ),
-              const SizedBox(
+              SizedBox(
                 height: 50.0,
               ),
             ],
@@ -58,24 +51,6 @@ class _LoginScreenState extends State<LoginScreen> {
         fontWeight: FontWeight.w600,
       ),
       textAlign: TextAlign.center,
-    );
-  }
-}
-
-class _Logo extends StatelessWidget {
-  const _Logo({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        '마이브러리',
-        style: TextStyle(
-          fontSize: 30.0,
-          fontWeight: FontWeight.w700,
-        ),
-        textAlign: TextAlign.center,
-      ),
     );
   }
 }
@@ -104,14 +79,14 @@ class _SelfLogin extends StatelessWidget {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextInput(
+        LoginInput(
           hintText: '이메일',
           backgroundColor: LOGIN_INPUT_COLOR,
         ),
         SizedBox(
           height: 10.0,
         ),
-        TextInput(
+        LoginInput(
           hintText: '비밀번호',
           backgroundColor: LOGIN_INPUT_COLOR,
         ),
@@ -143,8 +118,8 @@ class _DividerLogin extends StatelessWidget {
     return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        DividerRow(),
-        DividerRow(),
+        _DividerLine(),
+        _DividerLine(),
       ],
     );
   }
@@ -224,6 +199,21 @@ class _ForgotText extends StatelessWidget {
       forgotText,
       style: textStyle,
       textAlign: TextAlign.center,
+    );
+  }
+}
+
+class _DividerLine extends StatelessWidget {
+  const _DividerLine({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: 130,
+      child: Divider(
+        color: LESS_BLACK_COLOR,
+        thickness: 1.0,
+      ),
     );
   }
 }

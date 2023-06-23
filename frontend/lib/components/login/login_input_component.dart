@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-class TextInput extends StatelessWidget {
+class LoginInput extends StatelessWidget {
   final String hintText;
   final Color backgroundColor;
-  const TextInput({
+
+  const LoginInput({
     required this.hintText,
     required this.backgroundColor,
     Key? key,
@@ -18,13 +19,13 @@ class TextInput extends StatelessWidget {
         fillColor: backgroundColor,
         border: InputBorder.none,
         contentPadding: const EdgeInsets.all(18.0),
-        focusedBorder: outlineInputBorderStyle(),
-        enabledBorder: outlineInputBorderStyle(),
+        focusedBorder: loginInputBorderStyle(),
+        enabledBorder: loginInputBorderStyle(),
       ),
     );
   }
 
-  OutlineInputBorder outlineInputBorderStyle() {
+  OutlineInputBorder loginInputBorderStyle() {
     return const OutlineInputBorder(
       borderSide: BorderSide.none,
       borderRadius: BorderRadius.all(
