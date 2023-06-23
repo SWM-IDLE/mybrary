@@ -16,14 +16,14 @@ class LoginButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {},
       style: ElevatedButton.styleFrom(
-        textStyle: TextStyle(
+        textStyle: const TextStyle(
           fontSize: 16.0,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
         backgroundColor: btnBackgroundColor,
-        minimumSize: Size(100, 55),
+        minimumSize: const Size(100, 55),
       ),
       child: Text(
         btnText,

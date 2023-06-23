@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget forgotText(String text) {
     return Text(
       text,
-      style: TextStyle(
+      style: const TextStyle(
         color: LOGIN_PRIMARY_COLOR,
         fontSize: 15.0,
         fontWeight: FontWeight.w600,
@@ -86,15 +86,10 @@ class _LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _SelfLogin(),
-        SizedBox(
-          height: 30.0,
-        ),
         _DividerLogin(),
-        SizedBox(
-          height: 30.0,
-        ),
         _OAuthLogin(),
       ],
     );
@@ -121,7 +116,7 @@ class _SelfLogin extends StatelessWidget {
           backgroundColor: LOGIN_INPUT_COLOR,
         ),
         SizedBox(
-          height: 10,
+          height: 10.0,
         ),
         LoginButton(
           btnText: '로그인',
@@ -146,11 +141,9 @@ class _DividerLogin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         DividerRow(),
-        SizedBox(
-          width: 105,
-        ),
         DividerRow(),
       ],
     );
@@ -222,7 +215,7 @@ class _ForgotText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textStyle = TextStyle(
-      color: Color(0xFFCDE7BE),
+      color: LOGIN_PRIMARY_COLOR,
       fontSize: 15.0,
       fontWeight: fontWeight,
     );

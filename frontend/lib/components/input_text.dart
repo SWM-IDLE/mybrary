@@ -17,7 +17,7 @@ class TextInput extends StatelessWidget {
         filled: true,
         fillColor: backgroundColor,
         border: InputBorder.none,
-        contentPadding: EdgeInsets.all(18.0),
+        contentPadding: const EdgeInsets.all(18.0),
         focusedBorder: outlineInputBorderStyle(),
         enabledBorder: outlineInputBorderStyle(),
       ),
@@ -25,7 +25,7 @@ class TextInput extends StatelessWidget {
   }
 
   OutlineInputBorder outlineInputBorderStyle() {
-    return OutlineInputBorder(
+    return const OutlineInputBorder(
       borderSide: BorderSide.none,
       borderRadius: BorderRadius.all(
         Radius.circular(10.0),
