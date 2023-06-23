@@ -1,7 +1,7 @@
 package kr.mybrary.userservice.authentication.presentation;
 
 import jakarta.validation.Valid;
-import kr.mybrary.userservice.authentication.application.AuthenticationService;
+import kr.mybrary.userservice.authentication.domain.AuthenticationService;
 import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

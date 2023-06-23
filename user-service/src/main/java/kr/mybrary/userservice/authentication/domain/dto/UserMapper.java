@@ -1,7 +1,7 @@
-package kr.mybrary.userservice.authentication.application.dto;
+package kr.mybrary.userservice.authentication.domain.dto;
 
 import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
-import kr.mybrary.userservice.user.domain.User;
+import kr.mybrary.userservice.user.persistence.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;

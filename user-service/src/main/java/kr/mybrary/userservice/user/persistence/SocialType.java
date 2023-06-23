@@ -1,4 +1,4 @@
-package kr.mybrary.userservice.user.domain;
+package kr.mybrary.userservice.user.persistence;
 
 import lombok.RequiredArgsConstructor;
 

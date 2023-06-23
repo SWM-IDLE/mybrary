@@ -1,4 +1,4 @@
-package kr.mybrary.userservice.authentication.application.exception;
+package kr.mybrary.userservice.authentication.domain.exception;
 
 import kr.mybrary.userservice.global.exception.CustomException;
 

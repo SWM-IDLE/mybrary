@@ -1,4 +1,4 @@
-package kr.mybrary.userservice.authentication.application;
+package kr.mybrary.userservice.authentication.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,11 +8,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
-import kr.mybrary.userservice.authentication.application.exception.DuplicateUserInfoException;
+import kr.mybrary.userservice.authentication.domain.exception.DuplicateUserInfoException;
 import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
-import kr.mybrary.userservice.user.domain.Role;
-import kr.mybrary.userservice.user.domain.User;
-import kr.mybrary.userservice.user.domain.repository.UserRepository;
+import kr.mybrary.userservice.user.persistence.Role;
+import kr.mybrary.userservice.user.persistence.User;
+import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
