@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/components/login/login_box_component.dart';
-import 'package:mybrary/components/login/login_button.dart';
+import 'package:mybrary/components/login/login_button_component.dart';
 import 'package:mybrary/components/login/login_input_component.dart';
 import 'package:mybrary/components/login/login_logo_component.dart';
 import 'package:mybrary/constants/color.dart';
