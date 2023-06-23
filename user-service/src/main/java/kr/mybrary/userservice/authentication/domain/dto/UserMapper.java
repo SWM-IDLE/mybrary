@@ -13,5 +13,5 @@ public interface UserMapper {
 
     User toEntity(SignUpRequest signUpRequest);
 
-    // SignUpResponse toResponse(User user);
+    SignUpResponse toResponse(User user);
 }
