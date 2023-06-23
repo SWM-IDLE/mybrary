@@ -2,7 +2,7 @@ package kr.mybrary.userservice.authentication.domain.impl;
 
 import jakarta.transaction.Transactional;
 import kr.mybrary.userservice.authentication.domain.AuthenticationService;
-import kr.mybrary.userservice.authentication.domain.dto.SignUpResponse;
+import kr.mybrary.userservice.authentication.presentation.dto.response.SignUpResponse;
 import kr.mybrary.userservice.authentication.domain.dto.UserMapper;
 import kr.mybrary.userservice.authentication.domain.exception.DuplicateUserInfoException;
 import kr.mybrary.userservice.user.persistence.Role;
@@ -21,17 +21,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
 
-        if (userRepository.findByLoginId(signUpRequest.getLoginId()).isPresent()) {
-            throw new DuplicateUserInfoException();
-        }
-        if (userRepository.findByNickname(signUpRequest.getNickname()).isPresent()) {
-            throw new DuplicateUserInfoException();
-        }
-        if (userRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
-            throw new DuplicateUserInfoException();
-        }
+        validateDuplicateLoginId(signUpRequest);
+        validateDuplicateNickname(signUpRequest);
+        validateDuplicateEmail(signUpRequest);
 
         User user = UserMapper.INSTANCE.toEntity(signUpRequest);
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
@@ -42,5 +37,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     }
 
+    private void validateDuplicateEmail(SignUpRequest signUpRequest) {
+        if (userRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
+            throw new DuplicateUserInfoException();
+        }
+    }
+
+    private void validateDuplicateNickname(SignUpRequest signUpRequest) {
+        if (userRepository.findByNickname(signUpRequest.getNickname()).isPresent()) {
+            throw new DuplicateUserInfoException();
+        }
+    }
+
+    private void validateDuplicateLoginId(SignUpRequest signUpRequest) {
+        if (userRepository.findByLoginId(signUpRequest.getLoginId()).isPresent()) {
+            throw new DuplicateUserInfoException();
+        }
+    }
 
 }

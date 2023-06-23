@@ -2,14 +2,12 @@ package kr.mybrary.userservice.authentication.domain.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
-import kr.mybrary.userservice.authentication.domain.dto.SignUpResponse;
-import kr.mybrary.userservice.authentication.domain.dto.UserMapper;
+import kr.mybrary.userservice.authentication.presentation.dto.response.SignUpResponse;
 import kr.mybrary.userservice.authentication.domain.exception.DuplicateUserInfoException;
 import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
 import kr.mybrary.userservice.user.persistence.Role;
