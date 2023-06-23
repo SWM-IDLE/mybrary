@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.exception;
+package kr.mybrary.bookservice.global.exception;
 
 public class ApplicationException extends RuntimeException {
 

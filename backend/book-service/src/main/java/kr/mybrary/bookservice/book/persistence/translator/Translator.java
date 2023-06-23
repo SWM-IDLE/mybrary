@@ -1,11 +1,11 @@
-package kr.mybrary.bookservice.book.domain.translator;
+package kr.mybrary.bookservice.book.persistence.translator;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import kr.mybrary.bookservice.book.domain.BaseEntity;
+import kr.mybrary.bookservice.global.BaseEntity;
 import lombok.Getter;
 
 @Entity

@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.domain;
+package kr.mybrary.bookservice.global;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.infrastructure.dto.kakaoapi;
+package kr.mybrary.bookservice.book.domain.dto.kakaoapi;
 
 import java.time.OffsetDateTime;
 import java.util.List;

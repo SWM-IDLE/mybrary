@@ -1,6 +1,6 @@
-package kr.mybrary.bookservice.book.infrastructure.booksearch;
+package kr.mybrary.bookservice.book.domain;
 
-import kr.mybrary.bookservice.book.infrastructure.dto.kakaoapi.KakaoBookSearchResponse;
+import kr.mybrary.bookservice.book.domain.dto.kakaoapi.KakaoBookSearchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @RequiredArgsConstructor
-public class KakaoBookSearchApiRequester implements PlatformBookSearchApiRequester {
+public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
 
     private final RestTemplate restTemplate;
 
