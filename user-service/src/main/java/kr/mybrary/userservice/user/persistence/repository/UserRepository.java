@@ -1,7 +1,7 @@
-package kr.mybrary.userservice.user.domain.repository;
+package kr.mybrary.userservice.user.persistence.repository;
 
-import kr.mybrary.userservice.user.domain.SocialType;
-import kr.mybrary.userservice.user.domain.User;
+import kr.mybrary.userservice.user.persistence.SocialType;
+import kr.mybrary.userservice.user.persistence.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,12 +1,12 @@
-package kr.mybrary.userservice.authentication.application;
+package kr.mybrary.userservice.authentication.domain;
 
 import jakarta.transaction.Transactional;
-import kr.mybrary.userservice.authentication.application.dto.UserMapper;
-import kr.mybrary.userservice.authentication.application.exception.DuplicateUserInfoException;
-import kr.mybrary.userservice.user.domain.Role;
-import kr.mybrary.userservice.user.domain.User;
+import kr.mybrary.userservice.authentication.domain.dto.UserMapper;
+import kr.mybrary.userservice.authentication.domain.exception.DuplicateUserInfoException;
+import kr.mybrary.userservice.user.persistence.Role;
+import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
-import kr.mybrary.userservice.user.domain.repository.UserRepository;
+import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
