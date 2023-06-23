@@ -2,9 +2,11 @@ package kr.mybrary.userservice.authentication.domain.impl;
 
 import jakarta.transaction.Transactional;
 import kr.mybrary.userservice.authentication.domain.AuthenticationService;
+import kr.mybrary.userservice.authentication.domain.exception.DuplicateEmailException;
+import kr.mybrary.userservice.authentication.domain.exception.DuplicateLoginIdException;
+import kr.mybrary.userservice.authentication.domain.exception.DuplicateNicknameException;
 import kr.mybrary.userservice.authentication.presentation.dto.response.SignUpResponse;
 import kr.mybrary.userservice.authentication.domain.dto.UserMapper;
-import kr.mybrary.userservice.authentication.domain.exception.DuplicateUserInfoException;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
@@ -39,19 +41,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private void validateDuplicateEmail(SignUpRequest signUpRequest) {
         if (userRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
-            throw new DuplicateUserInfoException();
+            throw new DuplicateEmailException();
         }
     }
 
     private void validateDuplicateNickname(SignUpRequest signUpRequest) {
         if (userRepository.findByNickname(signUpRequest.getNickname()).isPresent()) {
-            throw new DuplicateUserInfoException();
+            throw new DuplicateNicknameException();
         }
     }
 
     private void validateDuplicateLoginId(SignUpRequest signUpRequest) {
         if (userRepository.findByLoginId(signUpRequest.getLoginId()).isPresent()) {
-            throw new DuplicateUserInfoException();
+            throw new DuplicateLoginIdException();
         }
     }
 

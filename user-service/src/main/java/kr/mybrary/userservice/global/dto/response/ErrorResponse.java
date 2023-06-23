@@ -1,10 +1,11 @@
 package kr.mybrary.userservice.global.dto.response;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorResponse {
 
     private String errorCode;

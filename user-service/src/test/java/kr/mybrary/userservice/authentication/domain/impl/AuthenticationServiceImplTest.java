@@ -7,8 +7,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
+import kr.mybrary.userservice.authentication.domain.exception.DuplicateEmailException;
+import kr.mybrary.userservice.authentication.domain.exception.DuplicateLoginIdException;
+import kr.mybrary.userservice.authentication.domain.exception.DuplicateNicknameException;
 import kr.mybrary.userservice.authentication.presentation.dto.response.SignUpResponse;
-import kr.mybrary.userservice.authentication.domain.exception.DuplicateUserInfoException;
 import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
@@ -97,9 +99,9 @@ class AuthenticationServiceImplTest {
 
         // When
         assertThatThrownBy(() -> authenticationService.signUp(signUpRequest))
-                .isInstanceOf(DuplicateUserInfoException.class)
-                .hasFieldOrPropertyWithValue("errorCode", "U-01")
-                .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 회원입니다.");
+                .isInstanceOf(DuplicateLoginIdException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "U-02")
+                .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 로그인 아이디입니다.");
 
         // Then
         verify(userRepository).findByLoginId(signUpRequest.getLoginId());
@@ -125,9 +127,9 @@ class AuthenticationServiceImplTest {
 
         // When
         assertThatThrownBy(() -> authenticationService.signUp(signUpRequest))
-                .isInstanceOf(DuplicateUserInfoException.class)
-                .hasFieldOrPropertyWithValue("errorCode", "U-01")
-                .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 회원입니다.");
+                .isInstanceOf(DuplicateNicknameException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "U-03")
+                .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 닉네임입니다.");
 
         // Then
         verify(userRepository).findByNickname(signUpRequest.getNickname());
@@ -153,9 +155,9 @@ class AuthenticationServiceImplTest {
 
         // When
         assertThatThrownBy(() -> authenticationService.signUp(signUpRequest))
-                .isInstanceOf(DuplicateUserInfoException.class)
-                .hasFieldOrPropertyWithValue("errorCode", "U-01")
-                .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 회원입니다.");
+                .isInstanceOf(DuplicateEmailException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "U-04")
+                .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 이메일입니다.");
 
         // Then
         verify(userRepository).findByEmail(signUpRequest.getEmail());
