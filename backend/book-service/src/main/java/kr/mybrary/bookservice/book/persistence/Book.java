@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.domain;
+package kr.mybrary.bookservice.book.persistence;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -7,8 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import kr.mybrary.bookservice.book.domain.author.BookAuthor;
-import kr.mybrary.bookservice.book.domain.translator.BookTranslator;
+import kr.mybrary.bookservice.book.persistence.author.BookAuthor;
+import kr.mybrary.bookservice.book.persistence.translator.BookTranslator;
+import kr.mybrary.bookservice.global.BaseEntity;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

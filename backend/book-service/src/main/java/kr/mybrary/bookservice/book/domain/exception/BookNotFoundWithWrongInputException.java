@@ -1,6 +1,6 @@
-package kr.mybrary.bookservice.exception.book;
+package kr.mybrary.bookservice.book.domain.exception;
 
-import kr.mybrary.bookservice.exception.ApplicationException;
+import kr.mybrary.bookservice.global.exception.ApplicationException;
 
 public class BookNotFoundWithWrongInputException extends ApplicationException {
 

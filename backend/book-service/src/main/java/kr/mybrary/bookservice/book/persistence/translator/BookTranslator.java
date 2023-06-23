@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.domain.translator;
+package kr.mybrary.bookservice.book.persistence.translator;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -7,8 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import kr.mybrary.bookservice.book.domain.BaseEntity;
-import kr.mybrary.bookservice.book.domain.Book;
+import kr.mybrary.bookservice.global.BaseEntity;
+import kr.mybrary.bookservice.book.persistence.Book;
 import lombok.Getter;
 
 @Entity

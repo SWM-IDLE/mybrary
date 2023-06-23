@@ -1,5 +1,6 @@
-package kr.mybrary.bookservice.exception;
+package kr.mybrary.bookservice.global.exception;
 
+import kr.mybrary.bookservice.global.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
