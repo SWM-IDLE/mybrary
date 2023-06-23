@@ -1,0 +1,236 @@
+import 'package:flutter/material.dart';
+import 'package:mybrary/components/divider_row.dart';
+import 'package:mybrary/components/input_text.dart';
+import 'package:mybrary/components/login_button.dart';
+import 'package:mybrary/constants/color.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Expanded(
+                child: _Logo(),
+              ),
+              Expanded(
+                flex: 4,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0, vertical: 20.0),
+                  decoration: BoxDecoration(
+                    color: LOGIN_BACKGROUND_COLOR.withOpacity(0.5),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
+                  ),
+                  child: const _LoginForm(),
+                ),
+              ),
+              const SizedBox(
+                height: 50.0,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget forgotText(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: LOGIN_PRIMARY_COLOR,
+        fontSize: 15.0,
+        fontWeight: FontWeight.w600,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+}
+
+class _Logo extends StatelessWidget {
+  const _Logo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        '마이브러리',
+        style: TextStyle(
+          fontSize: 30.0,
+          fontWeight: FontWeight.w700,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
+
+class _LoginForm extends StatelessWidget {
+  const _LoginForm({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [
+        _SelfLogin(),
+        SizedBox(
+          height: 30.0,
+        ),
+        _DividerLogin(),
+        SizedBox(
+          height: 30.0,
+        ),
+        _OAuthLogin(),
+      ],
+    );
+  }
+}
+
+class _SelfLogin extends StatelessWidget {
+  const _SelfLogin({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextInput(
+          hintText: '이메일',
+          backgroundColor: LOGIN_INPUT_COLOR,
+        ),
+        SizedBox(
+          height: 10.0,
+        ),
+        TextInput(
+          hintText: '비밀번호',
+          backgroundColor: LOGIN_INPUT_COLOR,
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        LoginButton(
+          btnText: '로그인',
+          btnBackgroundColor: LOGIN_PRIMARY_COLOR,
+          textColor: Colors.black,
+        ),
+        SizedBox(
+          height: 20.0,
+        ),
+        _ForgotText(
+          forgotText: '비밀번호를 잊으셨나요?',
+          fontWeight: FontWeight.w600,
+        ),
+      ],
+    );
+  }
+}
+
+class _DividerLogin extends StatelessWidget {
+  const _DividerLogin({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      children: [
+        DividerRow(),
+        SizedBox(
+          width: 105,
+        ),
+        DividerRow(),
+      ],
+    );
+  }
+}
+
+class _OAuthLogin extends StatelessWidget {
+  const _OAuthLogin({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        LoginButton(
+          btnText: 'Google로 시작하기',
+          btnBackgroundColor: GOOGLE_COLOR,
+          textColor: Colors.white,
+        ),
+        SizedBox(
+          height: 10.0,
+        ),
+        LoginButton(
+          btnText: 'Naver로 시작하기',
+          btnBackgroundColor: NAVER_COLOR,
+          textColor: Colors.white,
+        ),
+        SizedBox(
+          height: 10.0,
+        ),
+        LoginButton(
+          btnText: 'Kakao로 시작하기',
+          btnBackgroundColor: KAKAO_COLOR,
+          textColor: Colors.black,
+        ),
+        SizedBox(
+          height: 20.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _ForgotText(
+              forgotText: '계정이 없으신가요?',
+              fontWeight: FontWeight.w300,
+            ),
+            SizedBox(
+              width: 5.0,
+            ),
+            _ForgotText(
+              forgotText: '회원가입',
+              fontWeight: FontWeight.w600,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _ForgotText extends StatelessWidget {
+  final String forgotText;
+  final FontWeight fontWeight;
+  const _ForgotText({
+    required this.forgotText,
+    required this.fontWeight,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final textStyle = TextStyle(
+      color: Color(0xFFCDE7BE),
+      fontSize: 15.0,
+      fontWeight: fontWeight,
+    );
+
+    return Text(
+      forgotText,
+      style: textStyle,
+      textAlign: TextAlign.center,
+    );
+  }
+}
