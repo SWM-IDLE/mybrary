@@ -1,0 +1,8 @@
+### 1. Keyword을 사용하여 도서 정보 조회
+GET {{book-api}}/books/search?keyword=미움
+
+### 2. ISBN을 사용하여 도서 정보 조회 (IBSN 바코드 인식)
+GET {{book-api}}/books/search/isbn?isbn=9788980782970
+
+### 3. ISBN을 사용하여 도서 정보 조회 (존재하지 않은 ISBN)
+GET {{book-api}}/books/search/isbn?isbn=9788980782970111
