@@ -1,8 +1,11 @@
 package kr.mybrary.bookservice.book.domain;
 
+import java.util.List;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookSearchResultResponse;
+
 public interface PlatformBookSearchApiService {
 
-    Object searchWithKeyWord(String keyword);
+    List<BookSearchResultResponse> searchWithKeyWord(String keyword);
 
-    Object searchWithISBN(String isbn);
+    List<BookSearchResultResponse> searchWithISBN(String isbn);
 }
