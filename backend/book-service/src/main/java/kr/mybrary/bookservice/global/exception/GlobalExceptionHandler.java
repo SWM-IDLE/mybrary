@@ -20,6 +20,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> runtimeException(RuntimeException e) {
         return ResponseEntity
                 .badRequest()
-                .body(ErrorResponse.of("RT-500", e.getMessage()));
+                .body(ErrorResponse.of("RT-01", e.getMessage()));
     }
 }

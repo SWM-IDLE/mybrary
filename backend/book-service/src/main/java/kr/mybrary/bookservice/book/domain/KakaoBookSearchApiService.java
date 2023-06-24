@@ -31,7 +31,7 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
     private static final String KAKAO_AUTHORIZATION_HEADER_PREFIX = "KakaoAK ";
 
     @Override
-    public List<BookSearchResultResponse> searchWithKeyWord(String keyword) {
+    public List<BookSearchResultResponse> searchWithKeyword(String keyword) {
         return searchBookFromKakaoApi(API_URL_WITH_KEYWORD, keyword);
     }
 
