@@ -19,23 +19,23 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: Logo(),
-              ),
-              Expanded(
-                flex: 4,
-                child: LoginBox(
+          child: IntrinsicHeight(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 50.0,
+                ),
+                Logo(
+                  logoText: '마이브러리',
+                ),
+                SizedBox(
+                  height: 50.0,
+                ),
+                LoginBox(
                   signWidget: _LoginForm(),
                 ),
-              ),
-              SizedBox(
-                height: 50.0,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -64,7 +64,13 @@ class _LoginForm extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _SelfLogin(),
+        SizedBox(
+          height: 20.0,
+        ),
         _DividerLogin(),
+        SizedBox(
+          height: 20.0,
+        ),
         _OAuthLogin(),
       ],
     );
@@ -99,7 +105,7 @@ class _SelfLogin extends StatelessWidget {
           textColor: Colors.black,
         ),
         SizedBox(
-          height: 20.0,
+          height: 25.0,
         ),
         _ForgotText(
           forgotText: '비밀번호를 잊으셨나요?',
@@ -155,7 +161,7 @@ class _OAuthLogin extends StatelessWidget {
           textColor: Colors.black,
         ),
         SizedBox(
-          height: 20.0,
+          height: 25.0,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
 class Logo extends StatelessWidget {
-  const Logo({Key? key}) : super(key: key);
+  final String logoText;
+  const Logo({
+    required this.logoText,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Text(
-        '마이브러리',
+        logoText,
         style: TextStyle(
           fontSize: 30.0,
           fontWeight: FontWeight.w700,
