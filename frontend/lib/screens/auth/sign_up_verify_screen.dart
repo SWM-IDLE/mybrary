@@ -54,6 +54,9 @@ class _SignUpVerfiyForm extends StatelessWidget {
           LoginInput(
             hintText: '이메일',
             backgroundColor: LOGIN_INPUT_COLOR,
+            setValidator: (String? val) {
+              return null;
+            },
           ),
           SizedBox(
             height: 10.0,
@@ -61,6 +64,9 @@ class _SignUpVerfiyForm extends StatelessWidget {
           LoginInput(
             hintText: '인증코드',
             backgroundColor: LOGIN_INPUT_COLOR,
+            setValidator: (String? val) {
+              return null;
+            },
           ),
           SizedBox(
             height: 30.0,
