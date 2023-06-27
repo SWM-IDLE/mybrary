@@ -15,28 +15,26 @@ class SignUpVerifyScreen extends StatefulWidget {
 class _SignUpVerifyScreenState extends State<SignUpVerifyScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: IntrinsicHeight(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 50.0,
-                ),
-                Logo(
-                  logoText: '회원가입',
-                ),
-                SizedBox(
-                  height: 50.0,
-                ),
-                LoginBox(
-                  signWidget: _SignUpVerfiyForm(),
-                ),
-              ],
-            ),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 50.0,
+              ),
+              Logo(
+                logoText: '회원가입',
+              ),
+              SizedBox(
+                height: 140.0,
+              ),
+              LoginBox(
+                signWidget: _SignUpVerfiyForm(),
+              ),
+            ],
           ),
         ),
       ),
@@ -69,6 +67,7 @@ class _SignUpVerfiyForm extends StatelessWidget {
           ),
           LoginButton(
             onPressed: () {},
+            isOAuth: false,
             btnText: '가입하기',
             btnBackgroundColor: LOGIN_PRIMARY_COLOR,
             textColor: Colors.black,

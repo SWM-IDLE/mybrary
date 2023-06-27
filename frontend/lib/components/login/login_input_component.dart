@@ -12,7 +12,7 @@ class LoginInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,

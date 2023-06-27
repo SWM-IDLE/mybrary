@@ -87,6 +87,7 @@ class _SignUpForm extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pushNamed('/signup/verify');
             },
+            isOAuth: false,
             btnText: '인증하기',
             btnBackgroundColor: LOGIN_PRIMARY_COLOR,
             textColor: Colors.black,
