@@ -10,8 +10,9 @@ import java.util.Optional;
 import kr.mybrary.userservice.authentication.domain.exception.DuplicateEmailException;
 import kr.mybrary.userservice.authentication.domain.exception.DuplicateLoginIdException;
 import kr.mybrary.userservice.authentication.domain.exception.DuplicateNicknameException;
-import kr.mybrary.userservice.authentication.presentation.dto.response.SignUpResponse;
+import kr.mybrary.userservice.authentication.domain.exception.LoginIdNotFoundException;
 import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
+import kr.mybrary.userservice.authentication.presentation.dto.response.SignUpResponse;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -161,6 +163,50 @@ class AuthenticationServiceImplTest {
 
         // Then
         verify(userRepository).findByEmail(signUpRequest.getEmail());
+    }
+
+    @Test
+    @DisplayName("로그인 아이디를 통해 사용자 정보를 조회한다")
+    void loadUserByUsername() {
+        // Given
+        String loginId = "loginId";
+        User user = User.builder()
+                .loginId(loginId)
+                .password("password")
+                .nickname("nickname")
+                .role(Role.USER)
+                .build();
+
+        given(userRepository.findByLoginId(loginId)).willReturn(Optional.of(user));
+
+        // When
+        UserDetails userDetails = authenticationService.loadUserByUsername(loginId);
+
+        // Then
+        assertThat(userDetails.getUsername()).isEqualTo(loginId);
+        Assertions.assertAll(
+                () -> assertThat(userDetails.getUsername()).isEqualTo(loginId),
+                () -> assertThat(userDetails.getPassword()).isEqualTo(user.getPassword())
+        );
+
+        verify(userRepository).findByLoginId(loginId);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디와 일치하는 사용자가 없으면 예외를 던진다")
+    void usernameNotFound() {
+        // Given
+        String loginId = "loginId";
+
+        given(userRepository.findByLoginId(loginId)).willReturn(Optional.empty());
+
+        // When
+        assertThatThrownBy(() -> authenticationService.loadUserByUsername(loginId))
+                .isInstanceOf(LoginIdNotFoundException.class)
+                .hasMessage("존재하지 않는 로그인 아이디입니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(loginId);
     }
 
 }

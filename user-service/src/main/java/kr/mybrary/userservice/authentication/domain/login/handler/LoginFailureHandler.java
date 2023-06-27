@@ -10,14 +10,18 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 @Slf4j
 public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-        @Override
-        public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-                AuthenticationException exception) throws IOException {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/plain:charset=utf-8");
-            response.getWriter().write("로그인 실패! 이메일이나 비밀번호를 확인해주세요.");
-            log.info("로그인에 실패하였습니다. 실패 이유 : {}", exception.getMessage());
+    @Override
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException exception) throws IOException {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/plain:charset=utf-8");
+        if (exception.getMessage().equals("Bad credentials")) {
+            response.getWriter().write("비밀번호가 일치하지 않습니다.");
+            return;
         }
+        response.getWriter().write(exception.getMessage());
+        log.info("로그인에 실패하였습니다. 실패 이유 : {}", exception.getMessage());
+    }
 
 }
