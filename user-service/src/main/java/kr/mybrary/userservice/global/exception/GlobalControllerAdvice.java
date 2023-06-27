@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalControllerAdvice {
 
-    @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponse> customException(CustomException e) {
+    @ExceptionHandler(ApplicationException.class)
+    public ResponseEntity<ErrorResponse> customException(ApplicationException e) {
         return ResponseEntity.badRequest()
                 .body(ErrorResponse.of(e.getErrorCode(), e.getErrorMessage()));
     }

@@ -42,10 +42,10 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends
     public Authentication attemptAuthentication(HttpServletRequest request,
             HttpServletResponse response)
             throws AuthenticationException, IOException {
-        if (request.getContentType() == null || !request.getContentType()
-                .equals(CONTENT_TYPE_JSON)) {
+        if (request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE_JSON)) {
             throw new AuthenticationServiceException(
-                    "Authentication Content-Type not supported: " + request.getContentType());
+                    "지원되지 않는 Authentication Content-Type: " + request.getContentType()
+                            + ". Expected: " + CONTENT_TYPE_JSON);
         }
 
         String messageBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
