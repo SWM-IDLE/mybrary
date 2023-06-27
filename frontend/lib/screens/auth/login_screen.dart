@@ -88,6 +88,9 @@ class _SelfLogin extends StatelessWidget {
         LoginInput(
           hintText: '이메일',
           backgroundColor: LOGIN_INPUT_COLOR,
+          setValidator: (String? val) {
+            return null;
+          },
         ),
         SizedBox(
           height: 10.0,
@@ -95,6 +98,9 @@ class _SelfLogin extends StatelessWidget {
         LoginInput(
           hintText: '비밀번호',
           backgroundColor: LOGIN_INPUT_COLOR,
+          setValidator: (String? val) {
+            return null;
+          },
         ),
         SizedBox(
           height: 10.0,

@@ -44,13 +44,19 @@ class _SignUpForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<FormState> signUpKey = GlobalKey();
+
     return Form(
+      key: signUpKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           LoginInput(
             hintText: '아이디',
             backgroundColor: LOGIN_INPUT_COLOR,
+            setValidator: (String? val) {
+              return null;
+            },
           ),
           SizedBox(
             height: 10.0,
@@ -58,6 +64,9 @@ class _SignUpForm extends StatelessWidget {
           LoginInput(
             hintText: '이메일',
             backgroundColor: LOGIN_INPUT_COLOR,
+            setValidator: (String? val) {
+              return null;
+            },
           ),
           SizedBox(
             height: 10.0,
@@ -65,6 +74,9 @@ class _SignUpForm extends StatelessWidget {
           LoginInput(
             hintText: '비밀번호',
             backgroundColor: LOGIN_INPUT_COLOR,
+            setValidator: (String? val) {
+              return null;
+            },
           ),
           SizedBox(
             height: 10.0,
@@ -72,6 +84,9 @@ class _SignUpForm extends StatelessWidget {
           LoginInput(
             hintText: '비밀번호 확인',
             backgroundColor: LOGIN_INPUT_COLOR,
+            setValidator: (String? val) {
+              return null;
+            },
           ),
           SizedBox(
             height: 10.0,
@@ -79,6 +94,9 @@ class _SignUpForm extends StatelessWidget {
           LoginInput(
             hintText: '닉네임',
             backgroundColor: LOGIN_INPUT_COLOR,
+            setValidator: (String? val) {
+              return null;
+            },
           ),
           SizedBox(
             height: 30.0,
