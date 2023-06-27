@@ -15,7 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget forgotText(String text) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         color: LOGIN_PRIMARY_COLOR,
         fontSize: 15.0,
         fontWeight: FontWeight.w600,
@@ -60,7 +60,7 @@ class _LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _SelfLogin(),
@@ -82,7 +82,7 @@ class _SelfLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         LoginInput(
@@ -100,6 +100,7 @@ class _SelfLogin extends StatelessWidget {
           height: 10.0,
         ),
         LoginButton(
+          onPressed: () {},
           btnText: '로그인',
           btnBackgroundColor: LOGIN_PRIMARY_COLOR,
           textColor: Colors.black,
@@ -136,10 +137,11 @@ class _OAuthLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         LoginButton(
+          onPressed: () {},
           btnText: 'Google로 시작하기',
           btnBackgroundColor: GOOGLE_COLOR,
           textColor: Colors.white,
@@ -148,6 +150,7 @@ class _OAuthLogin extends StatelessWidget {
           height: 10.0,
         ),
         LoginButton(
+          onPressed: () {},
           btnText: 'Naver로 시작하기',
           btnBackgroundColor: NAVER_COLOR,
           textColor: Colors.white,
@@ -156,6 +159,7 @@ class _OAuthLogin extends StatelessWidget {
           height: 10.0,
         ),
         LoginButton(
+          onPressed: () {},
           btnText: 'Kakao로 시작하기',
           btnBackgroundColor: KAKAO_COLOR,
           textColor: Colors.black,
@@ -173,9 +177,14 @@ class _OAuthLogin extends StatelessWidget {
             SizedBox(
               width: 5.0,
             ),
-            _ForgotText(
-              forgotText: '회원가입',
-              fontWeight: FontWeight.w600,
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pushNamed('/signup');
+              },
+              child: _ForgotText(
+                forgotText: '회원가입',
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),

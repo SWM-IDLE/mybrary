@@ -4,17 +4,19 @@ class LoginButton extends StatelessWidget {
   final String btnText;
   final Color btnBackgroundColor;
   final Color textColor;
+  final VoidCallback onPressed;
   const LoginButton({
     required this.btnText,
     required this.btnBackgroundColor,
     required this.textColor,
+    required this.onPressed,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         textStyle: const TextStyle(
           fontSize: 16.0,
