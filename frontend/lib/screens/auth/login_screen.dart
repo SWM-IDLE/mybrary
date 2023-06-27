@@ -101,6 +101,7 @@ class _SelfLogin extends StatelessWidget {
         ),
         LoginButton(
           onPressed: () {},
+          isOAuth: false,
           btnText: '로그인',
           btnBackgroundColor: LOGIN_PRIMARY_COLOR,
           textColor: Colors.black,
@@ -142,6 +143,12 @@ class _OAuthLogin extends StatelessWidget {
       children: [
         LoginButton(
           onPressed: () {},
+          isOAuth: true,
+          btnIcon: Image.asset(
+            'assets/images/logo-google.png',
+            width: 30.0,
+            height: 30.0,
+          ),
           btnText: 'Google로 시작하기',
           btnBackgroundColor: GOOGLE_COLOR,
           textColor: Colors.white,
@@ -151,6 +158,12 @@ class _OAuthLogin extends StatelessWidget {
         ),
         LoginButton(
           onPressed: () {},
+          isOAuth: true,
+          btnIcon: Image.asset(
+            'assets/images/logo-naver.png',
+            width: 30.0,
+            height: 30.0,
+          ),
           btnText: 'Naver로 시작하기',
           btnBackgroundColor: NAVER_COLOR,
           textColor: Colors.white,
@@ -160,6 +173,12 @@ class _OAuthLogin extends StatelessWidget {
         ),
         LoginButton(
           onPressed: () {},
+          isOAuth: true,
+          btnIcon: Image.asset(
+            'assets/images/logo-kakao.png',
+            width: 30.0,
+            height: 30.0,
+          ),
           btnText: 'Kakao로 시작하기',
           btnBackgroundColor: KAKAO_COLOR,
           textColor: Colors.black,
