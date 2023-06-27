@@ -12,6 +12,8 @@ import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return signUpResponse;
 
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 로그인 아이디가 존재하지 않습니다."));
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getLoginId())
+                .password(user.getPassword())
+                .roles(user.getRole().name())
+                .build();
     }
 
     private void validateDuplicateEmail(SignUpRequest signUpRequest) {

@@ -1,9 +1,19 @@
+### 1. 회원 가입
 POST http://localhost:8080/sign-up
 Content-Type: application/json
 
 {
-    "loginId": "loginId122",
-    "password": "passwor2d12123!",
-    "email": "aaa212@naver.com",
-    "nickname": "nickname"
+    "loginId": "id1",
+    "password": "password1!",
+    "email": "email1@naver.com",
+    "nickname": "nickname1"
+}
+
+### 2. 로그인
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+    "loginId": "id1",
+    "password": "password1!"
 }
