@@ -1,7 +1,9 @@
 package kr.mybrary.userservice.user.persistence;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public enum Role {
 
