@@ -19,8 +19,10 @@ public class BookController {
 
     @GetMapping("/search")
     public ResponseEntity<List<BookSearchResultResponse>> searchWithKeyword(
-            @RequestParam("keyword") String keyword) {
-        return ResponseEntity.ok(bookService.searchWithKeyword(keyword));
+            @RequestParam(value = "keyword") String keyword,
+            @RequestParam(value = "sort", required = false, defaultValue = "accuracy") String sort,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+        return ResponseEntity.ok(bookService.searchWithKeyword(keyword, sort, page));
     }
 
     @GetMapping("/search/isbn")
