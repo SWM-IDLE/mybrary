@@ -1,7 +1,6 @@
 package kr.mybrary.bookservice.book.domain.dto;
 
 import kr.mybrary.bookservice.book.domain.dto.kakaoapi.Document;
-import kr.mybrary.bookservice.book.presentation.dto.response.BookSearchResultResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -15,5 +14,5 @@ public interface BookDtoMapper {
     @Mapping(target = "thumbnailUrl", source = "thumbnail")
     @Mapping(target = "publicationDate", source = "datetime")
     @Mapping(target = "starRating", constant = "0.0")
-    BookSearchResultResponse kakaoSearchResponseToResponseDto(Document kakaoBookSearchResponse);
+    BookSearchResultDto kakaoSearchResponseToDto(Document kakaoBookSearchResponse);
 }
