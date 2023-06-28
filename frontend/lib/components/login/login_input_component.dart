@@ -1,38 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:mybrary/constants/color.dart';
 
 class LoginInput extends StatelessWidget {
   final String hintText;
-  final Color backgroundColor;
-  final FormFieldValidator<String> setValidator;
+  final String initialValue;
+  final FormFieldSetter<String> onSaved;
+  final FormFieldValidator<String> validator;
 
   const LoginInput({
     required this.hintText,
-    required this.backgroundColor,
-    required this.setValidator,
+    required this.validator,
+    required this.initialValue,
+    required this.onSaved,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      validator: setValidator,
+      onSaved: onSaved,
+      initialValue: initialValue,
+      validator: validator,
+      cursorColor: ORANGE_COLOR,
       decoration: InputDecoration(
         hintText: hintText,
-        filled: true,
-        fillColor: backgroundColor,
-        border: InputBorder.none,
-        contentPadding: const EdgeInsets.all(18.0),
+        contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
         focusedBorder: loginInputBorderStyle(),
-        enabledBorder: loginInputBorderStyle(),
       ),
     );
   }
 
-  OutlineInputBorder loginInputBorderStyle() {
-    return const OutlineInputBorder(
-      borderSide: BorderSide.none,
-      borderRadius: BorderRadius.all(
-        Radius.circular(10.0),
+  UnderlineInputBorder loginInputBorderStyle() {
+    return const UnderlineInputBorder(
+      borderSide: BorderSide(
+        color: BLACK_COLOR,
       ),
     );
   }
