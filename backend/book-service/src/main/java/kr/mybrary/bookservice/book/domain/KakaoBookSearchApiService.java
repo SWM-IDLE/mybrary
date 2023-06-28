@@ -7,24 +7,28 @@ import kr.mybrary.bookservice.book.domain.dto.kakaoapi.Document;
 import kr.mybrary.bookservice.book.domain.dto.kakaoapi.KakaoBookSearchResponse;
 import kr.mybrary.bookservice.book.domain.exception.BookSearchResultNotFoundException;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookSearchResultResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Component
-@RequiredArgsConstructor
+@Service
 public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
 
-    private final RestTemplate restTemplate;
 
     @Value("${kakao.api.key}")
     private String API_KEY;
+
+    private final RestTemplate restTemplate;
+
+    public KakaoBookSearchApiService(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplate = restTemplateBuilder.build();
+    }
 
     private static final String API_URL_WITH_KEYWORD = "https://dapi.kakao.com/v3/search/book?query=%s&sort=%s&page=%d";
     private static final String API_URL_WITH_ISBN = "https://dapi.kakao.com/v3/search/book?target=isbn&query=%s&sort=%s&page=%d";
