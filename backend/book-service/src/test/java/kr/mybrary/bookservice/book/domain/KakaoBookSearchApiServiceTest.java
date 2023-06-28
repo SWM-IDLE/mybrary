@@ -105,11 +105,12 @@ class KakaoBookSearchApiServiceTest {
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
-        BookSearchResultResponse bookSearchResultResponse = kakaoBookSearchApiService.searchWithISBN("9788980782970");
+        BookSearchResultResponse bookSearchResultResponse =
+                kakaoBookSearchApiService.searchWithISBN("9788980782970");
 
         // then
-        assertAll(() ->
-                assertThat(bookSearchResultResponse.getBookSearchResult().size()).isEqualTo(1),
+        assertAll(
+                () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isEqualTo(1),
                 () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
         );
     }
@@ -129,7 +130,7 @@ class KakaoBookSearchApiServiceTest {
         assertThatThrownBy(
                 () -> kakaoBookSearchApiService.searchWithISBN("978898078297011"))
                 .isInstanceOf(BookSearchResultNotFoundException.class);
-    }ㅇ
+    }
 
     private String readJsonFile(String fileName) throws IOException {
         return new String(Files.readAllBytes(Paths.get(jsonFilePath + fileName)));
