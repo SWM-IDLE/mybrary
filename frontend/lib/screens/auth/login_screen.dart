@@ -4,6 +4,9 @@ import 'package:mybrary/components/login/login_input_component.dart';
 import 'package:mybrary/components/login/login_logo_component.dart';
 import 'package:mybrary/constants/color.dart';
 
+const LOGIN_TEST_ID = 'test123';
+const LOGIN_TEST_PASSWORD = 'test123!@';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -96,15 +99,13 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    final isValid = formKey.currentState!.validate();
-    setState(() {
-      _isValid = isValid;
-    });
-
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
-
-      Navigator.of(context).pushNamed('/home');
+      if (loginId == LOGIN_TEST_ID && loginPassword == LOGIN_TEST_PASSWORD) {
+        Navigator.of(context).pushNamed('/home');
+      } else {
+        print('아이디 또는 비밀번호가 틀렸습니다.');
+      }
     } else {
       print('에러가 있습니다.');
     }
