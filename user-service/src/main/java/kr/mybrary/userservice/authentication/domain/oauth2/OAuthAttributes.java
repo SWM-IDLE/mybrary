@@ -38,12 +38,12 @@ public class OAuthAttributes { // 소셜 별로 받는 데이터를 분기 처�
                 .build();
     }
 
-    private User toEntity(SocialType socialType, OAuth2UserInfo oAuth2UserInfo) {
+    public User toEntity(SocialType socialType, OAuth2UserInfo oAuth2UserInfo) {
         return User.builder()
                 .socialType(socialType)
                 .socialId(oAuth2UserInfo.getId())
                 .loginId(UUID.randomUUID().toString())
-                .email(UUID.randomUUID() + "@socialUser.com")
+                .email(oAuth2UserInfo.getEmail())
                 .nickname(oAuth2UserInfo.getNickname())
                 .profileImageUrl(oAuth2UserInfo.getImageUrl())
                 .role(Role.GUEST)
