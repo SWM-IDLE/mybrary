@@ -2,6 +2,7 @@ package kr.mybrary.bookservice.book.domain;
 
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
+import kr.mybrary.bookservice.book.domain.dto.BookSearchResultDto;
 import kr.mybrary.bookservice.book.domain.dto.kakaoapi.Document;
 import kr.mybrary.bookservice.book.domain.dto.kakaoapi.KakaoBookSearchResponse;
 import kr.mybrary.bookservice.book.domain.exception.BookSearchResultNotFoundException;
@@ -27,20 +28,21 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
 
     private static final String API_URL_WITH_KEYWORD = "https://dapi.kakao.com/v3/search/book?query=%s&sort=%s&page=%d";
     private static final String API_URL_WITH_ISBN = "https://dapi.kakao.com/v3/search/book?target=isbn&query=%s&sort=%s&page=%d";
+    private static final String REQUEST_NEXT_URL = "/books/search?keyword=%s&sort=%s&page=%d";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String KAKAO_AUTHORIZATION_HEADER_PREFIX = "KakaoAK ";
 
     @Override
-    public List<BookSearchResultResponse> searchWithKeyword(String keyword, String sort, int page) {
+    public BookSearchResultResponse searchWithKeyword(String keyword, String sort, int page) {
         return searchBookFromKakaoApi(API_URL_WITH_KEYWORD, keyword, sort, page);
     }
 
     @Override
-    public List<BookSearchResultResponse> searchWithISBN(String isbn) {
+    public BookSearchResultResponse searchWithISBN(String isbn) {
         return searchBookFromKakaoApi(API_URL_WITH_ISBN, isbn, "accuracy", 1);
     }
 
-    private List<BookSearchResultResponse> searchBookFromKakaoApi(String baseUrl, String searchKeyword, String sort, int page) {
+    private BookSearchResultResponse searchBookFromKakaoApi(String baseUrl, String searchKeyword, String sort, int page) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTHORIZATION_HEADER, KAKAO_AUTHORIZATION_HEADER_PREFIX + API_KEY);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -57,8 +59,19 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
             throw new BookSearchResultNotFoundException();
         }
 
-        return documents.stream()
-                .map(BookDtoMapper.INSTANCE::kakaoSearchResponseToResponseDto)
+        List<BookSearchResultDto> booSearchResultDtos = documents.stream()
+                .map(BookDtoMapper.INSTANCE::kakaoSearchResponseToDto)
                 .toList();
+
+        if (isLastPage(response)) {
+            return BookSearchResultResponse.of(booSearchResultDtos, "");
+        }
+
+        String nextRequestUrl = String.format(REQUEST_NEXT_URL, searchKeyword, sort, page + 1);
+        return BookSearchResultResponse.of(booSearchResultDtos, nextRequestUrl);
+    }
+
+    private Boolean isLastPage(ResponseEntity<KakaoBookSearchResponse> response) {
+        return response.getBody().getMeta().getIs_end();
     }
 }

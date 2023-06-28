@@ -1,23 +1,21 @@
 package kr.mybrary.bookservice.book.presentation.dto.response;
 
-import java.time.OffsetDateTime;
 import java.util.List;
+import kr.mybrary.bookservice.book.domain.dto.BookSearchResultDto;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 public class BookSearchResultResponse {
 
-    private String title;
-    private String contents;
-    private List<String> authors;
-    private String thumbnailUrl;
-    private OffsetDateTime publicationDate;
-    private Double starRating;
+    private List<BookSearchResultDto> bookSearchResult;
+    private String nextRequestUrl;
 
-    private Integer price;
-    private String status;
+    public static BookSearchResultResponse of(List<BookSearchResultDto> bookSearchResultDtos, String nextRequestUrl) {
+        return BookSearchResultResponse.builder()
+                .bookSearchResult(bookSearchResultDtos)
+                .nextRequestUrl(nextRequestUrl)
+                .build();
+    }
 }
