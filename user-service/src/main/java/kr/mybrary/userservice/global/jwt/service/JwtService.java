@@ -42,8 +42,7 @@ public class JwtService {
     private final UserRepository userRepository;
 
     // AccessToken 생성 - loginId을 payload로 넣어서 생성
-    public String createAccessToken(String loginId) {
-        Date now = new Date();
+    public String createAccessToken(String loginId, Date now) {
         return JWT.create()
                 .withSubject(ACCESS_TOKEN_SUBJECT)
                 .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
@@ -52,8 +51,7 @@ public class JwtService {
     }
 
     // RefreshToken 생성
-    public String createRefreshToken() {
-        Date now = new Date();
+    public String createRefreshToken(Date now) {
         return JWT.create()
                 .withSubject(REFRESH_TOKEN_SUBJECT)
                 .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
