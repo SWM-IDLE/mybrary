@@ -1,0 +1,17 @@
+{
+  "bookSearchResult": [
+    {
+      "title": "스프링5 프로그래밍 입문",
+      "contents": "필자의 한마디 : 처음 스프링을 배우고자 하는 독자들이 입문할 때 필요한 것은 스프링의 방대한 내용이 아닌 기초와 전반적인 흐름을 잡아주는 것으로 생각한다.    ● 스프링 DI 기초와 의존 자동 주입  ● 스프링 AOP 기초  ● 스프링을 이용한 DB 연동  ● 스프링 MVC 기본 동작 방식과 웹 어플리케이션 구조 이해  ● 컨트롤러 구현 : 요청, 폼, 세션/쿠키 처리  ● JSON 요청/응답처리  ● 스프링 부트, 타임리프 템플릿 소개    ■ 소스",
+      "authors": [
+        "최범균"
+      ],
+      "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F1126198%3Ftimestamp%3D20230616171403",
+      "publicationDate": "2018-07-19T15:00:00Z",
+      "starRating": 0.0,
+      "price": 26500,
+      "status": "정상판매"
+    }
+  ],
+  "nextRequestUrl": ""
+}
