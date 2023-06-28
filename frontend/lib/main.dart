@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:mybrary/screens/auth/login_screen.dart';
 import 'package:mybrary/screens/auth/sign_up_screen.dart';
 import 'package:mybrary/screens/auth/sign_up_verify_screen.dart';
+import 'package:mybrary/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => LoginScreen(),
         '/signup': (context) => SignUpScreen(),
         '/signup/verify': (context) => SignUpVerifyScreen(),
+        '/home': (context) => HomeScreen(),
       },
     );
   }

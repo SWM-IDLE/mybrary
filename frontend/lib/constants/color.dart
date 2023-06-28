@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 // Common Color
 const Color LESS_BLACK_COLOR = Color(0xFF313333);
+const Color BLACK_COLOR = Color(0xFF000000);
+const Color ORANGE_COLOR = Color(0xFFFF9800);
 
 // Login Color
 const Color LOGIN_PRIMARY_COLOR = Color(0xFFCDE7BE);
