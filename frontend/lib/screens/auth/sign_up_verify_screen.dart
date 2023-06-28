@@ -37,7 +37,7 @@ class _SignUpVerifyScreenState extends State<SignUpVerifyScreen> {
                 onSignUpSaved: (String? val) {
                   emailCode = val;
                 },
-                isVerifyEnabled: emailCode != null,
+                isVerifyEnabled: false,
               ),
             ],
           ),
@@ -61,10 +61,12 @@ class _SignUpVerifyForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final email = ModalRoute.of(context)!.settings.arguments;
     return Form(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Text('이메일'),
           Container(
             padding: EdgeInsets.symmetric(vertical: 16.0),
             decoration: BoxDecoration(
@@ -76,16 +78,17 @@ class _SignUpVerifyForm extends StatelessWidget {
               ),
             ),
             child: Text(
-              'test@gmail.com',
+              email.toString(),
             ),
           ),
           SizedBox(
-            height: 10.0,
+            height: 20.0,
           ),
+          Text('인증코드'),
           LoginInput(
             initialValue: emailCode,
             onSaved: onSignUpSaved,
-            hintText: '인증코드',
+            hintText: '이메일로 전송된 인증코드를 입력해주세요.',
             validator: (String? val) {
               return null;
             },
