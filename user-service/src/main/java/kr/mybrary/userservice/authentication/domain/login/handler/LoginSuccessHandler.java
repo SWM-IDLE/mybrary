@@ -2,6 +2,7 @@ package kr.mybrary.userservice.authentication.domain.login.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Date;
 import kr.mybrary.userservice.global.jwt.service.JwtService;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) {
         String loginId = extractUsername(authentication);
-        String accessToken = jwtService.createAccessToken(loginId);
-        String refreshToken = jwtService.createRefreshToken();
+        String accessToken = jwtService.createAccessToken(loginId, new Date());
+        String refreshToken = jwtService.createRefreshToken(new Date());
 
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 

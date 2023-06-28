@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import kr.mybrary.userservice.global.jwt.service.JwtService;
 import kr.mybrary.userservice.global.jwt.util.PasswordUtil;
 import kr.mybrary.userservice.user.persistence.User;
@@ -65,13 +66,13 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
                 .ifPresent(user -> {
                     String reIssuedRefreshToken = reIssueRefreshToken(user);
                     jwtService.sendAccessAndRefreshToken(response,
-                            jwtService.createAccessToken(user.getLoginId()), reIssuedRefreshToken);
+                            jwtService.createAccessToken(user.getLoginId(), new Date()), reIssuedRefreshToken);
                 });
     }
 
     // RefreshToken 재발급 및 업데이트
     private String reIssueRefreshToken(User user) {
-        String reIssuedRefreshToken = jwtService.createRefreshToken();
+        String reIssuedRefreshToken = jwtService.createRefreshToken(new Date());
         user.updateRefreshToken(reIssuedRefreshToken);
         userRepository.saveAndFlush(user);
         return reIssuedRefreshToken;
