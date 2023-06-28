@@ -142,7 +142,7 @@ class _SelfLogin extends StatelessWidget {
           hintText: '영문, 숫자 포함 6자 이상',
           validator: (String? val) {
             if (val == null || val.isEmpty) {
-              return '아이디를 입력해주세요.';
+              return '아이디를 입력해 주세요.';
             }
 
             // 영어 소문자와 숫자를 포함, 영어 대문자와 특수문자를 포함하지 않는 6~20자의 문자열
@@ -164,7 +164,7 @@ class _SelfLogin extends StatelessWidget {
           hintText: '영문, 숫자, 특수문자 포함 8자 이상',
           validator: (String? val) {
             if (val == null || val.isEmpty) {
-              return '비밀번호를 입력해주세요.';
+              return '비밀번호를 입력해 주세요.';
             }
 
             // 영문, 숫자, 특수문자를 포함하는 8~16자의 문자열

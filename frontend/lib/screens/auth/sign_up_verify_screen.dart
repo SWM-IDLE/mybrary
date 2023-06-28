@@ -90,6 +90,8 @@ class _SignUpVerifyForm extends StatelessWidget {
             onSaved: onSignUpSaved,
             hintText: '이메일로 전송된 인증코드를 입력해주세요.',
             validator: (String? val) {
+              // 인증코드는 숫자로만? 영문/숫자 혼합?
+              // 추후 검증 로직이 추가될 예정입니다.
               return null;
             },
           ),
