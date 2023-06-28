@@ -58,6 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onLoginPasswordSaved: (String? val) {
                         loginPassword = val;
                       },
+                      isEnabledLogin: _isValid ?? false,
                     ),
                     SizedBox(
                       height: 20.0,
@@ -95,6 +96,11 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    final isValid = formKey.currentState!.validate();
+    setState(() {
+      _isValid = isValid;
+    });
+
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
@@ -110,6 +116,7 @@ class _SelfLogin extends StatelessWidget {
   final String loginPasswordInitialValue;
   final FormFieldSetter<String> onLoginIdSaved;
   final FormFieldSetter<String> onLoginPasswordSaved;
+  final bool isEnabledLogin;
 
   final VoidCallback onSavePressed;
   const _SelfLogin({
@@ -118,6 +125,7 @@ class _SelfLogin extends StatelessWidget {
     required this.loginPasswordInitialValue,
     required this.onLoginIdSaved,
     required this.onLoginPasswordSaved,
+    required this.isEnabledLogin,
     Key? key,
   }) : super(key: key);
 
@@ -173,6 +181,7 @@ class _SelfLogin extends StatelessWidget {
         LoginButton(
           onPressed: onSavePressed,
           isOAuth: false,
+          isEnabled: isEnabledLogin,
           btnText: '로그인',
           btnBackgroundColor: LOGIN_PRIMARY_COLOR,
           textColor: BLACK_COLOR,
@@ -215,6 +224,7 @@ class _OAuthLogin extends StatelessWidget {
         LoginButton(
           onPressed: () {},
           isOAuth: true,
+          isEnabled: true,
           btnIcon: Image.asset(
             'assets/images/logo-google.png',
             width: 30.0,
@@ -230,6 +240,7 @@ class _OAuthLogin extends StatelessWidget {
         LoginButton(
           onPressed: () {},
           isOAuth: true,
+          isEnabled: true,
           btnIcon: Image.asset(
             'assets/images/logo-naver.png',
             width: 30.0,
@@ -245,6 +256,7 @@ class _OAuthLogin extends StatelessWidget {
         LoginButton(
           onPressed: () {},
           isOAuth: true,
+          isEnabled: true,
           btnIcon: Image.asset(
             'assets/images/logo-kakao.png',
             width: 30.0,

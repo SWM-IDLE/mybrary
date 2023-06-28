@@ -57,6 +57,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 onSignUpNicknameSaved: (String? val) {
                   signUpNickname = val;
                 },
+                isEnabledSignUp: signUpId != null &&
+                    signUpEmail != null &&
+                    signUpPassword != null &&
+                    signUpPasswordCheck != null &&
+                    signUpNickname != null,
               ),
             ],
           ),
@@ -77,6 +82,7 @@ class _SignUpForm extends StatelessWidget {
   final FormFieldSetter<String> onSignUpPasswordSaved;
   final FormFieldSetter<String> onSignUpPasswordConfirmSaved;
   final FormFieldSetter<String> onSignUpNicknameSaved;
+  final bool isEnabledSignUp;
 
   const _SignUpForm({
     required this.signUpIdInitialValue,
@@ -89,6 +95,7 @@ class _SignUpForm extends StatelessWidget {
     required this.onSignUpPasswordSaved,
     required this.onSignUpPasswordConfirmSaved,
     required this.onSignUpNicknameSaved,
+    required this.isEnabledSignUp,
     Key? key,
   }) : super(key: key);
 
@@ -161,6 +168,7 @@ class _SignUpForm extends StatelessWidget {
               Navigator.of(context).pushNamed('/signup/verify');
             },
             isOAuth: false,
+            isEnabled: isEnabledSignUp,
             btnText: '인증하기',
             btnBackgroundColor: LOGIN_PRIMARY_COLOR,
             textColor: BLACK_COLOR,
