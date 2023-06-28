@@ -43,9 +43,7 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends
             HttpServletResponse response)
             throws AuthenticationException, IOException {
         if (request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE_JSON)) {
-            throw new AuthenticationServiceException(
-                    "지원되지 않는 Authentication Content-Type: " + request.getContentType()
-                            + ". Expected: " + CONTENT_TYPE_JSON);
+            throw new AuthenticationServiceException(request.getContentType());
         }
 
         String messageBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);

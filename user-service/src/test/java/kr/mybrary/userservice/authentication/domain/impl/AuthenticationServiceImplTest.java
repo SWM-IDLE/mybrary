@@ -10,7 +10,6 @@ import java.util.Optional;
 import kr.mybrary.userservice.authentication.domain.exception.DuplicateEmailException;
 import kr.mybrary.userservice.authentication.domain.exception.DuplicateLoginIdException;
 import kr.mybrary.userservice.authentication.domain.exception.DuplicateNicknameException;
-import kr.mybrary.userservice.authentication.domain.exception.LoginIdNotFoundException;
 import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
 import kr.mybrary.userservice.authentication.presentation.dto.response.SignUpResponse;
 import kr.mybrary.userservice.user.persistence.Role;
@@ -24,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -202,8 +202,8 @@ class AuthenticationServiceImplTest {
 
         // When
         assertThatThrownBy(() -> authenticationService.loadUserByUsername(loginId))
-                .isInstanceOf(LoginIdNotFoundException.class)
-                .hasMessage("존재하지 않는 로그인 아이디입니다.");
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessage(loginId);
 
         // Then
         verify(userRepository).findByLoginId(loginId);
