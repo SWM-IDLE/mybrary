@@ -143,7 +143,7 @@ class _SignUpForm extends StatelessWidget {
           hintText: '영문, 숫자 포함 6자 이상',
           validator: (String? val) {
             if (val == null || val.isEmpty) {
-              return '아이디를 입력해주세요.';
+              return '아이디를 입력해 주세요.';
             }
 
             // 영어 소문자와 숫자를 포함, 영어 대문자와 특수문자를 포함하지 않는 6~20자의 문자열
@@ -165,10 +165,11 @@ class _SignUpForm extends StatelessWidget {
           hintText: 'mybrary@example.com',
           validator: (String? val) {
             if (val == null || val.isEmpty) {
-              return '이메일을 입력해주세요.';
+              return '이메일을 입력해 주세요.';
             }
 
             // 영문/숫자/하이픈 검증 + @ + 도메인 검증 (최소 2자, 최대 7자)
+            // 이메일은 최소 7자에서 최대 40자까지 입력 가능
             RegExp regExp =
                 RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
             if (val.length < 7 || val.length > 40 || !(regExp.hasMatch(val))) {
@@ -188,7 +189,7 @@ class _SignUpForm extends StatelessWidget {
           hintText: '영문, 숫자, 특수문자 포함 8자 이상',
           validator: (String? val) {
             if (val == null || val.isEmpty) {
-              return '비밀번호를 입력해주세요.';
+              return '비밀번호를 입력해 주세요.';
             }
 
             // 영문, 숫자, 특수문자를 포함하는 8~16자의 문자열
@@ -210,8 +211,10 @@ class _SignUpForm extends StatelessWidget {
           hintText: '비밀번호 확인',
           validator: (String? val) {
             if (val == null || val.isEmpty) {
-              return '비밀번호를 입력해주세요.';
+              return '비밀번호를 한번 더 입력해 주세요.';
             }
+
+            // 비밀번호 확인 로직은 추후 input controller 구현 이후에 추가할 예정입니다.
 
             return null;
           },
@@ -225,6 +228,16 @@ class _SignUpForm extends StatelessWidget {
           onSaved: onSignUpNicknameSaved,
           hintText: '특수문자 제외 6자 이상',
           validator: (String? val) {
+            if (val == null || val.isEmpty) {
+              return '닉네임을 입력해 주세요.';
+            }
+
+            // 영문, 숫자, 특수문자를 포함하는 6~20자 이상의 문자열
+            RegExp regExp = RegExp(r'^[a-zA-Z0-9가-힣]+$');
+            if (val.length < 6 || val.length > 20 || !(regExp.hasMatch(val))) {
+              return '닉네임은 특수문자 제외 6자 이상으로 입력해 주세요.';
+            }
+
             return null;
           },
         ),
