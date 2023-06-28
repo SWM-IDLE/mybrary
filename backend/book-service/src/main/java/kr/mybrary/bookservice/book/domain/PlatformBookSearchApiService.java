@@ -5,7 +5,7 @@ import kr.mybrary.bookservice.book.presentation.dto.response.BookSearchResultRes
 
 public interface PlatformBookSearchApiService {
 
-    List<BookSearchResultResponse> searchWithKeyword(String keyword);
+    List<BookSearchResultResponse> searchWithKeyword(String keyword, String sort, int page);
 
     List<BookSearchResultResponse> searchWithISBN(String isbn);
 }

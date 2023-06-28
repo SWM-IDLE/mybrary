@@ -25,29 +25,29 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
     @Value("${kakao.api.key}")
     private String API_KEY;
 
-    private static final String API_URL_WITH_KEYWORD = "https://dapi.kakao.com/v3/search/book?query=%s";
-    private static final String API_URL_WITH_ISBN = "https://dapi.kakao.com/v3/search/book?target=isbn&query=%s";
+    private static final String API_URL_WITH_KEYWORD = "https://dapi.kakao.com/v3/search/book?query=%s&sort=%s&page=%d";
+    private static final String API_URL_WITH_ISBN = "https://dapi.kakao.com/v3/search/book?target=isbn&query=%s&sort=%s&page=%d";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String KAKAO_AUTHORIZATION_HEADER_PREFIX = "KakaoAK ";
 
     @Override
-    public List<BookSearchResultResponse> searchWithKeyword(String keyword) {
-        return searchBookFromKakaoApi(API_URL_WITH_KEYWORD, keyword);
+    public List<BookSearchResultResponse> searchWithKeyword(String keyword, String sort, int page) {
+        return searchBookFromKakaoApi(API_URL_WITH_KEYWORD, keyword, sort, page);
     }
 
     @Override
     public List<BookSearchResultResponse> searchWithISBN(String isbn) {
-        return searchBookFromKakaoApi(API_URL_WITH_ISBN, isbn);
+        return searchBookFromKakaoApi(API_URL_WITH_ISBN, isbn, "accuracy", 1);
     }
 
-    private List<BookSearchResultResponse> searchBookFromKakaoApi(String baseUrl, String searchKeyword) {
+    private List<BookSearchResultResponse> searchBookFromKakaoApi(String baseUrl, String searchKeyword, String sort, int page) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTHORIZATION_HEADER, KAKAO_AUTHORIZATION_HEADER_PREFIX + API_KEY);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<HttpHeaders> httpEntity = new HttpEntity<>(headers);
 
-        String requestUri = String.format(baseUrl, searchKeyword);
+        String requestUri = String.format(baseUrl, searchKeyword, sort, page);
         ResponseEntity<KakaoBookSearchResponse> response = restTemplate.exchange(requestUri,
                 HttpMethod.GET, httpEntity, KakaoBookSearchResponse.class);
 
