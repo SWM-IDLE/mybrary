@@ -30,14 +30,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
-                SizedBox(
-                  height: 50.0,
-                ),
                 Logo(
                   logoText: '회원가입',
-                ),
-                SizedBox(
-                  height: 50.0,
                 ),
                 Form(
                   key: signUpKey,
@@ -244,13 +238,16 @@ class _SignUpForm extends StatelessWidget {
         SizedBox(
           height: 30.0,
         ),
-        LoginButton(
-          onPressed: onVerifyPressed,
-          isOAuth: false,
-          isEnabled: isEnabledSignUp,
-          btnText: '인증번호 발송',
-          btnBackgroundColor: LOGIN_PRIMARY_COLOR,
-          textColor: BLACK_COLOR,
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: LoginButton(
+            onPressed: onVerifyPressed,
+            isOAuth: false,
+            isEnabled: isEnabledSignUp,
+            btnText: '인증번호 발송',
+            btnBackgroundColor: LOGIN_PRIMARY_COLOR,
+            textColor: BLACK_COLOR,
+          ),
         ),
       ],
     );

@@ -9,14 +9,17 @@ class Logo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        logoText,
-        style: TextStyle(
-          fontSize: 30.0,
-          fontWeight: FontWeight.w700,
+    return Container(
+      height: 100,
+      child: Center(
+        child: Text(
+          logoText,
+          style: TextStyle(
+            fontSize: 30.0,
+            fontWeight: FontWeight.w700,
+          ),
+          textAlign: TextAlign.center,
         ),
-        textAlign: TextAlign.center,
       ),
     );
   }

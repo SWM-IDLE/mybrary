@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mybrary/screens/auth/login_screen.dart';
+import 'package:mybrary/screens/auth/reset_verify_screen.dart';
 import 'package:mybrary/screens/auth/sign_up_screen.dart';
 import 'package:mybrary/screens/auth/sign_up_verify_screen.dart';
 import 'package:mybrary/screens/home_screen.dart';
@@ -23,9 +24,10 @@ class MyApp extends StatelessWidget {
           systemOverlayStyle: SystemUiOverlayStyle.dark,
         ),
       ),
-      initialRoute: '/',
+      initialRoute: '/login',
       routes: {
-        '/': (context) => LoginScreen(),
+        '/login': (context) => LoginScreen(),
+        '/login/verify': (context) => ResetVerifyScreen(),
         '/signup': (context) => SignUpScreen(),
         '/signup/verify': (context) => SignUpVerifyScreen(),
         '/home': (context) => HomeScreen(),

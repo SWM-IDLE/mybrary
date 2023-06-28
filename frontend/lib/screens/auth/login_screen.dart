@@ -30,48 +30,44 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: [
-              SizedBox(
-                height: 50.0,
-              ),
               Logo(
                 logoText: '마이브러리',
               ),
-              SizedBox(
-                height: 50.0,
-              ),
-              Form(
-                key: formKey,
-                onChanged: () {
-                  final isValid = formKey.currentState!.validate();
-                  if (isValid != _isValid) {
-                    setState(() {
-                      _isValid = isValid;
-                    });
-                  }
-                },
-                child: Column(
-                  children: [
-                    _SelfLogin(
-                      onSavePressed: onSavePressed,
-                      loginIdInitialValue: loginId ?? '',
-                      loginPasswordInitialValue: loginPassword ?? '',
-                      onLoginIdSaved: (String? val) {
-                        loginId = val;
-                      },
-                      onLoginPasswordSaved: (String? val) {
-                        loginPassword = val;
-                      },
-                      isEnabledLogin: _isValid ?? false,
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    _DividerLogin(),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    _OAuthLogin(),
-                  ],
+              Expanded(
+                child: Form(
+                  key: formKey,
+                  onChanged: () {
+                    final isValid = formKey.currentState!.validate();
+                    if (isValid != _isValid) {
+                      setState(() {
+                        _isValid = isValid;
+                      });
+                    }
+                  },
+                  child: Column(
+                    children: [
+                      _SelfLogin(
+                        onSavePressed: onSavePressed,
+                        loginIdInitialValue: loginId ?? '',
+                        loginPasswordInitialValue: loginPassword ?? '',
+                        onLoginIdSaved: (String? val) {
+                          loginId = val;
+                        },
+                        onLoginPasswordSaved: (String? val) {
+                          loginPassword = val;
+                        },
+                        isEnabledLogin: _isValid ?? false,
+                      ),
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      _DividerLogin(),
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      _OAuthLogin(),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -190,9 +186,14 @@ class _SelfLogin extends StatelessWidget {
         SizedBox(
           height: 25.0,
         ),
-        _ForgotText(
-          forgotText: '비밀번호를 잊으셨나요?',
-          fontWeight: FontWeight.w600,
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushNamed('/login/verify');
+          },
+          child: _ForgotText(
+            forgotText: '비밀번호를 잊으셨나요?',
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );
