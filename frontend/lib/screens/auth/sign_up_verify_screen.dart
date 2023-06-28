@@ -37,6 +37,7 @@ class _SignUpVerifyScreenState extends State<SignUpVerifyScreen> {
                 onSignUpSaved: (String? val) {
                   emailCode = val;
                 },
+                isVerifyEnabled: emailCode != null,
               ),
             ],
           ),
@@ -49,10 +50,12 @@ class _SignUpVerifyScreenState extends State<SignUpVerifyScreen> {
 class _SignUpVerifyForm extends StatelessWidget {
   final String emailCode;
   final FormFieldSetter<String> onSignUpSaved;
+  final bool isVerifyEnabled;
 
   const _SignUpVerifyForm({
     required this.emailCode,
     required this.onSignUpSaved,
+    required this.isVerifyEnabled,
     Key? key,
   }) : super(key: key);
 
@@ -92,6 +95,7 @@ class _SignUpVerifyForm extends StatelessWidget {
           ),
           LoginButton(
             onPressed: () {},
+            isEnabled: isVerifyEnabled,
             isOAuth: false,
             btnText: '가입하기',
             btnBackgroundColor: LOGIN_PRIMARY_COLOR,

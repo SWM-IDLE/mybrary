@@ -7,6 +7,8 @@ class LoginButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isOAuth;
   final Widget? btnIcon;
+  final bool isEnabled;
+
   const LoginButton({
     required this.btnText,
     required this.btnBackgroundColor,
@@ -14,6 +16,7 @@ class LoginButton extends StatelessWidget {
     required this.onPressed,
     this.btnIcon,
     required this.isOAuth,
+    required this.isEnabled,
     Key? key,
   }) : super(key: key);
 
@@ -36,17 +39,18 @@ class LoginButton extends StatelessWidget {
       ),
       backgroundColor: btnBackgroundColor,
       minimumSize: const Size(100, 55),
+      elevation: 0.0,
     );
 
     return isOAuth
         ? ElevatedButton.icon(
             icon: isOAuth ? btnIcon! : Icon(null),
             label: textContent,
-            onPressed: onPressed,
+            onPressed: isEnabled ? onPressed : null,
             style: elevatedButtonStyle,
           )
         : ElevatedButton(
-            onPressed: onPressed,
+            onPressed: isEnabled ? onPressed : null,
             style: elevatedButtonStyle,
             child: textContent,
           );
