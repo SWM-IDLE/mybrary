@@ -102,7 +102,8 @@ public class AuthenticationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(header().doesNotExist("Authorization"))
                 .andExpect(header().doesNotExist("Authorization-Refresh"))
-                .andExpect(content().string("비밀번호가 일치하지 않습니다."));
+                .andExpect(
+                        content().json("{'errorCode':'U-06','errorMessage':'비밀번호가 일치하지 않습니다.'}"));
     }
 
     @DisplayName("로그인 요청 시 없는 아이디라면 로그인 실패")
@@ -122,7 +123,7 @@ public class AuthenticationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(header().doesNotExist("Authorization"))
                 .andExpect(header().doesNotExist("Authorization-Refresh"))
-                .andExpect(content().string("존재하지 않는 로그인 아이디입니다."));
+                .andExpect(content().json("{'errorCode':'U-05','errorMessage':'존재하지 않는 아이디입니다: wrongId'}"));
     }
 
     @DisplayName("로그인 요청 시 Json 형식이 아니면 로그인 실패")
@@ -142,8 +143,8 @@ public class AuthenticationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(header().doesNotExist("Authorization"))
                 .andExpect(header().doesNotExist("Authorization-Refresh"))
-                .andExpect(content().string(
-                        "지원되지 않는 Authentication Content-Type: text/plain. Expected: application/json"));
+                .andExpect(content().json(
+                        "{'errorCode':'U-07','errorMessage':'지원되지 않는 Content-Type 입니다: text/plain. JSON 형식으로 요청해주세요.'}"));
     }
 
 
