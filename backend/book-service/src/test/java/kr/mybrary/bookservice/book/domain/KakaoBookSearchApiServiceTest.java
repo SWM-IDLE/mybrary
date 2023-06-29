@@ -1,6 +1,7 @@
 package kr.mybrary.bookservice.book.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -26,8 +27,10 @@ import org.springframework.web.client.RestTemplate;
 @RestClientTest(value = KakaoBookSearchApiService.class)
 class KakaoBookSearchApiServiceTest {
 
-    private static final String kakaoBookSearchApiUrl = "https://dapi.kakao.com/v3/search/book";
-    private static final String jsonFilePath = "src/test/resources/kakaoapi/";
+    private static final String KAKAO_BOOK_SEARCH_API_URL = "https://dapi.kakao.com/v3/search/book";
+    private static final String JSON_FILE_PATH = "src/test/resources/kakaoapi/";
+    private static final String EXIST_ISBN = "9788980782970";
+    private static final String NOT_EXIST_ISBN = "978898078297011";
 
     @Autowired
     private KakaoBookSearchApiService kakaoBookSearchApiService;
@@ -53,7 +56,7 @@ class KakaoBookSearchApiServiceTest {
         String expectResult = readJsonFile("resultMoreThan10FromKeyword.json");
 
         mockServer
-                .expect(requestTo(kakaoBookSearchApiUrl + "?query=docker&sort=accuracy&page=1"))
+                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "?query=docker&sort=accuracy&page=1"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
@@ -77,7 +80,7 @@ class KakaoBookSearchApiServiceTest {
         String expectResult = readJsonFile("resultLessThan10FromKeyword.json");
 
         mockServer
-                .expect(requestTo(kakaoBookSearchApiUrl + "?query=Docker Container&sort=accuracy&page=1"))
+                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "?query=Docker Container&sort=accuracy&page=1"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
@@ -101,12 +104,12 @@ class KakaoBookSearchApiServiceTest {
         String expectResult = readJsonFile("resultFromISBN.json");
 
         mockServer
-                .expect(requestTo(kakaoBookSearchApiUrl + "/isbn?isbn=9788980782970"))
+                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "/isbn?isbn=" + EXIST_ISBN))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
         BookSearchResultResponse bookSearchResultResponse =
-                kakaoBookSearchApiService.searchWithISBN("9788980782970");
+                kakaoBookSearchApiService.searchWithISBN(EXIST_ISBN);
 
         // then
         assertAll(
@@ -123,16 +126,22 @@ class KakaoBookSearchApiServiceTest {
         String expectResult = readJsonFile("resultEmpty.json");
 
         mockServer
-                .expect(requestTo(kakaoBookSearchApiUrl + "/isbn?isbn=978898078297011"))
+                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "/isbn?isbn=" + NOT_EXIST_ISBN))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when then
-        assertThatThrownBy(
-                () -> kakaoBookSearchApiService.searchWithISBN("978898078297011"))
-                .isInstanceOf(BookSearchResultNotFoundException.class);
+        BookSearchResultNotFoundException exception = assertThrows(
+                BookSearchResultNotFoundException.class,
+                () -> kakaoBookSearchApiService.searchWithISBN(NOT_EXIST_ISBN));
+
+        assertAll(
+                () -> assertThat(exception.getStatus()).isEqualTo(404),
+                () -> assertThat(exception.getErrorMessage()).isEqualTo("도서 검색 결과가 존재하지 않습니다."),
+                () -> assertThat(exception.getErrorCode()).isEqualTo("B-01")
+        );
     }
 
     private String readJsonFile(String fileName) throws IOException {
-        return new String(Files.readAllBytes(Paths.get(jsonFilePath + fileName)));
+        return new String(Files.readAllBytes(Paths.get(JSON_FILE_PATH + fileName)));
     }
 }
