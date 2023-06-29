@@ -10,12 +10,15 @@ import kr.mybrary.userservice.user.persistence.User;
 import lombok.Builder;
 import lombok.Getter;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 
 @Getter
 public class OAuthAttributes { // 소셜 별로 받는 데이터를 분기 처리하는 DTO 클래스
 
     private String nameAttributeKey; // OAuth2 로그인 진행 시 키가 되는 필드 값
     private OAuth2UserInfo oAuth2UserInfo;
+
+    private static final String SOCIAL_TYPE_NOT_SUPPORTED = "지원하지 않는 소셜 로그인입니다.";
 
     @Builder
     public OAuthAttributes(String nameAttributeKey, OAuth2UserInfo oAuth2UserInfo) {
@@ -28,7 +31,7 @@ public class OAuthAttributes { // 소셜 별로 받는 데이터를 분기 처�
         if (socialType == SocialType.GOOGLE) {
             return ofGoogle(userNameAttributeName, attributes);
         }
-        throw new IllegalArgumentException("지원하지 않는 소셜 타입입니다.");
+        throw new OAuth2AuthenticationException(SOCIAL_TYPE_NOT_SUPPORTED);
     }
 
     private static OAuthAttributes ofGoogle(String userNameAttributeName,
