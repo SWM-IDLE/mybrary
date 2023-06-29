@@ -1,5 +1,9 @@
 package kr.mybrary.userservice.authentication.domain.login.handler;
 
+import static kr.mybrary.userservice.authentication.domain.login.LoginException.CONTENT_TYPE_NOT_JSON;
+import static kr.mybrary.userservice.authentication.domain.login.LoginException.LOGIN_ID_NOT_FOUND;
+import static kr.mybrary.userservice.authentication.domain.login.LoginException.PASSWORD_NOT_MATCH;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,12 +25,6 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     static final String ENCODING_UTF_8 = "UTF-8";
     static final String CONTENT_TYPE_JSON = "application/json";
-    static final String ERROR_CODE_LOGIN_ID_NOT_FOUND = "U-05";
-    static final String ERROR_CODE_PASSWORD_INCORRECT = "U-06";
-    static final String ERROR_CODE_CONTENT_TYPE_NOT_JSON = "U-07";
-    static final String ERROR_MESSAGE_LOGIN_ID_NOT_FOUND = "존재하지 않는 아이디입니다: %s";
-    static final String ERROR_MESSAGE_PASSWORD_INCORRECT = "비밀번호가 일치하지 않습니다.";
-    static final String ERROR_MESSAGE_CONTENT_TYPE_NOT_JSON = "지원되지 않는 Content-Type 입니다: %s. JSON 형식으로 요청해주세요.";
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -50,26 +48,26 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     private String getErrorCode(AuthenticationException exception) {
         if (exception instanceof AuthenticationServiceException) {
-            return ERROR_CODE_CONTENT_TYPE_NOT_JSON;
+            return CONTENT_TYPE_NOT_JSON.getErrorCode();
         }
         if (exception instanceof UsernameNotFoundException) {
-            return ERROR_CODE_LOGIN_ID_NOT_FOUND;
+            return LOGIN_ID_NOT_FOUND.getErrorCode();
         }
         if (exception instanceof BadCredentialsException) {
-            return ERROR_CODE_PASSWORD_INCORRECT;
+            return PASSWORD_NOT_MATCH.getErrorCode();
         }
         return null;
     }
 
     private String getErrorMessage(AuthenticationException exception) {
         if (exception instanceof AuthenticationServiceException) {
-            return String.format(ERROR_MESSAGE_CONTENT_TYPE_NOT_JSON, exception.getMessage());
+            return String.format(CONTENT_TYPE_NOT_JSON.getErrorMessage(), exception.getMessage());
         }
         if (exception instanceof UsernameNotFoundException) {
-            return String.format(ERROR_MESSAGE_LOGIN_ID_NOT_FOUND, exception.getMessage());
+            return String.format(LOGIN_ID_NOT_FOUND.getErrorMessage(), exception.getMessage());
         }
         if (exception instanceof BadCredentialsException) {
-            return ERROR_MESSAGE_PASSWORD_INCORRECT;
+            return PASSWORD_NOT_MATCH.getErrorMessage();
         }
         return exception.getMessage();
     }
