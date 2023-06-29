@@ -235,7 +235,7 @@ class _OAuthLogin extends StatelessWidget {
           ),
           btnText: 'Google로 시작하기',
           btnBackgroundColor: GOOGLE_COLOR,
-          textColor: Colors.white,
+          textColor: WHITE_COLOR,
         ),
         SizedBox(
           height: 10.0,
@@ -251,7 +251,7 @@ class _OAuthLogin extends StatelessWidget {
           ),
           btnText: 'Naver로 시작하기',
           btnBackgroundColor: NAVER_COLOR,
-          textColor: Colors.white,
+          textColor: WHITE_COLOR,
         ),
         SizedBox(
           height: 10.0,
@@ -267,7 +267,7 @@ class _OAuthLogin extends StatelessWidget {
           ),
           btnText: 'Kakao로 시작하기',
           btnBackgroundColor: KAKAO_COLOR,
-          textColor: Colors.black,
+          textColor: WHITE_COLOR,
         ),
         SizedBox(
           height: 25.0,

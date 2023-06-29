@@ -202,7 +202,9 @@ class _IdVerifyForm extends StatelessWidget {
           // 추후 토스트 메세지로 변경 예정입니다.
           Text(
             '존재하지 않는 아이디입니다.',
-            style: TextStyle(color: Colors.red[500]),
+            style: TextStyle(
+              color: LOGIN_ERROR_COLOR,
+            ),
           ),
       ],
     );
