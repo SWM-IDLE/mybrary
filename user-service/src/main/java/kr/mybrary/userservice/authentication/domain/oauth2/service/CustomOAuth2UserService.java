@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private final PasswordEncoder passwordEncoder;
 
     private static final String GOOGLE = "google";
+    private static final String SOCIAL_TYPE_NOT_SUPPORTED = "지원하지 않는 소셜 로그인입니다.";
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
@@ -67,7 +69,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         if (registrationId.equals(GOOGLE)) {
             return SocialType.GOOGLE;
         }
-        throw new IllegalArgumentException("지원하지 않는 소셜 타입입니다.");
+        throw new OAuth2AuthenticationException(SOCIAL_TYPE_NOT_SUPPORTED);
     }
 
     private User getUser(OAuthAttributes attributes, SocialType socialType) {
