@@ -21,6 +21,7 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
   String? code;
   bool? _isValid;
   bool? _isFormValid;
+  bool? _isValidLoginId;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +48,7 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
                 Expanded(
                   child: _FindPasswordForm(
                     isValid: _isValid ?? false,
+                    isValidLoginId: _isValidLoginId ?? false,
                     loginId: loginId ?? '',
                     code: code ?? '',
                     onSignUpSaved: (String? val) {
@@ -78,9 +80,13 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
       if (loginId == RESET_VERIFY_TEST_ID) {
         setState(() {
           _isValid = true;
+          _isValidLoginId = true;
         });
       } else {
-        print('아이디가 일치하지 않습니다.');
+        setState(() {
+          _isValid = true;
+          _isValidLoginId = false;
+        });
       }
     } else {
       print('에러가 있습니다.');
@@ -94,6 +100,7 @@ class _FindPasswordForm extends StatelessWidget {
   final FormFieldSetter<String> onSignUpSaved;
   final bool isValid;
   final bool isVerifyEnabled;
+  final bool isValidLoginId;
   final VoidCallback onIdVerifyPressed;
   final VoidCallback onConfirmPressed;
 
@@ -105,6 +112,7 @@ class _FindPasswordForm extends StatelessWidget {
     required this.isVerifyEnabled,
     required this.onIdVerifyPressed,
     required this.onConfirmPressed,
+    required this.isValidLoginId,
     Key? key,
   }) : super(key: key);
 
@@ -119,14 +127,17 @@ class _FindPasswordForm extends StatelessWidget {
           code: code,
           onSignUpSaved: onSignUpSaved,
           isValid: isValid,
+          isValidLoginId: isValidLoginId,
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: LoginButton(
-            onPressed: isValid ? onConfirmPressed : onIdVerifyPressed,
+            onPressed: isValid && isValidLoginId
+                ? onConfirmPressed
+                : onIdVerifyPressed,
             isEnabled: isVerifyEnabled,
             isOAuth: false,
-            btnText: isValid ? '확인' : '임시 비밀번호 받기',
+            btnText: isValid && isValidLoginId ? '확인' : '임시 비밀번호 받기',
             btnBackgroundColor: LOGIN_PRIMARY_COLOR,
             textColor: BLACK_COLOR,
           ),
@@ -141,12 +152,14 @@ class _IdVerifyForm extends StatelessWidget {
   final String code;
   final FormFieldSetter<String> onSignUpSaved;
   final bool isValid;
+  final bool isValidLoginId;
 
   const _IdVerifyForm({
     required this.loginId,
     required this.onSignUpSaved,
     required this.isValid,
     required this.code,
+    required this.isValidLoginId,
     Key? key,
   }) : super(key: key);
 
@@ -158,11 +171,11 @@ class _IdVerifyForm extends StatelessWidget {
         Text(
           '아이디',
           style: TextStyle(
-            color: !isValid ? BLACK_COLOR : DISABLED_COLOR,
+            color: !(isValid && isValidLoginId) ? BLACK_COLOR : DISABLED_COLOR,
           ),
         ),
         LoginInput(
-          isEnabled: !isValid,
+          isEnabled: !(isValid && isValidLoginId),
           initialValue: loginId,
           onSaved: onSignUpSaved,
           hintText: '가입하신 아이디를 입력해주세요.',
@@ -183,9 +196,15 @@ class _IdVerifyForm extends StatelessWidget {
           },
         ),
         SizedBox(
-          height: 30.0,
+          height: isValid && !isValidLoginId ? 15.0 : 30.0,
         ),
-        if (isValid) _ConfirmNotification(),
+        if (isValid && isValidLoginId) _ConfirmNotification(),
+        if (isValid && !isValidLoginId)
+          // 추후 토스트 메세지로 변경 예정입니다.
+          Text(
+            '존재하지 않는 아이디입니다.',
+            style: TextStyle(color: Colors.red[500]),
+          ),
       ],
     );
   }
