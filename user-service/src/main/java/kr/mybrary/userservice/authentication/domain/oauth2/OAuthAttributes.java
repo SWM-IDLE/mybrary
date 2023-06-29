@@ -9,6 +9,7 @@ import kr.mybrary.userservice.user.persistence.SocialType;
 import kr.mybrary.userservice.user.persistence.User;
 import lombok.Builder;
 import lombok.Getter;
+import org.apache.commons.lang3.RandomStringUtils;
 
 @Getter
 public class OAuthAttributes { // 소셜 별로 받는 데이터를 분기 처리하는 DTO 클래스
@@ -45,7 +46,7 @@ public class OAuthAttributes { // 소셜 별로 받는 데이터를 분기 처�
                 .loginId(UUID.randomUUID().toString())
                 .password(UUID.randomUUID().toString())
                 .email(oAuth2UserInfo.getEmail())
-                .nickname(oAuth2UserInfo.getNickname())
+                .nickname(oAuth2UserInfo.getNickname() + RandomStringUtils.randomNumeric(5))
                 .profileImageUrl(oAuth2UserInfo.getImageUrl())
                 .role(Role.GUEST)
                 .build();
