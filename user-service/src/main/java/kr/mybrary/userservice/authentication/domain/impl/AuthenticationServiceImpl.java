@@ -43,7 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public User authorizeUser(String loginId) {
         User findUser = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new UsernameNotFoundException(loginId));
         findUser.authorizeUser();
         return userRepository.save(findUser);
     }
