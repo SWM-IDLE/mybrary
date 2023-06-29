@@ -11,6 +11,6 @@ class LoginRegExp {
   static RegExp passwordRegExp =
       RegExp(r'^(?=.*[a-z])(?=.*\d)(?=.*[A-Z!@#$&*])');
 
-  // 영문, 숫자, 특수문자를 포함하는 6~20자 이상의 문자열
+  // 특수문자 제외 영문, 숫자, 한글을 포함하는 6~20자 이상의 문자열
   static RegExp nicknameRegExp = RegExp(r'^[a-zA-Z0-9가-힣]+$');
 }
