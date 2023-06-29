@@ -27,6 +27,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private final PasswordEncoder passwordEncoder;
 
     private static final String GOOGLE = "google";
+    private static final String KAKAO = "kakao";
+    private static final String NAVER = "naver";
     private static final String SOCIAL_TYPE_NOT_SUPPORTED = "지원하지 않는 소셜 로그인입니다.";
 
     @Override
@@ -68,6 +70,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private SocialType getSocialType(String registrationId) {
         if (registrationId.equals(GOOGLE)) {
             return SocialType.GOOGLE;
+        }
+        if (registrationId.equals(KAKAO)) {
+            return SocialType.KAKAO;
+        }
+        if (registrationId.equals(NAVER)) {
+            return SocialType.NAVER;
         }
         throw new OAuth2AuthenticationException(SOCIAL_TYPE_NOT_SUPPORTED);
     }
