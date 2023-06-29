@@ -188,7 +188,7 @@ class _SelfLogin extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            Navigator.of(context).pushNamed('/login/verify');
+            Navigator.of(context).pushNamed('/login/findpw');
           },
           child: _ForgotText(
             forgotText: '비밀번호를 잊으셨나요?',
