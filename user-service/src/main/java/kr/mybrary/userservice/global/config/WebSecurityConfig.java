@@ -6,6 +6,9 @@ import kr.mybrary.userservice.authentication.domain.AuthenticationService;
 import kr.mybrary.userservice.authentication.domain.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
 import kr.mybrary.userservice.authentication.domain.login.handler.LoginFailureHandler;
 import kr.mybrary.userservice.authentication.domain.login.handler.LoginSuccessHandler;
+import kr.mybrary.userservice.authentication.domain.oauth2.handler.OAuth2LoginFailureHandler;
+import kr.mybrary.userservice.authentication.domain.oauth2.handler.OAuth2LoginSuccessHandler;
+import kr.mybrary.userservice.authentication.domain.oauth2.service.CustomOAuth2UserService;
 import kr.mybrary.userservice.global.jwt.filter.JwtAuthenticationProcessingFilter;
 import kr.mybrary.userservice.global.jwt.service.JwtService;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
@@ -32,6 +35,9 @@ public class WebSecurityConfig {
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -43,6 +49,12 @@ public class WebSecurityConfig {
                 .authorizeRequests(request -> request
                         .requestMatchers("/sign-up").permitAll()
                         .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler(oAuth2LoginFailureHandler)
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService))
                 );
 
         http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
