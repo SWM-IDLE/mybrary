@@ -43,6 +43,7 @@ public class OAuthAttributes { // 소셜 별로 받는 데이터를 분기 처�
                 .socialType(socialType)
                 .socialId(oAuth2UserInfo.getId())
                 .loginId(UUID.randomUUID().toString())
+                .password(UUID.randomUUID().toString())
                 .email(oAuth2UserInfo.getEmail())
                 .nickname(oAuth2UserInfo.getNickname())
                 .profileImageUrl(oAuth2UserInfo.getImageUrl())
