@@ -3,6 +3,7 @@ import 'package:mybrary/components/login/login_button_component.dart';
 import 'package:mybrary/components/login/login_input_component.dart';
 import 'package:mybrary/components/login/login_logo_component.dart';
 import 'package:mybrary/constants/color.dart';
+import 'package:mybrary/utilities/logic.dart';
 import 'package:mybrary/utilities/regexps.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -91,7 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         arguments: signUpEmail,
       );
     } else {
-      print('에러가 있습니다.');
+      print('Log: 서버 에러');
     }
   }
 }
@@ -141,9 +142,8 @@ class _SignUpForm extends StatelessWidget {
               return '아이디를 입력해 주세요.';
             }
 
-            if (val.length < 6 ||
-                val.length > 20 ||
-                !(LoginRegExp.idRegExp.hasMatch(val))) {
+            // 아이디의 길이는 6~20자 입니다.
+            if (valueRegExpValidation(val, LoginRegExp.idRegExp, 6, 20)) {
               return '아이디는 영문/숫자 포함 6자 이상으로 입력해 주세요.';
             }
 
@@ -163,9 +163,8 @@ class _SignUpForm extends StatelessWidget {
               return '이메일을 입력해 주세요.';
             }
 
-            if (val.length < 7 ||
-                val.length > 40 ||
-                !(LoginRegExp.emailRegExp.hasMatch(val))) {
+            // 이메일의 길이는 10~40자 입니다.
+            if (valueRegExpValidation(val, LoginRegExp.emailRegExp, 10, 40)) {
               return '이메일 형식으로 입력해 주세요.';
             }
 
@@ -185,9 +184,8 @@ class _SignUpForm extends StatelessWidget {
               return '비밀번호를 입력해 주세요.';
             }
 
-            if (val.length < 8 ||
-                val.length > 16 ||
-                !(LoginRegExp.passwordRegExp.hasMatch(val))) {
+            // 비밀번호의 길이는 8~16자 입니다.
+            if (valueRegExpValidation(val, LoginRegExp.passwordRegExp, 8, 16)) {
               return '비밀번호는 영문/숫자/특수문자 혼합 8자 이상으로 입력해 주세요.';
             }
 
@@ -225,9 +223,8 @@ class _SignUpForm extends StatelessWidget {
               return '닉네임을 입력해 주세요.';
             }
 
-            if (val.length < 6 ||
-                val.length > 20 ||
-                !(LoginRegExp.nicknameRegExp.hasMatch(val))) {
+            // 닉네임의 길이는 2~20자 입니다.
+            if (valueRegExpValidation(val, LoginRegExp.nicknameRegExp, 2, 20)) {
               return '닉네임은 특수문자 제외 6자 이상으로 입력해 주세요.';
             }
 
