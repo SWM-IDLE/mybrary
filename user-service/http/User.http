@@ -17,3 +17,6 @@ Content-Type: application/json
     "loginId": "id11",
     "password": "password1!"
 }
+
+### 3. 소셜 로그인
+GET http://localhost:8080/oauth2/authorization/google
