@@ -1,6 +1,7 @@
 package kr.mybrary.bookservice.book.domain;
 
 import java.util.List;
+import java.util.Objects;
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.BookSearchResultDto;
 import kr.mybrary.bookservice.book.domain.dto.kakaoapi.Document;
@@ -57,7 +58,7 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
         ResponseEntity<KakaoBookSearchResponse> response = restTemplate.exchange(requestUri,
                 HttpMethod.GET, httpEntity, KakaoBookSearchResponse.class);
 
-        List<Document> documents = response.getBody().getDocuments();
+        List<Document> documents = Objects.requireNonNull(response.getBody()).getDocuments();
 
         if (documents.isEmpty()) {
             throw new BookSearchResultNotFoundException();
@@ -76,6 +77,6 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
     }
 
     private Boolean isLastPage(ResponseEntity<KakaoBookSearchResponse> response) {
-        return response.getBody().getMeta().getIs_end();
+        return Objects.requireNonNull(response.getBody()).getMeta().getIs_end();
     }
 }
