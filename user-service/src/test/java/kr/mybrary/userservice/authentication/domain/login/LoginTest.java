@@ -1,4 +1,4 @@
-package kr.mybrary.userservice.authentication.presentation;
+package kr.mybrary.userservice.authentication.domain.login;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class AuthenticationTest {
+public class LoginTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -66,13 +66,11 @@ public class AuthenticationTest {
     @Test
     void loginSuccess() throws Exception {
         // given
-
-        // when
         Map<String, String> loginRequest = new HashMap<>();
         loginRequest.put("loginId", LOGIN_ID);
         loginRequest.put("password", PASSWORD);
 
-        // then
+        // when // then
         MvcResult result = mockMvc.perform(post("/login")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(loginRequest)))
@@ -91,13 +89,11 @@ public class AuthenticationTest {
     @Test
     void loginWithWrongPassword() throws Exception {
         // given
-
-        // when
         Map<String, String> loginRequest = new HashMap<>();
         loginRequest.put("loginId", LOGIN_ID);
         loginRequest.put("password", "wrongPassword");
 
-        // then
+        // when // then
         mockMvc.perform(post("/login")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(loginRequest)))
@@ -112,13 +108,11 @@ public class AuthenticationTest {
     @Test
     void loginWithWrongLoginId() throws Exception {
         // given
-
-        // when
         Map<String, String> loginRequest = new HashMap<>();
         loginRequest.put("loginId", "wrongId");
         loginRequest.put("password", PASSWORD);
 
-        // then
+        // when // then
         mockMvc.perform(post("/login")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(loginRequest)))
@@ -132,13 +126,11 @@ public class AuthenticationTest {
     @Test
     void loginWithWrongFormat() throws Exception {
         // given
-
-        // when
         Map<String, String> loginRequest = new HashMap<>();
         loginRequest.put("loginId", LOGIN_ID);
         loginRequest.put("password", PASSWORD);
 
-        // then
+        // when // then
         mockMvc.perform(post("/login")
                         .contentType(MediaType.TEXT_PLAIN)
                         .content(objectMapper.writeValueAsString(loginRequest)))
@@ -148,6 +140,5 @@ public class AuthenticationTest {
                 .andExpect(content().json(
                         "{'errorCode':'U-07','errorMessage':'지원되지 않는 Content-Type 입니다: text/plain. JSON 형식으로 요청해주세요.'}"));
     }
-
 
 }
