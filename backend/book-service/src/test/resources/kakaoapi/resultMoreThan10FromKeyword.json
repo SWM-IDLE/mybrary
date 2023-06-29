@@ -2,122 +2,184 @@
   "bookSearchResult": [
     {
       "title": "Docker",
-      "contents": "",
+      "description": "",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=3627652&q=Docker",
+      "isbn10": "1982047313",
+      "isbn13": "9781982047313",
       "authors": [
         "Createspace Independent Publis"
       ],
+      "translators": [],
+      "publisher": "Createspace Independent Publishing Platform",
       "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F3627652",
       "publicationDate": "2017-12-25T15:00:00Z",
-      "starRating": 0.0,
       "price": 21100,
-      "status": "정상판매"
+      "salePrice": 19720,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "가장 빨리 만나는 도커(Docker)",
-      "contents": "클라우드 플랫폼 어디서나 빠르게 배포하고 실행할 수 있는 리눅스 기반 경량화 컨테이너 [가장 빨리 만나는 도커(Docker)]. Docker만 있으면 언제 어디서나 애플리케이션을 실행할 수 있는 안전한 런타임 환경을 구성할 수 있다. 하이퍼바이저가 CPU, RAM, 스토리지 같은 하드웨어를 전부 추상화했다면, Docker는 운영체제 커널만 추상화했다. Docker 기반 배포를 구현하면 개발, 테스트, 서비스 단계의 시스템 불일치나 호환성 문제를 줄이거나",
+      "description": "클라우드 플랫폼 어디서나 빠르게 배포하고 실행할 수 있는 리눅스 기반 경량화 컨테이너 [가장 빨리 만나는 도커(Docker)]. Docker만 있으면 언제 어디서나 애플리케이션을 실행할 수 있는 안전한 런타임 환경을 구성할 수 있다. 하이퍼바이저가 CPU, RAM, 스토리지 같은 하드웨어를 전부 추상화했다면, Docker는 운영체제 커널만 추상화했다. Docker 기반 배포를 구현하면 개발, 테스트, 서비스 단계의 시스템 불일치나 호환성 문제를 줄이거나",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=923845&q=%EA%B0%80%EC%9E%A5+%EB%B9%A8%EB%A6%AC+%EB%A7%8C%EB%82%98%EB%8A%94+%EB%8F%84%EC%BB%A4%28Docker%29",
+      "isbn10": "8966188389",
+      "isbn13": "9788966188383",
       "authors": [
         "이재홍"
       ],
+      "translators": [],
+      "publisher": "길벗",
       "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F923845%3Ftimestamp%3D20221209171052",
       "publicationDate": "2014-11-29T15:00:00Z",
-      "starRating": 0.0,
       "price": 26000,
-      "status": "정상판매"
+      "salePrice": 23400,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "Docker",
-      "contents": "",
+      "description": "",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=5147932&q=Docker",
+      "isbn10": "",
+      "isbn13": "",
       "authors": [],
-      "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F5147932%3Ftimestamp%3D20230628174705",
+      "translators": [],
+      "publisher": "",
+      "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F5147932%3Ftimestamp%3D20230629174659",
       "publicationDate": "2018-10-15T15:00:00Z",
-      "starRating": 0.0,
       "price": 86690,
-      "status": "정상판매"
+      "salePrice": 73690,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "Docker",
-      "contents": "",
+      "description": "",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=3927407&q=Docker",
+      "isbn10": "",
+      "isbn13": "",
       "authors": [],
-      "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F3927407%3Ftimestamp%3D20230628164635",
+      "translators": [],
+      "publisher": "",
+      "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F3927407%3Ftimestamp%3D20230629164154",
       "publicationDate": "2017-12-25T15:00:00Z",
-      "starRating": 0.0,
       "price": 26910,
-      "status": "정상판매"
+      "salePrice": 22870,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "Docker",
-      "contents": "",
+      "description": "",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=3329001&q=Docker",
+      "isbn10": "1491917571",
+      "isbn13": "9781491917572",
       "authors": [
         "O'Reilly Media"
       ],
+      "translators": [],
+      "publisher": "O'Reilly Media",
       "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F3329001%3Ftimestamp%3D20190219211242",
       "publicationDate": "2015-07-08T15:00:00Z",
-      "starRating": 0.0,
       "price": 47900,
-      "status": "정상판매"
+      "salePrice": 38730,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "Docker",
-      "contents": "",
+      "description": "",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=4954692&q=Docker",
+      "isbn10": "1492036730",
+      "isbn13": "9781492036739",
       "authors": [
         "Kane Sean P",
         "Matthias Karl"
       ],
+      "translators": [],
+      "publisher": "O'Reilly Media",
       "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F4954692",
       "publicationDate": "2018-10-05T15:00:00Z",
-      "starRating": 0.0,
       "price": 71650,
-      "status": "정상판매"
+      "salePrice": 16490,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "Mastering Docker",
-      "contents": "",
+      "description": "",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=3634214&q=Mastering+Docker",
+      "isbn10": "1787280241",
+      "isbn13": "9781787280243",
       "authors": [
         "Mckendrick Russ",
         "Gallagher Scott"
       ],
+      "translators": [],
+      "publisher": "Packt Publishing",
       "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F3634214",
       "publicationDate": "2017-09-30T15:00:00Z",
-      "starRating": 0.0,
       "price": 39000,
-      "status": "정상판매"
+      "salePrice": 38610,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "Docker in Action",
-      "contents": "",
+      "description": "",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=3340859&q=Docker+in+Action",
+      "isbn10": "1633430235",
+      "isbn13": "9781633430235",
       "authors": [
         "Manning Publications"
       ],
+      "translators": [],
+      "publisher": "Manning Publications",
       "thumbnailUrl": "",
       "publicationDate": "2016-05-26T15:00:00Z",
-      "starRating": 0.0,
       "price": 68180,
-      "status": "정상판매"
+      "salePrice": 60450,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "Docker for Data Science",
-      "contents": "",
+      "description": "",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=3580999&q=Docker+for+Data+Science",
+      "isbn10": "1484230116",
+      "isbn13": "9781484230114",
       "authors": [
         "Apress"
       ],
+      "translators": [],
+      "publisher": "Apress",
       "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F3580999",
       "publicationDate": "2017-09-27T15:00:00Z",
-      "starRating": 0.0,
       "price": 60190,
-      "status": "정상판매"
+      "salePrice": 36870,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "완벽한 IT 인프라 구축을 위한 Docker",
-      "contents": "Linux 컨테이너 가상화 기술을 이용한 애플리케이션 실행 환경 플랫폼인 ‘Docker’를 사용하여 인프라를 구축할 수 있도록 돕는 입문서『완벽한 IT 인프라 구축을 위한 Docker』. Docker와 업무 시스템에서 많이 사용되고 있는 클라우드 서비스인 Amazon Web Services를 이용한 실행 환경 구축 사례를 소개한다. 또한 인프라를 구축하고 운영하는 데 있어서 애플리케이션 엔지니어가 Docker를 활용하기 위한 정보와 기초 지식을 정리",
+      "description": "Linux 컨테이너 가상화 기술을 이용한 애플리케이션 실행 환경 플랫폼인 ‘Docker’를 사용하여 인프라를 구축할 수 있도록 돕는 입문서『완벽한 IT 인프라 구축을 위한 Docker』. Docker와 업무 시스템에서 많이 사용되고 있는 클라우드 서비스인 Amazon Web Services를 이용한 실행 환경 구축 사례를 소개한다. 또한 인프라를 구축하고 운영하는 데 있어서 애플리케이션 엔지니어가 Docker를 활용하기 위한 정보와 기초 지식을 정리",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=742012&q=%EC%99%84%EB%B2%BD%ED%95%9C+IT+%EC%9D%B8%ED%94%84%EB%9D%BC+%EA%B5%AC%EC%B6%95%EC%9D%84+%EC%9C%84%ED%95%9C+Docker",
+      "isbn10": "8956747016",
+      "isbn13": "9788956747019",
       "authors": [
         "Asa Shiho"
       ],
+      "translators": [
+        "신은화"
+      ],
+      "publisher": "정보문화사",
       "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F742012%3Ftimestamp%3D20190124180724",
       "publicationDate": "2016-09-29T15:00:00Z",
-      "starRating": 0.0,
       "price": 23000,
-      "status": "정상판매"
+      "salePrice": 20700,
+      "status": "정상판매",
+      "starRating": 0.0
     }
   ],
-  "nextRequestUrl": "/books/search?keyword=Docker&sort=accuracy&page=2"
+  "nextRequestUrl": "/books/search?keyword=docker&sort=accuracy&page=2"
 }

@@ -12,12 +12,18 @@ import lombok.Setter;
 public class BookSearchResultDto {
 
     private String title;
-    private String contents;
+    private String description;
+    private String detailsUrl;
+    private String isbn10;
+    private String isbn13;
     private List<String> authors;
+    private List<String> translators;
+    private String publisher;
     private String thumbnailUrl;
     private OffsetDateTime publicationDate;
-    private Double starRating;
-
     private Integer price;
+    private Integer salePrice;
+
     private String status;
+    private Double starRating;
 }
