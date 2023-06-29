@@ -63,16 +63,16 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
             throw new BookSearchResultNotFoundException();
         }
 
-        List<BookSearchResultDto> booSearchResultDtos = documents.stream()
+        List<BookSearchResultDto> bookSearchResultDtos = documents.stream()
                 .map(BookDtoMapper.INSTANCE::kakaoSearchResponseToDto)
                 .toList();
 
         if (isLastPage(response)) {
-            return BookSearchResultResponse.of(booSearchResultDtos, "");
+            return BookSearchResultResponse.of(bookSearchResultDtos, "");
         }
 
         String nextRequestUrl = String.format(REQUEST_NEXT_URL, searchKeyword, sort, page + 1);
-        return BookSearchResultResponse.of(booSearchResultDtos, nextRequestUrl);
+        return BookSearchResultResponse.of(bookSearchResultDtos, nextRequestUrl);
     }
 
     private Boolean isLastPage(ResponseEntity<KakaoBookSearchResponse> response) {
