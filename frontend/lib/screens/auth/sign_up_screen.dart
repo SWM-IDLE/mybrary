@@ -3,6 +3,7 @@ import 'package:mybrary/components/login/login_button_component.dart';
 import 'package:mybrary/components/login/login_input_component.dart';
 import 'package:mybrary/components/login/login_logo_component.dart';
 import 'package:mybrary/constants/color.dart';
+import 'package:mybrary/utilities/regexps.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -140,10 +141,10 @@ class _SignUpForm extends StatelessWidget {
               return '아이디를 입력해 주세요.';
             }
 
-            // 영어 소문자와 숫자를 포함, 영어 대문자와 특수문자를 포함하지 않는 6~20자의 문자열
-            RegExp regExp = RegExp(r'^(?=.*[a-z])(?=.*\d)(?!.*[A-Z!@#$&*])');
-            if (val.length < 6 || val.length > 20 || !(regExp.hasMatch(val))) {
-              return '아이디는 영소문자/숫자 혼합 6자 이상으로 입력해 주세요.';
+            if (val.length < 6 ||
+                val.length > 20 ||
+                !(LoginRegExp.idRegExp.hasMatch(val))) {
+              return '아이디는 영문/숫자 포함 6자 이상으로 입력해 주세요.';
             }
 
             return null;
@@ -162,11 +163,9 @@ class _SignUpForm extends StatelessWidget {
               return '이메일을 입력해 주세요.';
             }
 
-            // 영문/숫자/하이픈 검증 + @ + 도메인 검증 (최소 2자, 최대 7자)
-            // 이메일은 최소 7자에서 최대 40자까지 입력 가능
-            RegExp regExp =
-                RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
-            if (val.length < 7 || val.length > 40 || !(regExp.hasMatch(val))) {
+            if (val.length < 7 ||
+                val.length > 40 ||
+                !(LoginRegExp.emailRegExp.hasMatch(val))) {
               return '이메일 형식으로 입력해 주세요.';
             }
 
@@ -186,9 +185,9 @@ class _SignUpForm extends StatelessWidget {
               return '비밀번호를 입력해 주세요.';
             }
 
-            // 영문, 숫자, 특수문자를 포함하는 8~16자의 문자열
-            RegExp regExp = RegExp(r'^(?=.*[a-z])(?=.*\d)(?=.*[A-Z!@#$&*])');
-            if (val.length < 8 || val.length > 16 || !(regExp.hasMatch(val))) {
+            if (val.length < 8 ||
+                val.length > 16 ||
+                !(LoginRegExp.passwordRegExp.hasMatch(val))) {
               return '비밀번호는 영문/숫자/특수문자 혼합 8자 이상으로 입력해 주세요.';
             }
 
@@ -226,9 +225,9 @@ class _SignUpForm extends StatelessWidget {
               return '닉네임을 입력해 주세요.';
             }
 
-            // 영문, 숫자, 특수문자를 포함하는 6~20자 이상의 문자열
-            RegExp regExp = RegExp(r'^[a-zA-Z0-9가-힣]+$');
-            if (val.length < 6 || val.length > 20 || !(regExp.hasMatch(val))) {
+            if (val.length < 6 ||
+                val.length > 20 ||
+                !(LoginRegExp.nicknameRegExp.hasMatch(val))) {
               return '닉네임은 특수문자 제외 6자 이상으로 입력해 주세요.';
             }
 
