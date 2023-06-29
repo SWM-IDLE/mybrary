@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 const Color LESS_BLACK_COLOR = Color(0xFF313333);
 const Color BLACK_COLOR = Color(0xFF000000);
 const Color ORANGE_COLOR = Color(0xFFFF9800);
+const Color DISABLED_COLOR = Color(0x6B000000);
 
 // Login Color
 const Color LOGIN_PRIMARY_COLOR = Color(0xFFCDE7BE);
