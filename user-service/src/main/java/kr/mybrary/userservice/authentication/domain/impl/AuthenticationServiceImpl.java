@@ -8,7 +8,6 @@ import kr.mybrary.userservice.authentication.domain.exception.DuplicateLoginIdEx
 import kr.mybrary.userservice.authentication.domain.exception.DuplicateNicknameException;
 import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
 import kr.mybrary.userservice.authentication.presentation.dto.response.SignUpResponse;
-import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +33,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = UserMapper.INSTANCE.toEntity(signUpRequest);
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
-        user.updateRole(Role.USER);
+        user.authorizeUser();
         SignUpResponse signUpResponse = UserMapper.INSTANCE.toResponse(userRepository.save(user));
 
         return signUpResponse;
 
+    }
+
+    @Override
+    public User authorizeUser(String loginId) {
+        User findUser = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        findUser.authorizeUser();
+        return userRepository.save(findUser);
     }
 
     @Override
