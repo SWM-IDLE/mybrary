@@ -7,14 +7,14 @@ import 'package:mybrary/constants/color.dart';
 const String RESET_VERIFY_TEST_ID = 'test123';
 const String RESET_VERIFY_TEST_CODE = 'abcdef';
 
-class ResetVerifyScreen extends StatefulWidget {
-  const ResetVerifyScreen({super.key});
+class FindPasswordScreen extends StatefulWidget {
+  const FindPasswordScreen({super.key});
 
   @override
-  State<ResetVerifyScreen> createState() => _ResetVerifyScreenState();
+  State<FindPasswordScreen> createState() => _FindPasswordScreenState();
 }
 
-class _ResetVerifyScreenState extends State<ResetVerifyScreen> {
+class _FindPasswordScreenState extends State<FindPasswordScreen> {
   final GlobalKey<FormState> resetVerifyKey = GlobalKey();
 
   String? loginId;
@@ -42,10 +42,10 @@ class _ResetVerifyScreenState extends State<ResetVerifyScreen> {
             child: Column(
               children: [
                 Logo(
-                  logoText: '비밀번호 재설정',
+                  logoText: '비밀번호 찾기',
                 ),
                 Expanded(
-                  child: _ResetVerifyForm(
+                  child: _FindPasswordForm(
                     isValid: _isValid ?? false,
                     loginId: loginId ?? '',
                     code: code ?? '',
@@ -54,6 +54,9 @@ class _ResetVerifyScreenState extends State<ResetVerifyScreen> {
                     },
                     isVerifyEnabled: _isFormValid ?? false,
                     onIdVerifyPressed: onIdVerifyPressed,
+                    onConfirmPressed: () {
+                      Navigator.of(context).pop();
+                    },
                   ),
                 ),
               ],
@@ -85,21 +88,23 @@ class _ResetVerifyScreenState extends State<ResetVerifyScreen> {
   }
 }
 
-class _ResetVerifyForm extends StatelessWidget {
+class _FindPasswordForm extends StatelessWidget {
   final String loginId;
   final String code;
   final FormFieldSetter<String> onSignUpSaved;
   final bool isValid;
   final bool isVerifyEnabled;
   final VoidCallback onIdVerifyPressed;
+  final VoidCallback onConfirmPressed;
 
-  const _ResetVerifyForm({
+  const _FindPasswordForm({
     required this.loginId,
     required this.code,
     required this.onSignUpSaved,
     required this.isValid,
     required this.isVerifyEnabled,
     required this.onIdVerifyPressed,
+    required this.onConfirmPressed,
     Key? key,
   }) : super(key: key);
 
@@ -118,10 +123,10 @@ class _ResetVerifyForm extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: LoginButton(
-            onPressed: onIdVerifyPressed,
-            isEnabled: isValid ? false : isVerifyEnabled,
+            onPressed: isValid ? onConfirmPressed : onIdVerifyPressed,
+            isEnabled: isVerifyEnabled,
             isOAuth: false,
-            btnText: isValid ? '인증하기' : '인증번호 발송',
+            btnText: isValid ? '확인' : '임시 비밀번호 받기',
             btnBackgroundColor: LOGIN_PRIMARY_COLOR,
             textColor: BLACK_COLOR,
           ),
@@ -150,8 +155,14 @@ class _IdVerifyForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('아이디'),
+        Text(
+          '아이디',
+          style: TextStyle(
+            color: !isValid ? BLACK_COLOR : DISABLED_COLOR,
+          ),
+        ),
         LoginInput(
+          isEnabled: !isValid,
           initialValue: loginId,
           onSaved: onSignUpSaved,
           hintText: '가입하신 아이디를 입력해주세요.',
@@ -172,71 +183,116 @@ class _IdVerifyForm extends StatelessWidget {
           },
         ),
         SizedBox(
-          height: 20.0,
+          height: 30.0,
         ),
-        if (isValid)
-          _VerifyForm(
-            code: code,
-            onSignUpSaved: onSignUpSaved,
-          ),
+        if (isValid) _ConfirmNotification(),
       ],
     );
   }
 }
 
-class _VerifyForm extends StatelessWidget {
-  final String code;
-  final FormFieldSetter<String> onSignUpSaved;
-  const _VerifyForm({
-    required this.onSignUpSaved,
-    required this.code,
-    Key? key,
-  }) : super(key: key);
+class _ConfirmNotification extends StatelessWidget {
+  const _ConfirmNotification({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final boxDecorationStyle = BoxDecoration(
-      border: Border(
-        bottom: BorderSide(
-          color: LESS_BLACK_COLOR,
-          width: 0.5,
-        ),
-      ),
-    );
-
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text('인증코드'),
-        LoginInput(
-          suffixText: '02:00',
-          initialValue: code,
-          onSaved: onSignUpSaved,
-          hintText: '이메일로 전송된 인증코드를 입력해주세요.',
-          validator: (String? val) {
-            // 인증코드는 숫자로만? 영문/숫자 혼합?
-            // 추후 검증 로직이 추가될 예정입니다.
-            return null;
-          },
-        ),
-        SizedBox(height: 15.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 5.0),
-              decoration: boxDecorationStyle,
-              child: Text(
-                '인증코드 재발송',
-                style: TextStyle(
-                  color: LESS_BLACK_COLOR,
-                ),
-                textAlign: TextAlign.right,
-              ),
+            _notificationText('가입하신 이메일로 '),
+            _notificationText(
+              '임시 비밀번호를 발송',
+              isBold: true,
             ),
+            _notificationText('했습니다.'),
+          ],
+        ),
+        SizedBox(
+          height: 5.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            _notificationText('임시 비밀번호로 로그인 후, '),
+            _notificationText(
+              '비밀번호를 변경',
+              isBold: true,
+            ),
+            _notificationText('해주세요.'),
           ],
         ),
       ],
     );
   }
+
+  Text _notificationText(String text, {bool isBold = false}) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 16.0,
+        fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+      ),
+    );
+  }
 }
+
+// 추후 비밀번호 재설정 관련해서 논의 후 재사용 예정
+// class _VerifyForm extends StatelessWidget {
+//   final String code;
+//   final FormFieldSetter<String> onSignUpSaved;
+//   const _VerifyForm({
+//     required this.onSignUpSaved,
+//     required this.code,
+//     Key? key,
+//   }) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final boxDecorationStyle = BoxDecoration(
+//       border: Border(
+//         bottom: BorderSide(
+//           color: LESS_BLACK_COLOR,
+//           width: 0.5,
+//         ),
+//       ),
+//     );
+//
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text('인증코드'),
+//         LoginInput(
+//           suffixText: '02:00',
+//           initialValue: code,
+//           onSaved: onSignUpSaved,
+//           hintText: '이메일로 전송된 인증코드를 입력해주세요.',
+//           validator: (String? val) {
+//             // 인증코드는 숫자로만? 영문/숫자 혼합?
+//             // 추후 검증 로직이 추가될 예정입니다.
+//             return null;
+//           },
+//         ),
+//         SizedBox(height: 15.0),
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.end,
+//           children: [
+//             Container(
+//               padding: EdgeInsets.symmetric(vertical: 5.0),
+//               decoration: boxDecorationStyle,
+//               child: Text(
+//                 '인증코드 재발송',
+//                 style: TextStyle(
+//                   color: LESS_BLACK_COLOR,
+//                 ),
+//                 textAlign: TextAlign.right,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ],
+//     );
+//   }
+// }

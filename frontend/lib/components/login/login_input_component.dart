@@ -5,6 +5,7 @@ class LoginInput extends StatelessWidget {
   final String hintText;
   final String initialValue;
   final String? suffixText;
+  final bool? isEnabled;
   final FormFieldSetter<String> onSaved;
   final FormFieldValidator<String> validator;
 
@@ -14,12 +15,14 @@ class LoginInput extends StatelessWidget {
     required this.initialValue,
     required this.onSaved,
     this.suffixText,
+    this.isEnabled,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: isEnabled,
       onSaved: onSaved,
       initialValue: initialValue,
       validator: validator,
