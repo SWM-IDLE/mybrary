@@ -2,49 +2,74 @@
   "bookSearchResult": [
     {
       "title": "Windows Server Container 시작하기(acorn+Packt)",
-      "contents": "대한민국과 같이 IT에 대한 요구 사항으로 기민성 및 유연성을 요구하는 나라도 많지 않다. 이러한 요구사항에는 최근 이슈가 되는 Docker가 제격이다. 이 책은 Docker에 대한 세부사항과, Windows Container라는 이름으로 Docker를 품은 Windows Server와 Microsoft Azure에 대해 다룬다. 또한 역시나 최근 화두가 되고 있는 마이크로서비스를 구현하기 위한 Orchestrator와 클러스터링에 대해서도 함께 다루고",
+      "description": "대한민국과 같이 IT에 대한 요구 사항으로 기민성 및 유연성을 요구하는 나라도 많지 않다. 이러한 요구사항에는 최근 이슈가 되는 Docker가 제격이다. 이 책은 Docker에 대한 세부사항과, Windows Container라는 이름으로 Docker를 품은 Windows Server와 Microsoft Azure에 대해 다룬다. 또한 역시나 최근 화두가 되고 있는 마이크로서비스를 구현하기 위한 Orchestrator와 클러스터링에 대해서도 함께 다루고",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=1601468&q=Windows+Server+Container+%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0%28acorn%2BPackt%29",
+      "isbn10": "1161750975",
+      "isbn13": "9791161750972",
       "authors": [
         "스리칸스 마히라지"
       ],
+      "translators": [
+        "백승주"
+      ],
+      "publisher": "에이콘출판",
       "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F1601468%3Ftimestamp%3D20220831030516",
       "publicationDate": "2018-01-01T15:00:00Z",
-      "starRating": 0.0,
       "price": 35000,
-      "status": "정상판매"
+      "salePrice": 31500,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "Docker and Kubernetes for Java Developers",
-      "contents": "",
+      "description": "",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=5026107&q=Docker+and+Kubernetes+for+Java+Developers",
+      "isbn10": "",
+      "isbn13": "",
       "authors": [],
-      "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F5026107%3Ftimestamp%3D20230628143029",
+      "translators": [],
+      "publisher": "",
+      "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F5026107%3Ftimestamp%3D20230629142756",
       "publicationDate": "2017-08-28T15:00:00Z",
-      "starRating": 0.0,
       "price": 74230,
-      "status": "정상판매"
+      "salePrice": 74230,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "Pro SQL Server on Linux",
-      "contents": "",
+      "description": "",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=5363781&q=Pro+SQL+Server+on+Linux",
+      "isbn10": "",
+      "isbn13": "",
       "authors": [],
-      "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F5363781%3Ftimestamp%3D20230628180159",
+      "translators": [],
+      "publisher": "",
+      "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F5363781%3Ftimestamp%3D20230629180311",
       "publicationDate": "2018-10-27T15:00:00Z",
-      "starRating": 0.0,
       "price": 115480,
-      "status": "정상판매"
+      "salePrice": 92390,
+      "status": "정상판매",
+      "starRating": 0.0
     },
     {
       "title": "Pro SQL Server on Linux",
-      "contents": "",
+      "description": "",
+      "detailsUrl": "https://search.daum.net/search?w=bookpage&bookId=5332169&q=Pro+SQL+Server+on+Linux",
+      "isbn10": "1484241274",
+      "isbn13": "9781484241271",
       "authors": [
         "Ward Bob",
         "Oks Slava (FRW)"
       ],
+      "translators": [],
+      "publisher": "Apress",
       "thumbnailUrl": "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F5332169",
       "publicationDate": "2018-10-27T15:00:00Z",
-
-      "starRating": 0.0,
       "price": 59110,
-      "status": "정상판매"
+      "salePrice": 70700,
+      "status": "정상판매",
+      "starRating": 0.0
     }
   ],
   "nextRequestUrl": ""
