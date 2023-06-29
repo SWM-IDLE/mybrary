@@ -3,9 +3,9 @@ import 'package:mybrary/components/login/login_button_component.dart';
 import 'package:mybrary/components/login/login_input_component.dart';
 import 'package:mybrary/components/login/login_logo_component.dart';
 import 'package:mybrary/constants/color.dart';
+import 'package:mybrary/utilities/regexps.dart';
 
-const String RESET_VERIFY_TEST_ID = 'test123';
-const String RESET_VERIFY_TEST_CODE = 'abcdef';
+const String FIND_PASSWORD_TEST_ID = 'test123';
 
 class FindPasswordScreen extends StatefulWidget {
   const FindPasswordScreen({super.key});
@@ -77,7 +77,7 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
 
     if (resetVerifyKey.currentState!.validate()) {
       resetVerifyKey.currentState!.save();
-      if (loginId == RESET_VERIFY_TEST_ID) {
+      if (loginId == FIND_PASSWORD_TEST_ID) {
         setState(() {
           _isValid = true;
           _isValidLoginId = true;
@@ -184,14 +184,13 @@ class _IdVerifyForm extends StatelessWidget {
               return '아이디를 입력해 주세요.';
             }
 
-            // 영어 소문자와 숫자를 포함, 영어 대문자와 특수문자를 포함하지 않는 6~20자의 문자열
-            RegExp regExp = RegExp(r'^(?=.*[a-z])(?=.*\d)(?!.*[A-Z!@#$&*])');
-            if (val.length < 6 || val.length > 20 || !(regExp.hasMatch(val))) {
+            if (val.length < 6 ||
+                val.length > 20 ||
+                !(LoginRegExp.idRegExp.hasMatch(val))) {
               return '아이디는 영소문자/숫자 혼합 6자 이상으로 입력해 주세요.';
             }
 
             // 존재하지 않는 아이디입니다에 대한 로직 추가 예정
-
             return null;
           },
         ),

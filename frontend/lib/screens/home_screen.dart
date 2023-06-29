@@ -12,7 +12,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Text('My brary'),
+        child: Text('마이브러리 메인 화면입니다.'),
       ),
     );
   }
