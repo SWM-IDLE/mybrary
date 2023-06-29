@@ -3,6 +3,8 @@ package kr.mybrary.userservice.authentication.domain.oauth2;
 import java.util.Map;
 import java.util.UUID;
 import kr.mybrary.userservice.authentication.domain.oauth2.userinfo.GoogleOAuth2UserInfo;
+import kr.mybrary.userservice.authentication.domain.oauth2.userinfo.KakaoOAuth2UserInfo;
+import kr.mybrary.userservice.authentication.domain.oauth2.userinfo.NaverOAuth2UserInfo;
 import kr.mybrary.userservice.authentication.domain.oauth2.userinfo.OAuth2UserInfo;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.SocialType;
@@ -31,6 +33,12 @@ public class OAuthAttributes { // 소셜 별로 받는 데이터를 분기 처�
         if (socialType == SocialType.GOOGLE) {
             return ofGoogle(userNameAttributeName, attributes);
         }
+        if (socialType == SocialType.KAKAO) {
+            return ofKakao(userNameAttributeName, attributes);
+        }
+        if (socialType == SocialType.NAVER) {
+            return ofNaver(userNameAttributeName, attributes);
+        }
         throw new OAuth2AuthenticationException(SOCIAL_TYPE_NOT_SUPPORTED);
     }
 
@@ -39,6 +47,22 @@ public class OAuthAttributes { // 소셜 별로 받는 데이터를 분기 처�
         return OAuthAttributes.builder()
                 .nameAttributeKey(userNameAttributeName)
                 .oAuth2UserInfo(new GoogleOAuth2UserInfo(attributes))
+                .build();
+    }
+
+    private static OAuthAttributes ofKakao(String userNameAttributeName,
+            Map<String, Object> attributes) {
+        return OAuthAttributes.builder()
+                .nameAttributeKey(userNameAttributeName)
+                .oAuth2UserInfo(new KakaoOAuth2UserInfo(attributes))
+                .build();
+    }
+
+    private static OAuthAttributes ofNaver(String userNameAttributeName,
+            Map<String, Object> attributes) {
+        return OAuthAttributes.builder()
+                .nameAttributeKey(userNameAttributeName)
+                .oAuth2UserInfo(new NaverOAuth2UserInfo(attributes))
                 .build();
     }
 

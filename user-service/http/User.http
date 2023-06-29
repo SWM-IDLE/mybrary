@@ -18,5 +18,11 @@ Content-Type: application/json
     "password": "password1!"
 }
 
-### 3. 소셜 로그인
+### 3. 구글 소셜 로그인
 GET http://localhost:8080/oauth2/authorization/google
+
+### 4. 카카오 소셜 로그인
+GET http://localhost:8080/oauth2/authorization/kakao
+
+### 5. 네이버 소셜 로그인
+GET http://localhost:8080/oauth2/authorization/naver
