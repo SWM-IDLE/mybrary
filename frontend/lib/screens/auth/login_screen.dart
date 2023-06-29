@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
         print('아이디 또는 비밀번호가 틀렸습니다.');
       }
     } else {
-      print('에러가 있습니다.');
+      print('Log: 서버 에러');
     }
   }
 }

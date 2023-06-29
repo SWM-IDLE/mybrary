@@ -19,7 +19,7 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
 
   String? loginId;
   String? code;
-  bool? _isValid;
+  bool? _isInputValid;
   bool? _isFormValid;
   bool? _isValidLoginId;
 
@@ -47,7 +47,7 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
                 ),
                 Expanded(
                   child: _FindPasswordForm(
-                    isValid: _isValid ?? false,
+                    isInputValid: _isInputValid ?? false,
                     isValidLoginId: _isValidLoginId ?? false,
                     loginId: loginId ?? '',
                     code: code ?? '',
@@ -79,17 +79,17 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
       resetVerifyKey.currentState!.save();
       if (loginId == FIND_PASSWORD_TEST_ID) {
         setState(() {
-          _isValid = true;
+          _isInputValid = true;
           _isValidLoginId = true;
         });
       } else {
         setState(() {
-          _isValid = true;
+          _isInputValid = true;
           _isValidLoginId = false;
         });
       }
     } else {
-      print('에러가 있습니다.');
+      print('Log: 서버 에러');
     }
   }
 }
@@ -98,7 +98,7 @@ class _FindPasswordForm extends StatelessWidget {
   final String loginId;
   final String code;
   final FormFieldSetter<String> onSignUpSaved;
-  final bool isValid;
+  final bool isInputValid;
   final bool isVerifyEnabled;
   final bool isValidLoginId;
   final VoidCallback onIdVerifyPressed;
@@ -108,7 +108,7 @@ class _FindPasswordForm extends StatelessWidget {
     required this.loginId,
     required this.code,
     required this.onSignUpSaved,
-    required this.isValid,
+    required this.isInputValid,
     required this.isVerifyEnabled,
     required this.onIdVerifyPressed,
     required this.onConfirmPressed,
@@ -126,18 +126,18 @@ class _FindPasswordForm extends StatelessWidget {
           loginId: loginId,
           code: code,
           onSignUpSaved: onSignUpSaved,
-          isValid: isValid,
+          isInputValid: isInputValid,
           isValidLoginId: isValidLoginId,
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: LoginButton(
-            onPressed: isValid && isValidLoginId
+            onPressed: isInputValid && isValidLoginId
                 ? onConfirmPressed
                 : onIdVerifyPressed,
             isEnabled: isVerifyEnabled,
             isOAuth: false,
-            btnText: isValid && isValidLoginId ? '확인' : '임시 비밀번호 받기',
+            btnText: isInputValid && isValidLoginId ? '확인' : '임시 비밀번호 받기',
             btnBackgroundColor: LOGIN_PRIMARY_COLOR,
             textColor: BLACK_COLOR,
           ),
@@ -151,13 +151,13 @@ class _IdVerifyForm extends StatelessWidget {
   final String loginId;
   final String code;
   final FormFieldSetter<String> onSignUpSaved;
-  final bool isValid;
+  final bool isInputValid;
   final bool isValidLoginId;
 
   const _IdVerifyForm({
     required this.loginId,
     required this.onSignUpSaved,
-    required this.isValid,
+    required this.isInputValid,
     required this.code,
     required this.isValidLoginId,
     Key? key,
@@ -171,11 +171,13 @@ class _IdVerifyForm extends StatelessWidget {
         Text(
           '아이디',
           style: TextStyle(
-            color: !(isValid && isValidLoginId) ? BLACK_COLOR : DISABLED_COLOR,
+            color: !(isInputValid && isValidLoginId)
+                ? BLACK_COLOR
+                : DISABLED_COLOR,
           ),
         ),
         LoginInput(
-          isEnabled: !(isValid && isValidLoginId),
+          isEnabled: !(isInputValid && isValidLoginId),
           initialValue: loginId,
           onSaved: onSignUpSaved,
           hintText: '가입하신 아이디를 입력해주세요.',
@@ -195,10 +197,10 @@ class _IdVerifyForm extends StatelessWidget {
           },
         ),
         SizedBox(
-          height: isValid && !isValidLoginId ? 15.0 : 30.0,
+          height: isInputValid && !isValidLoginId ? 15.0 : 30.0,
         ),
-        if (isValid && isValidLoginId) _ConfirmNotification(),
-        if (isValid && !isValidLoginId)
+        if (isInputValid && isValidLoginId) _ConfirmNotification(),
+        if (isInputValid && !isValidLoginId)
           // 추후 토스트 메세지로 변경 예정입니다.
           Text(
             '존재하지 않는 아이디입니다.',

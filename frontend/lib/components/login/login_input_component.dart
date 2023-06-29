@@ -4,7 +4,6 @@ import 'package:mybrary/constants/color.dart';
 class LoginInput extends StatelessWidget {
   final String hintText;
   final String initialValue;
-  final String? suffixText;
   final bool? isEnabled;
   final FormFieldSetter<String> onSaved;
   final FormFieldValidator<String> validator;
@@ -14,7 +13,6 @@ class LoginInput extends StatelessWidget {
     required this.validator,
     required this.initialValue,
     required this.onSaved,
-    this.suffixText,
     this.isEnabled,
     Key? key,
   }) : super(key: key);
@@ -28,10 +26,6 @@ class LoginInput extends StatelessWidget {
       validator: validator,
       cursorColor: ORANGE_COLOR,
       decoration: InputDecoration(
-        suffixIcon: Padding(
-          padding: EdgeInsets.all(15.0),
-          child: suffixText != null ? Text('$suffixText') : null,
-        ),
         hintText: hintText,
         contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
         focusedBorder: loginInputBorderStyle(),
