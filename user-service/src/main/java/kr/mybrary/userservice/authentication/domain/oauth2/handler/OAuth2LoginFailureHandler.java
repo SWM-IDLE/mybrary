@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -22,7 +23,8 @@ public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
     static final String ENCODING_UTF_8 = "UTF-8";
     static final String CONTENT_TYPE_JSON = "application/json";
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
@@ -31,10 +33,10 @@ public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         response.setCharacterEncoding(ENCODING_UTF_8);
         response.setContentType(CONTENT_TYPE_JSON);
-        response.getWriter().write(generateRequestBody(exception));
+        response.getWriter().write(generateResponseBody(exception));
     }
 
-    private String generateRequestBody(AuthenticationException exception)
+    private String generateResponseBody(AuthenticationException exception)
             throws JsonProcessingException {
         Map<String, String> responseMessage = new HashMap<>();
         responseMessage.put("errorCode", getErrorCode(exception));
