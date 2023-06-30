@@ -14,10 +14,12 @@ import lombok.Getter;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 
+// 소셜 별로 받는 데이터를 분기 처리하는 DTO 클래스
 @Getter
-public class OAuthAttributes { // 소셜 별로 받는 데이터를 분기 처리하는 DTO 클래스
+public class OAuthAttributes {
 
-    private String nameAttributeKey; // OAuth2 로그인 진행 시 키가 되는 필드 값
+    // OAuth2 로그인 진행 시 키가 되는 필드 값
+    private String nameAttributeKey;
     private OAuth2UserInfo oAuth2UserInfo;
 
     private static final String SOCIAL_TYPE_NOT_SUPPORTED = "지원하지 않는 소셜 로그인입니다.";

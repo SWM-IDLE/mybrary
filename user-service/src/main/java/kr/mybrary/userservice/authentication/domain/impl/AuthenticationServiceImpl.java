@@ -33,7 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = UserMapper.INSTANCE.toEntity(signUpRequest);
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
-        user.authorizeUser();
+        user.grantUserRole();
         SignUpResponse signUpResponse = UserMapper.INSTANCE.toResponse(userRepository.save(user));
 
         return signUpResponse;
@@ -44,7 +44,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User authorizeUser(String loginId) {
         User findUser = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new UsernameNotFoundException(loginId));
-        findUser.authorizeUser();
+        findUser.grantUserRole();
         return userRepository.save(findUser);
     }
 

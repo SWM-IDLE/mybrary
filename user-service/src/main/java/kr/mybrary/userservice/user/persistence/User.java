@@ -45,7 +45,7 @@ public class User extends BaseEntity {
 
     // 주소, 직장, 직장 공개 여부, 성별, 생년월일, 학력, 본인인증 여부 추가 예정
 
-    public void authorizeUser() {
+    public void grantUserRole() {
         this.role = Role.USER;
     }
 
