@@ -1,9 +1,12 @@
 package kr.mybrary.userservice.authentication.domain.oauth2.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import kr.mybrary.userservice.authentication.domain.AuthenticationService;
 import kr.mybrary.userservice.authentication.domain.oauth2.CustomOAuth2User;
 import kr.mybrary.userservice.global.jwt.service.JwtService;
@@ -11,6 +14,7 @@ import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -21,13 +25,16 @@ import org.springframework.stereotype.Component;
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     static final String ENCODING_UTF_8 = "UTF-8";
-    static final String CONTENT_TYPE_TEXT_PLAIN = "text/plain";
+    static final String CONTENT_TYPE_JSON = "application/json";
     static final String SIGN_UP_SUCCESS = "회원 가입이 완료되었습니다.";
     static final String LOGIN_SUCCESS = "로그인에 성공하였습니다. 로그인 아이디: %s";
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -47,10 +54,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private void initialLoginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User)
             throws IOException {
         setAccessAndRefreshToken(response, oAuth2User);
-
-        response.setCharacterEncoding(ENCODING_UTF_8);
-        response.setContentType(CONTENT_TYPE_TEXT_PLAIN);
-        response.getWriter().write(SIGN_UP_SUCCESS);
+        generateResponseWith(response, SIGN_UP_SUCCESS);
 
         // 추가 정보 입력 필요 시 회원 가입 추가 정보 입력 페이지로 리다이렉트 후 USER 권한 부여
         authenticationService.authorizeUser(oAuth2User.getLoginId());
@@ -61,13 +65,20 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User)
             throws IOException {
         setAccessAndRefreshToken(response, oAuth2User);
-
-        response.setCharacterEncoding(ENCODING_UTF_8);
-        response.setContentType(CONTENT_TYPE_TEXT_PLAIN);
-        response.getWriter().write(String.format(LOGIN_SUCCESS, oAuth2User.getLoginId()));
+        generateResponseWith(response, String.format(LOGIN_SUCCESS, oAuth2User.getLoginId()));
     }
 
-    private void setAccessAndRefreshToken(HttpServletResponse response, CustomOAuth2User oAuth2User) {
+    private void generateResponseWith(HttpServletResponse response, String message)
+            throws IOException {
+        response.setCharacterEncoding(ENCODING_UTF_8);
+        response.setContentType(CONTENT_TYPE_JSON);
+        Map<String, String> responseMessage = new HashMap<>();
+        responseMessage.put("message", message);
+        response.getWriter().write(objectMapper.writeValueAsString(responseMessage));
+    }
+
+    private void setAccessAndRefreshToken(HttpServletResponse response,
+            CustomOAuth2User oAuth2User) {
         String accessToken = jwtService.createAccessToken(oAuth2User.getLoginId(), new Date());
         String refreshToken = jwtService.createRefreshToken(new Date());
         response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);

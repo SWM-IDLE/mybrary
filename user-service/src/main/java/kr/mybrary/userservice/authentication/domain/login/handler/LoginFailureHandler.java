@@ -11,9 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.print.attribute.standard.Media;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -26,7 +25,8 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     static final String ENCODING_UTF_8 = "UTF-8";
     static final String CONTENT_TYPE_JSON = "application/json";
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
