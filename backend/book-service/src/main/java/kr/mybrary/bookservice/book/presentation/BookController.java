@@ -1,12 +1,13 @@
 package kr.mybrary.bookservice.book.presentation;
 
-import kr.mybrary.bookservice.book.domain.PlatformBookSearchApiService;
-import kr.mybrary.bookservice.book.presentation.dto.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.book.domain.BookService;
+import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -14,19 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/books")
 public class BookController {
 
-    private final PlatformBookSearchApiService bookService;
+    private final BookService bookService;
 
-    @GetMapping("/search")
-    public ResponseEntity<BookSearchResultResponse> searchWithKeyword(
-            @RequestParam(value = "keyword") String keyword,
-            @RequestParam(value = "sort", required = false, defaultValue = "accuracy") String sort,
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-        return ResponseEntity.ok(bookService.searchWithKeyword(keyword, sort, page));
-    }
+    @PostMapping
+    public ResponseEntity<Void> create(@RequestBody BookCreateRequest request) {
+        bookService.getRegisteredOrNewBook(request);
 
-    @GetMapping("/search/isbn")
-    public ResponseEntity<BookSearchResultResponse> searchWithISBNBarcodeScan(
-            @RequestParam("isbn") String isbn) {
-        return ResponseEntity.ok(bookService.searchWithISBN(isbn));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
