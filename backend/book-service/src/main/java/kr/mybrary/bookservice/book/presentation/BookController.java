@@ -19,7 +19,7 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody BookCreateRequest request) {
-        bookService.getRegisteredOrNewBook(request);
+        bookService.getRegisteredOrNewBook(request.toServiceRequest());
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

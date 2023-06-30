@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.book.domain;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
+import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.AuthorRepository;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
@@ -11,7 +12,6 @@ import kr.mybrary.bookservice.book.persistence.author.BookAuthor;
 import kr.mybrary.bookservice.book.persistence.repository.TranslatorRepository;
 import kr.mybrary.bookservice.book.persistence.translator.BookTranslator;
 import kr.mybrary.bookservice.book.persistence.translator.Translator;
-import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +24,12 @@ public class BookService {
     private final AuthorRepository authorRepository;
     private final TranslatorRepository translatorRepository;
 
-    public Book getRegisteredOrNewBook(BookCreateRequest request) {
+    public Book getRegisteredOrNewBook(BookCreateServiceRequest request) {
         return bookRepository.findByIsbn10OrIsbn13(request.getIsbn10(), request.getIsbn10())
                 .orElseGet(() -> create(request));
     }
 
-    private Book create(BookCreateRequest request) {
+    private Book create(BookCreateServiceRequest request) {
 
         Book book = BookDtoMapper.INSTANCE.bookCreateRequestToEntity(request);
 

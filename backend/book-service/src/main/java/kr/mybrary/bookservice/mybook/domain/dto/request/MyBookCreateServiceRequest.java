@@ -2,7 +2,7 @@ package kr.mybrary.bookservice.mybook.domain.dto.request;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
+import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,8 +26,8 @@ public class MyBookCreateServiceRequest {
     private List<String> authors;
     private List<String> translators;
 
-    public BookCreateRequest toBookCreateRequest() {
-        return BookCreateRequest.builder()
+    public BookCreateServiceRequest toBookCreateRequest() {
+        return BookCreateServiceRequest.builder()
                 .title(title)
                 .description(description)
                 .isbn10(isbn10)
