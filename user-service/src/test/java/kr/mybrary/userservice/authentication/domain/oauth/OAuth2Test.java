@@ -21,11 +21,13 @@ public class OAuth2Test {
     @Autowired
     MockMvc mockMvc;
 
+    static final String OAUTH2_URL = "/oauth2/authorization";
+
     @DisplayName("Google 로그인 시도 시 Google OAuth 인증 창이 나타난다")
     @Test
     void googleLogin() throws Exception {
         // given
-        String googleOAuth2Url = "/oauth2/authorization/google";
+        String googleOAuth2Url = OAUTH2_URL + "/google";
         String redirectedGoogleOAuth2Url = "https://accounts.google.com/o/oauth2/v2/auth";
 
         // when // then
@@ -39,7 +41,7 @@ public class OAuth2Test {
     @Test
     void kakaoLogin() throws Exception {
         // given
-        String kakaoOAuth2Url = "/oauth2/authorization/kakao";
+        String kakaoOAuth2Url = OAUTH2_URL + "/kakao";
         String redirectedKakaoOAuth2Url = "https://kauth.kakao.com/oauth/authorize";
 
         // when // then
@@ -52,7 +54,7 @@ public class OAuth2Test {
     @Test
     void naverLogin() throws Exception {
         // given
-        String naverOAuth2Url = "/oauth2/authorization/naver";
+        String naverOAuth2Url = OAUTH2_URL + "/naver";
         String redirectedNaverOAuth2Url = "https://nid.naver.com/oauth2.0/authorize";
 
         // when // then
