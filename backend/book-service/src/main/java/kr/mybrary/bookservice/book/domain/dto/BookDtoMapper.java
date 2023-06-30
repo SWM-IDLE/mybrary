@@ -2,6 +2,7 @@ package kr.mybrary.bookservice.book.domain.dto;
 
 import kr.mybrary.bookservice.book.domain.dto.kakaoapi.Document;
 import kr.mybrary.bookservice.book.persistence.Book;
+import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -22,6 +23,9 @@ public interface BookDtoMapper {
     @Mapping(target = "isbn10", source = "isbn", qualifiedByName = "getISBN10")
     @Mapping(target = "isbn13", source = "isbn", qualifiedByName = "getISBN13")
     BookSearchResultDto kakaoSearchResponseToDto(Document kakaoBookSearchResponse);
+
+    @Mapping(target = "publishDate", source = "publicationDate")
+    Book bookCreateRequestToEntity(BookCreateRequest request);
 
     @Named("getISBN10")
     static String getISBN10(String isbn) {
