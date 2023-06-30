@@ -18,7 +18,7 @@ public class MyBookService {
     private final MyBookRepository myBookRepository;
     private final BookService bookService;
 
-    public void create(MyBookCreateServiceRequest request) {
+    public MyBook create(MyBookCreateServiceRequest request) {
 
         Book book = bookService.getRegisteredOrNewBook(request.toBookCreateRequest());
 
@@ -30,11 +30,11 @@ public class MyBookService {
                 .isDeleted(false)
                 .build();
 
-        myBookRepository.save(myBook);
+        return myBookRepository.save(myBook);
     }
 
     private void checkBookAlreadyRegisteredAsMyBook(String userId, Book book) {
-        if (myBookRepository.existsByUserIdAndBookId(userId, book.getId())) {
+        if (myBookRepository.existsByUserIdAndBook(userId, book)) {
             throw new MyBookAlreadyExistsException();
         }
     }
