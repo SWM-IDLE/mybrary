@@ -1,18 +1,14 @@
 package kr.mybrary.bookservice.mybook.presentation;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
-import kr.mybrary.bookservice.book.domain.BookService;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
-import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

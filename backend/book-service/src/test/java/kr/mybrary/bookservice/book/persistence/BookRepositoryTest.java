@@ -79,16 +79,4 @@ class BookRepositoryTest {
                 .thumbnailUrl("thumbnailUrl_1")
                 .build();
     }
-    private Book createAnotherBook() {
-        return Book.builder()
-                .isbn10("isbn10_2")
-                .isbn13("isbn13_2")
-                .title("title_2")
-                .description("description_2")
-                .publisher("publisher_2")
-                .publishDate(LocalDateTime.now())
-                .price(20000)
-                .thumbnailUrl("thumbnailUrl_2")
-                .build();
-    }
 }
