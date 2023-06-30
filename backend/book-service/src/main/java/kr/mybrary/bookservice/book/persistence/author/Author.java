@@ -6,11 +6,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import kr.mybrary.bookservice.global.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "authors")
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Author extends BaseEntity {
 
     @Id
