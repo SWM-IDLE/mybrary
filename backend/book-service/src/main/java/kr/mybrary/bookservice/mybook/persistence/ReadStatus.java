@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.persistence;
+package kr.mybrary.bookservice.mybook.persistence;
 
 import lombok.Getter;
 

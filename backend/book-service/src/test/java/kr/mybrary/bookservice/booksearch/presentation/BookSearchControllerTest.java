@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.presentation;
+package kr.mybrary.bookservice.booksearch.presentation;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -8,10 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.OffsetDateTime;
 import java.util.List;
-import kr.mybrary.bookservice.book.domain.KakaoBookSearchApiService;
-import kr.mybrary.bookservice.book.domain.dto.BookSearchResultDto;
-import kr.mybrary.bookservice.book.domain.exception.BookSearchResultNotFoundException;
-import kr.mybrary.bookservice.book.presentation.dto.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.domain.KakaoBookSearchApiService;
+import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchResultDto;
+import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
+import kr.mybrary.bookservice.booksearch.presentation.response.BookSearchResultResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +20,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(BookController.class)
+@WebMvcTest(BookSearchController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-class BookControllerTest {
+class BookSearchControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -38,13 +38,10 @@ class BookControllerTest {
     void searchWithISBNBarcodeScan() throws Exception {
 
         // given
-        BookSearchResultResponse response = BookSearchResultResponse.builder().bookSearchResult(
-                List.of(BookSearchResultDto.builder().title("자바의 정석").contents("자바의 정석 3판")
-                        .authors(List.of("남궁성")).price(25000).thumbnailUrl(
-                                "https://bookthumb-phinf.pstatic.net/cover/150/077/15007773.jpg?type=m1&udate=20180726")
-                        .status("정상판매").starRating(0.0)
-                        .publicationDate(OffsetDateTime.parse("2008-08-01T00:00:00+09:00"))
-                        .build())).nextRequestUrl("").build();
+        BookSearchResultResponse response = BookSearchResultResponse.builder()
+                .bookSearchResult(List.of(createBookSearchDto()))
+                .nextRequestUrl("")
+                .build();
 
         String responseJson = objectMapper.writeValueAsString(response);
 
@@ -62,19 +59,15 @@ class BookControllerTest {
     void searchWithKeyword() throws Exception {
 
         // given
-        BookSearchResultResponse response = BookSearchResultResponse.builder().bookSearchResult(
-                        List.of(BookSearchResultDto.builder().title("자바의 정석").contents("자바의 정석 3판")
-                                .authors(List.of("남궁성")).price(25000).thumbnailUrl(
-                                        "https://bookthumb-phinf.pstatic.net/cover/150/077/15007773.jpg?type=m1&udate=20180726")
-                                .status("정상판매").starRating(0.0)
-                                .publicationDate(OffsetDateTime.parse("2008-08-01T00:00:00+09:00"))
-                                .build())).nextRequestUrl("/books/search?keyword=자바&sort=accuracy&page=2")
+        BookSearchResultResponse response = BookSearchResultResponse.builder()
+                .bookSearchResult(List.of(createBookSearchDto()))
+                .nextRequestUrl("/books/search?keyword=자바&sort=accuracy&page=2")
                 .build();
 
         String responseJson = objectMapper.writeValueAsString(response);
 
-        given(kakaoBookSearchApiService.searchWithKeyword("자바", "accuracy", 1)).willReturn(
-                response);
+        given(kakaoBookSearchApiService.searchWithKeyword("자바", "accuracy", 1))
+                .willReturn(response);
 
         // when, then
         mockMvc.perform(get("/books/search")
@@ -98,5 +91,17 @@ class BookControllerTest {
                 .param("sort", "accuracy")
                 .param("page", "1"))
                 .andExpect(status().isNotFound());
+    }
+
+    private BookSearchResultDto createBookSearchDto() {
+        return BookSearchResultDto.builder()
+                .title("자바의 정석")
+                .description("자바의 정석 3판")
+                .authors(List.of("남궁성"))
+                .price(25000)
+                .thumbnailUrl("https://bookthumb-phinf.pstatic.net/cover/150/077/15007773.jpg?type=m1&udate=20180726")
+                .status("정상판매").starRating(0.0)
+                .publicationDate(OffsetDateTime.parse("2008-08-01T00:00:00+09:00"))
+                .build();
     }
 }

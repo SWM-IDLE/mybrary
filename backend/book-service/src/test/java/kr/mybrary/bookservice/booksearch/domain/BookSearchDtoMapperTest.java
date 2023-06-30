@@ -1,11 +1,12 @@
-package kr.mybrary.bookservice.book.domain.dto;
+package kr.mybrary.bookservice.booksearch.domain;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchDtoMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class BookDtoMapperTest {
+class BookSearchDtoMapperTest {
 
     private final static String ISBN_10_AND_13 = "8980782977 9788980782970";
     private final static String ISBN_10 = "8980782977";
@@ -16,8 +17,8 @@ class BookDtoMapperTest {
     void getISBNWhenHasISBN10And13() {
 
         // when given
-        String isbn10 = BookDtoMapper.getISBN10(ISBN_10_AND_13);
-        String isbn13 = BookDtoMapper.getISBN13(ISBN_10_AND_13);
+        String isbn10 = BookSearchDtoMapper.getISBN10(ISBN_10_AND_13);
+        String isbn13 = BookSearchDtoMapper.getISBN13(ISBN_10_AND_13);
 
         // then
         assertAll(
@@ -31,8 +32,8 @@ class BookDtoMapperTest {
     void getISBNWhenHasISBN10() {
 
         // when given
-        String isbn10 = BookDtoMapper.getISBN10(ISBN_10);
-        String isbn13 = BookDtoMapper.getISBN13(ISBN_10);
+        String isbn10 = BookSearchDtoMapper.getISBN10(ISBN_10);
+        String isbn13 = BookSearchDtoMapper.getISBN13(ISBN_10);
 
         // then
         assertAll(
@@ -46,8 +47,8 @@ class BookDtoMapperTest {
     void getISBNWhenHasISBN13() {
 
         // when given
-        String isbn10 = BookDtoMapper.getISBN10(ISBN_13);
-        String isbn13 = BookDtoMapper.getISBN13(ISBN_13);
+        String isbn10 = BookSearchDtoMapper.getISBN10(ISBN_13);
+        String isbn13 = BookSearchDtoMapper.getISBN13(ISBN_13);
 
         // then
         assertAll(

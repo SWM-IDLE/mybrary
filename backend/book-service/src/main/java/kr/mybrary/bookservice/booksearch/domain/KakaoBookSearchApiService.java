@@ -1,13 +1,13 @@
-package kr.mybrary.bookservice.book.domain;
+package kr.mybrary.bookservice.booksearch.domain;
 
 import java.util.List;
 import java.util.Objects;
-import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
-import kr.mybrary.bookservice.book.domain.dto.BookSearchResultDto;
-import kr.mybrary.bookservice.book.domain.dto.kakaoapi.Document;
-import kr.mybrary.bookservice.book.domain.dto.kakaoapi.KakaoBookSearchResponse;
-import kr.mybrary.bookservice.book.domain.exception.BookSearchResultNotFoundException;
-import kr.mybrary.bookservice.book.presentation.dto.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchDtoMapper;
+import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchResultDto;
+import kr.mybrary.bookservice.booksearch.domain.dto.kakaoapi.Document;
+import kr.mybrary.bookservice.booksearch.domain.dto.kakaoapi.KakaoBookSearchResponse;
+import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
+import kr.mybrary.bookservice.booksearch.presentation.response.BookSearchResultResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -65,7 +65,7 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
         }
 
         List<BookSearchResultDto> bookSearchResultDtos = documents.stream()
-                .map(BookDtoMapper.INSTANCE::kakaoSearchResponseToDto)
+                .map(BookSearchDtoMapper.INSTANCE::kakaoSearchResponseToDto)
                 .toList();
 
         if (isLastPage(response)) {

@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.domain.dto.kakaoapi;
+package kr.mybrary.bookservice.booksearch.domain.dto.kakaoapi;
 
 import java.util.List;
 import lombok.Data;
