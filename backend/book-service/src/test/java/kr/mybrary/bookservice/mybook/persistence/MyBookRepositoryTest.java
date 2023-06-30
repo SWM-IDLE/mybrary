@@ -1,12 +1,10 @@
 package kr.mybrary.bookservice.mybook.persistence;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import kr.mybrary.bookservice.book.persistence.Book;
-import kr.mybrary.bookservice.book.persistence.author.Author;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import org.junit.jupiter.api.DisplayName;
