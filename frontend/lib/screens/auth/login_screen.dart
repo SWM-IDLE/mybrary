@@ -3,6 +3,7 @@ import 'package:mybrary/components/login/login_button_component.dart';
 import 'package:mybrary/components/login/login_input_component.dart';
 import 'package:mybrary/components/login/login_logo_component.dart';
 import 'package:mybrary/constants/color.dart';
+import 'package:mybrary/data/network/service/auth_apis.dart';
 import 'package:mybrary/utilities/regexps.dart';
 
 const LOGIN_TEST_ID = 'test123';
@@ -225,7 +226,9 @@ class _OAuthLogin extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         LoginButton(
-          onPressed: () {},
+          onPressed: () {
+            signInOAuth(oAuthType: OAuthType.google);
+          },
           isOAuth: true,
           isEnabled: true,
           btnIcon: Image.asset(
@@ -241,7 +244,9 @@ class _OAuthLogin extends StatelessWidget {
           height: 10.0,
         ),
         LoginButton(
-          onPressed: () {},
+          onPressed: () {
+            signInOAuth(oAuthType: OAuthType.naver);
+          },
           isOAuth: true,
           isEnabled: true,
           btnIcon: Image.asset(
@@ -257,7 +262,9 @@ class _OAuthLogin extends StatelessWidget {
           height: 10.0,
         ),
         LoginButton(
-          onPressed: () {},
+          onPressed: () {
+            signInOAuth(oAuthType: OAuthType.kakao);
+          },
           isOAuth: true,
           isEnabled: true,
           btnIcon: Image.asset(
@@ -267,7 +274,7 @@ class _OAuthLogin extends StatelessWidget {
           ),
           btnText: 'Kakao로 시작하기',
           btnBackgroundColor: KAKAO_COLOR,
-          textColor: WHITE_COLOR,
+          textColor: BLACK_COLOR,
         ),
         SizedBox(
           height: 25.0,
