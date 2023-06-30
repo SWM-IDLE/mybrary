@@ -1,6 +1,6 @@
-package kr.mybrary.bookservice.book.domain;
+package kr.mybrary.bookservice.booksearch.domain;
 
-import kr.mybrary.bookservice.book.presentation.dto.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.presentation.response.BookSearchResultResponse;
 
 public interface PlatformBookSearchApiService {
 

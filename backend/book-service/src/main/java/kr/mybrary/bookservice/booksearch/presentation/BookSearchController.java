@@ -1,7 +1,7 @@
-package kr.mybrary.bookservice.book.presentation;
+package kr.mybrary.bookservice.booksearch.presentation;
 
-import kr.mybrary.bookservice.book.domain.PlatformBookSearchApiService;
-import kr.mybrary.bookservice.book.presentation.dto.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.domain.PlatformBookSearchApiService;
+import kr.mybrary.bookservice.booksearch.presentation.response.BookSearchResultResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

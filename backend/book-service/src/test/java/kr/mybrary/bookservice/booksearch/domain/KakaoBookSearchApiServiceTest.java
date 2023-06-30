@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.domain;
+package kr.mybrary.bookservice.booksearch.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,8 +9,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import kr.mybrary.bookservice.book.domain.exception.BookSearchResultNotFoundException;
-import kr.mybrary.bookservice.book.presentation.dto.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
+import kr.mybrary.bookservice.booksearch.presentation.response.BookSearchResultResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

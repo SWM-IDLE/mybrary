@@ -1,7 +1,7 @@
-package kr.mybrary.bookservice.book.presentation.dto.response;
+package kr.mybrary.bookservice.booksearch.presentation.response;
 
 import java.util.List;
-import kr.mybrary.bookservice.book.domain.dto.BookSearchResultDto;
+import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchResultDto;
 import lombok.Builder;
 import lombok.Getter;
 

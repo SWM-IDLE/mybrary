@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.domain.dto;
+package kr.mybrary.bookservice.booksearch.domain.dto;
 
 import java.time.OffsetDateTime;
 import java.util.List;
