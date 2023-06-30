@@ -1,5 +1,6 @@
 package kr.mybrary.bookservice.book.persistence.translator;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -9,11 +10,17 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import kr.mybrary.bookservice.global.BaseEntity;
 import kr.mybrary.bookservice.book.persistence.Book;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "books_translators")
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookTranslator extends BaseEntity {
 
     @Id
@@ -23,7 +30,7 @@ public class BookTranslator extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Book book;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Translator translator;
 
     public void assignBook(Book book) {
