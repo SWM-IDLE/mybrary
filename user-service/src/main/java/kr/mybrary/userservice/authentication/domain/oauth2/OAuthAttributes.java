@@ -77,7 +77,7 @@ public class OAuthAttributes {
                 .email(oAuth2UserInfo.getEmail())
                 .nickname(oAuth2UserInfo.getNickname() + RandomStringUtils.randomNumeric(5))
                 .profileImageUrl(oAuth2UserInfo.getImageUrl())
-                .role(Role.GUEST)
+                .role(Role.USER)
                 .build();
     }
 
