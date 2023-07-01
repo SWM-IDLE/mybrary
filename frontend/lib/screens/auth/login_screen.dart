@@ -226,7 +226,7 @@ class _OAuthLogin extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         LoginButton(
-          onPressed: () {
+          onPressed: () async {
             signInOAuth(oAuthType: OAuthType.google);
           },
           isOAuth: true,
@@ -262,7 +262,7 @@ class _OAuthLogin extends StatelessWidget {
           height: 10.0,
         ),
         LoginButton(
-          onPressed: () {
+          onPressed: () async {
             signInOAuth(oAuthType: OAuthType.kakao);
           },
           isOAuth: true,
