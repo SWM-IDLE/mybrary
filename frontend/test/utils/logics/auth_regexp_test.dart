@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mybrary/utilities/logic.dart';
-import 'package:mybrary/utilities/regexps.dart';
+import 'package:mybrary/utils/logics/auth_regexp.dart';
 
 const CORRECT_ID = 'test123';
 const CORRECT_PASSWORD = 'test123!@';
@@ -13,7 +12,7 @@ void main() {
       // given
 
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, CORRECT_PASSWORD, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, true);
@@ -23,7 +22,7 @@ void main() {
       // given
       String loginId = 'test1';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           loginId, CORRECT_PASSWORD, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -33,7 +32,7 @@ void main() {
       // given
       String loginId = 'testtestte1234567890t';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           loginId, CORRECT_PASSWORD, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -43,7 +42,7 @@ void main() {
       // given
       String loginId = 'Test123';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           loginId, CORRECT_PASSWORD, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -53,7 +52,7 @@ void main() {
       // given
       String loginId = 'test123!';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           loginId, CORRECT_PASSWORD, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -65,7 +64,7 @@ void main() {
       // given
 
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, CORRECT_PASSWORD, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, true);
@@ -75,7 +74,7 @@ void main() {
       // given
       String loginPassword = 't123!@';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, loginPassword, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -85,7 +84,7 @@ void main() {
       // given
       String loginPassword = 'testtest12341234!@#';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, loginPassword, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -95,7 +94,7 @@ void main() {
       // given
       String loginPassword = 'test1234';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, loginPassword, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -105,7 +104,7 @@ void main() {
       // given
       String loginPassword = 'testtest!@';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, loginPassword, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -115,7 +114,7 @@ void main() {
       // given
       String loginPassword = '12341234!@';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, loginPassword, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -127,7 +126,7 @@ void main() {
       // given
 
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, CORRECT_PASSWORD, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, true);
@@ -137,7 +136,7 @@ void main() {
       // given
       String loginEmail = 'te@st.co';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, CORRECT_PASSWORD, loginEmail, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -147,7 +146,7 @@ void main() {
       // given
       String loginEmail = 'test1test1test1test1@test1test1.comcomcom';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, CORRECT_PASSWORD, loginEmail, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -157,7 +156,7 @@ void main() {
       // given
       String loginEmail = 'test.com';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, CORRECT_PASSWORD, loginEmail, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -167,7 +166,7 @@ void main() {
       // given
       String loginEmail = 'test1@gmail.';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, CORRECT_PASSWORD, loginEmail, CORRECT_NICKNAME);
       // then
       expect(result, false);
@@ -179,7 +178,7 @@ void main() {
       // given
 
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, CORRECT_PASSWORD, CORRECT_EMAIL, CORRECT_NICKNAME);
       // then
       expect(result, true);
@@ -189,7 +188,7 @@ void main() {
       // given
       String loginNickname = 't';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, CORRECT_PASSWORD, CORRECT_EMAIL, loginNickname);
       // then
       expect(result, false);
@@ -199,7 +198,7 @@ void main() {
       // given
       String loginNickname = 'test1test1test1test12';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, CORRECT_PASSWORD, CORRECT_EMAIL, loginNickname);
       // then
       expect(result, false);
@@ -209,7 +208,7 @@ void main() {
       // given
       String loginNickname = '마이브러리1!@';
       // when
-      bool result = signUpFormValidatorTest(
+      bool result = signUpValidatorTest(
           CORRECT_ID, CORRECT_PASSWORD, CORRECT_EMAIL, loginNickname);
       // then
       expect(result, false);
@@ -217,25 +216,25 @@ void main() {
   });
 }
 
-bool signUpFormValidatorTest(
+bool signUpValidatorTest(
   String loginId,
   String password,
   String email,
   String nickname,
 ) {
-  if (valueRegExpValidation(loginId, LoginRegExp.idRegExp, 6, 20)) {
+  if (checkAuthValidator(loginId, LoginRegExp.idRegExp, 6, 20)) {
     return false;
   }
 
-  if (valueRegExpValidation(email, LoginRegExp.emailRegExp, 10, 40)) {
+  if (checkAuthValidator(email, LoginRegExp.emailRegExp, 10, 40)) {
     return false;
   }
 
-  if (valueRegExpValidation(password, LoginRegExp.passwordRegExp, 8, 16)) {
+  if (checkAuthValidator(password, LoginRegExp.passwordRegExp, 8, 16)) {
     return false;
   }
 
-  if (valueRegExpValidation(nickname, LoginRegExp.nicknameRegExp, 2, 20)) {
+  if (checkAuthValidator(nickname, LoginRegExp.nicknameRegExp, 2, 20)) {
     return false;
   }
 

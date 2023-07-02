@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class LoginButton extends StatelessWidget {
+class SingInButton extends StatelessWidget {
   final String btnText;
   final Color btnBackgroundColor;
   final Color textColor;
@@ -9,7 +9,7 @@ class LoginButton extends StatelessWidget {
   final Widget? btnIcon;
   final bool isEnabled;
 
-  const LoginButton({
+  const SingInButton({
     required this.btnText,
     required this.btnBackgroundColor,
     required this.textColor,

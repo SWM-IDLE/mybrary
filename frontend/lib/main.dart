@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mybrary/screens/auth/find_password_screen.dart';
-import 'package:mybrary/screens/auth/login_screen.dart';
-import 'package:mybrary/screens/auth/sign_up_screen.dart';
-import 'package:mybrary/screens/auth/sign_up_verify_screen.dart';
-import 'package:mybrary/screens/home_screen.dart';
+import 'package:mybrary/ui/auth/find_pw/find_password_screen.dart';
+import 'package:mybrary/ui/auth/sign_in/sign_in_screen.dart';
+import 'package:mybrary/ui/auth/sign_up/sign_up_screen.dart';
+import 'package:mybrary/ui/auth/sign_up/sign_up_verify_screen.dart';
+import 'package:mybrary/ui/home/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,10 +24,10 @@ class MyApp extends StatelessWidget {
           systemOverlayStyle: SystemUiOverlayStyle.dark,
         ),
       ),
-      initialRoute: '/login',
+      initialRoute: '/signin',
       routes: {
-        '/login': (context) => LoginScreen(),
-        '/login/findpw': (context) => FindPasswordScreen(),
+        '/signin': (context) => SignInScreen(),
+        '/signin/findpw': (context) => FindPasswordScreen(),
         '/signup': (context) => SignUpScreen(),
         '/signup/verify': (context) => SignUpVerifyScreen(),
         '/home': (context) => HomeScreen(),

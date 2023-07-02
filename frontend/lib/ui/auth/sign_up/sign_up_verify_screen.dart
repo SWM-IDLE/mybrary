@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/components/login/login_button_component.dart';
-import 'package:mybrary/components/login/login_input_component.dart';
-import 'package:mybrary/components/login/login_logo_component.dart';
-import 'package:mybrary/constants/color.dart';
+import 'package:mybrary/res/colors/auth_color.dart';
+import 'package:mybrary/ui/auth/components/logo.dart';
+import 'package:mybrary/ui/auth/components/sign_in_input.dart';
+import 'package:mybrary/ui/auth/components/sing_in_button.dart';
 
 class SignUpVerifyScreen extends StatefulWidget {
   const SignUpVerifyScreen({Key? key}) : super(key: key);
@@ -69,7 +69,7 @@ class _SignUpVerifyForm extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
-            child: LoginButton(
+            child: SingInButton(
               onPressed: () {},
               isEnabled: isVerifyEnabled,
               isOAuth: false,
@@ -119,7 +119,7 @@ class _VerifyForm extends StatelessWidget {
           height: 20.0,
         ),
         Text('인증코드'),
-        LoginInput(
+        SignInInput(
           initialValue: emailCode,
           onSaved: onSignUpSaved,
           hintText: '이메일로 전송된 인증코드를 입력해주세요.',
