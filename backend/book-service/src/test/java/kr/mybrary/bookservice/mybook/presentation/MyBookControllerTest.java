@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.mybook.presentation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,7 +47,10 @@ class MyBookControllerTest {
         mockMvc.perform(post("/mybooks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("201 CREATED"))
+                .andExpect(jsonPath("$.message").value("내 서재에 도서를 등록했습니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
     }
 
     private MyBookCreateRequest createMyBookCreateRequest() {
