@@ -12,6 +12,7 @@ import lombok.Setter;
 public class BookCreateServiceRequest {
     private String title;
     private String description;
+    private String detailsUrl;
     private String isbn10;
     private String isbn13;
     private String publisher;

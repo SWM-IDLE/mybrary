@@ -47,14 +47,14 @@ class BookServiceTest {
         BookCreateServiceRequest request = createBookCreateServiceRequest();
         Book book = BookDtoMapper.INSTANCE.bookCreateRequestToEntity(request);
 
-        given(bookRepository.findByIsbn10OrIsbn13(request.getIsbn10(), request.getIsbn10()))
+        given(bookRepository.findByIsbn10OrIsbn13(request.getIsbn10(), request.getIsbn13()))
                 .willReturn(Optional.empty());
         given(bookRepository.save(any(Book.class))).willReturn(book);
         given(authorRepository.findByName(anyString())).willReturn(Optional.empty());
         given(translatorRepository.findByName(anyString())).willReturn(Optional.empty());
 
         // when
-        bookService.getRegisteredOrNewBook(request);
+        bookService.getRegisteredBook(request);
 
         // then
         assertAll(
@@ -73,14 +73,15 @@ class BookServiceTest {
         BookCreateServiceRequest request = createBookCreateServiceRequest();
         Book book = BookDtoMapper.INSTANCE.bookCreateRequestToEntity(request);
 
-        given(bookRepository.findByIsbn10OrIsbn13(request.getIsbn10(), request.getIsbn10()))
+        given(bookRepository.findByIsbn10OrIsbn13(request.getIsbn10(), request.getIsbn13()))
                 .willReturn(Optional.of(book));
 
         // when
-        bookService.getRegisteredOrNewBook(request);
+        bookService.getRegisteredBook(request);
 
         // then
         assertAll(
+                () -> verify(bookRepository).findByIsbn10OrIsbn13(anyString(), anyString()),
                 () -> verify(bookRepository).findByIsbn10OrIsbn13(anyString(), anyString()),
                 () -> verify(authorRepository, never()).findByName(anyString()),
                 () -> verify(translatorRepository, never()).findByName(anyString()),
@@ -92,6 +93,7 @@ class BookServiceTest {
         return BookCreateServiceRequest.builder()
                 .title("title")
                 .description("description")
+                .detailsUrl("detailsUrl")
                 .isbn10("isbn10")
                 .isbn13("isbn13")
                 .publisher("publisher")

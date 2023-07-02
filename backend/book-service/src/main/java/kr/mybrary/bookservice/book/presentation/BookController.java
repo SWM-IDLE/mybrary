@@ -2,6 +2,7 @@ package kr.mybrary.bookservice.book.presentation;
 
 import kr.mybrary.bookservice.book.domain.BookService;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
+import kr.mybrary.bookservice.global.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,10 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody BookCreateRequest request) {
-        bookService.getRegisteredOrNewBook(request.toServiceRequest());
+    public ResponseEntity<SuccessResponse> create(@RequestBody BookCreateRequest request) {
+        bookService.getRegisteredBook(request.toServiceRequest());
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.status(201).body(
+                SuccessResponse.of(HttpStatus.CREATED.toString(), "도서 등록에 성공했습니다.", null));
     }
 }

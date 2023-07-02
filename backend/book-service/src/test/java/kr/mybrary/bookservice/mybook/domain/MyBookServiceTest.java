@@ -39,8 +39,7 @@ class MyBookServiceTest {
         // given
         MyBookCreateServiceRequest request = createMyBookCreateServiceRequest();
 
-
-        given(bookService.getRegisteredOrNewBook(any()))
+        given(bookService.getRegisteredBook(any()))
                 .willReturn(Book.builder().id(1L).build());
         given(myBookRepository.existsByUserIdAndBook(any(), any())).willReturn(false);
         given(myBookRepository.save(any())).willReturn(any());
@@ -50,7 +49,7 @@ class MyBookServiceTest {
 
         // then
         assertAll(
-                () -> verify(bookService).getRegisteredOrNewBook(any()),
+                () -> verify(bookService).getRegisteredBook(any()),
                 () -> verify(myBookRepository).existsByUserIdAndBook(any(), any()),
                 () -> verify(myBookRepository).save(any())
         );
@@ -63,7 +62,7 @@ class MyBookServiceTest {
         // given
         MyBookCreateServiceRequest request = createMyBookCreateServiceRequest();
 
-        given(bookService.getRegisteredOrNewBook(any()))
+        given(bookService.getRegisteredBook(any()))
                 .willReturn(Book.builder().id(1L).build());
         given(myBookRepository.existsByUserIdAndBook(any(), any())).willReturn(true);
 
@@ -71,7 +70,7 @@ class MyBookServiceTest {
         assertThrows(MyBookAlreadyExistsException.class, () -> myBookService.create(request));
 
         assertAll(
-                () -> verify(bookService).getRegisteredOrNewBook(any()),
+                () -> verify(bookService).getRegisteredBook(any()),
                 () -> verify(myBookRepository).existsByUserIdAndBook(any(), any()),
                 () -> verify(myBookRepository, never()).save(any())
         );

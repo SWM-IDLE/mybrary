@@ -20,7 +20,7 @@ public class MyBookService {
 
     public MyBook create(MyBookCreateServiceRequest request) {
 
-        Book book = bookService.getRegisteredOrNewBook(request.toBookCreateRequest());
+        Book book = bookService.getRegisteredBook(request.toBookCreateRequest());
 
         checkBookAlreadyRegisteredAsMyBook(request.getUserId(), book);
 

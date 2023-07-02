@@ -96,6 +96,7 @@ class BookSearchControllerTest {
     private BookSearchResultDto createBookSearchDto() {
         return BookSearchResultDto.builder()
                 .title("자바의 정석")
+                .detailsUrl("자바의 정석 detail Url")
                 .description("자바의 정석 3판")
                 .authors(List.of("남궁성"))
                 .price(25000)

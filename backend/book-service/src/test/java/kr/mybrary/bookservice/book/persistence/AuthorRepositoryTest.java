@@ -20,6 +20,7 @@ class AuthorRepositoryTest {
     @DisplayName("저자를 저장한다.")
     @Test
     void saveAuthor() {
+
         // given
         Author author = createAuthor();
 
@@ -33,6 +34,7 @@ class AuthorRepositoryTest {
     @DisplayName("저자를 이름으로 조회한다.")
     @Test
     void findAuthorByName() {
+
         // given
         Author savedAuthor = authorRepository.save(createAuthor());
 
