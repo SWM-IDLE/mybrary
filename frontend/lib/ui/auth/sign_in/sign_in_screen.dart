@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/res/colors/auth_color.dart';
@@ -270,6 +271,7 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Future<void> signInOAuth(String api) async {
+    const secureStorage = FlutterSecureStorage();
     try {
       // oAuth 로그인 페이지 요청과 동시에 redirect_url로 callback 데이터 전달
       final url = Uri.parse('$api?redirect_url=$mybraryUrlScheme');
@@ -287,37 +289,62 @@ class _SignInScreenState extends State<SignInScreen> {
 
       print(accessToken);
 
-      // save tokens on secure storage
-      // await storage.write(key: 'ACCESS_TOKEN', value: accessToken);
-      // await storage.write(key: 'REFRESH_TOKEN', value: refreshToken);
+      // secureStorage에 accessToken & refreshToken 저장
+      await secureStorage.write(key: 'ACCESS_TOKEN', value: accessToken);
+      await secureStorage.write(key: 'REFRESH_TOKEN', value: refreshToken);
     } catch (e) {
-      // showSignInFailDialog(e.toString());
+      showSignInFailDialog(e.toString());
     }
   }
 
-  void showSignInFailDialog(String errMsg) {
+  void showSignInFailDialog(String errMessage) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Center(
-            child: Text(
-          "로그인 오류",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        )),
-        content: IntrinsicHeight(
-          child: Column(children: [
-            Text("로그인 도중 오류가 발생하였습니다.", style: TextStyle(fontSize: 14)),
-          ]),
+          child: Text(
+            "마이브러리",
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+            ),
+          ),
         ),
-        contentPadding: const EdgeInsets.fromLTRB(15, 15, 15, 5),
+        content: IntrinsicHeight(
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            children: [
+              Text(
+                "잠시 후 다시 시도해주세요.",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(
+                height: 5.0,
+              ),
+              Text(
+                "로그인 중에 오류가 발생하였습니다.",
+                style: TextStyle(fontSize: 14),
+              ),
+              Text(
+                "지속적으로 발생할 경우, 고객센터로 문의해주세요.",
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+        contentPadding: const EdgeInsets.all(10),
         actions: [
           Center(
             child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('확인')),
-          )
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('확인'),
+            ),
+          ),
         ],
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
