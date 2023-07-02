@@ -19,7 +19,7 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<SuccessResponse> create(@RequestBody BookCreateRequest request) {
+    public ResponseEntity create(@RequestBody BookCreateRequest request) {
         bookService.getRegisteredBook(request.toServiceRequest());
 
         return ResponseEntity.status(201).body(
