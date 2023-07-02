@@ -26,9 +26,11 @@ class BookRepositoryTest {
     @DisplayName("도서를 영속화할 때, 도서저자, 도서번역가, 저자, 번역가도 영속화된다.")
     @Test
     void saveBook() {
+
         // given
         Book book = createBook();
-        book.addBookAuthorAndBookTranslator(createAuthor(), createTranslator());
+        book.addBookAuthor(createAuthor());
+        book.addBookTranslator(createTranslator());
 
         // when
         Book savedBook = bookRepository.save(book);
@@ -38,8 +40,14 @@ class BookRepositoryTest {
                 () -> assertThat(savedBook.getTitle()).isEqualTo(book.getTitle()),
                 () -> assertThat(savedBook.getIsbn10()).isEqualTo(book.getIsbn10()),
                 () -> assertThat(savedBook.getIsbn13()).isEqualTo(book.getIsbn13()),
-                () -> assertThat(savedBook.getBookTranslators().size()).isEqualTo(2),
-                () -> assertThat(savedBook.getBookAuthors().size()).isEqualTo(2)
+                () -> assertThat(savedBook.getBookAuthors().stream().map(BookAuthor::getAuthor))
+                        .hasSize(2)
+                        .extracting("name")
+                        .containsExactlyInAnyOrder("author_name_1", "author_name_2"),
+                () -> assertThat(savedBook.getBookTranslators().stream().map(BookTranslator::getTranslator))
+                        .hasSize(2)
+                        .extracting("name")
+                        .containsExactlyInAnyOrder("translator_name_1", "translator_name_2")
         );
     }
 

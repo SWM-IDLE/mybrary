@@ -35,6 +35,8 @@ public class Book extends BaseEntity {
 
     private String description;
 
+    private String detailsUrl;
+
     private String isbn10;
 
     private String isbn13;
@@ -61,14 +63,15 @@ public class Book extends BaseEntity {
     @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST)
     private List<BookTranslator> bookTranslators = new ArrayList<>();
 
-    public void addBookAuthorAndBookTranslator(List<BookAuthor> bookAuthorList,
-            List<BookTranslator> bookTranslatorList) {
+    public void addBookAuthor(List<BookAuthor> bookAuthorList) {
 
         bookAuthorList.forEach(bookAuthor -> {
             this.bookAuthors.add(bookAuthor);
             bookAuthor.assignBook(this);
         });
+    }
 
+    public void addBookTranslator(List<BookTranslator> bookTranslatorList) {
         bookTranslatorList.forEach(bookTranslator -> {
             this.bookTranslators.add(bookTranslator);
             bookTranslator.assignBook(this);

@@ -36,12 +36,13 @@ class BookControllerTest {
     @DisplayName("새로운 도서를 등록한다.")
     @Test
     void create() throws Exception {
+
         // given
         BookCreateRequest request = createBookCreateRequest();
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        given(bookService.getRegisteredOrNewBook(request.toServiceRequest()))
+        given(bookService.getRegisteredBook(request.toServiceRequest()))
                 .willReturn(any(Book.class));
 
         // when, then
@@ -55,6 +56,7 @@ class BookControllerTest {
         return BookCreateRequest.builder()
                 .title("title")
                 .description("description")
+                .detailsUrl("detailUrl")
                 .isbn10("isbn10")
                 .isbn13("isbn13")
                 .publisher("publisher")

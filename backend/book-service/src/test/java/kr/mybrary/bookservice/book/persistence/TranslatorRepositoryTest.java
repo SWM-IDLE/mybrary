@@ -20,6 +20,7 @@ class TranslatorRepositoryTest {
     @DisplayName("번역가를 저장한다.")
     @Test
     void saveTranslator() {
+
         // given
         Translator translator = createTranslator();
 
@@ -33,6 +34,7 @@ class TranslatorRepositoryTest {
     @DisplayName("저자를 이름으로 조회한다.")
     @Test
     void findTranslatorByName() {
+
         // given
         Translator savedTranslator = translatorRepository.save(createTranslator());
 

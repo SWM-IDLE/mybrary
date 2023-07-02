@@ -24,8 +24,8 @@ public class BookService {
     private final AuthorRepository authorRepository;
     private final TranslatorRepository translatorRepository;
 
-    public Book getRegisteredOrNewBook(BookCreateServiceRequest request) {
-        return bookRepository.findByIsbn10OrIsbn13(request.getIsbn10(), request.getIsbn10())
+    public Book getRegisteredBook(BookCreateServiceRequest request) {
+        return bookRepository.findByIsbn10OrIsbn13(request.getIsbn10(), request.getIsbn13())
                 .orElseGet(() -> create(request));
     }
 
@@ -43,7 +43,8 @@ public class BookService {
                 .map(translator -> BookTranslator.builder().translator(translator).build())
                 .toList();
 
-        book.addBookAuthorAndBookTranslator(bookAuthors, bookTranslators);
+        book.addBookAuthor(bookAuthors);
+        book.addBookTranslator(bookTranslators);
 
         return bookRepository.save(book);
     }

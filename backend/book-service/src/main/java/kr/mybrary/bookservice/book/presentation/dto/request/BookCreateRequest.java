@@ -14,6 +14,7 @@ public class BookCreateRequest {
 
     private String title;
     private String description;
+    private String detailsUrl;
     private String isbn10;
     private String isbn13;
     private String publisher;
@@ -28,6 +29,7 @@ public class BookCreateRequest {
         return BookCreateServiceRequest.builder()
                 .title(title)
                 .description(description)
+                .detailsUrl(detailsUrl)
                 .isbn10(isbn10)
                 .isbn13(isbn13)
                 .publisher(publisher)
