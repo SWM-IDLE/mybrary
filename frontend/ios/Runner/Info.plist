@@ -24,19 +24,11 @@
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
-        <dict>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>kr.mybrary.mybrary</string>
-            </array>
-        </dict>
-    </array>
-	<array>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>kr.mybrary.mybrary</string>
+			<string>kr.mybrary</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>mybrary</string>

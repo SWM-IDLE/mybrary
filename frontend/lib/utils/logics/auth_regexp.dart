@@ -1,3 +1,11 @@
+bool checkAuthValidator(
+    String val, RegExp regExp, int minLength, int maxLength) {
+  final bool authValidator = val.length < minLength ||
+      val.length > maxLength ||
+      !(regExp.hasMatch(val));
+  return authValidator;
+}
+
 class LoginRegExp {
   // 적어도 하나의 영어 소문자와 숫자를 포함합니다.
   // 영어 대문자와 특수문자는 포함하지 않습니다.

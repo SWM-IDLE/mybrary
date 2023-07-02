@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/components/login/login_button_component.dart';
-import 'package:mybrary/components/login/login_input_component.dart';
-import 'package:mybrary/components/login/login_logo_component.dart';
-import 'package:mybrary/constants/color.dart';
-import 'package:mybrary/utilities/regexps.dart';
+import 'package:mybrary/res/colors/auth_color.dart';
+import 'package:mybrary/ui/auth/components/logo.dart';
+import 'package:mybrary/ui/auth/components/sign_in_input.dart';
+import 'package:mybrary/ui/auth/components/sing_in_button.dart';
+import 'package:mybrary/utils/logics/auth_regexp.dart';
 
 const String FIND_PASSWORD_TEST_ID = 'test123';
 
@@ -131,7 +131,7 @@ class _FindPasswordForm extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
-          child: LoginButton(
+          child: SingInButton(
             onPressed: isInputValid && isValidLoginId
                 ? onConfirmPressed
                 : onIdVerifyPressed,
@@ -176,7 +176,7 @@ class _IdVerifyForm extends StatelessWidget {
                 : DISABLED_COLOR,
           ),
         ),
-        LoginInput(
+        SignInInput(
           isEnabled: !(isInputValid && isValidLoginId),
           initialValue: loginId,
           onSaved: onSignUpSaved,

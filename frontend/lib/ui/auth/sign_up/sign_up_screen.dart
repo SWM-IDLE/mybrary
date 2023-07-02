@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/components/login/login_button_component.dart';
-import 'package:mybrary/components/login/login_input_component.dart';
-import 'package:mybrary/components/login/login_logo_component.dart';
-import 'package:mybrary/constants/color.dart';
-import 'package:mybrary/utilities/logic.dart';
-import 'package:mybrary/utilities/regexps.dart';
+import 'package:mybrary/res/colors/auth_color.dart';
+import 'package:mybrary/ui/auth/components/logo.dart';
+import 'package:mybrary/ui/auth/components/sign_in_input.dart';
+import 'package:mybrary/ui/auth/components/sing_in_button.dart';
+import 'package:mybrary/utils/logics/auth_regexp.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -133,7 +132,7 @@ class _SignUpForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text('아이디*'),
-        LoginInput(
+        SignInInput(
           initialValue: signUpIdInitialValue,
           onSaved: onSignUpIdSaved,
           hintText: '영문, 숫자 포함 6자 이상',
@@ -143,7 +142,7 @@ class _SignUpForm extends StatelessWidget {
             }
 
             // 아이디의 길이는 6~20자 입니다.
-            if (valueRegExpValidation(val, LoginRegExp.idRegExp, 6, 20)) {
+            if (checkAuthValidator(val, LoginRegExp.idRegExp, 6, 20)) {
               return '아이디는 영문/숫자 포함 6자 이상으로 입력해 주세요.';
             }
 
@@ -154,7 +153,7 @@ class _SignUpForm extends StatelessWidget {
           height: 20.0,
         ),
         Text('이메일'),
-        LoginInput(
+        SignInInput(
           initialValue: signUpEmailInitialValue,
           onSaved: onSignUpEmailSaved,
           hintText: 'mybrary@example.com',
@@ -164,7 +163,7 @@ class _SignUpForm extends StatelessWidget {
             }
 
             // 이메일의 길이는 10~40자 입니다.
-            if (valueRegExpValidation(val, LoginRegExp.emailRegExp, 10, 40)) {
+            if (checkAuthValidator(val, LoginRegExp.emailRegExp, 10, 40)) {
               return '이메일 형식으로 입력해 주세요.';
             }
 
@@ -175,7 +174,7 @@ class _SignUpForm extends StatelessWidget {
           height: 20.0,
         ),
         Text('비밀번호*'),
-        LoginInput(
+        SignInInput(
           initialValue: signUpPasswordInitialValue,
           onSaved: onSignUpPasswordSaved,
           hintText: '영문, 숫자, 특수문자 포함 8자 이상',
@@ -185,7 +184,7 @@ class _SignUpForm extends StatelessWidget {
             }
 
             // 비밀번호의 길이는 8~16자 입니다.
-            if (valueRegExpValidation(val, LoginRegExp.passwordRegExp, 8, 16)) {
+            if (checkAuthValidator(val, LoginRegExp.passwordRegExp, 8, 16)) {
               return '비밀번호는 영문/숫자/특수문자 혼합 8자 이상으로 입력해 주세요.';
             }
 
@@ -196,7 +195,7 @@ class _SignUpForm extends StatelessWidget {
           height: 20.0,
         ),
         Text('비밀번호 확인*'),
-        LoginInput(
+        SignInInput(
           initialValue: signUpPasswordCheckInitialValue,
           onSaved: onSignUpPasswordConfirmSaved,
           hintText: '비밀번호 확인',
@@ -214,7 +213,7 @@ class _SignUpForm extends StatelessWidget {
           height: 20.0,
         ),
         Text('닉네임'),
-        LoginInput(
+        SignInInput(
           initialValue: signUpNicknameInitialValue,
           onSaved: onSignUpNicknameSaved,
           hintText: '특수문자 제외 6자 이상',
@@ -224,7 +223,7 @@ class _SignUpForm extends StatelessWidget {
             }
 
             // 닉네임의 길이는 2~20자 입니다.
-            if (valueRegExpValidation(val, LoginRegExp.nicknameRegExp, 2, 20)) {
+            if (checkAuthValidator(val, LoginRegExp.nicknameRegExp, 2, 20)) {
               return '닉네임은 특수문자 제외 6자 이상으로 입력해 주세요.';
             }
 
@@ -236,7 +235,7 @@ class _SignUpForm extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
-          child: LoginButton(
+          child: SingInButton(
             onPressed: onVerifyPressed,
             isOAuth: false,
             isEnabled: isEnabledSignUp,
