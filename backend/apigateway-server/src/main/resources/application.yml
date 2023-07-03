@@ -11,4 +11,19 @@ eureka:
 spring:
   application:
     name: apigateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /$\
+        - id: book-service
+          uri: lb://BOOK-SERVICE
+          predicates:
+            - Path=/book-service/**
+          filters:
+            - RewritePath=/book-service/(?<segment>.*), /$\
 
