@@ -1,6 +1,7 @@
 package kr.mybrary.userservice.global.jwt.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
@@ -146,17 +148,16 @@ class JwtServiceTest {
         assertThat(isValid).isTrue();
     }
 
-    @DisplayName("토큰이 유효하지 않으면 false를 반환한다")
+    @DisplayName("토큰이 유효하지 않으면 JwtException이 발생한다")
     @Test
-    void isTokenValid2() {
+    void isTokenNotValid() {
         // given
         String token = "token";
 
-        // when
-        boolean isValid = jwtService.isTokenValid(token);
-
-        // then
-        assertThat(isValid).isFalse();
+        // when then
+        assertThatThrownBy(() -> jwtService.isTokenValid(token))
+                .isInstanceOf(JwtException.class)
+                .hasMessage("유효하지 않은 토큰입니다.");
     }
 
 }
