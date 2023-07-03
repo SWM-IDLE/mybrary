@@ -41,6 +41,8 @@ public class LoginTest {
 
     static final String LOGIN_ID = "testId";
     static final String PASSWORD = "password123!";
+    static final String LOGIN_URL = "/api/v1/auth/login";
+    static final String CONTENT_TYPE_JSON = "application/json";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -51,7 +53,7 @@ public class LoginTest {
         signUpRequest.put("nickname", "nickname");
         signUpRequest.put("email", "email@mail.com");
 
-        mockMvc.perform(post("/sign-up")
+        mockMvc.perform(post("/api/v1/auth/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(signUpRequest)))
                 .andExpect(status().isOk());
@@ -71,8 +73,8 @@ public class LoginTest {
         loginRequest.put("password", PASSWORD);
 
         // when // then
-        MvcResult result = mockMvc.perform(post("/login")
-                        .contentType("application/json")
+        MvcResult result = mockMvc.perform(post(LOGIN_URL)
+                        .contentType(CONTENT_TYPE_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("Authorization"))
@@ -94,8 +96,8 @@ public class LoginTest {
         loginRequest.put("password", "wrongPassword");
 
         // when // then
-        mockMvc.perform(post("/login")
-                        .contentType("application/json")
+        mockMvc.perform(post(LOGIN_URL)
+                        .contentType(CONTENT_TYPE_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isBadRequest())
                 .andExpect(header().doesNotExist("Authorization"))
@@ -113,8 +115,8 @@ public class LoginTest {
         loginRequest.put("password", PASSWORD);
 
         // when // then
-        mockMvc.perform(post("/login")
-                        .contentType("application/json")
+        mockMvc.perform(post(LOGIN_URL)
+                        .contentType(CONTENT_TYPE_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isBadRequest())
                 .andExpect(header().doesNotExist("Authorization"))
@@ -131,7 +133,7 @@ public class LoginTest {
         loginRequest.put("password", PASSWORD);
 
         // when // then
-        mockMvc.perform(post("/login")
+        mockMvc.perform(post(LOGIN_URL)
                         .contentType(MediaType.TEXT_PLAIN)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isBadRequest())
