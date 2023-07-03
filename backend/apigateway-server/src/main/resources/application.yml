@@ -25,11 +25,11 @@ spring:
           predicates:
             - Path=/user-service/**
           filters:
-            - RewritePath=/user-service/(?<segment>.*), /$\
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
         - id: book-service
           uri: lb://BOOK-SERVICE
           predicates:
             - Path=/book-service/**
           filters:
-            - RewritePath=/book-service/(?<segment>.*), /$\
+            - RewritePath=/book-service/(?<segment>.*), /$\{segment}
 
