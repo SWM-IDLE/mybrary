@@ -3,6 +3,7 @@ package kr.mybrary.userservice.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.mybrary.userservice.authentication.domain.AuthenticationService;
+import kr.mybrary.userservice.authentication.domain.login.CustomAuthenticationEntryPoint;
 import kr.mybrary.userservice.authentication.domain.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
 import kr.mybrary.userservice.authentication.domain.login.handler.LoginFailureHandler;
 import kr.mybrary.userservice.authentication.domain.login.handler.LoginSuccessHandler;
@@ -10,6 +11,7 @@ import kr.mybrary.userservice.authentication.domain.oauth2.handler.OAuth2LoginFa
 import kr.mybrary.userservice.authentication.domain.oauth2.handler.OAuth2LoginSuccessHandler;
 import kr.mybrary.userservice.authentication.domain.oauth2.service.CustomOAuth2UserService;
 import kr.mybrary.userservice.global.jwt.filter.JwtAuthenticationProcessingFilter;
+import kr.mybrary.userservice.global.jwt.filter.JwtExceptionFilter;
 import kr.mybrary.userservice.global.jwt.service.JwtService;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +48,12 @@ public class WebSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint(objectMapper)))
                 .authorizeRequests(request -> request
-                        .requestMatchers("/sign-up").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/api/v1/oauth2/*").permitAll()
+                        .requestMatchers("/api/v1/auth/sign-up").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -58,8 +64,9 @@ public class WebSecurityConfig {
                 );
 
         http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
-        http.addFilterBefore(jwtAuthenticationProcessingFilter(),
+        http.addFilterAfter(jwtAuthenticationProcessingFilter(),
                 CustomJsonUsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(jwtExceptionFilter(), JwtAuthenticationProcessingFilter.class);
 
         return http.build();
     }
@@ -99,4 +106,9 @@ public class WebSecurityConfig {
         return jwtAuthenticationFilter;
     }
 
+    @Bean
+    public JwtExceptionFilter jwtExceptionFilter() {
+        JwtExceptionFilter jwtExceptionFilter = new JwtExceptionFilter(objectMapper);
+        return jwtExceptionFilter;
+    }
 }
