@@ -257,7 +257,8 @@ class _SignInScreenState extends State<SignInScreen> {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
       if (loginId == LOGIN_TEST_ID && loginPassword == LOGIN_TEST_PASSWORD) {
-        Navigator.of(context).pushNamed('/home');
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/home', (route) => false);
       } else {
         print('아이디 또는 비밀번호가 틀렸습니다.');
       }
@@ -288,6 +289,7 @@ class _SignInScreenState extends State<SignInScreen> {
           Uri.parse(result).queryParameters['Authorization-Refresh'];
 
       print(accessToken);
+      print(refreshToken);
 
       // secureStorage에 accessToken & refreshToken 저장
       await secureStorage.write(key: 'ACCESS_TOKEN', value: accessToken);
@@ -295,6 +297,10 @@ class _SignInScreenState extends State<SignInScreen> {
     } catch (e) {
       showSignInFailDialog(e.toString());
     }
+
+    // 로그인 성공 시 홈 화면으로 이동
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
   }
 
   void showSignInFailDialog(String errMessage) {
