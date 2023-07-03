@@ -24,7 +24,7 @@ import org.springframework.util.StreamUtils;
 public class CustomJsonUsernamePasswordAuthenticationFilter extends
         AbstractAuthenticationProcessingFilter {
 
-    private static final String DEFAULT_LOGIN_REQUEST_URL = "/login";
+    private static final String DEFAULT_LOGIN_REQUEST_URL = "/api/v1/auth/login";
     private static final String HTTP_METHOD_POST = "POST";
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String LOGIN_ID_KEY = "loginId";
