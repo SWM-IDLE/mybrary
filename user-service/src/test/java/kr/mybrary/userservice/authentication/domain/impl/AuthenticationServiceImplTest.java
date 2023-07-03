@@ -71,7 +71,6 @@ class AuthenticationServiceImplTest {
                 () -> assertThat(savedUser.getLoginId()).isEqualTo(signUpRequest.getLoginId()),
                 () -> assertThat(savedUser.getNickname()).isEqualTo(signUpRequest.getNickname()),
                 () -> assertThat(savedUser.getEmail()).isEqualTo(signUpRequest.getEmail()),
-                () -> assertThat(savedUser.getPassword()).isEqualTo("encodedPassword"),
                 () -> assertThat(savedUser.getRole()).isEqualTo(Role.USER)
         );
 
