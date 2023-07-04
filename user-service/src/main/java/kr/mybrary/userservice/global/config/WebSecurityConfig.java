@@ -33,13 +33,23 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 public class WebSecurityConfig {
 
     private final AuthenticationService authenticationService;
+    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
-    private final PasswordEncoder passwordEncoder;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+
+    private static final String[] AUTH_WHITELIST = {
+            "/login",
+            "/api/v1/oauth2/**",
+            "/api/v1/auth/sign-up",
+            "/docs/**",
+            "/v3/api-docs/swagger-config/**",
+            "/api/v1/users/**",
+            "/error"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -51,9 +61,7 @@ public class WebSecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint(objectMapper)))
                 .authorizeRequests(request -> request
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/api/v1/oauth2/*").permitAll()
-                        .requestMatchers("/api/v1/auth/sign-up").permitAll()
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -63,10 +71,10 @@ public class WebSecurityConfig {
                                 .userService(customOAuth2UserService))
                 );
 
-        http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
-        http.addFilterAfter(jwtAuthenticationProcessingFilter(),
+        http.addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
+        http.addFilterBefore(jwtAuthenticationProcessingFilter(),
                 CustomJsonUsernamePasswordAuthenticationFilter.class);
-        http.addFilterAfter(jwtExceptionFilter(), JwtAuthenticationProcessingFilter.class);
+        http.addFilterBefore(jwtExceptionFilter(), JwtAuthenticationProcessingFilter.class);
 
         return http.build();
     }
