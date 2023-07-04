@@ -69,7 +69,6 @@ Future<Dio> authDio(BuildContext context) async {
       // 토큰 갱신을 위한 API 요청 부분
       // 현재 요청한 API에 새 토큰을 재 요청하기 때문에 requestOptions.path 호출
       final refreshResponse = await refreshDio.get(error.requestOptions.path);
-      print(refreshResponse.headers);
 
       // 요청한 API의 response에서 갱신된 Access/Refresh Token 파싱
       final newAccessToken = refreshResponse.headers['authorization']![0];

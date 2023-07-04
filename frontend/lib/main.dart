@@ -73,8 +73,6 @@ class Init {
     final accessToken = await secureStorage.read(key: 'ACCESS_TOKEN');
     final refreshToken = await secureStorage.read(key: 'REFRESH_TOKEN');
 
-    // print('accessToken: $accessToken');
-    // print('refreshToken: $refreshToken');
     // accessToken과 refreshToken이 없으면 로그인 화면으로 이동
     if (accessToken == null || refreshToken == null) return SignInScreen();
 
