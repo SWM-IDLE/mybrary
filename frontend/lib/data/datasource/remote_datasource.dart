@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/utils/dios/auth_dio.dart';
@@ -8,6 +10,6 @@ class RemoteDataSource {
     // profile 응답을 위한 API Get 요청
     final profileResponse = await dio.get(getApi(API.getUserProfile));
 
-    print('response: $profileResponse');
+    log('profile Get 요청 응답값: $profileResponse');
   }
 }
