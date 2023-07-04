@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -14,14 +16,17 @@ Future<Dio> authDio(BuildContext context) async {
     // device의 secureStorage에 저장된 AccessToken 불러오기
     final accessToken = await secureStorage.read(key: 'ACCESS_TOKEN');
 
+    final jwtPayload = parseJwt(accessToken!);
+
     // 현재 날짜의 밀리초를 1000으로 나누어 타임스탬프 반환
     final int todayTimeStamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final int expiredTimeStamp = parseJwt(accessToken!)['exp'];
-
+    final int expiredTimeStamp = jwtPayload['exp'];
+    final String loginId = jwtPayload['loginId'];
     // 만료 시간이 현재 시간보다 크면 만료되지 않음
     if (expiredTimeStamp >= todayTimeStamp) {
       // AccessToken이 만료되지 않았다면, 요청 헤더에 AccessToken 전달
       options.headers['Authorization'] = 'Bearer $accessToken';
+      options.headers['User-Id'] = loginId;
       return handler.next(options);
     }
 
@@ -29,10 +34,12 @@ Future<Dio> authDio(BuildContext context) async {
     options.data = {'isExpired': true};
     return handler.reject(DioException(requestOptions: options), true);
   }, onError: (error, handler) async {
+    log('토큰 만료에 대한 클라이언트 및 서버 에러입니다.');
+
+    bool isExpired = error.requestOptions.data['isExpired'];
     // 1. AccessToken 만료에 대한 인증 오류 발생
     // AccessToken이 만료되었거나, statusCode가 401 이면 발생
-    if (error.requestOptions.data['isExpired'] ||
-        error.response?.statusCode == 401) {
+    if (isExpired || error.response?.statusCode == 401) {
       final accessToken = await secureStorage.read(key: 'ACCESS_TOKEN');
       final refreshToken = await secureStorage.read(key: 'REFRESH_TOKEN');
 
@@ -62,6 +69,7 @@ Future<Dio> authDio(BuildContext context) async {
       // 토큰 갱신을 위한 API 요청 부분
       // 현재 요청한 API에 새 토큰을 재 요청하기 때문에 requestOptions.path 호출
       final refreshResponse = await refreshDio.get(error.requestOptions.path);
+      print(refreshResponse.headers);
 
       // 요청한 API의 response에서 갱신된 Access/Refresh Token 파싱
       final newAccessToken = refreshResponse.headers['authorization']![0];
