@@ -1,7 +1,7 @@
 package kr.mybrary.bookservice.booksearch.presentation;
 
 import kr.mybrary.bookservice.booksearch.domain.PlatformBookSearchApiService;
-import kr.mybrary.bookservice.global.SuccessResponse;
+import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

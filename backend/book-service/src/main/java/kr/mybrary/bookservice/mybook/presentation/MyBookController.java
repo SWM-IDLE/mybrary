@@ -1,6 +1,6 @@
 package kr.mybrary.bookservice.mybook.presentation;
 
-import kr.mybrary.bookservice.global.SuccessResponse;
+import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
 import lombok.RequiredArgsConstructor;

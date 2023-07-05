@@ -2,7 +2,7 @@ package kr.mybrary.bookservice.book.presentation;
 
 import kr.mybrary.bookservice.book.domain.BookService;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
-import kr.mybrary.bookservice.global.SuccessResponse;
+import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
