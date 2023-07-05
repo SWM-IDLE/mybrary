@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/auth_color.dart';
+import 'package:mybrary/res/colors/color.dart';
 
 class SignInInput extends StatelessWidget {
   final String hintText;

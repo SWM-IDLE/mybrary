@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/datasource/remote_datasource.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -19,7 +18,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text('마이브러리 메인 화면입니다.'),
           ),
           ElevatedButton(
-            onPressed: () => RemoteDataSource().getProfileData(context),
+            onPressed: () {
+              Navigator.pushNamed(context, '/search');
+            },
             child: Text('테스트'),
           ),
         ],

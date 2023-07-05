@@ -7,6 +7,7 @@ import 'package:mybrary/ui/auth/sign_in/sign_in_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_verify_screen.dart';
 import 'package:mybrary/ui/home/home_screen.dart';
+import 'package:mybrary/ui/search/search_screen.dart';
 
 void main() {
   // System Interface 글자 색상 light, dark
@@ -54,6 +55,7 @@ class MyApp extends StatelessWidget {
               '/signup': (context) => SignUpScreen(),
               '/signup/verify': (context) => SignUpVerifyScreen(),
               '/home': (context) => HomeScreen(),
+              '/search': (context) => SearchScreen(),
             },
           );
         }

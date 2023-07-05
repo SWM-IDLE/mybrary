@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:mybrary/data/network/api.dart';
-import 'package:mybrary/res/colors/auth_color.dart';
+import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/config/config.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
 import 'package:mybrary/ui/auth/components/sign_in_input.dart';

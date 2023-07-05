@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/auth_color.dart';
+import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
 import 'package:mybrary/ui/auth/components/sign_in_input.dart';
 import 'package:mybrary/ui/auth/components/sing_in_button.dart';
