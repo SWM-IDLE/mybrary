@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.global;
+package kr.mybrary.bookservice.global.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
