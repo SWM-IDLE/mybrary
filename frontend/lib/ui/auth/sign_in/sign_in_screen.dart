@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/res/colors/auth_color.dart';
+import 'package:mybrary/res/config/config.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
 import 'package:mybrary/ui/auth/components/sign_in_input.dart';
 import 'package:mybrary/ui/auth/components/sing_in_button.dart';
@@ -65,9 +68,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                 return '아이디를 입력해 주세요.';
                               }
 
-                              if (val.length < 6 ||
-                                  val.length > 20 ||
-                                  !(LoginRegExp.idRegExp.hasMatch(val))) {
+                              if (checkAuthValidator(
+                                  val, LoginRegExp.idRegExp, 6, 20)) {
                                 return '아이디는 영소문자/숫자 혼합 6자 이상으로 입력해 주세요.';
                               }
 
@@ -90,9 +92,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                 return '비밀번호를 입력해 주세요.';
                               }
 
-                              if (val.length < 8 ||
-                                  val.length > 16 ||
-                                  !(LoginRegExp.passwordRegExp.hasMatch(val))) {
+                              if (checkAuthValidator(
+                                  val, LoginRegExp.passwordRegExp, 8, 16)) {
                                 return '비밀번호는 영문/숫자/특수문자 혼합 8자 이상으로 입력해 주세요.';
                               }
 
@@ -261,10 +262,10 @@ class _SignInScreenState extends State<SignInScreen> {
         Navigator.of(context)
             .pushNamedAndRemoveUntil('/home', (route) => false);
       } else {
-        print('아이디 또는 비밀번호가 틀렸습니다.');
+        log('DEBUG: 테스트 계정의 아이디 또는 비밀번호가 틀렸습니다.');
       }
     } else {
-      print('Log: 서버 에러');
+      log('ERROR: 서버 에러가 발생했습니다.');
     }
   }
 
@@ -285,16 +286,14 @@ class _SignInScreenState extends State<SignInScreen> {
       // AccessToken Parameter : "Authorization"
       // RefreshToken Parameter : "Authorization-Refresh"
       // callback 데이터로부터 accessToken & refreshToken 파싱
-      final accessToken = Uri.parse(result).queryParameters['Authorization'];
+      final accessToken =
+          Uri.parse(result).queryParameters[accessTokenHeaderKey];
       final refreshToken =
-          Uri.parse(result).queryParameters['Authorization-Refresh'];
-
-      print(accessToken);
-      print(refreshToken);
+          Uri.parse(result).queryParameters[refreshTokenHeaderKey];
 
       // secureStorage에 accessToken & refreshToken 저장
-      await secureStorage.write(key: 'ACCESS_TOKEN', value: accessToken);
-      await secureStorage.write(key: 'REFRESH_TOKEN', value: refreshToken);
+      await secureStorage.write(key: accessTokenKey, value: accessToken);
+      await secureStorage.write(key: refreshTokenKey, value: refreshToken);
     } catch (e) {
       showSignInFailDialog(e.toString());
     }

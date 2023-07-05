@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mybrary/res/config/config.dart';
 import 'package:mybrary/ui/auth/find_pw/find_password_screen.dart';
 import 'package:mybrary/ui/auth/sign_in/sign_in_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_screen.dart';
@@ -70,8 +71,8 @@ class Init {
 
     const secureStorage = FlutterSecureStorage();
 
-    final accessToken = await secureStorage.read(key: 'ACCESS_TOKEN');
-    final refreshToken = await secureStorage.read(key: 'REFRESH_TOKEN');
+    final accessToken = await secureStorage.read(key: accessTokenKey);
+    final refreshToken = await secureStorage.read(key: refreshTokenKey);
 
     // accessToken과 refreshToken이 없으면 로그인 화면으로 이동
     if (accessToken == null || refreshToken == null) return SignInScreen();
