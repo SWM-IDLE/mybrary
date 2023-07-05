@@ -5,6 +5,7 @@ class SignInInput extends StatelessWidget {
   final String hintText;
   final String initialValue;
   final bool? isEnabled;
+  final bool obscureText;
   final FormFieldSetter<String> onSaved;
   final FormFieldValidator<String> validator;
 
@@ -14,6 +15,7 @@ class SignInInput extends StatelessWidget {
     required this.initialValue,
     required this.onSaved,
     this.isEnabled,
+    this.obscureText = false,
     Key? key,
   }) : super(key: key);
 
@@ -22,6 +24,7 @@ class SignInInput extends StatelessWidget {
     return TextFormField(
       enabled: isEnabled,
       onSaved: onSaved,
+      obscureText: obscureText,
       initialValue: initialValue,
       validator: validator,
       cursorColor: ORANGE_COLOR,

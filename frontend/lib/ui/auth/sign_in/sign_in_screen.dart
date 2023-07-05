@@ -83,6 +83,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             onSaved: (String? val) {
                               loginPassword = val;
                             },
+                            obscureText: true,
                             hintText: '영문, 숫자, 특수문자 포함 8자 이상',
                             validator: (String? val) {
                               if (val == null || val.isEmpty) {
