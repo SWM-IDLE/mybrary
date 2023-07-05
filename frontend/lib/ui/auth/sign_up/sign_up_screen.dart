@@ -177,6 +177,7 @@ class _SignUpForm extends StatelessWidget {
         SignInInput(
           initialValue: signUpPasswordInitialValue,
           onSaved: onSignUpPasswordSaved,
+          obscureText: true,
           hintText: '영문, 숫자, 특수문자 포함 8자 이상',
           validator: (String? val) {
             if (val == null || val.isEmpty) {
@@ -198,6 +199,7 @@ class _SignUpForm extends StatelessWidget {
         SignInInput(
           initialValue: signUpPasswordCheckInitialValue,
           onSaved: onSignUpPasswordConfirmSaved,
+          obscureText: true,
           hintText: '비밀번호 확인',
           validator: (String? val) {
             if (val == null || val.isEmpty) {
