@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mybrary/res/colors/auth_color.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
@@ -89,7 +91,7 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
         });
       }
     } else {
-      print('Log: 서버 에러');
+      log('ERROR: 서버 에러가 발생했습니다.');
     }
   }
 }
@@ -186,9 +188,7 @@ class _IdVerifyForm extends StatelessWidget {
               return '아이디를 입력해 주세요.';
             }
 
-            if (val.length < 6 ||
-                val.length > 20 ||
-                !(LoginRegExp.idRegExp.hasMatch(val))) {
+            if (checkAuthValidator(val, LoginRegExp.idRegExp, 6, 20)) {
               return '아이디는 영소문자/숫자 혼합 6자 이상으로 입력해 주세요.';
             }
 

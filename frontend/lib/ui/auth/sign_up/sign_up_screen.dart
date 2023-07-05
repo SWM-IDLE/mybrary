@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mybrary/res/colors/auth_color.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
@@ -91,7 +93,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         arguments: signUpEmail,
       );
     } else {
-      print('Log: 서버 에러');
+      log('ERROR: 서버 에러가 발생했습니다.');
     }
   }
 }
@@ -184,7 +186,6 @@ class _SignUpForm extends StatelessWidget {
               return '비밀번호를 입력해 주세요.';
             }
 
-            // 비밀번호의 길이는 8~16자 입니다.
             if (checkAuthValidator(val, LoginRegExp.passwordRegExp, 8, 16)) {
               return '비밀번호는 영문/숫자/특수문자 혼합 8자 이상으로 입력해 주세요.';
             }
