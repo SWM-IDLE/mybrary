@@ -2,7 +2,10 @@ package kr.mybrary.userservice.user.domain;
 
 import jakarta.transaction.Transactional;
 import kr.mybrary.userservice.user.domain.dto.UserMapper;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileImageServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileImageServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.domain.exception.DuplicateEmailException;
@@ -12,7 +15,6 @@ import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,19 +41,6 @@ public class UserServiceImpl implements UserService {
         return serviceResponse;
     }
 
-    @Override
-    public User grantUserRole(String loginId) {
-        User findUser = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new UsernameNotFoundException(loginId));
-        findUser.updateRole(Role.USER);
-        return userRepository.save(findUser);
-    }
-
-    @Override
-    public ProfileServiceResponse getProfile(String loginId) {
-        return null;
-    }
-
     private void validateDuplicateEmail(SignUpServiceRequest serviceRequest) {
         if (userRepository.findByEmail(serviceRequest.getEmail()).isPresent()) {
             throw new DuplicateEmailException();
@@ -69,5 +58,32 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateLoginIdException();
         }
     }
+
+    @Override
+    public ProfileServiceResponse getProfile(String loginId) {
+        return null;
+    }
+
+    @Override
+    public ProfileServiceResponse updateProfile(ProfileUpdateServiceRequest serviceRequest) {
+        return null;
+    }
+
+    @Override
+    public ProfileImageServiceResponse getProfileImage(String loginId) {
+        return null;
+    }
+
+    @Override
+    public ProfileImageServiceResponse updateProfileImage(
+            ProfileImageServiceRequest serviceRequest) {
+        return null;
+    }
+
+    @Override
+    public ProfileImageServiceResponse deleteProfileImage(String loginId) {
+        return null;
+    }
+
 
 }
