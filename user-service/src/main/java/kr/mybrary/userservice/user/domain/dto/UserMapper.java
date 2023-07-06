@@ -1,7 +1,7 @@
 package kr.mybrary.userservice.user.domain.dto;
 
-import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
-import kr.mybrary.userservice.user.presentation.dto.response.SignUpResponse;
+import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.persistence.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -12,7 +12,7 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    User toEntity(SignUpRequest signUpRequest);
+    User toEntity(SignUpServiceRequest serviceRequest);
 
-    SignUpResponse toResponse(User user);
+    SignUpServiceResponse toSignUpServiceResponse(User user);
 }

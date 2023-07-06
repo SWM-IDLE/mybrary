@@ -3,9 +3,10 @@ package kr.mybrary.userservice.user.presentation;
 import jakarta.validation.Valid;
 import kr.mybrary.userservice.global.dto.response.SuccessResponse;
 import kr.mybrary.userservice.user.domain.UserService;
+import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
-import kr.mybrary.userservice.user.presentation.dto.response.SignUpResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +25,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
-        SignUpResponse response = userService.signUp(signUpRequest);
+    public ResponseEntity<SuccessResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+        SignUpServiceRequest serviceRequest = SignUpServiceRequest.of(signUpRequest);
+        SignUpServiceResponse serviceResponse = userService.signUp(serviceRequest);
 
         return ResponseEntity.status(200).body(
-                SuccessResponse.of(HttpStatus.CREATED.toString(), "회원 가입에 성공했습니다.", response)
+                SuccessResponse.of(HttpStatus.CREATED.toString(), "회원 가입에 성공했습니다.", serviceResponse)
         );
     }
 
