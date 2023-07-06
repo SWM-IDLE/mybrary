@@ -1,12 +1,11 @@
-package kr.mybrary.userservice.user.domain.dto;
+package kr.mybrary.userservice.user.domain.dto.response;
 
-import kr.mybrary.userservice.user.persistence.Role;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class ProfileResponse {
+public class ProfileServiceResponse {
 
     private String nickname;
     private String profileImageUrl;

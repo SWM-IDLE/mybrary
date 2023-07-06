@@ -1,13 +1,12 @@
 package kr.mybrary.userservice.global.exception;
 
-import javax.security.sasl.AuthenticationException;
 import kr.mybrary.userservice.global.dto.response.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class GlobalControllerAdvice {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ErrorResponse> applicationException(ApplicationException e) {

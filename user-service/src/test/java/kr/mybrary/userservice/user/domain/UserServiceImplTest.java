@@ -1,4 +1,4 @@
-package kr.mybrary.userservice.authentication.domain.impl;
+package kr.mybrary.userservice.user.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,14 +8,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
-import kr.mybrary.userservice.authentication.domain.exception.DuplicateEmailException;
-import kr.mybrary.userservice.authentication.domain.exception.DuplicateLoginIdException;
-import kr.mybrary.userservice.authentication.domain.exception.DuplicateNicknameException;
-import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
-import kr.mybrary.userservice.authentication.presentation.dto.response.SignUpResponse;
+import kr.mybrary.userservice.user.domain.exception.DuplicateEmailException;
+import kr.mybrary.userservice.user.domain.exception.DuplicateLoginIdException;
+import kr.mybrary.userservice.user.domain.exception.DuplicateNicknameException;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
+import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
+import kr.mybrary.userservice.user.presentation.dto.response.SignUpResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,20 +23,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
-class AuthenticationServiceImplTest {
+class UserServiceImplTest {
 
     @Mock
     UserRepository userRepository;
     @Mock
     PasswordEncoder passwordEncoder;
-
     @InjectMocks
-    AuthenticationServiceImpl authenticationService;
+    UserServiceImpl userService;
 
     @Test
     @DisplayName("회원가입 요청이 들어오면 암호화된 비밀번호와 함께 회원 권한으로 사용자 정보를 저장한다")
@@ -64,7 +62,7 @@ class AuthenticationServiceImplTest {
         );
 
         // When
-        SignUpResponse savedUser = authenticationService.signUp(signUpRequest);
+        SignUpResponse savedUser = userService.signUp(signUpRequest);
 
         // Then
         Assertions.assertAll(
@@ -100,7 +98,7 @@ class AuthenticationServiceImplTest {
                 Optional.of(user));
 
         // When
-        assertThatThrownBy(() -> authenticationService.signUp(signUpRequest))
+        assertThatThrownBy(() -> userService.signUp(signUpRequest))
                 .isInstanceOf(DuplicateLoginIdException.class)
                 .hasFieldOrPropertyWithValue("errorCode", "U-02")
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 로그인 아이디입니다.");
@@ -128,7 +126,7 @@ class AuthenticationServiceImplTest {
                 Optional.of(user));
 
         // When
-        assertThatThrownBy(() -> authenticationService.signUp(signUpRequest))
+        assertThatThrownBy(() -> userService.signUp(signUpRequest))
                 .isInstanceOf(DuplicateNicknameException.class)
                 .hasFieldOrPropertyWithValue("errorCode", "U-03")
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 닉네임입니다.");
@@ -156,57 +154,13 @@ class AuthenticationServiceImplTest {
                 Optional.of(user));
 
         // When
-        assertThatThrownBy(() -> authenticationService.signUp(signUpRequest))
+        assertThatThrownBy(() -> userService.signUp(signUpRequest))
                 .isInstanceOf(DuplicateEmailException.class)
                 .hasFieldOrPropertyWithValue("errorCode", "U-04")
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 이메일입니다.");
 
         // Then
         verify(userRepository).findByEmail(signUpRequest.getEmail());
-    }
-
-    @Test
-    @DisplayName("로그인 아이디를 통해 사용자 정보를 조회한다")
-    void loadUserByUsername() {
-        // Given
-        String loginId = "loginId";
-        User user = User.builder()
-                .loginId(loginId)
-                .password("password")
-                .nickname("nickname")
-                .role(Role.USER)
-                .build();
-
-        given(userRepository.findByLoginId(loginId)).willReturn(Optional.of(user));
-
-        // When
-        UserDetails userDetails = authenticationService.loadUserByUsername(loginId);
-
-        // Then
-        assertThat(userDetails.getUsername()).isEqualTo(loginId);
-        Assertions.assertAll(
-                () -> assertThat(userDetails.getUsername()).isEqualTo(loginId),
-                () -> assertThat(userDetails.getPassword()).isEqualTo(user.getPassword())
-        );
-
-        verify(userRepository).findByLoginId(loginId);
-    }
-
-    @Test
-    @DisplayName("로그인 아이디로 사용자를 찾을 때 로그인 아이디와 일치하는 사용자가 없으면 예외를 던진다")
-    void usernameNotFoundWhenLoadByUsername() {
-        // Given
-        String loginId = "loginId";
-
-        given(userRepository.findByLoginId(loginId)).willReturn(Optional.empty());
-
-        // When
-        assertThatThrownBy(() -> authenticationService.loadUserByUsername(loginId))
-                .isInstanceOf(UsernameNotFoundException.class)
-                .hasMessage(loginId);
-
-        // Then
-        verify(userRepository).findByLoginId(loginId);
     }
 
     @Test
@@ -223,7 +177,7 @@ class AuthenticationServiceImplTest {
         given(userRepository.save(any(User.class))).will(returnsFirstArg());
 
         // When
-        User authorizedUser = authenticationService.authorizeUser(loginId);
+        User authorizedUser = userService.grantUserRole(loginId);
 
         // Then
         assertThat(authorizedUser.getRole()).isEqualTo(Role.USER);
@@ -240,7 +194,7 @@ class AuthenticationServiceImplTest {
         given(userRepository.findByLoginId(loginId)).willReturn(Optional.empty());
 
         // When
-        assertThatThrownBy(() -> authenticationService.authorizeUser(loginId))
+        assertThatThrownBy(() -> userService.grantUserRole(loginId))
                 .isInstanceOf(UsernameNotFoundException.class)
                 .hasMessage(loginId);
 

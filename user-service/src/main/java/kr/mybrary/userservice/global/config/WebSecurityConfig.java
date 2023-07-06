@@ -2,7 +2,6 @@ package kr.mybrary.userservice.global.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.mybrary.userservice.authentication.domain.AuthenticationService;
 import kr.mybrary.userservice.authentication.domain.login.CustomAuthenticationEntryPoint;
 import kr.mybrary.userservice.authentication.domain.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
 import kr.mybrary.userservice.authentication.domain.login.handler.LoginFailureHandler;
@@ -23,6 +22,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -32,7 +32,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final AuthenticationService authenticationService;
+    private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -83,7 +83,7 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(authenticationService);
+        provider.setUserDetailsService(userDetailsService);
         provider.setHideUserNotFoundExceptions(false);
         return new ProviderManager(provider);
     }

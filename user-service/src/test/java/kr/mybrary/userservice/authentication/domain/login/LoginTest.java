@@ -53,7 +53,7 @@ public class LoginTest {
         signUpRequest.put("nickname", "nickname");
         signUpRequest.put("email", "email@mail.com");
 
-        mockMvc.perform(post("/api/v1/auth/sign-up")
+        mockMvc.perform(post("/api/v1/users/sign-up")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(signUpRequest)))
                 .andExpect(status().isOk());

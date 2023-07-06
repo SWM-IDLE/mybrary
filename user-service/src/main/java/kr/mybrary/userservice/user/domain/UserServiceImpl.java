@@ -1,17 +1,17 @@
-package kr.mybrary.userservice.authentication.domain.impl;
+package kr.mybrary.userservice.user.domain;
 
 import jakarta.transaction.Transactional;
-import kr.mybrary.userservice.authentication.domain.AuthenticationService;
-import kr.mybrary.userservice.authentication.domain.dto.UserMapper;
-import kr.mybrary.userservice.authentication.domain.exception.DuplicateEmailException;
-import kr.mybrary.userservice.authentication.domain.exception.DuplicateLoginIdException;
-import kr.mybrary.userservice.authentication.domain.exception.DuplicateNicknameException;
-import kr.mybrary.userservice.authentication.presentation.dto.request.SignUpRequest;
-import kr.mybrary.userservice.authentication.presentation.dto.response.SignUpResponse;
+import kr.mybrary.userservice.user.domain.dto.UserMapper;
+import kr.mybrary.userservice.user.domain.exception.DuplicateEmailException;
+import kr.mybrary.userservice.user.domain.exception.DuplicateLoginIdException;
+import kr.mybrary.userservice.user.domain.exception.DuplicateNicknameException;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
+import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
+import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
+import kr.mybrary.userservice.user.presentation.dto.response.SignUpResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AuthenticationServiceImpl implements AuthenticationService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -33,31 +33,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = UserMapper.INSTANCE.toEntity(signUpRequest);
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
-        user.grantUserRole();
+        grantUserRole(user.getLoginId());
         SignUpResponse signUpResponse = UserMapper.INSTANCE.toResponse(userRepository.save(user));
 
         return signUpResponse;
-
     }
 
     @Override
-    public User authorizeUser(String loginId) {
+    public User grantUserRole(String loginId) {
         User findUser = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new UsernameNotFoundException(loginId));
-        findUser.grantUserRole();
+        findUser.updateRole(Role.USER);
         return userRepository.save(findUser);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String loginId) {
-        User user = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new UsernameNotFoundException(loginId));
-
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getLoginId())
-                .password(user.getPassword())
-                .roles(user.getRole().name())
-                .build();
+    public ProfileServiceResponse getProfile(String loginId) {
+        return null;
     }
 
     private void validateDuplicateEmail(SignUpRequest signUpRequest) {

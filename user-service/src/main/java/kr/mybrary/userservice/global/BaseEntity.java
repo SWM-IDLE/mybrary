@@ -1,4 +1,4 @@
-package kr.mybrary.userservice.user.persistence;
+package kr.mybrary.userservice.global;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

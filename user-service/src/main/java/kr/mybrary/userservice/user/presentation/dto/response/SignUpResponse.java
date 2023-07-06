@@ -1,4 +1,4 @@
-package kr.mybrary.userservice.authentication.presentation.dto.response;
+package kr.mybrary.userservice.user.presentation.dto.response;
 
 import kr.mybrary.userservice.user.persistence.Role;
 import lombok.Builder;
