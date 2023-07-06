@@ -19,10 +19,15 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.mybrary.userservice.user.domain.UserService;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileImageServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileImageServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.persistence.Role;
+import kr.mybrary.userservice.user.presentation.dto.request.ProfileImageUpdateRequest;
+import kr.mybrary.userservice.user.presentation.dto.request.ProfileUpdateRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,11 +37,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
 
 @WebMvcTest(UserController.class)
 @MockBean(JpaMetamodelMappingContext.class)
@@ -163,7 +170,7 @@ class UserControllerTest {
                                 .summary("로그인한 사용자의 프로필 정보를 조회한다.")
                                 .requestSchema(Schema.schema("get_user_profile_request_body"))
                                 .requestHeaders(
-                                        headerWithName("USER-ID").description("로그인 할 사용자의 아이디")
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
                                 )
                                 .responseSchema(Schema.schema("get_user_profile_response_body"))
                                 .responseFields(
@@ -178,5 +185,227 @@ class UserControllerTest {
                 ))
         );
     }
+
+    @DisplayName("로그인 된 사용자의 프로필 정보를 수정한다.")
+    @Test
+    void updateProfile() throws Exception {
+        // given
+        ProfileUpdateRequest profileUpdateRequest = ProfileUpdateRequest.builder()
+                .nickname("new_nickname")
+                .email("new_email")
+                .introduction("new_introduction")
+                .build();
+
+        ProfileServiceResponse profileServiceResponse = ProfileServiceResponse.builder()
+                .nickname(profileUpdateRequest.getNickname())
+                .profileImageUrl("profileImageUrl_1")
+                .email(profileUpdateRequest.getEmail())
+                .introduction(profileUpdateRequest.getIntroduction())
+                .build();
+
+        given(userService.updateProfile(any(ProfileUpdateServiceRequest.class))).willReturn(profileServiceResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.put("/api/v1/users/profile")
+                .with(csrf())
+                .header("USER-ID", "loginId_1")
+                .content(objectMapper.writeValueAsString(profileUpdateRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 정보를 수정했습니다."))
+                .andExpect(jsonPath("$.data.nickname").value(profileServiceResponse.getNickname()))
+                .andExpect(jsonPath("$.data.profileImageUrl").value(profileServiceResponse.getProfileImageUrl()))
+                .andExpect(jsonPath("$.data.email").value(profileServiceResponse.getEmail()))
+                .andExpect(jsonPath("$.data.introduction").value(profileServiceResponse.getIntroduction()));
+
+        // docs
+        actions.andDo(document("update-user-profile",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-profile")
+                                .summary("로그인한 사용자의 프로필 정보를 수정한다.")
+                                .requestSchema(Schema.schema("update_user_profile_request_body"))
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .requestFields(
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("수정할 닉네임"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("수정할 이메일"),
+                                        fieldWithPath("introduction").type(JsonFieldType.STRING).description("수정할 한 줄 소개")
+                                )
+                                .responseSchema(Schema.schema("update_user_profile_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("수정된 닉네임"),
+                                        fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("프로필 이미지 URL"),
+                                        fieldWithPath("data.email").type(JsonFieldType.STRING).description("수정된 이메일"),
+                                        fieldWithPath("data.introduction").type(JsonFieldType.STRING).description("수정된 한 줄 소개")
+                                )
+                                .build()
+                ))
+        );
+    }
+
+    @DisplayName("로그인 된 사용자의 프로필 이미지 URL을 조회한다.")
+    @Test
+    void getProfileImageUrl() throws Exception {
+        // given
+        ProfileImageServiceResponse profileImageServiceResponse = ProfileImageServiceResponse.builder()
+                .profileImageUrl("profileImageUrl_1")
+                .build();
+
+        given(userService.getProfileImage(anyString())).willReturn(profileImageServiceResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.get("/api/v1/users/profile/image")
+                .with(csrf())
+                .header("USER-ID", "loginId_1"));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 이미지 URL입니다."))
+                .andExpect(jsonPath("$.data.profileImageUrl").value(profileImageServiceResponse.getProfileImageUrl()));
+
+        verify(userService).getProfileImage(anyString());
+
+        // docs
+        actions.andDo(document("get-user-profile-image",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-profile")
+                                .summary("로그인한 사용자의 프로필 이미지 URL을 조회한다.")
+                                .requestSchema(Schema.schema("get_user_profile_image_request_body"))
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .responseSchema(Schema.schema("get_user_profile_image_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("프로필 이미지 URL")
+                                )
+                                .build()
+                ))
+        );
+    }
+
+    @DisplayName("로그인 된 사용자의 프로필 이미지를 등록한다.")
+    @Test
+    void updateProfileImage() throws Exception {
+        // given
+        MockMultipartFile profileImage = new MockMultipartFile("profileImage", "profileImage.jpg", "image/jpeg", "profileImage".getBytes());
+        ProfileImageUpdateRequest profileImageUpdateRequest = ProfileImageUpdateRequest.builder()
+                .profileImage(profileImage)
+                .build();
+
+
+        ProfileImageServiceResponse profileImageServiceResponse = ProfileImageServiceResponse.builder()
+                .profileImageUrl("profileImageUrl_1")
+                .build();
+
+        given(userService.updateProfileImage(any(ProfileImageServiceRequest.class))).willReturn(profileImageServiceResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.multipart("/api/v1/users/profile/image")
+                .file(profileImage)
+                .with(csrf())
+                .header("USER-ID", "loginId_1"));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 이미지를 등록했습니다."))
+                .andExpect(jsonPath("$.data.profileImageUrl").value(profileImageServiceResponse.getProfileImageUrl()));
+
+        verify(userService).updateProfileImage(any(ProfileImageServiceRequest.class));
+
+        // docs
+        actions.andDo(document("update-user-profile-image",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-profile")
+                                .summary("로그인한 사용자의 프로필 이미지를 수정한다.")
+                                .requestSchema(Schema.schema("update_user_profile_image_request_body"))
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .responseSchema(Schema.schema("update_user_profile_image_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("수정된 프로필 이미지 URL")
+                                )
+                                .build()
+                ))
+        );
+    }
+
+    @DisplayName("로그인 된 사용자의 프로필 이미지를 삭제한다.")
+    @Test
+    void deleteProfileImage() throws Exception {
+        // given
+        ProfileImageServiceResponse profileImageServiceResponse = ProfileImageServiceResponse.builder()
+                .profileImageUrl("profileImageUrl_1")
+                .build();
+
+        given(userService.deleteProfileImage(anyString())).willReturn(profileImageServiceResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.delete("/api/v1/users/profile/image")
+                .with(csrf())
+                .header("USER-ID", "loginId_1"));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 이미지를 삭제했습니다."))
+                .andExpect(jsonPath("$.data.profileImageUrl").value(profileImageServiceResponse.getProfileImageUrl()));
+
+        verify(userService).deleteProfileImage(anyString());
+
+        // docs
+        actions.andDo(document("delete-user-profile-image",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-profile")
+                                .summary("로그인한 사용자의 프로필 이미지를 삭제한다.")
+                                .requestSchema(Schema.schema("delete_user_profile_image_request_body"))
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .responseSchema(Schema.schema("delete_user_profile_image_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("기본 프로필 이미지 URL")
+                                )
+                                .build()
+                ))
+        );
+    }
+
+
 
 }

@@ -162,43 +162,4 @@ class UserServiceImplTest {
         verify(userRepository).findByEmail(serviceRequest.getEmail());
     }
 
-    @Test
-    @DisplayName("로그인 아이디를 통해 사용자에게 USER 권한을 부여한다")
-    void authorizeUser() {
-        // Given
-        String loginId = "loginId";
-        User user = User.builder()
-                .loginId(loginId)
-                .role(Role.GUEST)
-                .build();
-
-        given(userRepository.findByLoginId(loginId)).willReturn(Optional.of(user));
-        given(userRepository.save(any(User.class))).will(returnsFirstArg());
-
-        // When
-        User authorizedUser = userService.grantUserRole(loginId);
-
-        // Then
-        assertThat(authorizedUser.getRole()).isEqualTo(Role.USER);
-
-        verify(userRepository).findByLoginId(loginId);
-    }
-
-    @Test
-    @DisplayName("로그인 아이디로 사용자에게 USER 권한을 부여할 때 로그인 아이디와 일치하는 사용자가 없으면 예외를 던진다")
-    void usernameNotFoundWhenAuthorizingUser() {
-        // Given
-        String loginId = "loginId";
-
-        given(userRepository.findByLoginId(loginId)).willReturn(Optional.empty());
-
-        // When
-        assertThatThrownBy(() -> userService.grantUserRole(loginId))
-                .isInstanceOf(UsernameNotFoundException.class)
-                .hasMessage(loginId);
-
-        // Then
-        verify(userRepository).findByLoginId(loginId);
-    }
-
 }
