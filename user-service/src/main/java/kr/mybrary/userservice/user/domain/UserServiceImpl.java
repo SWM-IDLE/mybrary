@@ -2,15 +2,15 @@ package kr.mybrary.userservice.user.domain;
 
 import jakarta.transaction.Transactional;
 import kr.mybrary.userservice.user.domain.dto.UserMapper;
+import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.domain.exception.DuplicateEmailException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateNicknameException;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
-import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
-import kr.mybrary.userservice.user.presentation.dto.response.SignUpResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,18 +25,18 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public SignUpResponse signUp(SignUpRequest signUpRequest) {
+    public SignUpServiceResponse signUp(SignUpServiceRequest serviceRequest) {
 
-        validateDuplicateLoginId(signUpRequest);
-        validateDuplicateNickname(signUpRequest);
-        validateDuplicateEmail(signUpRequest);
+        validateDuplicateLoginId(serviceRequest);
+        validateDuplicateNickname(serviceRequest);
+        validateDuplicateEmail(serviceRequest);
 
-        User user = UserMapper.INSTANCE.toEntity(signUpRequest);
+        User user = UserMapper.INSTANCE.toEntity(serviceRequest);
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
-        grantUserRole(user.getLoginId());
-        SignUpResponse signUpResponse = UserMapper.INSTANCE.toResponse(userRepository.save(user));
+        user.updateRole(Role.USER);
+        SignUpServiceResponse serviceResponse = UserMapper.INSTANCE.toSignUpServiceResponse(userRepository.save(user));
 
-        return signUpResponse;
+        return serviceResponse;
     }
 
     @Override
@@ -52,20 +52,20 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    private void validateDuplicateEmail(SignUpRequest signUpRequest) {
-        if (userRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
+    private void validateDuplicateEmail(SignUpServiceRequest serviceRequest) {
+        if (userRepository.findByEmail(serviceRequest.getEmail()).isPresent()) {
             throw new DuplicateEmailException();
         }
     }
 
-    private void validateDuplicateNickname(SignUpRequest signUpRequest) {
-        if (userRepository.findByNickname(signUpRequest.getNickname()).isPresent()) {
+    private void validateDuplicateNickname(SignUpServiceRequest serviceRequest) {
+        if (userRepository.findByNickname(serviceRequest.getNickname()).isPresent()) {
             throw new DuplicateNicknameException();
         }
     }
 
-    private void validateDuplicateLoginId(SignUpRequest signUpRequest) {
-        if (userRepository.findByLoginId(signUpRequest.getLoginId()).isPresent()) {
+    private void validateDuplicateLoginId(SignUpServiceRequest serviceRequest) {
+        if (userRepository.findByLoginId(serviceRequest.getLoginId()).isPresent()) {
             throw new DuplicateLoginIdException();
         }
     }
