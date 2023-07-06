@@ -18,7 +18,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.mybrary.userservice.user.domain.UserService;
-import kr.mybrary.userservice.user.domain.dto.ProfileResponse;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,18 +47,20 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+
+
     @DisplayName("로그인 된 사용자의 프로필 정보를 조회한다.")
     @Test
     void getProfile() throws Exception {
         // given
-        ProfileResponse profileResponse = ProfileResponse.builder()
+        ProfileServiceResponse profileServiceResponse = ProfileServiceResponse.builder()
                 .nickname("nickname_1")
                 .profileImageUrl("profileImageUrl_1")
                 .email("email_1")
                 .introduction("introduction_1")
                 .build();
 
-        given(userService.getProfile(anyString())).willReturn(profileResponse);
+        given(userService.getProfile(anyString())).willReturn(profileServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -71,10 +73,10 @@ class UserControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value("200 OK"))
                 .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 정보입니다."))
-                .andExpect(jsonPath("$.data.nickname").value(profileResponse.getNickname()))
-                .andExpect(jsonPath("$.data.profileImageUrl").value(profileResponse.getProfileImageUrl()))
-                .andExpect(jsonPath("$.data.email").value(profileResponse.getEmail()))
-                .andExpect(jsonPath("$.data.introduction").value(profileResponse.getIntroduction()));
+                .andExpect(jsonPath("$.data.nickname").value(profileServiceResponse.getNickname()))
+                .andExpect(jsonPath("$.data.profileImageUrl").value(profileServiceResponse.getProfileImageUrl()))
+                .andExpect(jsonPath("$.data.email").value(profileServiceResponse.getEmail()))
+                .andExpect(jsonPath("$.data.introduction").value(profileServiceResponse.getIntroduction()));
 
         verify(userService).getProfile(anyString());
 

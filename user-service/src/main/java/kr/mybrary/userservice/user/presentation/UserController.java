@@ -1,12 +1,17 @@
 package kr.mybrary.userservice.user.presentation;
 
+import jakarta.validation.Valid;
 import kr.mybrary.userservice.global.dto.response.SuccessResponse;
 import kr.mybrary.userservice.user.domain.UserService;
-import kr.mybrary.userservice.user.domain.dto.ProfileResponse;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
+import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
+import kr.mybrary.userservice.user.presentation.dto.response.SignUpResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,9 +23,18 @@ public class UserController {
 
     private final UserService userService;
 
+    @PostMapping("/sign-up")
+    public ResponseEntity signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+        SignUpResponse response = userService.signUp(signUpRequest);
+
+        return ResponseEntity.status(200).body(
+                SuccessResponse.of(HttpStatus.CREATED.toString(), "회원 가입에 성공했습니다.", response)
+        );
+    }
+
     @GetMapping("/profile")
     public ResponseEntity<SuccessResponse> getProfile(@RequestHeader("USER-ID") String loginId) {
-        ProfileResponse response = userService.getProfile(loginId);
+        ProfileServiceResponse response = userService.getProfile(loginId);
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 프로필 정보입니다.", response)
