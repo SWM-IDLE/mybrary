@@ -1,24 +1,35 @@
 package kr.mybrary.bookservice.mybook.presentation;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
+import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
+import com.epages.restdocs.apispec.SimpleType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDateTime;
 import java.util.List;
+import kr.mybrary.bookservice.mybook.MybookTestData;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +38,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -47,16 +57,16 @@ class MyBookControllerTest {
 
     @DisplayName("내 서재에 책을 추가한다.")
     @Test
-    void assignMyBook() throws Exception {
+    void createMyBook() throws Exception {
         // given
-        MyBookCreateRequest request = createMyBookCreateRequest();
+        MyBookCreateRequest request = MybookTestData.createMyBookCreateRequest();
 
         String requestJson = objectMapper.writeValueAsString(request);
 
-        given(myBookService.create(request.toServiceRequest("userId"))).willReturn(any());
+        given(myBookService.create(request.toServiceRequest(any()))).willReturn(any());
 
         // when
-        ResultActions actions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/mybooks")
+        ResultActions actions = mockMvc.perform(post("/api/v1/mybooks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson));
 
@@ -98,19 +108,142 @@ class MyBookControllerTest {
                                         ).build())));
     }
 
-    private MyBookCreateRequest createMyBookCreateRequest() {
-        return MyBookCreateRequest.builder()
-                .title("title")
-                .description("description")
-                .detailsUrl("detailsUrl")
-                .isbn10("isbn10")
-                .isbn13("isbn13")
-                .publisher("publisher")
-                .price(10000)
-                .publicationDate(LocalDateTime.now())
-                .translators(List.of("translator1", "translator2"))
-                .authors(List.of("author1", "author2"))
-                .thumbnailUrl("thumbnailUrl")
-                .build();
+    @DisplayName("내 서재의 도서를 모두 조회한다.")
+    @Test
+    void findAllMybooks() throws Exception {
+        // given
+        MyBookElementResponse expectedResponse_1 = MybookTestData.createMyBookElementResponse();
+        MyBookElementResponse expectedResponse_2 = MybookTestData.createMyBookElementResponse();
+
+        given(myBookService.findAllMyBooks(any())).willReturn(List.of(expectedResponse_1, expectedResponse_2));
+
+        // when
+        ResultActions actions = mockMvc.perform(get("/api/v1/mybooks"));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("내 서재의 도서 목록입니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // document
+        actions.andDo(document("find-all-mybooks",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("mybook")
+                                .summary("내 서재의 도서를 모두 조회한다.")
+                                .responseSchema(Schema.schema("find-all-mybooks response body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(STRING).description("응답 상태"),
+                                        fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                        fieldWithPath("data[].id").type(NUMBER).description("마이북 ID"),
+                                        fieldWithPath("data[].readStatus").type(STRING).description("독서 진행 상태"),
+                                        fieldWithPath("data[].startDateOfPossession").type(STRING).description("보유 시작일"),
+                                        fieldWithPath("data[].book.id").type(NUMBER).description("도서 ID"),
+                                        fieldWithPath("data[].book.title").type(STRING).description("도서 제목"),
+                                        fieldWithPath("data[].book.description").type(STRING).description("도서 설명"),
+                                        fieldWithPath("data[].book.thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
+                                        fieldWithPath("data[].book.stars").type(NUMBER).description("도서 별점"),
+                                        fieldWithPath("data[].public").type(BOOLEAN).description("공개 여부"),
+                                        fieldWithPath("data[].exchangeable").type(BOOLEAN).description("교환 여부"),
+                                        fieldWithPath("data[].shareable").type(BOOLEAN).description("나눔 여부")
+                                ).build())));
+
     }
+
+    @DisplayName("내 마이북의 상세보기를 조회한다.")
+    @Test
+    void findMyBookDetail() throws Exception {
+
+        // given
+        Long id = 1L;
+        MyBookDetailResponse expectedResponse = MybookTestData.createMyBookDetailResponse();
+
+        given(myBookService.findMyBookDetail(any(), any())).willReturn(expectedResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(get("/api/v1/mybooks/{id}", id));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("마이북 상세보기입니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // document
+        actions
+                .andDo(document("find-mybook-detail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("mybook")
+                                        .summary("내 마이북의 상세보기를 조회한다.")
+                                        .pathParameters(
+                                                parameterWithName("id").type(SimpleType.INTEGER).description("마이북 ID")
+                                        )
+                                        .responseSchema(Schema.schema("find-mybook-detail response body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data.id").type(NUMBER).description("마이북 ID"),
+                                                fieldWithPath("data.public").type(BOOLEAN).description("공개 여부"),
+                                                fieldWithPath("data.exchangeable").type(BOOLEAN).description("교환 여부"),
+                                                fieldWithPath("data.shareable").type(BOOLEAN).description("나눔 여부"),
+                                                fieldWithPath("data.readStatus").type(STRING).description("독서 진행 상태"),
+                                                fieldWithPath("data.startDateOfPossession").type(STRING).description("보유 시작일"),
+                                                fieldWithPath("data.book.id").type(NUMBER).description("도서 ID"),
+                                                fieldWithPath("data.book.title").type(STRING).description("도서 제목"),
+                                                fieldWithPath("data.book.description").type(STRING).description("도서 설명"),
+                                                fieldWithPath("data.book.thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
+                                                fieldWithPath("data.book.authors").type(ARRAY).description("도서 저자"),
+                                                fieldWithPath("data.book.translators").type(ARRAY).description("도서 번역자"),
+                                                fieldWithPath("data.book.stars").type(NUMBER).description("도서 별점"),
+                                                fieldWithPath("data.book.publisher").type(STRING).description("출판사")
+                                        ).build())));
+    }
+
+    @DisplayName("마이북을 삭제한다.")
+    @Test
+    void deleteMyBook() throws Exception {
+
+        // given
+        Long id = 1L;
+
+//        given(myBookService.findMyBookDetail(any(), any()));
+
+        // when
+        ResultActions actions = mockMvc.perform(delete("/api/v1/mybooks/{id}", id));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("내 서재의 도서를 삭제했습니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+        // document
+        actions
+                .andDo(document("delete-mybook",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("mybook")
+                                        .summary("내 서재의 마이북을 삭제한다.")
+                                        .pathParameters(
+                                                parameterWithName("id").type(SimpleType.INTEGER).description("마이북 ID")
+                                        )
+                                        .responseSchema(Schema.schema("delete-mybook response body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data").type(OBJECT).description("응답 데이터").optional()
+                                        ).build())));
+    }
+
 }
