@@ -77,7 +77,7 @@ class Init {
     final refreshToken = await secureStorage.read(key: refreshTokenKey);
 
     // accessToken과 refreshToken이 없으면 로그인 화면으로 이동
-    if (accessToken == null || refreshToken == null) return SignInScreen();
+    if (accessToken == null || refreshToken == null) return SearchScreen();
 
     // 토큰이 존재하면, 홈 화면으로 바로 이동
     return HomeScreen();
