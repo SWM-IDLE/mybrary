@@ -6,6 +6,7 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -18,14 +19,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.List;
 import kr.mybrary.userservice.user.domain.UserService;
+import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileImageServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.FollowResponse;
+import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileImageServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.persistence.Role;
+import kr.mybrary.userservice.user.presentation.dto.request.FollowRequest;
+import kr.mybrary.userservice.user.presentation.dto.request.FollowerRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.ProfileImageUpdateRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.ProfileUpdateRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
@@ -43,7 +53,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.multipart.MultipartFile;
 
 @WebMvcTest(UserController.class)
 @MockBean(JpaMetamodelMappingContext.class)
@@ -406,6 +415,322 @@ class UserControllerTest {
         );
     }
 
+    @DisplayName("로그인 된 사용자의 팔로워 목록을 조회한다.")
+    @Test
+    void getFollowers() throws Exception {
+        // given
+        List<FollowResponse> followers = new ArrayList<>();
+        followers.add(FollowResponse.builder()
+                .id(1L)
+                .loginId("loginId_1")
+                .nickname("name_1")
+                .profileImageUrl("profileImageUrl_1")
+                .build());
+        followers.add(FollowResponse.builder()
+                .id(2L)
+                .loginId("loginId_2")
+                .nickname("name_2")
+                .profileImageUrl("profileImageUrl_2")
+                .build());
 
+        FollowerServiceResponse followerServiceResponse = FollowerServiceResponse.builder()
+                .requestLoginId("loginId")
+                .followers(followers)
+                .build();
+
+        given(userService.getFollowers(anyString())).willReturn(followerServiceResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.get("/api/v1/users/followers")
+                .with(csrf())
+                .header("USER-ID", "loginId"));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("로그인 된 사용자의 팔로워 목록을 조회했습니다."))
+                .andExpect(jsonPath("$.data.requestLoginId").value(followerServiceResponse.getRequestLoginId()))
+                .andExpect(jsonPath("$.data.followers[0].id").value(followers.get(0).getId()))
+                .andExpect(jsonPath("$.data.followers[1].id").value(followers.get(1).getId()))
+                .andExpect(jsonPath("$.data.followers[0].loginId").value(followers.get(0).getLoginId()))
+                .andExpect(jsonPath("$.data.followers[1].loginId").value(followers.get(1).getLoginId()))
+                .andExpect(jsonPath("$.data.followers[0].nickname").value(followers.get(0).getNickname()))
+                .andExpect(jsonPath("$.data.followers[1].nickname").value(followers.get(1).getNickname()))
+                .andExpect(jsonPath("$.data.followers[0].profileImageUrl").value(followers.get(0).getProfileImageUrl()))
+                .andExpect(jsonPath("$.data.followers[1].profileImageUrl").value(followers.get(1).getProfileImageUrl()));
+
+        verify(userService).getFollowers(anyString());
+
+        // docs
+        actions.andDo(document("get-user-followers",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-follow")
+                                .summary("로그인한 사용자의 팔로워 목록을 조회한다.")
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .responseSchema(Schema.schema("get_user_followers_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.requestLoginId").type(JsonFieldType.STRING).description("요청한 사용자의 아이디"),
+                                        fieldWithPath("data.followers[].id").type(JsonFieldType.NUMBER).description("팔로워의 식별자"),
+                                        fieldWithPath("data.followers[].loginId").type(JsonFieldType.STRING).description("팔로워의 아이디"),
+                                        fieldWithPath("data.followers[].nickname").type(JsonFieldType.STRING).description("팔로워의 닉네임"),
+                                        fieldWithPath("data.followers[].profileImageUrl").type(JsonFieldType.STRING).description("팔로워의 프로필 이미지 URL")
+                                )
+                                .build()
+                ))
+        );
+    }
+
+    @DisplayName("로그인 된 사용자의 팔로잉 목록을 조회한다.")
+    @Test
+    void getFollowings() throws Exception {
+        // given
+        List<FollowResponse> followings = new ArrayList<>();
+        followings.add(FollowResponse.builder()
+                .id(1L)
+                .loginId("loginId_1")
+                .nickname("name_1")
+                .profileImageUrl("profileImageUrl_1")
+                .build());
+        followings.add(FollowResponse.builder()
+                .id(2L)
+                .loginId("loginId_2")
+                .nickname("name_2")
+                .profileImageUrl("profileImageUrl_2")
+                .build());
+
+        FollowingServiceResponse followingServiceResponse = FollowingServiceResponse.builder()
+                .requestLoginId("loginId")
+                .followings(followings)
+                .build();
+
+        given(userService.getFollowings(anyString())).willReturn(followingServiceResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.get("/api/v1/users/followings")
+                .with(csrf())
+                .header("USER-ID", "loginId"));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("로그인 된 사용자의 팔로잉 목록을 조회했습니다."))
+                .andExpect(jsonPath("$.data.requestLoginId").value(followingServiceResponse.getRequestLoginId()))
+                .andExpect(jsonPath("$.data.followings[0].id").value(followings.get(0).getId()))
+                .andExpect(jsonPath("$.data.followings[1].id").value(followings.get(1).getId()))
+                .andExpect(jsonPath("$.data.followings[0].loginId").value(followings.get(0).getLoginId()))
+                .andExpect(jsonPath("$.data.followings[1].loginId").value(followings.get(1).getLoginId()))
+                .andExpect(jsonPath("$.data.followings[0].nickname").value(followings.get(0).getNickname()))
+                .andExpect(jsonPath("$.data.followings[1].nickname").value(followings.get(1).getNickname()))
+                .andExpect(jsonPath("$.data.followings[0].profileImageUrl").value(followings.get(0).getProfileImageUrl()))
+                .andExpect(jsonPath("$.data.followings[1].profileImageUrl").value(followings.get(1).getProfileImageUrl()));
+
+        verify(userService).getFollowings(anyString());
+
+        // docs
+        actions.andDo(document("get-user-followings",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-follow")
+                                .summary("로그인한 사용자의 팔로잉 목록을 조회한다.")
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .responseSchema(Schema.schema("get_user_followings_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.requestLoginId").type(JsonFieldType.STRING).description("요청한 사용자의 아이디"),
+                                        fieldWithPath("data.followings[].id").type(JsonFieldType.NUMBER).description("팔로잉의 식별자"),
+                                        fieldWithPath("data.followings[].loginId").type(JsonFieldType.STRING).description("팔로잉의 아이디"),
+                                        fieldWithPath("data.followings[].nickname").type(JsonFieldType.STRING).description("팔로잉의 닉네임"),
+                                        fieldWithPath("data.followings[].profileImageUrl").type(JsonFieldType.STRING).description("팔로잉의 프로필 이미지 URL")
+                                )
+                                .build()
+                ))
+        );
+    }
+
+    @DisplayName("사용자를 팔로우한다.")
+    @Test
+    void follow() throws Exception {
+        // given
+        doNothing().when(userService).follow(any(FollowServiceRequest.class));
+
+        FollowRequest followRequest = FollowRequest.builder()
+                .targetId("targetId")
+                .build();
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.post("/api/v1/users/follow")
+                .with(csrf())
+                .header("USER-ID", "loginId")
+                .content(objectMapper.writeValueAsString(followRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("사용자를 팔로우했습니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+        verify(userService).follow(any(FollowServiceRequest.class));
+
+        // docs
+        actions.andDo(document("follow-user",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-follow")
+                                .summary("사용자를 팔로우한다.")
+                                .requestSchema(Schema.schema("follow_user_request_body"))
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .requestFields(
+                                        fieldWithPath("targetId").type(JsonFieldType.STRING).description("팔로우할 사용자의 아이디")
+                                )
+                                .responseSchema(Schema.schema("follow_user_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터").optional()
+                                )
+                                .build()
+                ))
+        );
+    }
+
+    @DisplayName("사용자를 언팔로우한다.")
+    @Test
+    void unfollow() throws Exception {
+        // given
+        doNothing().when(userService).unfollow(any(FollowServiceRequest.class));
+
+        FollowRequest followRequest = FollowRequest.builder()
+                .targetId("targetId")
+                .build();
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.delete("/api/v1/users/follow")
+                        .with(csrf())
+                        .header("USER-ID", "loginId")
+                        .content(objectMapper.writeValueAsString(followRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("사용자를 언팔로우했습니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+        verify(userService).unfollow(any(FollowServiceRequest.class));
+
+        // docs
+        actions.andDo(document("unfollow-user",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-follow")
+                                .summary("사용자를 언팔로우한다.")
+                                .requestSchema(Schema.schema("unfollow_user_request_body"))
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .requestFields(
+                                        fieldWithPath("targetId").type(JsonFieldType.STRING)
+                                                .description("언팔로우할 사용자의 아이디")
+                                )
+                                .responseSchema(Schema.schema("unfollow_user_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description("응답 상태"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("응답 메시지"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                                .description("응답 데이터").optional()
+                                )
+                                .build()
+                ))
+        );
+    }
+
+    @DisplayName("사용자를 팔로워 목록에서 삭제한다.")
+    @Test
+    void deleteFollower() throws Exception {
+        // given
+        doNothing().when(userService).deleteFollower(any(FollowerServiceRequest.class));
+
+        FollowerRequest followerRequest = FollowerRequest.builder()
+                .sourceId("sourceId")
+                .build();
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.delete("/api/v1/users/follower")
+                        .with(csrf())
+                        .header("USER-ID", "loginId")
+                        .content(objectMapper.writeValueAsString(followerRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("사용자를 팔로워 목록에서 삭제했습니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+        verify(userService).deleteFollower(any(FollowerServiceRequest.class));
+
+        // docs
+        actions.andDo(document("delete-follower",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-follow")
+                                .summary("사용자를 팔로워 목록에서 삭제한다.")
+                                .requestSchema(Schema.schema("delete_follower_request_body"))
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .requestFields(
+                                        fieldWithPath("sourceId").type(JsonFieldType.STRING)
+                                                .description("팔로워 목록에서 삭제할 사용자의 아이디")
+                                )
+                                .responseSchema(Schema.schema("delete_follower_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description("응답 상태"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("응답 메시지"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                                .description("응답 데이터").optional()
+                                )
+                                .build()
+                ))
+        );
+    }
 
 }

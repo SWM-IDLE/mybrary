@@ -3,12 +3,18 @@ package kr.mybrary.userservice.user.presentation;
 import jakarta.validation.Valid;
 import kr.mybrary.userservice.global.dto.response.SuccessResponse;
 import kr.mybrary.userservice.user.domain.UserService;
+import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileImageServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileImageServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
+import kr.mybrary.userservice.user.presentation.dto.request.FollowRequest;
+import kr.mybrary.userservice.user.presentation.dto.request.FollowerRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.ProfileImageUpdateRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.ProfileUpdateRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
@@ -64,7 +70,8 @@ public class UserController {
     @PutMapping("/profile")
     public ResponseEntity<SuccessResponse> updateProfile(@RequestHeader("USER-ID") String loginId,
             @RequestBody ProfileUpdateRequest profileUpdateRequest) {
-        ProfileUpdateServiceRequest serviceRequest = ProfileUpdateServiceRequest.of(profileUpdateRequest, loginId);
+        ProfileUpdateServiceRequest serviceRequest = ProfileUpdateServiceRequest.of(
+                profileUpdateRequest, loginId);
         ProfileServiceResponse serviceResponse = userService.updateProfile(serviceRequest);
 
         return ResponseEntity.ok().body(
@@ -105,7 +112,8 @@ public class UserController {
         ProfileImageServiceResponse serviceResponse = userService.deleteProfileImage(loginId);
 
         return ResponseEntity.ok().body(
-                SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 프로필 이미지를 삭제했습니다.", serviceResponse)
+                SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 프로필 이미지를 삭제했습니다.",
+                        serviceResponse)
         );
     }
 
@@ -115,6 +123,60 @@ public class UserController {
         - 팔로잉 목록 조회: get users/followings
         - 팔로우: post users/follow
         - 언팔로우: delete users/follow
+        - 언팔로잉: delete users/following
      */
+
+    @GetMapping("/followers")
+    public ResponseEntity<SuccessResponse> getFollowers(@RequestHeader("USER-ID") String loginId) {
+        FollowerServiceResponse serviceResponse = userService.getFollowers(loginId);
+
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 팔로워 목록을 조회했습니다.",
+                        serviceResponse)
+        );
+    }
+
+    @GetMapping("/followings")
+    public ResponseEntity<SuccessResponse> getFollowings(@RequestHeader("USER-ID") String loginId) {
+        FollowingServiceResponse serviceResponse = userService.getFollowings(loginId);
+
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 팔로잉 목록을 조회했습니다.",
+                        serviceResponse)
+        );
+    }
+
+    @PostMapping("/follow")
+    public ResponseEntity<SuccessResponse> follow(@RequestHeader("USER-ID") String loginId,
+            @RequestBody FollowRequest followRequest) {
+        FollowServiceRequest serviceRequest = FollowServiceRequest.of(loginId, followRequest);
+        userService.follow(serviceRequest);
+
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(HttpStatus.OK.toString(), "사용자를 팔로우했습니다.", null)
+        );
+    }
+
+    @DeleteMapping("/follow")
+    public ResponseEntity<SuccessResponse> unfollow(@RequestHeader("USER-ID") String loginId,
+            @RequestBody FollowRequest followRequest) {
+        FollowServiceRequest serviceRequest = FollowServiceRequest.of(loginId, followRequest);
+        userService.unfollow(serviceRequest);
+
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(HttpStatus.OK.toString(), "사용자를 언팔로우했습니다.", null)
+        );
+    }
+
+    @DeleteMapping("/follower")
+    public ResponseEntity<SuccessResponse> unfollowing(@RequestHeader("USER-ID") String loginId,
+            @RequestBody FollowerRequest followerRequest) {
+        FollowerServiceRequest serviceRequest = FollowerServiceRequest.of(loginId, followerRequest);
+        userService.deleteFollower(serviceRequest);
+
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(HttpStatus.OK.toString(), "사용자를 팔로워 목록에서 삭제했습니다.", null)
+        );
+    }
 
 }

@@ -2,9 +2,13 @@ package kr.mybrary.userservice.user.domain;
 
 import jakarta.transaction.Transactional;
 import kr.mybrary.userservice.user.domain.dto.UserMapper;
+import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileImageServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileImageServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
@@ -83,6 +87,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public ProfileImageServiceResponse deleteProfileImage(String loginId) {
         return null;
+    }
+
+    @Override
+    public FollowerServiceResponse getFollowers(String loginId) {
+        return null;
+    }
+
+    @Override
+    public FollowingServiceResponse getFollowings(String loginId) {
+        return null;
+    }
+
+    @Override
+    public void follow(FollowServiceRequest serviceRequest) {
+    }
+
+    @Override
+    public void unfollow(FollowServiceRequest serviceRequest) {
+
+    }
+
+    @Override
+    public void deleteFollower(FollowerServiceRequest serviceRequest) {
+
     }
 
 

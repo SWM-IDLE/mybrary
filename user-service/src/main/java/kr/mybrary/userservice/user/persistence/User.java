@@ -1,6 +1,7 @@
 package kr.mybrary.userservice.user.persistence;
 
 import jakarta.persistence.*;
+import java.util.List;
 import kr.mybrary.userservice.global.BaseEntity;
 import lombok.*;
 
@@ -8,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Builder
-@Table(name = "USERS")
+@Table(name = "users")
 @AllArgsConstructor
 public class User extends BaseEntity {
 
@@ -43,6 +44,12 @@ public class User extends BaseEntity {
     private String introduction;
 
     private String profileImageUrl;
+
+    @OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Follow> followers;
+
+    @OneToMany(mappedBy = "source", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Follow> followings;
 
     // 주소, 직장, 직장 공개 여부, 성별, 생년월일, 학력, 본인인증 여부 추가 예정
 

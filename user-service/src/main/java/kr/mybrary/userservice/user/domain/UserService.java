@@ -1,8 +1,12 @@
 package kr.mybrary.userservice.user.domain;
 
+import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileImageServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileImageServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
@@ -20,4 +24,14 @@ public interface UserService {
     ProfileImageServiceResponse updateProfileImage(ProfileImageServiceRequest serviceRequest);
 
     ProfileImageServiceResponse deleteProfileImage(String loginId);
+
+    FollowerServiceResponse getFollowers(String loginId);
+
+    FollowingServiceResponse getFollowings(String loginId);
+
+    void follow(FollowServiceRequest serviceRequest);
+
+    void unfollow(FollowServiceRequest serviceRequest);
+
+    void deleteFollower(FollowerServiceRequest serviceRequest);
 }
