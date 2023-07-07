@@ -1,0 +1,28 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-service
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/SWM-IDLE/config-repository.git
+          username: '{cipher}AQCfK9fk0QricP0qtt5vNKXTQ8atFyaOQZ4QChOslcYfgphIO2KBG9EfLNnbmuxuTkO2ov21e8slXh/lWROhccQe38UAQrLn80hSlYS91/uaXFVZv+z5uzZ/veAfQVwOyb2UYX28vGiwzYlJzQE3X5eyC36qc/uwed1ceo5XyssS8Txycln//oowOaVpSDT40Te0RAU5ZFJtvk5IAho7ncw1PprAyTMaxte3HnjVEu2jSQU49iX7nioK56/Zd/SX2Gc/O6SZKoMnW/SvYuuISHgDDfS9lAaOh+h3GBTDrLgtcPghRIXbNtvytC6DsBc6ISw52MKmH5/58xjQscgKymh2AUWVGiZFUXhrh1xoJ2hl8I+wJuPBV31VTjGxw8pRlxs='
+          password: '{cipher}AQC82UaPbgg0XAjMdU7pOyO+8sv3CVw++IbepSLoDWmOlF1vFnp2vzYKiSJW+2X92mF/4eWK7MmpPSE6nm3f0jbNHmJNE1FtJAfdy6MUeLiukkDazjrjLPVm6jOgihCrrZP67uHYJfgYjlf9oXEFjZCYVDgMHAhSXqyTM5ghY5f1+f+Ho2WQ2e2UK0O9zHVTaWew6mA1HlpIKTAHJp/3ZOBN7MyEdwc8XJ7+omIz5/SppHJTHNBIqXm3lyoTx629j/JcJvZTeWayvaprfy3VZ/i7uQUSr8VICCVz79vnWnXoUOFirumuf5fuHtGR6wk6UHZNEHJvBHlCjRGGrfFXEQIWGW9QSLVxrx/oHeSlRaq0UC7ufTLb77JtD5orDLEu0GocAQ5g5aCa/XiL+rjCy1gr97mzuJKc0Pcf4ykj5znDQg=='
+          default-label: master
+
+encrypt:
+  key-store:
+    location: /keystore/mybraryApiEncryptionKey.jks
+    password: ${KEY_STORE_PASSWORD}
+    alias: mybraryApiEncryptionKey
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans
+
