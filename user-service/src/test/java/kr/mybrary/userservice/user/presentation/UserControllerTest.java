@@ -36,7 +36,6 @@ import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.presentation.dto.request.FollowRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.FollowerRequest;
-import kr.mybrary.userservice.user.presentation.dto.request.ProfileImageUpdateRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.ProfileUpdateRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +45,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -69,6 +69,11 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private final String BASE_URL = "/api/v1/users";
+    private final String LOGIN_ID = "loginId_1";
+    private final String STATUS_FIELD_DESCRIPTION = "응답 상태";
+    private final String MESSAGE_FIELD_DESCRIPTION = "응답 메시지";
+
     @DisplayName("아이디, 비밀번호, 닉네임, 이메일을 입력해 회원 가입을 한다.")
     @Test
     void signUp() throws Exception {
@@ -87,25 +92,28 @@ class UserControllerTest {
                 .role(Role.USER)
                 .build();
 
-        given(userService.signUp(any(SignUpServiceRequest.class))).willReturn(signUpServiceResponse);
+        given(userService.signUp(any(SignUpServiceRequest.class))).willReturn(
+                signUpServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.post("/api/v1/users/sign-up")
-                .with(csrf())
-                .content(objectMapper.writeValueAsString(signUpRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
+                RestDocumentationRequestBuilders.post(BASE_URL+"/sign-up")
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(signUpRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value("201 CREATED"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.CREATED.toString()))
                 .andExpect(jsonPath("$.message").value("회원 가입에 성공했습니다."))
                 .andExpect(jsonPath("$.data.loginId").value(signUpRequest.getLoginId()))
                 .andExpect(jsonPath("$.data.nickname").value(signUpRequest.getNickname()))
                 .andExpect(jsonPath("$.data.email").value(signUpRequest.getEmail()))
                 .andExpect(jsonPath("$.data.role").value(Role.USER.name()));
+
+        verify(userService).signUp(any(SignUpServiceRequest.class));
 
         // docs
         actions.andDo(document("user-sign-up",
@@ -117,25 +125,35 @@ class UserControllerTest {
                                 .summary("아이디, 비밀번호, 닉네임, 이메일을 입력해 회원 가입을 한다.")
                                 .requestSchema(Schema.schema("user_sign_up_request_body"))
                                 .requestFields(
-                                        fieldWithPath("loginId").type(JsonFieldType.STRING).description("회원 가입 아이디"),
-                                        fieldWithPath("password").type(JsonFieldType.STRING).description("회원 가입 비밀번호 (8~16자 영문 대 소문자, 숫자, 특수문자 사용)"),
-                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("회원 가입 닉네임 (특수문자를 제외한 2~20자 사용)"),
-                                        fieldWithPath("email").type(JsonFieldType.STRING).description("회원 가입 이메일(선택)")
+                                        fieldWithPath("loginId").type(JsonFieldType.STRING)
+                                                .description("회원 가입 아이디"),
+                                        fieldWithPath("password").type(JsonFieldType.STRING)
+                                                .description(
+                                                        "회원 가입 비밀번호 (8~16자 영문 대 소문자, 숫자, 특수문자 사용)"),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING)
+                                                .description("회원 가입 닉네임 (특수문자를 제외한 2~20자 사용)"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING)
+                                                .description("회원 가입 이메일(선택)")
                                 )
                                 .responseSchema(Schema.schema("user_sign_up_response_body"))
                                 .responseFields(
-                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data.loginId").type(JsonFieldType.STRING).description("가입된 아이디"),
-                                        fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("가입된 닉네임"),
-                                        fieldWithPath("data.email").type(JsonFieldType.STRING).description("가입된 이메일"),
-                                        fieldWithPath("data.role").type(JsonFieldType.STRING).description("가입된 권한")
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.loginId").type(JsonFieldType.STRING)
+                                                .description("가입된 아이디"),
+                                        fieldWithPath("data.nickname").type(JsonFieldType.STRING)
+                                                .description("가입된 닉네임"),
+                                        fieldWithPath("data.email").type(JsonFieldType.STRING)
+                                                .description("가입된 이메일"),
+                                        fieldWithPath("data.role").type(JsonFieldType.STRING)
+                                                .description("가입된 권한")
                                 )
                                 .build()
                 ))
         );
     }
-
 
 
     @DisplayName("로그인 된 사용자의 프로필 정보를 조회한다.")
@@ -153,19 +171,21 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/api/v1/users/profile")
-                .with(csrf())
-                .header("USER-ID", "loginId_1"));
+                RestDocumentationRequestBuilders.get(BASE_URL+"/profile")
+                        .with(csrf())
+                        .header("USER-ID", LOGIN_ID));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 정보입니다."))
                 .andExpect(jsonPath("$.data.nickname").value(profileServiceResponse.getNickname()))
-                .andExpect(jsonPath("$.data.profileImageUrl").value(profileServiceResponse.getProfileImageUrl()))
+                .andExpect(jsonPath("$.data.profileImageUrl").value(
+                        profileServiceResponse.getProfileImageUrl()))
                 .andExpect(jsonPath("$.data.email").value(profileServiceResponse.getEmail()))
-                .andExpect(jsonPath("$.data.introduction").value(profileServiceResponse.getIntroduction()));
+                .andExpect(jsonPath("$.data.introduction").value(
+                        profileServiceResponse.getIntroduction()));
 
         verify(userService).getProfile(anyString());
 
@@ -183,12 +203,19 @@ class UserControllerTest {
                                 )
                                 .responseSchema(Schema.schema("get_user_profile_response_body"))
                                 .responseFields(
-                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("사용자의 닉네임"),
-                                        fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("사용자의 프로필 이미지 URL"),
-                                        fieldWithPath("data.email").type(JsonFieldType.STRING).description("사용자의 이메일"),
-                                        fieldWithPath("data.introduction").type(JsonFieldType.STRING).description("사용자의 한 줄 소개")
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.nickname").type(JsonFieldType.STRING)
+                                                .description("사용자의 닉네임"),
+                                        fieldWithPath("data.profileImageUrl").type(
+                                                        JsonFieldType.STRING)
+                                                .description("사용자의 프로필 이미지 URL"),
+                                        fieldWithPath("data.email").type(JsonFieldType.STRING)
+                                                .description("사용자의 이메일"),
+                                        fieldWithPath("data.introduction").type(
+                                                JsonFieldType.STRING).description("사용자의 한 줄 소개")
                                 )
                                 .build()
                 ))
@@ -212,26 +239,31 @@ class UserControllerTest {
                 .introduction(profileUpdateRequest.getIntroduction())
                 .build();
 
-        given(userService.updateProfile(any(ProfileUpdateServiceRequest.class))).willReturn(profileServiceResponse);
+        given(userService.updateProfile(any(ProfileUpdateServiceRequest.class))).willReturn(
+                profileServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.put("/api/v1/users/profile")
-                .with(csrf())
-                .header("USER-ID", "loginId_1")
-                .content(objectMapper.writeValueAsString(profileUpdateRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
+                RestDocumentationRequestBuilders.put(BASE_URL+"/profile")
+                        .with(csrf())
+                        .header("USER-ID", LOGIN_ID)
+                        .content(objectMapper.writeValueAsString(profileUpdateRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON));
+
+        verify(userService).updateProfile(any(ProfileUpdateServiceRequest.class));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 정보를 수정했습니다."))
                 .andExpect(jsonPath("$.data.nickname").value(profileServiceResponse.getNickname()))
-                .andExpect(jsonPath("$.data.profileImageUrl").value(profileServiceResponse.getProfileImageUrl()))
+                .andExpect(jsonPath("$.data.profileImageUrl").value(
+                        profileServiceResponse.getProfileImageUrl()))
                 .andExpect(jsonPath("$.data.email").value(profileServiceResponse.getEmail()))
-                .andExpect(jsonPath("$.data.introduction").value(profileServiceResponse.getIntroduction()));
+                .andExpect(jsonPath("$.data.introduction").value(
+                        profileServiceResponse.getIntroduction()));
 
         // docs
         actions.andDo(document("update-user-profile",
@@ -246,18 +278,27 @@ class UserControllerTest {
                                         headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
                                 )
                                 .requestFields(
-                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("수정할 닉네임"),
-                                        fieldWithPath("email").type(JsonFieldType.STRING).description("수정할 이메일"),
-                                        fieldWithPath("introduction").type(JsonFieldType.STRING).description("수정할 한 줄 소개")
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING)
+                                                .description("수정할 닉네임"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING)
+                                                .description("수정할 이메일"),
+                                        fieldWithPath("introduction").type(JsonFieldType.STRING)
+                                                .description("수정할 한 줄 소개")
                                 )
                                 .responseSchema(Schema.schema("update_user_profile_response_body"))
                                 .responseFields(
-                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("수정된 닉네임"),
-                                        fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("프로필 이미지 URL"),
-                                        fieldWithPath("data.email").type(JsonFieldType.STRING).description("수정된 이메일"),
-                                        fieldWithPath("data.introduction").type(JsonFieldType.STRING).description("수정된 한 줄 소개")
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.nickname").type(JsonFieldType.STRING)
+                                                .description("수정된 닉네임"),
+                                        fieldWithPath("data.profileImageUrl").type(
+                                                JsonFieldType.STRING).description("프로필 이미지 URL"),
+                                        fieldWithPath("data.email").type(JsonFieldType.STRING)
+                                                .description("수정된 이메일"),
+                                        fieldWithPath("data.introduction").type(
+                                                JsonFieldType.STRING).description("수정된 한 줄 소개")
                                 )
                                 .build()
                 ))
@@ -276,16 +317,17 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/api/v1/users/profile/image")
-                .with(csrf())
-                .header("USER-ID", "loginId_1"));
+                RestDocumentationRequestBuilders.get(BASE_URL+"/profile/image")
+                        .with(csrf())
+                        .header("USER-ID", LOGIN_ID));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 이미지 URL입니다."))
-                .andExpect(jsonPath("$.data.profileImageUrl").value(profileImageServiceResponse.getProfileImageUrl()));
+                .andExpect(jsonPath("$.data.profileImageUrl").value(
+                        profileImageServiceResponse.getProfileImageUrl()));
 
         verify(userService).getProfileImage(anyString());
 
@@ -301,11 +343,15 @@ class UserControllerTest {
                                 .requestHeaders(
                                         headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
                                 )
-                                .responseSchema(Schema.schema("get_user_profile_image_response_body"))
+                                .responseSchema(
+                                        Schema.schema("get_user_profile_image_response_body"))
                                 .responseFields(
-                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("프로필 이미지 URL")
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.profileImageUrl").type(
+                                                JsonFieldType.STRING).description("프로필 이미지 URL")
                                 )
                                 .build()
                 ))
@@ -316,31 +362,30 @@ class UserControllerTest {
     @Test
     void updateProfileImage() throws Exception {
         // given
-        MockMultipartFile profileImage = new MockMultipartFile("profileImage", "profileImage.jpg", "image/jpeg", "profileImage".getBytes());
-        ProfileImageUpdateRequest profileImageUpdateRequest = ProfileImageUpdateRequest.builder()
-                .profileImage(profileImage)
-                .build();
-
+        MockMultipartFile profileImage = new MockMultipartFile("profileImage", "profileImage.jpg",
+                "image/jpeg", "profileImage" .getBytes());
 
         ProfileImageServiceResponse profileImageServiceResponse = ProfileImageServiceResponse.builder()
                 .profileImageUrl("profileImageUrl_1")
                 .build();
 
-        given(userService.updateProfileImage(any(ProfileImageServiceRequest.class))).willReturn(profileImageServiceResponse);
+        given(userService.updateProfileImage(any(ProfileImageServiceRequest.class))).willReturn(
+                profileImageServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.multipart("/api/v1/users/profile/image")
-                .file(profileImage)
-                .with(csrf())
-                .header("USER-ID", "loginId_1"));
+                RestDocumentationRequestBuilders.multipart(BASE_URL+"/profile/image")
+                        .file(profileImage)
+                        .with(csrf())
+                        .header("USER-ID", LOGIN_ID));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 이미지를 등록했습니다."))
-                .andExpect(jsonPath("$.data.profileImageUrl").value(profileImageServiceResponse.getProfileImageUrl()));
+                .andExpect(jsonPath("$.data.profileImageUrl").value(
+                        profileImageServiceResponse.getProfileImageUrl()));
 
         verify(userService).updateProfileImage(any(ProfileImageServiceRequest.class));
 
@@ -352,15 +397,20 @@ class UserControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("user-profile")
                                 .summary("로그인한 사용자의 프로필 이미지를 수정한다.")
-                                .requestSchema(Schema.schema("update_user_profile_image_request_body"))
+                                .requestSchema(
+                                        Schema.schema("update_user_profile_image_request_body"))
                                 .requestHeaders(
                                         headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
                                 )
-                                .responseSchema(Schema.schema("update_user_profile_image_response_body"))
+                                .responseSchema(
+                                        Schema.schema("update_user_profile_image_response_body"))
                                 .responseFields(
-                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("수정된 프로필 이미지 URL")
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.profileImageUrl").type(
+                                                JsonFieldType.STRING).description("수정된 프로필 이미지 URL")
                                 )
                                 .build()
                 ))
@@ -379,16 +429,17 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.delete("/api/v1/users/profile/image")
-                .with(csrf())
-                .header("USER-ID", "loginId_1"));
+                RestDocumentationRequestBuilders.delete(BASE_URL+"/profile/image")
+                        .with(csrf())
+                        .header("USER-ID", LOGIN_ID));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 이미지를 삭제했습니다."))
-                .andExpect(jsonPath("$.data.profileImageUrl").value(profileImageServiceResponse.getProfileImageUrl()));
+                .andExpect(jsonPath("$.data.profileImageUrl").value(
+                        profileImageServiceResponse.getProfileImageUrl()));
 
         verify(userService).deleteProfileImage(anyString());
 
@@ -400,15 +451,20 @@ class UserControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("user-profile")
                                 .summary("로그인한 사용자의 프로필 이미지를 삭제한다.")
-                                .requestSchema(Schema.schema("delete_user_profile_image_request_body"))
+                                .requestSchema(
+                                        Schema.schema("delete_user_profile_image_request_body"))
                                 .requestHeaders(
                                         headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
                                 )
-                                .responseSchema(Schema.schema("delete_user_profile_image_response_body"))
+                                .responseSchema(
+                                        Schema.schema("delete_user_profile_image_response_body"))
                                 .responseFields(
-                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("기본 프로필 이미지 URL")
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.profileImageUrl").type(
+                                                JsonFieldType.STRING).description("기본 프로필 이미지 URL")
                                 )
                                 .build()
                 ))
@@ -442,24 +498,31 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/api/v1/users/followers")
-                .with(csrf())
-                .header("USER-ID", "loginId"));
+                RestDocumentationRequestBuilders.get(BASE_URL+"/followers")
+                        .with(csrf())
+                        .header("USER-ID", LOGIN_ID));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("로그인 된 사용자의 팔로워 목록을 조회했습니다."))
-                .andExpect(jsonPath("$.data.requestLoginId").value(followerServiceResponse.getRequestLoginId()))
+                .andExpect(jsonPath("$.data.requestLoginId").value(
+                        followerServiceResponse.getRequestLoginId()))
                 .andExpect(jsonPath("$.data.followers[0].id").value(followers.get(0).getId()))
                 .andExpect(jsonPath("$.data.followers[1].id").value(followers.get(1).getId()))
-                .andExpect(jsonPath("$.data.followers[0].loginId").value(followers.get(0).getLoginId()))
-                .andExpect(jsonPath("$.data.followers[1].loginId").value(followers.get(1).getLoginId()))
-                .andExpect(jsonPath("$.data.followers[0].nickname").value(followers.get(0).getNickname()))
-                .andExpect(jsonPath("$.data.followers[1].nickname").value(followers.get(1).getNickname()))
-                .andExpect(jsonPath("$.data.followers[0].profileImageUrl").value(followers.get(0).getProfileImageUrl()))
-                .andExpect(jsonPath("$.data.followers[1].profileImageUrl").value(followers.get(1).getProfileImageUrl()));
+                .andExpect(jsonPath("$.data.followers[0].loginId").value(
+                        followers.get(0).getLoginId()))
+                .andExpect(jsonPath("$.data.followers[1].loginId").value(
+                        followers.get(1).getLoginId()))
+                .andExpect(jsonPath("$.data.followers[0].nickname").value(
+                        followers.get(0).getNickname()))
+                .andExpect(jsonPath("$.data.followers[1].nickname").value(
+                        followers.get(1).getNickname()))
+                .andExpect(jsonPath("$.data.followers[0].profileImageUrl").value(
+                        followers.get(0).getProfileImageUrl()))
+                .andExpect(jsonPath("$.data.followers[1].profileImageUrl").value(
+                        followers.get(1).getProfileImageUrl()));
 
         verify(userService).getFollowers(anyString());
 
@@ -476,13 +539,21 @@ class UserControllerTest {
                                 )
                                 .responseSchema(Schema.schema("get_user_followers_response_body"))
                                 .responseFields(
-                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data.requestLoginId").type(JsonFieldType.STRING).description("요청한 사용자의 아이디"),
-                                        fieldWithPath("data.followers[].id").type(JsonFieldType.NUMBER).description("팔로워의 식별자"),
-                                        fieldWithPath("data.followers[].loginId").type(JsonFieldType.STRING).description("팔로워의 아이디"),
-                                        fieldWithPath("data.followers[].nickname").type(JsonFieldType.STRING).description("팔로워의 닉네임"),
-                                        fieldWithPath("data.followers[].profileImageUrl").type(JsonFieldType.STRING).description("팔로워의 프로필 이미지 URL")
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.requestLoginId").type(
+                                                JsonFieldType.STRING).description("요청한 사용자의 아이디"),
+                                        fieldWithPath("data.followers[].id").type(
+                                                JsonFieldType.NUMBER).description("팔로워의 식별자"),
+                                        fieldWithPath("data.followers[].loginId").type(
+                                                JsonFieldType.STRING).description("팔로워의 아이디"),
+                                        fieldWithPath("data.followers[].nickname").type(
+                                                JsonFieldType.STRING).description("팔로워의 닉네임"),
+                                        fieldWithPath("data.followers[].profileImageUrl").type(
+                                                        JsonFieldType.STRING)
+                                                .description("팔로워의 프로필 이미지 URL")
                                 )
                                 .build()
                 ))
@@ -516,24 +587,31 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/api/v1/users/followings")
-                .with(csrf())
-                .header("USER-ID", "loginId"));
+                RestDocumentationRequestBuilders.get(BASE_URL+"/followings")
+                        .with(csrf())
+                        .header("USER-ID", LOGIN_ID));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("로그인 된 사용자의 팔로잉 목록을 조회했습니다."))
-                .andExpect(jsonPath("$.data.requestLoginId").value(followingServiceResponse.getRequestLoginId()))
+                .andExpect(jsonPath("$.data.requestLoginId").value(
+                        followingServiceResponse.getRequestLoginId()))
                 .andExpect(jsonPath("$.data.followings[0].id").value(followings.get(0).getId()))
                 .andExpect(jsonPath("$.data.followings[1].id").value(followings.get(1).getId()))
-                .andExpect(jsonPath("$.data.followings[0].loginId").value(followings.get(0).getLoginId()))
-                .andExpect(jsonPath("$.data.followings[1].loginId").value(followings.get(1).getLoginId()))
-                .andExpect(jsonPath("$.data.followings[0].nickname").value(followings.get(0).getNickname()))
-                .andExpect(jsonPath("$.data.followings[1].nickname").value(followings.get(1).getNickname()))
-                .andExpect(jsonPath("$.data.followings[0].profileImageUrl").value(followings.get(0).getProfileImageUrl()))
-                .andExpect(jsonPath("$.data.followings[1].profileImageUrl").value(followings.get(1).getProfileImageUrl()));
+                .andExpect(jsonPath("$.data.followings[0].loginId").value(
+                        followings.get(0).getLoginId()))
+                .andExpect(jsonPath("$.data.followings[1].loginId").value(
+                        followings.get(1).getLoginId()))
+                .andExpect(jsonPath("$.data.followings[0].nickname").value(
+                        followings.get(0).getNickname()))
+                .andExpect(jsonPath("$.data.followings[1].nickname").value(
+                        followings.get(1).getNickname()))
+                .andExpect(jsonPath("$.data.followings[0].profileImageUrl").value(
+                        followings.get(0).getProfileImageUrl()))
+                .andExpect(jsonPath("$.data.followings[1].profileImageUrl").value(
+                        followings.get(1).getProfileImageUrl()));
 
         verify(userService).getFollowings(anyString());
 
@@ -550,13 +628,21 @@ class UserControllerTest {
                                 )
                                 .responseSchema(Schema.schema("get_user_followings_response_body"))
                                 .responseFields(
-                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data.requestLoginId").type(JsonFieldType.STRING).description("요청한 사용자의 아이디"),
-                                        fieldWithPath("data.followings[].id").type(JsonFieldType.NUMBER).description("팔로잉의 식별자"),
-                                        fieldWithPath("data.followings[].loginId").type(JsonFieldType.STRING).description("팔로잉의 아이디"),
-                                        fieldWithPath("data.followings[].nickname").type(JsonFieldType.STRING).description("팔로잉의 닉네임"),
-                                        fieldWithPath("data.followings[].profileImageUrl").type(JsonFieldType.STRING).description("팔로잉의 프로필 이미지 URL")
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.requestLoginId").type(
+                                                JsonFieldType.STRING).description("요청한 사용자의 아이디"),
+                                        fieldWithPath("data.followings[].id").type(
+                                                JsonFieldType.NUMBER).description("팔로잉의 식별자"),
+                                        fieldWithPath("data.followings[].loginId").type(
+                                                JsonFieldType.STRING).description("팔로잉의 아이디"),
+                                        fieldWithPath("data.followings[].nickname").type(
+                                                JsonFieldType.STRING).description("팔로잉의 닉네임"),
+                                        fieldWithPath("data.followings[].profileImageUrl").type(
+                                                        JsonFieldType.STRING)
+                                                .description("팔로잉의 프로필 이미지 URL")
                                 )
                                 .build()
                 ))
@@ -575,17 +661,17 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.post("/api/v1/users/follow")
-                .with(csrf())
-                .header("USER-ID", "loginId")
-                .content(objectMapper.writeValueAsString(followRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
+                RestDocumentationRequestBuilders.post(BASE_URL+"/follow")
+                        .with(csrf())
+                        .header("USER-ID", LOGIN_ID)
+                        .content(objectMapper.writeValueAsString(followRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("사용자를 팔로우했습니다."))
                 .andExpect(jsonPath("$.data").isEmpty());
 
@@ -604,13 +690,17 @@ class UserControllerTest {
                                         headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
                                 )
                                 .requestFields(
-                                        fieldWithPath("targetId").type(JsonFieldType.STRING).description("팔로우할 사용자의 아이디")
+                                        fieldWithPath("targetId").type(JsonFieldType.STRING)
+                                                .description("팔로우할 사용자의 아이디")
                                 )
                                 .responseSchema(Schema.schema("follow_user_response_body"))
                                 .responseFields(
-                                        fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
-                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터").optional()
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                                .description("응답 데이터").optional()
                                 )
                                 .build()
                 ))
@@ -629,9 +719,9 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.delete("/api/v1/users/follow")
+                RestDocumentationRequestBuilders.delete(BASE_URL+"/follow")
                         .with(csrf())
-                        .header("USER-ID", "loginId")
+                        .header("USER-ID", LOGIN_ID)
                         .content(objectMapper.writeValueAsString(followRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -639,7 +729,7 @@ class UserControllerTest {
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("사용자를 언팔로우했습니다."))
                 .andExpect(jsonPath("$.data").isEmpty());
 
@@ -664,9 +754,9 @@ class UserControllerTest {
                                 .responseSchema(Schema.schema("unfollow_user_response_body"))
                                 .responseFields(
                                         fieldWithPath("status").type(JsonFieldType.STRING)
-                                                .description("응답 상태"),
+                                                .description(STATUS_FIELD_DESCRIPTION),
                                         fieldWithPath("message").type(JsonFieldType.STRING)
-                                                .description("응답 메시지"),
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT)
                                                 .description("응답 데이터").optional()
                                 )
@@ -687,9 +777,9 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.delete("/api/v1/users/follower")
+                RestDocumentationRequestBuilders.delete(BASE_URL+"/follower")
                         .with(csrf())
-                        .header("USER-ID", "loginId")
+                        .header("USER-ID", LOGIN_ID)
                         .content(objectMapper.writeValueAsString(followerRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -697,7 +787,7 @@ class UserControllerTest {
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("사용자를 팔로워 목록에서 삭제했습니다."))
                 .andExpect(jsonPath("$.data").isEmpty());
 
@@ -722,9 +812,9 @@ class UserControllerTest {
                                 .responseSchema(Schema.schema("delete_follower_response_body"))
                                 .responseFields(
                                         fieldWithPath("status").type(JsonFieldType.STRING)
-                                                .description("응답 상태"),
+                                                .description(STATUS_FIELD_DESCRIPTION),
                                         fieldWithPath("message").type(JsonFieldType.STRING)
-                                                .description("응답 메시지"),
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT)
                                                 .description("응답 데이터").optional()
                                 )
