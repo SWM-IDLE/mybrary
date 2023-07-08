@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/datasource/remote_datasource.dart';
+import 'package:mybrary/data/model/book_search_data.dart';
+import 'package:mybrary/data/model/book_search_response.dart';
 import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/ui/search/components/search_book_list.dart';
+import 'package:mybrary/ui/search/components/search_loading.dart';
+import 'package:mybrary/ui/search/components/search_popular_keyword.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -10,29 +15,44 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  late final List<dynamic> _bookSearchItems = [];
+  late Future<BookSearchResponse> bookSearchItems;
+  late List<BookSearchData> bookSearchData = [];
+  late Future<BookSearchResponse> bookNextSearchResponse;
+  late bool isSearching = false;
+  late bool isMaxScrollExtent = false;
 
-  final List<String> popularSearchKeyword = [
-    '돈의 속성',
-    '코스모스',
-    '죽은 자의 집회',
-    '데미안',
-    '죽음의 수용소에서',
-    '피프티피플',
-    '함께 자라기',
-  ];
+  final ScrollController scrollController = ScrollController();
+  final TextEditingController bookSearchController = TextEditingController();
 
-  TextEditingController _bookSearchController = TextEditingController();
+  void getBookSearchPopularKeywordData(bool isBinding) {
+    final popularKeyword = bookSearchController.text;
+    setState(() {
+      if (popularKeyword != "") {
+        isBinding = true;
+        bookSearchItems =
+            RemoteDataSource.getBookSearchKeywordResponse(popularKeyword);
+        isSearching = true;
+      }
+    });
+  }
 
   @override
-  void setState(VoidCallback fn) {
-    print(_bookSearchItems);
-    super.setState(fn);
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    scrollController.addListener(() {
+      ScrollPosition scrollPosition = scrollController.position;
+      setState(() {
+        if (scrollPosition.pixels == scrollPosition.maxScrollExtent) {
+          isMaxScrollExtent = true;
+        }
+      });
+    });
   }
 
   @override
   void dispose() {
-    _bookSearchController.dispose();
+    bookSearchController.dispose();
     super.dispose();
   }
 
@@ -42,12 +62,6 @@ class _SearchScreenState extends State<SearchScreen> {
       borderSide: BorderSide.none,
       borderRadius: BorderRadius.circular(10.0),
     );
-
-    final titleTextStlye = TextStyle(
-      fontSize: 16.0,
-      fontWeight: FontWeight.w700,
-    );
-
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -72,11 +86,14 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: TextField(
                       autofocus: true,
                       textInputAction: TextInputAction.search,
-                      controller: _bookSearchController,
+                      controller: bookSearchController,
                       cursorColor: Colors.green,
                       onSubmitted: (value) {
                         setState(() {
-                          RemoteDataSource().getBookSearchKeywordData(value);
+                          bookSearchItems =
+                              RemoteDataSource.getBookSearchKeywordResponse(
+                                  value);
+                          isSearching = true;
                         });
                       },
                       decoration: InputDecoration(
@@ -94,8 +111,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
-                              _bookSearchController.clear();
-                              _bookSearchItems.clear();
+                              bookSearchController.clear();
                             });
                           },
                           icon: Icon(
@@ -108,223 +124,87 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                 ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.camera_alt_outlined),
-                ),
+                if (!isSearching)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.camera_alt_outlined),
+                    ),
+                  )
+                else
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        bookSearchController.clear();
+                        bookSearchData.clear();
+                        isSearching = false;
+                      });
+                    },
+                    child: Text(
+                      '취소',
+                      style: TextStyle(
+                        color: LESS_BLACK_COLOR,
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  )
               ],
             ),
             SizedBox(
               height: 8.0,
             ),
-            FutureBuilder(
-              future: RemoteDataSource()
-                  .getBookSearchKeywordData(_bookSearchController.text),
-              builder: (context, snapshot) {
-                if (snapshot.hasData &&
-                    snapshot.connectionState == ConnectionState.done) {
-                  final searchBookKeywordResponseData = snapshot.data!['data'];
-                  final searchBookKeywordDataList =
-                      snapshot.data!['data']['bookSearchResult'];
-                  _bookSearchItems.add(searchBookKeywordDataList);
+            if (!isSearching)
+              SearchPopularKeyword(
+                bookSearchController: bookSearchController,
+                onBookSearchBinding: getBookSearchPopularKeywordData,
+              )
+            else
+              FutureBuilder<BookSearchResponse>(
+                future: bookSearchItems,
+                builder: (context, snapshot) {
+                  // 서버 요청에 문제가 있을 경우
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('에러가 있습니다.'),
+                    );
+                  }
 
-                  return Expanded(
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                          width: double.infinity,
-                          height: 40.0,
-                          child: Text(
-                            '검색 도서 ${searchBookKeywordDataList.length}',
-                            style: titleTextStlye,
-                          ),
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: _bookSearchItems.length,
-                            itemBuilder: (context, index) {
-                              final searchBookData = _bookSearchItems[index];
-                              print('$index : ${_bookSearchItems[index]}');
-                              final DateTime publicationDate = DateTime.parse(
-                                  searchBookData['publicationDate']!);
+                  // 서버 요청을 기다리는 경우
+                  if (!snapshot.hasData) {
+                    return SearchLoading();
+                  }
 
-                              // if(index == snapshot.data!.length) {
-                              //   if(searchBookKeywordResponseData['nextRequestUrl']) {
-                              //     loadMore();
-                              //     return Loading(...);
-                              //   } else {
-                              //     return Container();
-                              //   }
-                              // }
+                  // 서버 요청이 완료된 경우
+                  if (snapshot.hasData) {
+                    BookSearchResponse bookSearchResponse = snapshot.data!;
+                    if (bookSearchData.isEmpty) {
+                      bookSearchData
+                          .addAll(bookSearchResponse.data!.bookSearchResult!);
+                    }
 
-                              return Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0,
-                                      vertical: 22.0,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 80,
-                                          height: 120,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color:
-                                                  Colors.grey.withOpacity(0.2),
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
-                                          ),
-                                          child: Image.network(
-                                            searchBookData['thumbnailUrl']!,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 12.0,
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(searchBookData['title']!,
-                                                  style: TextStyle(
-                                                    fontSize: 16.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  textWidthBasis:
-                                                      TextWidthBasis.parent),
-                                              SizedBox(
-                                                height: 4.0,
-                                              ),
-                                              Text(
-                                                '${searchBookData['publisher']!} 저',
-                                                style: TextStyle(
-                                                  fontSize: 14.0,
-                                                  color:
-                                                      BOOK_DESCRIPTION_GREY_COLOR,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 4.0,
-                                              ),
-                                              Text(
-                                                '${publicationDate.year}.${publicationDate.month}',
-                                                style: TextStyle(
-                                                  fontSize: 14.0,
-                                                  color: GREY_COLOR,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 6.0,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: BOOK_STAR_COLOR,
-                                                    size: 20.0,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 4.0,
-                                                  ),
-                                                  Text(
-                                                    '${searchBookData['starRating']!}',
-                                                    style: TextStyle(
-                                                      fontSize: 15.0,
-                                                      color: GREY_COLOR,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Divider(
-                                    thickness: 1,
-                                    height: 1,
-                                    color: DIVIDER_COLOR,
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                } else if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return Center(
-                      child: CircularProgressIndicator(
-                    backgroundColor: PRIMARY_COLOR.withOpacity(0.2),
-                    valueColor: AlwaysStoppedAnimation<Color>(PRIMARY_COLOR),
-                  ));
-                } else if (snapshot.error.toString().contains('404')) {
-                  return Center(
-                    child: Text('검색 결과가 없습니다.'),
-                  );
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '인기 검색어',
-                          style: titleTextStlye,
-                        ),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        Wrap(
-                          spacing: 8.0,
-                          runSpacing: 8.0,
-                          children: List.generate(
-                            popularSearchKeyword.length,
-                            (index) => InkWell(
-                              onTap: () {
-                                _bookSearchController.text =
-                                    popularSearchKeyword[index];
-                                setState(() {
-                                  RemoteDataSource().getBookSearchKeywordData(
-                                      _bookSearchController.text);
-                                });
-                                FocusManager.instance.primaryFocus?.unfocus();
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12.0, vertical: 8.0),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: GREY_COLOR.withOpacity(0.5),
-                                  ),
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                                child: Text(
-                                  popularSearchKeyword[index],
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                    color: GREY_COLOR,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-              },
-            ),
+                    // if (isMaxScrollExtent &&
+                    //     bookSearchResponse.data!.nextRequestUrl != "") {
+                    //   bookNextSearchResponse =
+                    //       RemoteDataSource.getBookSearchKeywordResponse("",
+                    //           nextRequestUrl:
+                    //               bookSearchResponse.data!.nextRequestUrl!);
+                    //   bookNextSearchResponse.then((value) {
+                    //     bookSearchData.addAll(value.data!.bookSearchResult!);
+                    //   }).catchError((e) {
+                    //     log('ERROR: nextRequestUrl 요청에 대한 오류입니다. $e');
+                    //   });
+                    // }
+
+                    return SearchBookList(
+                      searchBookList: bookSearchData,
+                      scrollController: scrollController,
+                    );
+                  }
+
+                  return Container();
+                },
+              ),
           ],
         ),
       ),
