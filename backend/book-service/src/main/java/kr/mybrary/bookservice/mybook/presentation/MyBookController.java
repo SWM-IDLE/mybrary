@@ -27,10 +27,9 @@ public class MyBookController {
     private final MyBookService myBookService;
 
     @PostMapping("/mybooks")
-    public ResponseEntity createMyBook(@RequestBody MyBookCreateRequest request) {
+    public ResponseEntity createMyBook(@RequestHeader("USER-ID") String loginId, @RequestBody MyBookCreateRequest request) {
 
-        String userId = "test1"; // TODO: 임시 회원 ID
-        myBookService.create(request.toServiceRequest(userId));
+        myBookService.create(request.toServiceRequest(loginId));
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(HttpStatus.CREATED.toString(), "내 서재에 도서를 등록했습니다.", null));
