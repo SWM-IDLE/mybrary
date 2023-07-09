@@ -1,10 +1,9 @@
 package kr.mybrary.userservice.user.domain;
 
-import jakarta.transaction.Transactional;
 import kr.mybrary.userservice.user.domain.dto.UserMapper;
 import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileImageServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
@@ -21,6 +20,7 @@ import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileImageServiceResponse updateProfileImage(
-            ProfileImageServiceRequest serviceRequest) {
+            ProfileImageUpdateServiceRequest serviceRequest) {
         return null;
     }
 
