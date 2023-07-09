@@ -19,12 +19,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import kr.mybrary.userservice.user.domain.UserService;
 import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileImageServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.FollowResponse;
@@ -362,20 +363,24 @@ class UserControllerTest {
     @Test
     void updateProfileImage() throws Exception {
         // given
-        MockMultipartFile profileImage = new MockMultipartFile("profileImage", "profileImage.jpg",
-                "image/jpeg", "profileImage" .getBytes());
+        MockMultipartFile profileImage = new MockMultipartFile("profileImage", "user1.png", "image/jpg",
+                "profileImage".getBytes());
 
         ProfileImageServiceResponse profileImageServiceResponse = ProfileImageServiceResponse.builder()
-                .profileImageUrl("profileImageUrl_1")
+                .profileImageUrl("profileImageUrl")
                 .build();
 
-        given(userService.updateProfileImage(any(ProfileImageServiceRequest.class))).willReturn(
+        given(userService.updateProfileImage(any(ProfileImageUpdateServiceRequest.class))).willReturn(
                 profileImageServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
                 RestDocumentationRequestBuilders.multipart(BASE_URL+"/profile/image")
                         .file(profileImage)
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
                         .with(csrf())
                         .header("USER-ID", LOGIN_ID));
 
@@ -387,7 +392,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.data.profileImageUrl").value(
                         profileImageServiceResponse.getProfileImageUrl()));
 
-        verify(userService).updateProfileImage(any(ProfileImageServiceRequest.class));
+        verify(userService).updateProfileImage(any(ProfileImageUpdateServiceRequest.class));
 
         // docs
         actions.andDo(document("update-user-profile-image",

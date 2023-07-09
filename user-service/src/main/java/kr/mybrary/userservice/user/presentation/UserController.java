@@ -5,7 +5,7 @@ import kr.mybrary.userservice.global.dto.response.SuccessResponse;
 import kr.mybrary.userservice.user.domain.UserService;
 import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileImageServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
@@ -15,7 +15,6 @@ import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.presentation.dto.request.FollowRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.FollowerRequest;
-import kr.mybrary.userservice.user.presentation.dto.request.ProfileImageUpdateRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.ProfileUpdateRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +22,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -91,12 +91,11 @@ public class UserController {
         );
     }
 
-    @PostMapping("/profile/image")
+    @PutMapping("/profile/image")
     public ResponseEntity<SuccessResponse> updateProfileImage(
-            @RequestHeader("USER-ID") String loginId,
-            @ModelAttribute ProfileImageUpdateRequest profileImageUpdateRequest) {
-        ProfileImageServiceRequest serviceRequest = ProfileImageServiceRequest.of(
-                profileImageUpdateRequest, loginId);
+            @RequestHeader("USER-ID") String loginId, @RequestParam("profileImage") MultipartFile profileImage) {
+        ProfileImageUpdateServiceRequest serviceRequest = ProfileImageUpdateServiceRequest.of(
+                profileImage, loginId);
         ProfileImageServiceResponse serviceResponse = userService.updateProfileImage(
                 serviceRequest);
 
@@ -149,7 +148,8 @@ public class UserController {
     @PostMapping("/follow")
     public ResponseEntity<SuccessResponse> follow(@RequestHeader("USER-ID") String loginId,
             @RequestBody FollowRequest followRequest) {
-        FollowServiceRequest serviceRequest = FollowServiceRequest.of(loginId, followRequest);
+        String targetId = followRequest.getTargetId();
+        FollowServiceRequest serviceRequest = FollowServiceRequest.of(loginId, targetId);
         userService.follow(serviceRequest);
 
         return ResponseEntity.ok().body(
@@ -160,7 +160,8 @@ public class UserController {
     @DeleteMapping("/follow")
     public ResponseEntity<SuccessResponse> unfollow(@RequestHeader("USER-ID") String loginId,
             @RequestBody FollowRequest followRequest) {
-        FollowServiceRequest serviceRequest = FollowServiceRequest.of(loginId, followRequest);
+        String targetId = followRequest.getTargetId();
+        FollowServiceRequest serviceRequest = FollowServiceRequest.of(loginId, targetId);
         userService.unfollow(serviceRequest);
 
         return ResponseEntity.ok().body(
@@ -171,7 +172,8 @@ public class UserController {
     @DeleteMapping("/follower")
     public ResponseEntity<SuccessResponse> unfollowing(@RequestHeader("USER-ID") String loginId,
             @RequestBody FollowerRequest followerRequest) {
-        FollowerServiceRequest serviceRequest = FollowerServiceRequest.of(loginId, followerRequest);
+        String sourceId = followerRequest.getSourceId();
+        FollowerServiceRequest serviceRequest = FollowerServiceRequest.of(loginId, sourceId);
         userService.deleteFollower(serviceRequest);
 
         return ResponseEntity.ok().body(
