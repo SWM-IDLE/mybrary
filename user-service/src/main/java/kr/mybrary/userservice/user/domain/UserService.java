@@ -2,7 +2,7 @@ package kr.mybrary.userservice.user.domain;
 
 import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileImageServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
@@ -21,7 +21,7 @@ public interface UserService {
 
     ProfileImageServiceResponse getProfileImage(String loginId);
 
-    ProfileImageServiceResponse updateProfileImage(ProfileImageServiceRequest serviceRequest);
+    ProfileImageServiceResponse updateProfileImage(ProfileImageUpdateServiceRequest serviceRequest);
 
     ProfileImageServiceResponse deleteProfileImage(String loginId);
 
