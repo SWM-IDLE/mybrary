@@ -55,6 +55,9 @@ class MyBookControllerTest {
     @MockBean
     private MyBookService myBookService;
 
+    private static final String LOGIN_ID = "test-login-id";
+    private static final String USER_ID = "user-login-id";
+
     @DisplayName("내 서재에 책을 추가한다.")
     @Test
     void createMyBook() throws Exception {
@@ -108,7 +111,7 @@ class MyBookControllerTest {
                                         ).build())));
     }
 
-    @DisplayName("내 서재의 도서를 모두 조회한다.")
+    @DisplayName("서재의 도서를 모두 조회한다.")
     @Test
     void findAllMybooks() throws Exception {
         // given
@@ -118,13 +121,14 @@ class MyBookControllerTest {
         given(myBookService.findAllMyBooks(any())).willReturn(List.of(expectedResponse_1, expectedResponse_2));
 
         // when
-        ResultActions actions = mockMvc.perform(get("/api/v1/mybooks"));
+        ResultActions actions = mockMvc.perform(get("/api/v1/users/{userId}/mybooks", USER_ID)
+                .header("USER-ID", LOGIN_ID));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value("200 OK"))
-                .andExpect(jsonPath("$.message").value("내 서재의 도서 목록입니다."))
+                .andExpect(jsonPath("$.message").value("서재의 도서 목록입니다."))
                 .andExpect(jsonPath("$.data").isNotEmpty());
 
         // document
@@ -147,7 +151,7 @@ class MyBookControllerTest {
                                         fieldWithPath("data[].book.description").type(STRING).description("도서 설명"),
                                         fieldWithPath("data[].book.thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
                                         fieldWithPath("data[].book.stars").type(NUMBER).description("도서 별점"),
-                                        fieldWithPath("data[].public").type(BOOLEAN).description("공개 여부"),
+                                        fieldWithPath("data[].showable").type(BOOLEAN).description("공개 여부"),
                                         fieldWithPath("data[].exchangeable").type(BOOLEAN).description("교환 여부"),
                                         fieldWithPath("data[].shareable").type(BOOLEAN).description("나눔 여부")
                                 ).build())));
