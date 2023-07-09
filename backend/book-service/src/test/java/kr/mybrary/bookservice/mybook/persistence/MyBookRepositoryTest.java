@@ -1,6 +1,7 @@
 package kr.mybrary.bookservice.mybook.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
@@ -80,5 +81,28 @@ class MyBookRepositoryTest {
 
         // then
         assertThat(myBooks.size()).isEqualTo(2);
+    }
+
+    @DisplayName("마이북 ID로 마이북을 조회한다. (삭제된 책은 보여주지 않는다.)")
+    @Test
+    void findMyBookById() {
+
+        // given
+        Book savedBook_1 = bookRepository.save(BookTestData.createBook());
+        Book savedBook_2 = bookRepository.save(BookTestData.createBook());
+
+        MyBook myBook_1 = MybookTestData.createMyBook(savedBook_1);
+        MyBook myBook_2 = MybookTestData.createDeletedMyBook(savedBook_2);
+
+        MyBook savedMyBook = myBookRepository.save(myBook_1);
+        MyBook savedDeletedMyBook = myBookRepository.save(myBook_2);
+
+        // when
+        assertAll(
+                () -> assertThat(myBookRepository.findByIdAndDeletedIsFalse(savedMyBook.getId())
+                        .isPresent()).isTrue(),
+                () -> assertThatThrownBy(() -> myBookRepository.findByIdAndDeletedIsFalse(savedDeletedMyBook.getId())
+                                .orElseThrow(IllegalArgumentException::new))
+        );
     }
 }
