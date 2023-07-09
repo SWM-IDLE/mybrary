@@ -1,6 +1,7 @@
 package kr.mybrary.bookservice.mybook.presentation;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,6 +58,7 @@ class MyBookControllerTest {
 
     private static final String LOGIN_ID = "test-login-id";
     private static final String USER_ID = "user-login-id";
+    private static final Long MYBOOK_ID = 1L;
 
     @DisplayName("내 서재에 책을 추가한다.")
     @Test
@@ -139,6 +141,12 @@ class MyBookControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("mybook")
                                 .summary("내 서재의 도서를 모두 조회한다.")
+                                .pathParameters(
+                                        parameterWithName("userId").type(SimpleType.STRING).description("사용자 ID")
+                                )
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("사용자 ID")
+                                )
                                 .responseSchema(Schema.schema("find-all-mybooks response body"))
                                 .responseFields(
                                         fieldWithPath("status").type(STRING).description("응답 상태"),
@@ -163,13 +171,13 @@ class MyBookControllerTest {
     void findMyBookDetail() throws Exception {
 
         // given
-        Long id = 1L;
         MyBookDetailResponse expectedResponse = MybookTestData.createMyBookDetailResponse();
 
-        given(myBookService.findMyBookDetail(any(), any())).willReturn(expectedResponse);
+        given(myBookService.findMyBookDetail(any())).willReturn(expectedResponse);
 
         // when
-        ResultActions actions = mockMvc.perform(get("/api/v1/mybooks/{id}", id));
+        ResultActions actions = mockMvc.perform(get("/api/v1/users/{userId}/mybooks/{mybookId}", LOGIN_ID, MYBOOK_ID)
+                .header("USER-ID", LOGIN_ID));
 
         // then
         actions
@@ -187,15 +195,19 @@ class MyBookControllerTest {
                                 ResourceSnippetParameters.builder()
                                         .tag("mybook")
                                         .summary("내 마이북의 상세보기를 조회한다.")
+                                        .requestHeaders(
+                                                headerWithName("USER-ID").description("사용자 ID")
+                                        )
                                         .pathParameters(
-                                                parameterWithName("id").type(SimpleType.INTEGER).description("마이북 ID")
+                                                parameterWithName("userId").type(SimpleType.STRING).description("사용자 ID"),
+                                                parameterWithName("mybookId").type(SimpleType.NUMBER).description("마이북 ID")
                                         )
                                         .responseSchema(Schema.schema("find-mybook-detail response body"))
                                         .responseFields(
                                                 fieldWithPath("status").type(STRING).description("응답 상태"),
                                                 fieldWithPath("message").type(STRING).description("응답 메시지"),
                                                 fieldWithPath("data.id").type(NUMBER).description("마이북 ID"),
-                                                fieldWithPath("data.public").type(BOOLEAN).description("공개 여부"),
+                                                fieldWithPath("data.showable").type(BOOLEAN).description("공개 여부"),
                                                 fieldWithPath("data.exchangeable").type(BOOLEAN).description("교환 여부"),
                                                 fieldWithPath("data.shareable").type(BOOLEAN).description("나눔 여부"),
                                                 fieldWithPath("data.readStatus").type(STRING).description("독서 진행 상태"),

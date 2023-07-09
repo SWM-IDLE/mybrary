@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.mybook.presentation;
 import java.util.List;
 import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
@@ -44,13 +45,15 @@ public class MyBookController {
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "서재의 도서 목록입니다.", myBooks));
     }
 
-    @GetMapping("/mybooks/{id}")
-    public ResponseEntity findMyBookDetail(@PathVariable Long id) {
+    @GetMapping("/users/{userId}/mybooks/{mybookId}")
+    public ResponseEntity findMyBookDetail(@RequestHeader("USER-ID") String loginId,
+            @PathVariable("userId") String userId,
+            @PathVariable("mybookId") Long mybookId) {
 
-        String userId = "test1"; // TODO: 임시 회원 ID
+        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(userId, loginId, mybookId);
 
         return ResponseEntity.ok(
-                SuccessResponse.of(HttpStatus.OK.toString(), "마이북 상세보기입니다.", myBookService.findMyBookDetail(userId, id)));
+                SuccessResponse.of(HttpStatus.OK.toString(), "마이북 상세보기입니다.", myBookService.findMyBookDetail(request)));
     }
 
     @DeleteMapping("/mybooks/{id}")
