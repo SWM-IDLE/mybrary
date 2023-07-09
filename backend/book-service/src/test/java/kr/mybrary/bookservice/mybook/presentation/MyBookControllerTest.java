@@ -72,6 +72,7 @@ class MyBookControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/v1/mybooks")
+                .header("USER-ID", LOGIN_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson));
 
@@ -92,6 +93,9 @@ class MyBookControllerTest {
                                         .tag("mybook")
                                         .summary("마이북으로 등록한다.")
                                         .requestSchema(Schema.schema("create-mybook request body"))
+                                        .requestHeaders(
+                                                headerWithName("USER-ID").description("사용자 ID")
+                                        )
                                         .requestFields(
                                                 fieldWithPath("title").type(STRING).description("도서 제목"),
                                                 fieldWithPath("description").type(STRING).description("도서 설명"),
