@@ -402,6 +402,7 @@ class UserControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("user-profile")
                                 .summary("로그인한 사용자의 프로필 이미지를 수정한다.")
+                                .description("프로필 이미지는 5MB 이하의 jpg, png 파일만 등록할 수 있습니다.")
                                 .requestSchema(
                                         Schema.schema("update_user_profile_image_request_body"))
                                 .requestHeaders(
