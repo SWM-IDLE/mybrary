@@ -5,8 +5,11 @@ import kr.mybrary.bookservice.book.domain.BookService;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.domain.dto.MyBookDtoMapper;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
+import kr.mybrary.bookservice.mybook.domain.exception.MyBookNotFoundException;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
@@ -57,10 +60,17 @@ public class MyBookService {
                 .toList();
     }
 
-    public MyBookDetailResponse findMyBookDetail(String userId, Long id) {
-        // TODO
+    @Transactional(readOnly = true)
+    public MyBookDetailResponse findMyBookDetail(MyBookDetailServiceRequest request) {
 
-        return null;
+        MyBook myBook = myBookRepository.findByIdAndDeletedIsFalse(request.getMybookId())
+                .orElseThrow(MyBookNotFoundException::new);
+
+        if (!myBook.isShareable() && !request.getUserId().equals(request.getLoginId())) {
+            throw new MyBookAccessDeniedException();
+        }
+
+        return MyBookDtoMapper.INSTANCE.entityToMyBookDetailResponse(myBook);
     }
 
     public void deleteMyBook(String userId, Long id) {

@@ -1,6 +1,7 @@
 package kr.mybrary.bookservice.mybook.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,13 +10,19 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
+import java.util.Optional;
 import kr.mybrary.bookservice.book.domain.BookService;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.MybookTestData;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
+import kr.mybrary.bookservice.mybook.domain.exception.MyBookNotFoundException;
+import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -87,7 +94,8 @@ class MyBookServiceTest {
     void findAllMyBooks() {
 
         //given
-        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(LOGIN_ID, LOGIN_ID);
+        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(
+                LOGIN_ID, LOGIN_ID);
 
         given(myBookRepository.findAllByUserId(any())).willReturn(
                 List.of(MybookTestData.createMyBook(), MybookTestData.createMyBookNotShowable()));
@@ -104,7 +112,8 @@ class MyBookServiceTest {
     void findOtherUserAllMyBooks() {
 
         //given
-        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(USER_ID, LOGIN_ID);
+        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(
+                USER_ID, LOGIN_ID);
 
         given(myBookRepository.findAllByUserId(any())).willReturn(
                 List.of(MybookTestData.createMyBook(), MybookTestData.createMyBookNotShowable()));
@@ -121,15 +130,76 @@ class MyBookServiceTest {
     void findAllMyBooksWithoutDeletedMyBook() {
 
         //given
-        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(LOGIN_ID, LOGIN_ID);
+        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(
+                LOGIN_ID, LOGIN_ID);
 
         given(myBookRepository.findAllByUserId(any())).willReturn(
-                List.of(MybookTestData.createMyBook(), MybookTestData.createMyBookNotShowable(), MybookTestData.createDeletedMyBook()));
+                List.of(MybookTestData.createMyBook(), MybookTestData.createMyBookNotShowable(),
+                        MybookTestData.createDeletedMyBook()));
 
         // when, then
         assertAll(
                 () -> assertThat(myBookService.findAllMyBooks(request).size()).isEqualTo(2),
                 () -> verify(myBookRepository).findAllByUserId(request.getUserId())
+        );
+    }
+
+    @DisplayName("내 마이북 상세보기한다.")
+    @Test
+    void findMyBookDetail() {
+
+        //given
+        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, LOGIN_ID, 1L);
+        MyBook myBook = MybookTestData.createMyBook();
+
+        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+                Optional.ofNullable(myBook));
+
+        // when
+        MyBookDetailResponse myBookDetail = myBookService.findMyBookDetail(request);
+
+        // then
+        assertAll(
+                () -> assertThat(myBookDetail).isInstanceOf(MyBookDetailResponse.class),
+                () -> assertThat(myBookDetail.getId()).isEqualTo(myBook.getId()),
+                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId())
+        );
+    }
+
+    @DisplayName("마이북 ID에 해당하는 마이북이 없으면 예외가 발생한다.")
+    @Test
+    void occurExceptionWhenFindMyBookDetailWithNotExistMyBook() {
+
+        //given
+        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, LOGIN_ID, 1L);
+
+        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+                Optional.empty());
+
+        // when, then
+        assertAll(
+                () -> assertThatThrownBy(() -> myBookService.findMyBookDetail(request))
+                        .isInstanceOf(MyBookNotFoundException.class),
+                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId())
+        );
+    }
+
+    @DisplayName("다른 사람의 비공개 마이북 상세보기를 요청하면 예외가 발생한다.")
+    @Test
+    void occurExceptionWhenFindOtherUserPrivateMyBookDetail() {
+
+        //given
+        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(USER_ID, LOGIN_ID, 1L);
+        MyBook myBook = MybookTestData.createMyBookNotShowable();
+
+        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+                Optional.ofNullable(myBook));
+
+        // when, then
+        assertAll(
+                () -> assertThatThrownBy(() -> myBookService.findMyBookDetail(request))
+                        .isInstanceOf(MyBookAccessDeniedException.class),
+                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId())
         );
     }
 }
