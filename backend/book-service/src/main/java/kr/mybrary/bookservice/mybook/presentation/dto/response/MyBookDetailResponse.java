@@ -12,9 +12,9 @@ import lombok.Setter;
 @Builder
 public class MyBookDetailResponse {
     private Long id;
-    private boolean isPublic;
-    private boolean isExchangeable;
-    private boolean isShareable;
+    private boolean showable;
+    private boolean exchangeable;
+    private boolean shareable;
     private ReadStatus readStatus;
     private LocalDateTime startDateOfPossession;
 
