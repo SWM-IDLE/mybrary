@@ -1,16 +1,19 @@
 package kr.mybrary.bookservice.mybook.domain;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.BookService;
 import kr.mybrary.bookservice.book.persistence.Book;
+import kr.mybrary.bookservice.mybook.MybookTestData;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -32,12 +35,15 @@ class MyBookServiceTest {
     @Mock
     private BookService bookService;
 
+    private static final String LOGIN_ID = "test-login-id";
+    private static final String USER_ID = "user-login-id";
+
     @DisplayName("도서를 마이북으로 등록한다.")
     @Test
     void registerMyBook() {
 
         // given
-        MyBookCreateServiceRequest request = createMyBookCreateServiceRequest();
+        MyBookCreateServiceRequest request = MybookTestData.createMyBookCreateServiceRequest();
 
         given(bookService.getRegisteredBook(any()))
                 .willReturn(Book.builder().id(1L).build());
@@ -60,7 +66,7 @@ class MyBookServiceTest {
     void occurExceptionWhenRegisterDuplicatedBook() {
 
         // given
-        MyBookCreateServiceRequest request = createMyBookCreateServiceRequest();
+        MyBookCreateServiceRequest request = MybookTestData.createMyBookCreateServiceRequest();
 
         given(bookService.getRegisteredBook(any()))
                 .willReturn(Book.builder().id(1L).build());
@@ -76,19 +82,54 @@ class MyBookServiceTest {
         );
     }
 
-    private static MyBookCreateServiceRequest createMyBookCreateServiceRequest() {
-        return MyBookCreateServiceRequest.builder()
-                .userId("test1")
-                .title("title")
-                .description("description")
-                .isbn10("isbn10")
-                .isbn13("isbn13")
-                .publisher("publisher")
-                .publicationDate(LocalDateTime.now())
-                .price(10000)
-                .thumbnailUrl("thumbnailUrl")
-                .authors(List.of("author1", "author2"))
-                .translators(List.of("translator1", "translator2"))
-                .build();
+    @DisplayName("나의 마이북을 모두 조회시, 비공개 설정된 마이북도 모두 조회한다.")
+    @Test
+    void findAllMyBooks() {
+
+        //given
+        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(LOGIN_ID, LOGIN_ID);
+
+        given(myBookRepository.findAllByUserId(any())).willReturn(
+                List.of(MybookTestData.createMyBook(), MybookTestData.createMyBookNotShowable()));
+
+        // when, then
+        assertAll(
+                () -> assertThat(myBookService.findAllMyBooks(request).size()).isEqualTo(2),
+                () -> verify(myBookRepository).findAllByUserId(request.getUserId())
+        );
+    }
+
+    @DisplayName("다른 유저의 마이북을 모두 조회시, 비공개 설정된 마이북은 조회되지 않는다.")
+    @Test
+    void findOtherUserAllMyBooks() {
+
+        //given
+        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(USER_ID, LOGIN_ID);
+
+        given(myBookRepository.findAllByUserId(any())).willReturn(
+                List.of(MybookTestData.createMyBook(), MybookTestData.createMyBookNotShowable()));
+
+        // when, then
+        assertAll(
+                () -> assertThat(myBookService.findAllMyBooks(request).size()).isEqualTo(1),
+                () -> verify(myBookRepository).findAllByUserId(request.getUserId())
+        );
+    }
+
+    @DisplayName("마이북 조회시, 마이북에서 삭제한 도서는 조회되지 않는다.")
+    @Test
+    void findAllMyBooksWithoutDeletedMyBook() {
+
+        //given
+        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(LOGIN_ID, LOGIN_ID);
+
+        given(myBookRepository.findAllByUserId(any())).willReturn(
+                List.of(MybookTestData.createMyBook(), MybookTestData.createMyBookNotShowable(), MybookTestData.createDeletedMyBook()));
+
+        // when, then
+        assertAll(
+                () -> assertThat(myBookService.findAllMyBooks(request).size()).isEqualTo(2),
+                () -> verify(myBookRepository).findAllByUserId(request.getUserId())
+        );
     }
 }
