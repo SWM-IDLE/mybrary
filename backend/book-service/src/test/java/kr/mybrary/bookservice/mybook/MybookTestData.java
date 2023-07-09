@@ -43,6 +43,20 @@ public class MybookTestData {
                 .build();
     }
 
+    public static MyBook createDeletedMyBook(Book book) {
+
+        return MyBook.builder()
+                .shareable(false)
+                .startDateOfPossession(LocalDateTime.now())
+                .exchangeable(false)
+                .showable(true)
+                .readStatus(ReadStatus.TO_READ)
+                .book(book)
+                .deleted(true)
+                .userId("test_userId")
+                .build();
+    }
+
     public static MyBook createMyBook(Book book) {
 
         return MyBook.builder()
@@ -107,9 +121,9 @@ public class MybookTestData {
     public static MyBookDetailResponse createMyBookDetailResponse() {
         return MyBookDetailResponse.builder()
                 .id(1L)
-                .isShareable(true)
-                .isExchangeable(true)
-                .isPublic(true)
+                .shareable(true)
+                .exchangeable(true)
+                .showable(true)
                 .startDateOfPossession(LocalDateTime.now())
                 .readStatus(ReadStatus.TO_READ)
                 .book(BookDetailResponse.builder()
