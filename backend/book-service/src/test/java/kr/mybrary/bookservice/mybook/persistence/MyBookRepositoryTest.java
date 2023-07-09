@@ -1,11 +1,13 @@
 package kr.mybrary.bookservice.mybook.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
+import java.util.List;
+import kr.mybrary.bookservice.book.BookTestData;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
+import kr.mybrary.bookservice.mybook.MybookTestData;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,10 +27,10 @@ class MyBookRepositoryTest {
 
     @DisplayName("마이북을 저장한다.")
     @Test
-    void saveAuthor() {
+    void saveMybook() {
         // given
-        Book savedBook = bookRepository.save(createBook());
-        MyBook myBook = createMyBook(savedBook);
+        Book savedBook = bookRepository.save(BookTestData.createBook());
+        MyBook myBook = MybookTestData.createMyBook(savedBook);
 
         // when
         MyBook savedMyBook = myBookRepository.save(myBook);
@@ -36,9 +38,9 @@ class MyBookRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(savedMyBook.getUserId()).isEqualTo(myBook.getUserId()),
-                () -> assertThat(savedMyBook.getBook().getIsbn10()).isEqualTo("isbn10"),
-                () -> assertThat(savedMyBook.getBook().getIsbn13()).isEqualTo("isbn13"),
-                () -> assertThat(savedMyBook.isPublic()).isEqualTo(false),
+                () -> assertThat(savedMyBook.getBook().getIsbn10()).isEqualTo(myBook.getBook().getIsbn10()),
+                () -> assertThat(savedMyBook.getBook().getIsbn13()).isEqualTo(myBook.getBook().getIsbn13()),
+                () -> assertThat(savedMyBook.isShowable()).isEqualTo(true),
                 () -> assertThat(savedMyBook.isDeleted()).isEqualTo(false),
                 () -> assertThat(savedMyBook.isExchangeable()).isEqualTo(false),
                 () -> assertThat(savedMyBook.isShareable()).isEqualTo(false)
@@ -49,38 +51,34 @@ class MyBookRepositoryTest {
     @Test
     void existsByUserIdAndBook() {
         // given
-        Book savedBook = bookRepository.save(createBook());
-        MyBook myBook = createMyBook(savedBook);
+        Book savedBook = bookRepository.save(BookTestData.createBook());
+        MyBook myBook = MybookTestData.createMyBook(savedBook);
 
         MyBook savedMyBook = myBookRepository.save(myBook);
 
         // when, then
-        assertThat(myBookRepository.existsByUserIdAndBook(savedMyBook.getUserId(), savedMyBook.getBook())).isTrue();
+        assertThat(myBookRepository.existsByUserIdAndBook(savedMyBook.getUserId(),
+                savedMyBook.getBook())).isTrue();
     }
 
-    private MyBook createMyBook(Book book) {
-        return MyBook.builder()
-                .userId("user_id")
-                .book(book)
-                .isDeleted(false)
-                .isExchangeable(false)
-                .isShareable(false)
-                .isPublic(false)
-                .readStatus(ReadStatus.READING)
-                .startDateOfPossession(LocalDateTime.now())
-                .build();
-    }
+    @DisplayName("마이북을 모두 조회한다.")
+    @Test
+    void findAllMyBooks() {
 
-    private Book createBook() {
-        return Book.builder()
-                .isbn10("isbn10")
-                .isbn13("isbn13")
-                .title("title")
-                .description("description")
-                .publisher("publisher")
-                .publishDate(LocalDateTime.now())
-                .price(10000)
-                .thumbnailUrl("thumbnailUrl")
-                .build();
+        // given
+        Book savedBook_1 = bookRepository.save(BookTestData.createBook());
+        Book savedBook_2 = bookRepository.save(BookTestData.createBook());
+
+        MyBook myBook_1 = MybookTestData.createMyBook(savedBook_1);
+        MyBook myBook_2 = MybookTestData.createMyBook(savedBook_2);
+
+        myBookRepository.save(myBook_1);
+        myBookRepository.save(myBook_2);
+
+        // when
+        List<MyBook> myBooks = myBookRepository.findAllByUserId("test_userId");
+
+        // then
+        assertThat(myBooks.size()).isEqualTo(2);
     }
 }

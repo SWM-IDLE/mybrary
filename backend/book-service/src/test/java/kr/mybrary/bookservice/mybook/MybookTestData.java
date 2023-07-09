@@ -2,6 +2,11 @@ package kr.mybrary.bookservice.mybook;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kr.mybrary.bookservice.book.BookTestData;
+import kr.mybrary.bookservice.book.persistence.Book;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
+import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
@@ -10,6 +15,61 @@ import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResp
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse.BookElementResponse;
 
 public class MybookTestData {
+
+    public static MyBook createMyBook() {
+
+        return MyBook.builder()
+                .shareable(false)
+                .startDateOfPossession(LocalDateTime.now())
+                .exchangeable(false)
+                .showable(true)
+                .readStatus(ReadStatus.TO_READ)
+                .book(BookTestData.createBook())
+                .deleted(false)
+                .userId("test_userId")
+                .build();
+    }
+    public static MyBook createDeletedMyBook() {
+
+        return MyBook.builder()
+                .shareable(false)
+                .startDateOfPossession(LocalDateTime.now())
+                .exchangeable(false)
+                .showable(true)
+                .readStatus(ReadStatus.TO_READ)
+                .book(BookTestData.createBook())
+                .deleted(true)
+                .userId("test_userId")
+                .build();
+    }
+
+    public static MyBook createMyBook(Book book) {
+
+        return MyBook.builder()
+                .shareable(false)
+                .startDateOfPossession(LocalDateTime.now())
+                .exchangeable(false)
+                .showable(true)
+                .readStatus(ReadStatus.TO_READ)
+                .book(book)
+                .deleted(false)
+                .userId("test_userId")
+                .build();
+    }
+
+    public static MyBook createMyBookNotShowable() {
+
+        return MyBook.builder()
+                .shareable(false)
+                .startDateOfPossession(LocalDateTime.now())
+                .exchangeable(false)
+                .showable(false)
+                .readStatus(ReadStatus.TO_READ)
+                .book(BookTestData.createBook())
+                .deleted(false)
+                .userId("test_userId")
+                .build();
+    }
 
     public static MyBookCreateRequest createMyBookCreateRequest() {
         return MyBookCreateRequest.builder()
@@ -30,16 +90,16 @@ public class MybookTestData {
     public static MyBookElementResponse createMyBookElementResponse() {
         return MyBookElementResponse.builder()
                 .id(1L)
-                .isShareable(true)
+                .shareable(true)
                 .startDateOfPossession(LocalDateTime.now())
-                .isExchangeable(true)
-                .isPublic(true).readStatus(ReadStatus.TO_READ)
+                .exchangeable(true)
+                .showable(true).readStatus(ReadStatus.TO_READ)
                 .book(BookElementResponse.builder()
                         .id(1L)
                         .title("토비의 스프링 3.1")
                         .description("스프링의 기본기를 다지기 위한 책")
                         .thumbnailUrl("https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?type=m1&udate=20191226")
-                        .stars(5)
+                        .stars(5.0)
                         .build())
                 .build();
     }
@@ -60,9 +120,32 @@ public class MybookTestData {
                         .translators(List.of("토비"))
                         .publisher("토비의 출판사")
                         .thumbnailUrl("https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?type=m1&udate=20191226")
-                        .stars(5)
+                        .stars(5.0)
                         .build()
                 )
+                .build();
+    }
+
+    public static MyBookCreateServiceRequest createMyBookCreateServiceRequest() {
+        return MyBookCreateServiceRequest.builder()
+                .userId("test1")
+                .title("title")
+                .description("description")
+                .isbn10("isbn10")
+                .isbn13("isbn13")
+                .publisher("publisher")
+                .publicationDate(LocalDateTime.now())
+                .price(10000)
+                .thumbnailUrl("thumbnailUrl")
+                .authors(List.of("author1", "author2"))
+                .translators(List.of("translator1", "translator2"))
+                .build();
+    }
+
+    public static MyBookFindAllServiceRequest createMyBookFindAllServiceRequest(String userId, String loginId) {
+        return MyBookFindAllServiceRequest.builder()
+                .userId(userId)
+                .loginId(loginId)
                 .build();
     }
 }
