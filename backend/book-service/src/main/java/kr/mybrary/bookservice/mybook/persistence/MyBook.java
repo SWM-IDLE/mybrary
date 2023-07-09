@@ -36,14 +36,14 @@ public class MyBook extends BaseEntity {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    private boolean isPublic;
-
     @Enumerated(EnumType.STRING)
     private ReadStatus readStatus;
 
     private LocalDateTime startDateOfPossession;
-    private boolean isExchangeable;
-    private boolean isShareable;
 
-    private boolean isDeleted;
+    private boolean showable;
+    private boolean exchangeable;
+    private boolean shareable;
+
+    private boolean deleted;
 }

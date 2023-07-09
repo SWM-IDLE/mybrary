@@ -3,20 +3,18 @@ package kr.mybrary.bookservice.mybook.presentation.dto.response;
 import java.time.LocalDateTime;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Builder
-@EqualsAndHashCode
 public class MyBookElementResponse {
 
     private Long id;
-    private boolean isPublic;
-    private boolean isExchangeable;
-    private boolean isShareable;
+    private boolean showable;
+    private boolean exchangeable;
+    private boolean shareable;
     private ReadStatus readStatus;
     private LocalDateTime startDateOfPossession;
 
@@ -30,6 +28,6 @@ public class MyBookElementResponse {
         private String title;
         private String description;
         private String thumbnailUrl;
-        private Integer stars;
+        private Double stars;
     }
 }
