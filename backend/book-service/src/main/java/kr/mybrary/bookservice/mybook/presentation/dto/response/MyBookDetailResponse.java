@@ -31,6 +31,6 @@ public class MyBookDetailResponse {
         private List<String> translators;
         private String publisher;
         private String thumbnailUrl;
-        private Integer stars;
+        private Double stars;
     }
 }
