@@ -1,10 +1,11 @@
 package kr.mybrary.bookservice.mybook.domain;
 
-import jakarta.transaction.Transactional;
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.BookService;
 import kr.mybrary.bookservice.book.persistence.Book;
+import kr.mybrary.bookservice.mybook.domain.dto.MyBookDtoMapper;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
@@ -12,6 +13,7 @@ import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailRespo
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -30,7 +32,7 @@ public class MyBookService {
         MyBook myBook = MyBook.builder()
                 .book(book)
                 .userId(request.getUserId())
-                .isDeleted(false)
+                .deleted(false)
                 .build();
 
         return myBookRepository.save(myBook);
@@ -42,10 +44,17 @@ public class MyBookService {
         }
     }
 
-    public List<MyBookElementResponse> findAllMyBooks(String userId) {
-        // TODO
 
-        return List.of();
+    @Transactional(readOnly = true)
+    public List<MyBookElementResponse> findAllMyBooks(MyBookFindAllServiceRequest request) {
+
+        List<MyBook> mybooks = myBookRepository.findAllByUserId(request.getUserId());
+
+        return mybooks.stream()
+                .filter(myBook -> !myBook.isDeleted())
+                .filter(myBook -> request.getUserId().equals(request.getLoginId()) || myBook.isShowable())
+                .map(MyBookDtoMapper.INSTANCE::entityToMyBookElementResponse)
+                .toList();
     }
 
     public MyBookDetailResponse findMyBookDetail(String userId, Long id) {
