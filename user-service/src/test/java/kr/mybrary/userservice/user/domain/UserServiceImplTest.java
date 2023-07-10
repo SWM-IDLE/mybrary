@@ -2,7 +2,6 @@ package kr.mybrary.userservice.user.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -10,11 +9,13 @@ import static org.mockito.Mockito.verify;
 import java.util.Optional;
 import kr.mybrary.userservice.user.UserTestData;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.domain.exception.DuplicateEmailException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateNicknameException;
+import kr.mybrary.userservice.user.domain.exception.ProfileImageUrlNotFoundException;
 import kr.mybrary.userservice.user.domain.exception.UserNotFoundException;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
@@ -26,7 +27,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -204,4 +204,52 @@ class UserServiceImplTest {
         verify(userRepository).findByLoginId(LOGIN_ID);
     }
 
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 URL을 조회한다")
+    void getProfileImageUrl() {
+        // Given
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
+                Optional.of(UserTestData.createUserWithProfile()));
+
+        // When
+        ProfileImageUrlServiceResponse profileImage = userService.getProfileImageUrl(LOGIN_ID);
+
+        // Then
+        assertThat(profileImage.getProfileImageUrl()).isEqualTo("profileImageUrl");
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 URL을 조회할 때 사용자가 없으면 예외를 던진다")
+    void getProfileImageUrlWithNotExistUser() {
+        // Given
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.empty());
+
+        // When
+        assertThatThrownBy(() -> userService.getProfileImageUrl(LOGIN_ID))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "U-05")
+                .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 URL을 조회할 때 프로필 이미지 URL이 없으면 예외를 던진다")
+    void getProfileImageUrlWithNoProfileImageUrl() {
+        // Given
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
+                Optional.of(UserTestData.createUserWithOutProfileImageUrl()));
+
+        // When
+        assertThatThrownBy(() -> userService.getProfileImageUrl(LOGIN_ID))
+                .isInstanceOf(ProfileImageUrlNotFoundException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "P-01")
+                .hasFieldOrPropertyWithValue("errorMessage", "프로필 이미지 URL이 존재하지 않습니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
 }
