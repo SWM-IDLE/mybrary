@@ -46,4 +46,17 @@ public class MyBook extends BaseEntity {
     private boolean shareable;
 
     private boolean deleted;
+
+    public static MyBook of(Book book, String userId) {
+        return MyBook.builder()
+                .userId(userId)
+                .book(book)
+                .startDateOfPossession(null)
+                .readStatus(ReadStatus.TO_READ)
+                .showable(true)
+                .exchangeable(false)
+                .shareable(false)
+                .deleted(false)
+                .build();
+    }
 }

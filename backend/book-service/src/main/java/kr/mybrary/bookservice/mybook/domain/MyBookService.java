@@ -29,15 +29,9 @@ public class MyBookService {
     public MyBook create(MyBookCreateServiceRequest request) {
 
         Book book = bookService.getRegisteredBook(request.toBookCreateRequest());
-
         checkBookAlreadyRegisteredAsMyBook(request.getUserId(), book);
 
-        MyBook myBook = MyBook.builder()
-                .book(book)
-                .userId(request.getUserId())
-                .deleted(false)
-                .build();
-
+        MyBook myBook = MyBook.of(book, request.getUserId());
         return myBookRepository.save(myBook);
     }
 
@@ -46,7 +40,6 @@ public class MyBookService {
             throw new MyBookAlreadyExistsException();
         }
     }
-
 
     @Transactional(readOnly = true)
     public List<MyBookElementResponse> findAllMyBooks(MyBookFindAllServiceRequest request) {
