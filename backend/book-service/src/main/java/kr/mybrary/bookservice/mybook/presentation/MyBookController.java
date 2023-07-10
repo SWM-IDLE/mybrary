@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.mybook.presentation;
 import java.util.List;
 import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
@@ -54,13 +55,13 @@ public class MyBookController {
                 SuccessResponse.of(HttpStatus.OK.toString(), "마이북 상세보기입니다.", myBookService.findMyBookDetail(request)));
     }
 
-    @DeleteMapping("/mybooks/{id}")
-    public ResponseEntity deleteMyBook(@PathVariable Long id) {
+    @DeleteMapping("/mybooks/{mybookId}")
+    public ResponseEntity deleteMyBook(@RequestHeader("USER-ID") String loginId,
+            @PathVariable Long mybookId) {
 
-        String userId = "test1"; // TODO: 임시 회원 ID
+        MyBookDeleteServiceRequest request = MyBookDeleteServiceRequest.of(loginId, mybookId);
 
-        // TODO
-        myBookService.deleteMyBook(userId, id);
+        myBookService.deleteMyBook(request);
 
         return ResponseEntity.ok(
                 SuccessResponse.of(HttpStatus.OK.toString(), "내 서재의 도서를 삭제했습니다.", null));
