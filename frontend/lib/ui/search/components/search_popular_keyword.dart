@@ -62,7 +62,7 @@ class SearchPopularKeyword extends StatelessWidget {
                     popularSearchKeyword[index],
                     style: TextStyle(
                       fontSize: 14.0,
-                      color: GREY_COLOR,
+                      color: DESCRIPTION_GREY_COLOR,
                     ),
                   ),
                 ),

@@ -8,7 +8,10 @@ const Color BLACK_COLOR = Color(0xFF000000);
 const Color ORANGE_COLOR = Color(0xFFFF9800);
 const Color DISABLED_COLOR = Color(0x6B000000);
 const Color GREY_COLOR = Color(0xFFA0A0A0);
+const Color GREY_COLOR_OPACITY_TWO = Color(0x33A0A0A0);
+const Color LESS_GREY_COLOR = Color(0xFFBEC2C6);
 const Color DIVIDER_COLOR = Color(0xFFDDDDDD);
+const Color DESCRIPTION_GREY_COLOR = Color(0xFF666666);
 
 // Auth Color
 const Color LOGIN_PRIMARY_COLOR = Color(0xFFCDE7BE);
@@ -19,6 +22,8 @@ const Color GOOGLE_COLOR = Color(0xFFD0422A);
 const Color NAVER_COLOR = Color(0xFF0AC75A);
 const Color KAKAO_COLOR = Color(0xFFFFE502);
 
+// Search Color
+const Color SEARCH_INPUT_COLOR = Color(0xFFF3F5F6);
+
 // Book Data Color
-const Color BOOK_DESCRIPTION_GREY_COLOR = Color(0xFF666666);
 const Color BOOK_STAR_COLOR = Color(0xFFFC8C00);

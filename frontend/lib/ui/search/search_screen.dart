@@ -15,44 +15,34 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  late Future<BookSearchResponse> bookSearchItems;
-  late List<BookSearchData> bookSearchData = [];
-  late Future<BookSearchResponse> bookNextSearchResponse;
-  late bool isSearching = false;
-  late bool isMaxScrollExtent = false;
+  late Future<BookSearchResponse>? _bookSearchResponse;
+  late final List<BookSearchData> _bookSearchData = [];
+  late String _bookNextRequestUrl;
 
-  final ScrollController scrollController = ScrollController();
-  final TextEditingController bookSearchController = TextEditingController();
+  bool _isSearching = false;
 
-  void getBookSearchPopularKeywordData(bool isBinding) {
-    final popularKeyword = bookSearchController.text;
-    setState(() {
-      if (popularKeyword != "") {
-        isBinding = true;
-        bookSearchItems =
-            RemoteDataSource.getBookSearchKeywordResponse(popularKeyword);
-        isSearching = true;
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _bookSearchController = TextEditingController();
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    // 스크롤 맨 하단에 닿기 바로 이전 (* 0.85) nextUrl 이 있을 때 추가 데이터 호출
+    _scrollController.addListener(() async {
+      ScrollPosition scrollPosition = _scrollController.position;
+      if (_scrollController.offset > scrollPosition.maxScrollExtent * 0.85 &&
+          !scrollPosition.outOfRange) {
+        if (_bookNextRequestUrl != "") {
+          _fetchNextBookSearchResponse();
+          _bookNextRequestUrl = "";
+        }
       }
     });
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    scrollController.addListener(() {
-      ScrollPosition scrollPosition = scrollController.position;
-      setState(() {
-        if (scrollPosition.pixels == scrollPosition.maxScrollExtent) {
-          isMaxScrollExtent = true;
-        }
-      });
-    });
-  }
-
-  @override
   void dispose() {
-    bookSearchController.dispose();
+    _bookSearchController.dispose();
     super.dispose();
   }
 
@@ -60,7 +50,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     final searchInputBorderStyle = OutlineInputBorder(
       borderSide: BorderSide.none,
-      borderRadius: BorderRadius.circular(10.0),
+      borderRadius: BorderRadius.circular(5.0),
     );
     return Scaffold(
       body: SafeArea(
@@ -86,14 +76,13 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: TextField(
                       autofocus: true,
                       textInputAction: TextInputAction.search,
-                      controller: bookSearchController,
-                      cursorColor: Colors.green,
+                      controller: _bookSearchController,
+                      cursorColor: PRIMARY_COLOR,
                       onSubmitted: (value) {
                         setState(() {
-                          bookSearchItems =
-                              RemoteDataSource.getBookSearchKeywordResponse(
-                                  value);
-                          isSearching = true;
+                          _bookSearchController.text = value;
+                          _bookSearchResponse = _fetchBookSearchResponse();
+                          _isSearching = true;
                         });
                       },
                       decoration: InputDecoration(
@@ -103,15 +92,20 @@ class _SearchScreenState extends State<SearchScreen> {
                           fontSize: 14.0,
                         ),
                         filled: true,
-                        fillColor: Colors.grey.withOpacity(0.2),
+                        fillColor: GREY_COLOR_OPACITY_TWO,
                         focusedBorder: searchInputBorderStyle,
                         enabledBorder: searchInputBorderStyle,
-                        focusColor: Colors.grey,
-                        prefixIcon: Icon(Icons.search, color: GREY_COLOR),
+                        focusColor: GREY_COLOR,
+                        prefixIcon: Image.asset(
+                          'assets/images/search_icon.png',
+                          color: LESS_GREY_COLOR,
+                          scale: 1.2,
+                        ),
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
-                              bookSearchController.clear();
+                              _bookSearchController.clear();
+                              _bookSearchResponse = null;
                             });
                           },
                           icon: Icon(
@@ -124,28 +118,32 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                 ),
-                if (!isSearching)
+                if (!_isSearching)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: IconButton(
                       onPressed: () {},
-                      icon: Icon(Icons.camera_alt_outlined),
+                      icon: Image.asset(
+                        'assets/images/barcode_scan_icon.png',
+                        color: PRIMARY_COLOR,
+                      ),
                     ),
                   )
                 else
                   TextButton(
                     onPressed: () {
                       setState(() {
-                        bookSearchController.clear();
-                        bookSearchData.clear();
-                        isSearching = false;
+                        _bookSearchController.clear();
+                        _bookSearchData.clear();
+                        _isSearching = false;
                       });
                     },
                     child: Text(
                       '취소',
                       style: TextStyle(
-                        color: LESS_BLACK_COLOR,
+                        color: DESCRIPTION_GREY_COLOR,
                         fontSize: 14.0,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   )
@@ -154,14 +152,14 @@ class _SearchScreenState extends State<SearchScreen> {
             SizedBox(
               height: 8.0,
             ),
-            if (!isSearching)
+            if (!_isSearching)
               SearchPopularKeyword(
-                bookSearchController: bookSearchController,
+                bookSearchController: _bookSearchController,
                 onBookSearchBinding: getBookSearchPopularKeywordData,
               )
             else
               FutureBuilder<BookSearchResponse>(
-                future: bookSearchItems,
+                future: _bookSearchResponse,
                 builder: (context, snapshot) {
                   // 서버 요청에 문제가 있을 경우
                   if (snapshot.hasError) {
@@ -178,27 +176,19 @@ class _SearchScreenState extends State<SearchScreen> {
                   // 서버 요청이 완료된 경우
                   if (snapshot.hasData) {
                     BookSearchResponse bookSearchResponse = snapshot.data!;
-                    if (bookSearchData.isEmpty) {
-                      bookSearchData
+                    String bookSearchNextRequestUrl =
+                        bookSearchResponse.data!.nextRequestUrl!;
+
+                    // 초기 검색 후 데이터 저장
+                    if (_bookSearchData.isEmpty) {
+                      _bookSearchData
                           .addAll(bookSearchResponse.data!.bookSearchResult!);
+                      _bookNextRequestUrl = bookSearchNextRequestUrl;
                     }
 
-                    // if (isMaxScrollExtent &&
-                    //     bookSearchResponse.data!.nextRequestUrl != "") {
-                    //   bookNextSearchResponse =
-                    //       RemoteDataSource.getBookSearchKeywordResponse("",
-                    //           nextRequestUrl:
-                    //               bookSearchResponse.data!.nextRequestUrl!);
-                    //   bookNextSearchResponse.then((value) {
-                    //     bookSearchData.addAll(value.data!.bookSearchResult!);
-                    //   }).catchError((e) {
-                    //     log('ERROR: nextRequestUrl 요청에 대한 오류입니다. $e');
-                    //   });
-                    // }
-
                     return SearchBookList(
-                      searchBookList: bookSearchData,
-                      scrollController: scrollController,
+                      searchBookList: _bookSearchData,
+                      scrollController: _scrollController,
                     );
                   }
 
@@ -209,5 +199,36 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       ),
     );
+  }
+
+  void getBookSearchPopularKeywordData(bool isBinding) {
+    final popularKeyword = _bookSearchController.text;
+    setState(() {
+      if (popularKeyword != "") {
+        isBinding = true;
+        _bookSearchResponse =
+            RemoteDataSource.getBookSearchKeywordResponse(popularKeyword);
+        _isSearching = true;
+      }
+    });
+  }
+
+  Future<BookSearchResponse> _fetchBookSearchResponse() async {
+    BookSearchResponse bookSearchResponse =
+        await RemoteDataSource.getBookSearchKeywordResponse(
+            _bookSearchController.text);
+
+    return bookSearchResponse;
+  }
+
+  Future<void> _fetchNextBookSearchResponse() async {
+    BookSearchResponse additionalBookSearchResponse =
+        await RemoteDataSource.getBookSearchKeywordNextResponse(
+            _bookNextRequestUrl);
+    setState(() {
+      _bookSearchData
+          .addAll(additionalBookSearchResponse.data!.bookSearchResult!);
+      _bookNextRequestUrl = additionalBookSearchResponse.data!.nextRequestUrl!;
+    });
   }
 }

@@ -5,10 +5,10 @@ import 'package:mybrary/res/colors/color.dart';
 class SearchBookList extends StatelessWidget {
   // final int searchBookTotalLength;
   final List<BookSearchData> searchBookList;
-  final ScrollController? scrollController;
+  final ScrollController scrollController;
   const SearchBookList({
     required this.searchBookList,
-    this.scrollController,
+    required this.scrollController,
     super.key,
   });
 
@@ -24,7 +24,7 @@ class SearchBookList extends StatelessWidget {
             child: Text(
               '검색 도서 ${searchBookList.length}',
               style: TextStyle(
-                fontSize: 16.0,
+                fontSize: 15.0,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -41,9 +41,11 @@ class SearchBookList extends StatelessWidget {
                 return Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 22.0,
+                      padding: EdgeInsets.only(
+                        left: 16.0,
+                        right: 16.0,
+                        top: index == 0 ? 5.0 : 20.0,
+                        bottom: 20.0,
                       ),
                       child: Row(
                         children: [
@@ -81,7 +83,7 @@ class SearchBookList extends StatelessWidget {
                                   '${searchBookData.publisher!} 저',
                                   style: TextStyle(
                                     fontSize: 14.0,
-                                    color: BOOK_DESCRIPTION_GREY_COLOR,
+                                    color: DESCRIPTION_GREY_COLOR,
                                   ),
                                 ),
                                 SizedBox(
@@ -90,7 +92,7 @@ class SearchBookList extends StatelessWidget {
                                 Text(
                                   '${publicationDate.year}.${publicationDate.month}',
                                   style: TextStyle(
-                                    fontSize: 14.0,
+                                    fontSize: 13.0,
                                     color: GREY_COLOR,
                                   ),
                                 ),
@@ -110,7 +112,7 @@ class SearchBookList extends StatelessWidget {
                                     Text(
                                       '${searchBookData.starRating!}',
                                       style: TextStyle(
-                                        fontSize: 15.0,
+                                        fontSize: 14.0,
                                         color: GREY_COLOR,
                                       ),
                                     ),
