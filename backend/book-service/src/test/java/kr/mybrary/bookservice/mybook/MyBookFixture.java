@@ -17,7 +17,9 @@ public enum MyBookFixture {
     NOT_SHOWABLE_LOGIN_USER_MYBOOK(3L, "LOGIN_USER_ID", BookFixture.COMMON_BOOK.getBook(), ReadStatus.TO_READ,
             LocalDateTime.now(), false, false, false, false),
     NOT_SHOWABLE_OTHER_USER_MYBOOK(4L, "OTHER_USER_ID", BookFixture.COMMON_BOOK.getBook(), ReadStatus.TO_READ,
-            LocalDateTime.now(), false, false, false, false);
+            LocalDateTime.now(), false, false, false, false),
+    COMMON_OTHER_USER_MYBOOK(5L, "OTHER_USER_ID", BookFixture.COMMON_BOOK.getBook(), ReadStatus.TO_READ,
+            LocalDateTime.now(), true, false, false, false);
 
     private final Long id;
     private final String userId;

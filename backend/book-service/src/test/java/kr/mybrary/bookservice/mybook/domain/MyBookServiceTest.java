@@ -16,6 +16,7 @@ import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.MybookDtoTestData;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedException;
@@ -203,6 +204,53 @@ class MyBookServiceTest {
         assertAll(
                 () -> assertThatThrownBy(() -> myBookService.findMyBookDetail(request))
                         .isInstanceOf(MyBookAccessDeniedException.class),
+                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId())
+        );
+    }
+
+    @DisplayName("마이북을 삭제한다.")
+    @Test
+    void deleteMyBook() {
+
+        //given
+        MyBookDeleteServiceRequest request = MyBookDeleteServiceRequest.of(LOGIN_ID, 1L);
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
+
+        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+                Optional.ofNullable(myBook));
+
+        // when
+        myBookService.deleteMyBook(request);
+
+        // then
+        assertAll(
+                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId()),
+                () -> {
+                    assert myBook != null;
+                    assertThat(myBook.isDeleted()).isTrue();
+                }
+        );
+    }
+
+    @DisplayName("다른 유저의 마이북을 삭제시, 예외가 발생한다.")
+    @Test
+    void occurExceptionWhenDeleteOtherUserMyBook() {
+
+        //given
+        MyBookDeleteServiceRequest request = MyBookDeleteServiceRequest.of(LOGIN_ID, 1L);
+        MyBook myBook = MyBookFixture.COMMON_OTHER_USER_MYBOOK.getMyBook();
+
+        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+                Optional.ofNullable(myBook));
+
+        // when, then
+        assertAll(
+                () -> assertThatThrownBy(() -> myBookService.deleteMyBook(request))
+                        .isInstanceOf(MyBookAccessDeniedException.class),
+                () -> {
+                    assert myBook != null;
+                    assertThat(myBook.isDeleted()).isFalse();
+                },
                 () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId())
         );
     }

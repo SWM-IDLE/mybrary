@@ -59,4 +59,8 @@ public class MyBook extends BaseEntity {
                 .deleted(false)
                 .build();
     }
+
+    public void deleteMyBook() {
+        this.deleted = true;
+    }
 }
