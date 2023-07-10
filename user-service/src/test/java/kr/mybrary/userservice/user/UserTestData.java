@@ -16,4 +16,14 @@ public class UserTestData {
                 .build();
     }
 
+    public static User createUserWithOutProfileImageUrl() {
+
+        return User.builder()
+                .id(1L)
+                .loginId("loginId")
+                .nickname("nickname")
+                .email("email@mail.com")
+                .introduction("introduction")
+                .build();
+    }
 }
