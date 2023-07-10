@@ -7,20 +7,19 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
-import java.time.OffsetDateTime;
 import java.util.List;
+import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
 import kr.mybrary.bookservice.booksearch.domain.KakaoBookSearchApiService;
-import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchResultDto;
-import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
 import kr.mybrary.bookservice.booksearch.presentation.response.BookSearchResultResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,7 +49,7 @@ class BookSearchControllerTest {
 
         // given
         BookSearchResultResponse response = BookSearchResultResponse.builder()
-                .bookSearchResult(List.of(createBookSearchDto()))
+                .bookSearchResult(List.of(BookSearchDtoTestData.createBookSearchDto()))
                 .nextRequestUrl("")
                 .build();
 
@@ -115,7 +114,7 @@ class BookSearchControllerTest {
 
         // given
         BookSearchResultResponse response = BookSearchResultResponse.builder()
-                .bookSearchResult(List.of(createBookSearchDto()))
+                .bookSearchResult(List.of(BookSearchDtoTestData.createBookSearchDto()))
                 .nextRequestUrl("/books/search?keyword=자바&sort=accuracy&page=2")
                 .build();
 
@@ -178,24 +177,5 @@ class BookSearchControllerTest {
                                                 fieldWithPath("data.bookSearchResult[].publisher").type(STRING).description("출판사"),
                                                 fieldWithPath("data.nextRequestUrl").type(STRING).description("다음 요청 URL")
                                         ).build())));
-    }
-
-    private BookSearchResultDto createBookSearchDto() {
-        return BookSearchResultDto.builder()
-                .title("자바의 정석")
-                .detailsUrl("자바의 정석 detail Url")
-                .description("자바의 정석 3판")
-                .isbn10("8980782970")
-                .isbn13("9788980782970")
-                .authors(List.of("남궁성"))
-                .translators(List.of("박은종"))
-                .salePrice(25000)
-                .price(25000)
-                .thumbnailUrl("https://bookthumb-phinf.pstatic.net/cover/150/077/15007773.jpg?type=m1&udate=20180726")
-                .status("정상판매")
-                .starRating(0.0)
-                .publisher("도우출판")
-                .publicationDate(OffsetDateTime.parse("2008-08-01T00:00:00+09:00"))
-                .build();
     }
 }

@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import kr.mybrary.bookservice.book.domain.BookService;
 import kr.mybrary.bookservice.book.persistence.Book;
-import kr.mybrary.bookservice.mybook.MybookTestData;
+import kr.mybrary.bookservice.mybook.MyBookFixture;
+import kr.mybrary.bookservice.mybook.MybookDtoTestData;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
@@ -42,15 +43,15 @@ class MyBookServiceTest {
     @Mock
     private BookService bookService;
 
-    private static final String LOGIN_ID = "login-user-id";
-    private static final String USER_ID = "user-id";
+    private static final String LOGIN_ID = "LOGIN_USER_ID";
+    private static final String OTHER_USER_ID = "OTHER_USER_ID";
 
     @DisplayName("도서를 마이북으로 등록한다.")
     @Test
     void registerMyBook() {
 
         // given
-        MyBookCreateServiceRequest request = MybookTestData.createMyBookCreateServiceRequest();
+        MyBookCreateServiceRequest request = MybookDtoTestData.createMyBookCreateServiceRequest();
 
         given(bookService.getRegisteredBook(any()))
                 .willReturn(Book.builder().id(1L).build());
@@ -73,7 +74,7 @@ class MyBookServiceTest {
     void occurExceptionWhenRegisterDuplicatedBook() {
 
         // given
-        MyBookCreateServiceRequest request = MybookTestData.createMyBookCreateServiceRequest();
+        MyBookCreateServiceRequest request = MybookDtoTestData.createMyBookCreateServiceRequest();
 
         given(bookService.getRegisteredBook(any()))
                 .willReturn(Book.builder().id(1L).build());
@@ -94,11 +95,12 @@ class MyBookServiceTest {
     void findAllMyBooks() {
 
         //given
-        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(
+        MyBookFindAllServiceRequest request = MybookDtoTestData.createMyBookFindAllServiceRequest(
                 LOGIN_ID, LOGIN_ID);
 
         given(myBookRepository.findAllByUserId(any())).willReturn(
-                List.of(MybookTestData.createMyBook(), MybookTestData.createMyBookNotShowable()));
+                List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(),
+                        MyBookFixture.NOT_SHOWABLE_LOGIN_USER_MYBOOK.getMyBook()));
 
         // when, then
         assertAll(
@@ -112,11 +114,12 @@ class MyBookServiceTest {
     void findOtherUserAllMyBooks() {
 
         //given
-        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(
-                USER_ID, LOGIN_ID);
+        MyBookFindAllServiceRequest request = MybookDtoTestData.createMyBookFindAllServiceRequest(
+                OTHER_USER_ID, LOGIN_ID);
 
         given(myBookRepository.findAllByUserId(any())).willReturn(
-                List.of(MybookTestData.createMyBook(), MybookTestData.createMyBookNotShowable()));
+                List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(),
+                        MyBookFixture.NOT_SHOWABLE_OTHER_USER_MYBOOK.getMyBook()));
 
         // when, then
         assertAll(
@@ -130,12 +133,13 @@ class MyBookServiceTest {
     void findAllMyBooksWithoutDeletedMyBook() {
 
         //given
-        MyBookFindAllServiceRequest request = MybookTestData.createMyBookFindAllServiceRequest(
+        MyBookFindAllServiceRequest request = MybookDtoTestData.createMyBookFindAllServiceRequest(
                 LOGIN_ID, LOGIN_ID);
 
         given(myBookRepository.findAllByUserId(any())).willReturn(
-                List.of(MybookTestData.createMyBook(), MybookTestData.createMyBookNotShowable(),
-                        MybookTestData.createDeletedMyBook()));
+                List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(),
+                        MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(),
+                        MyBookFixture.DELETED_LOGIN_USER_MYBOOK.getMyBook()));
 
         // when, then
         assertAll(
@@ -150,7 +154,7 @@ class MyBookServiceTest {
 
         //given
         MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
-        MyBook myBook = MybookTestData.createMyBook();
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
         given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
                 Optional.ofNullable(myBook));
@@ -190,7 +194,7 @@ class MyBookServiceTest {
 
         //given
         MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
-        MyBook myBook = MybookTestData.createMyBookNotShowable();
+        MyBook myBook = MyBookFixture.NOT_SHOWABLE_OTHER_USER_MYBOOK.getMyBook();
 
         given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
                 Optional.ofNullable(myBook));

@@ -52,7 +52,6 @@ class KakaoBookSearchApiServiceTest {
 
         // given
         String expectNextRequestUrl = "/books/search?keyword=docker&sort=accuracy&page=2";
-
         String expectResult = readJsonFile("resultMoreThan10FromKeyword.json");
 
         mockServer
@@ -100,7 +99,6 @@ class KakaoBookSearchApiServiceTest {
 
         // given
         String expectNextRequestUrl = "";
-
         String expectResult = readJsonFile("resultFromISBN.json");
 
         mockServer

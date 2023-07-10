@@ -3,7 +3,7 @@ package kr.mybrary.bookservice.mybook.domain.dto;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import kr.mybrary.bookservice.mybook.MybookTestData;
+import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
@@ -17,7 +17,7 @@ class MyBookDtoMapperTest {
     void entityToMyBookElementResponse() {
 
         // given
-        MyBook myBook = MybookTestData.createMyBook();
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
         // when
         MyBookElementResponse myBookElementResponse = MyBookDtoMapper.INSTANCE.entityToMyBookElementResponse(myBook);
@@ -43,7 +43,7 @@ class MyBookDtoMapperTest {
     void entityToMyBookDetailResponse() {
 
         // given
-        MyBook myBook = MybookTestData.createMyBook();
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
         // when
         MyBookDetailResponse myBookDetailResponse = MyBookDtoMapper.INSTANCE.entityToMyBookDetailResponse(

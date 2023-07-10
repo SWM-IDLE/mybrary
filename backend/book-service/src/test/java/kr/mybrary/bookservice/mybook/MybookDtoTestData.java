@@ -2,11 +2,8 @@ package kr.mybrary.bookservice.mybook;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kr.mybrary.bookservice.book.BookTestData;
-import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
-import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
@@ -14,76 +11,7 @@ import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailRespo
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse.BookElementResponse;
 
-public class MybookTestData {
-
-    public static MyBook createMyBook() {
-
-        return MyBook.builder()
-                .shareable(false)
-                .startDateOfPossession(LocalDateTime.now())
-                .exchangeable(false)
-                .showable(true)
-                .readStatus(ReadStatus.TO_READ)
-                .book(BookTestData.createBook())
-                .deleted(false)
-                .userId("test_userId")
-                .build();
-    }
-    public static MyBook createDeletedMyBook() {
-
-        return MyBook.builder()
-                .shareable(false)
-                .startDateOfPossession(LocalDateTime.now())
-                .exchangeable(false)
-                .showable(true)
-                .readStatus(ReadStatus.TO_READ)
-                .book(BookTestData.createBook())
-                .deleted(true)
-                .userId("test_userId")
-                .build();
-    }
-
-    public static MyBook createDeletedMyBook(Book book) {
-
-        return MyBook.builder()
-                .shareable(false)
-                .startDateOfPossession(LocalDateTime.now())
-                .exchangeable(false)
-                .showable(true)
-                .readStatus(ReadStatus.TO_READ)
-                .book(book)
-                .deleted(true)
-                .userId("test_userId")
-                .build();
-    }
-
-    public static MyBook createMyBook(Book book) {
-
-        return MyBook.builder()
-                .shareable(false)
-                .startDateOfPossession(LocalDateTime.now())
-                .exchangeable(false)
-                .showable(true)
-                .readStatus(ReadStatus.TO_READ)
-                .book(book)
-                .deleted(false)
-                .userId("test_userId")
-                .build();
-    }
-
-    public static MyBook createMyBookNotShowable() {
-
-        return MyBook.builder()
-                .shareable(false)
-                .startDateOfPossession(LocalDateTime.now())
-                .exchangeable(false)
-                .showable(false)
-                .readStatus(ReadStatus.TO_READ)
-                .book(BookTestData.createBook())
-                .deleted(false)
-                .userId("test_userId")
-                .build();
-    }
+public class MybookDtoTestData {
 
     public static MyBookCreateRequest createMyBookCreateRequest() {
         return MyBookCreateRequest.builder()

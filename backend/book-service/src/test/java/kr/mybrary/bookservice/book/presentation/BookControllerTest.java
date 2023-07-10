@@ -7,7 +7,10 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -15,8 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDateTime;
-import java.util.List;
+import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.domain.BookService;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
@@ -51,7 +53,7 @@ class BookControllerTest {
     void create() throws Exception {
 
         // given
-        BookCreateRequest request = createBookCreateRequest();
+        BookCreateRequest request = BookDtoTestData.createBookCreateRequest();
 
         String requestJson = objectMapper.writeValueAsString(request);
 
@@ -100,21 +102,5 @@ class BookControllerTest {
                                         fieldWithPath("data").type(OBJECT).description("응답 데이터").optional()
                                 )
                                 .build())));
-    }
-
-    private BookCreateRequest createBookCreateRequest() {
-        return BookCreateRequest.builder()
-                .title("title")
-                .description("description")
-                .detailsUrl("detailUrl")
-                .isbn10("isbn10")
-                .isbn13("isbn13")
-                .publisher("publisher")
-                .price(10000)
-                .publicationDate(LocalDateTime.now())
-                .translators(List.of("translator1", "translator2"))
-                .authors(List.of("author1", "author2"))
-                .thumbnailUrl("thumbnailUrl")
-                .build();
     }
 }
