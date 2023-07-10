@@ -1,51 +1,24 @@
 package kr.mybrary.userservice.user;
 
-import java.util.Collections;
-import kr.mybrary.userservice.user.persistence.Role;
-import kr.mybrary.userservice.user.persistence.SocialType;
+import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.persistence.User;
 
 public class UserTestData {
 
     public static User createUser() {
-
-            return User.builder()
-                    .id(1L)
-                    .loginId("loginId")
-                    .nickname("nickname")
-                    .password("password")
-                    .role(Role.USER)
-                    .socialId("socialId")
-                    .socialType(SocialType.GOOGLE)
-                    .refreshToken("refreshToken")
-                    .email("email@mail.com")
-                    .introduction("introduction")
-                    .profileImageUrl("profileImageUrl")
-                    .followers(Collections.emptyList())
-                    .followings(Collections.emptyList())
-                    .build();
-    }
-
-    public static User createUserWithProfile() {
-
-        return User.builder()
-                .id(1L)
-                .loginId("loginId")
-                .nickname("nickname")
-                .email("email@mail.com")
-                .introduction("introduction")
-                .profileImageUrl("profileImageUrl")
-                .build();
+        return UserFixture.USER.getUser();
     }
 
     public static User createUserWithOutProfileImageUrl() {
+        return UserFixture.USER_WITHOUT_PROFILE_IMAGE_URL.getUser();
+    }
 
-        return User.builder()
-                .id(1L)
+    public static SignUpServiceRequest createSignUpServiceRequest() {
+        return SignUpServiceRequest.builder()
                 .loginId("loginId")
+                .password("password123!")
                 .nickname("nickname")
                 .email("email@mail.com")
-                .introduction("introduction")
                 .build();
     }
 }
