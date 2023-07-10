@@ -7,9 +7,9 @@ import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/utils/dios/auth_dio.dart';
 
 const ngrokBaseurl =
-    'https://b357-1-236-97-56.ngrok-free.app/book-service/api/v1';
+    'https://f1ea-119-192-254-89.ngrok-free.app/book-service/api/v1';
 const ngrokTestApi =
-    'https://b357-1-236-97-56.ngrok-free.app/book-service/api/v1/books/search';
+    'https://f1ea-119-192-254-89.ngrok-free.app/book-service/api/v1/books/search';
 
 class RemoteDataSource {
   static Future<void> getProfileData(BuildContext context) async {
@@ -19,13 +19,12 @@ class RemoteDataSource {
     log('profile Get 요청 응답값: $profileResponse');
   }
 
-  static Future<BookSearchResponse> getBookSearchKeywordResponse(String keyword,
-      {String? nextRequestUrl}) async {
+  static Future<BookSearchResponse> getBookSearchKeywordResponse(
+      String keyword) async {
     try {
       final dio = Dio();
-      final bookSearchKeywordResponse = nextRequestUrl != null
-          ? await dio.get('$ngrokBaseurl$nextRequestUrl')
-          : await dio.get('$ngrokTestApi?keyword=$keyword');
+      final bookSearchKeywordResponse =
+          await dio.get('$ngrokTestApi?keyword=$keyword');
 
       if (bookSearchKeywordResponse.statusCode == 200) {
         final BookSearchResponse bookSearchKeywordResult = BookSearchResponse(
@@ -34,6 +33,33 @@ class RemoteDataSource {
           data: BookSearchResponseData.fromJson(
               bookSearchKeywordResponse.data['data']),
         );
+        return bookSearchKeywordResult;
+      } else if (bookSearchKeywordResponse.statusCode == 404) {
+        log('ERROR: 서버에 404 에러가 있습니다.');
+        return bookSearchKeywordResponse.data;
+      } else {
+        log('ERROR: 서버의 API 호출에 실패했습니다.');
+        throw Exception('서버의 API 호출에 실패했습니다.');
+      }
+    } catch (e) {
+      return Future.error('ERROR: 서버 자체에 오류가 있습니다. 오류는 $e 입니다.');
+    }
+  }
+
+  static Future<BookSearchResponse> getBookSearchKeywordNextResponse(
+      String nextRequestUrl) async {
+    try {
+      final dio = Dio();
+      final bookSearchKeywordResponse =
+          await dio.get('$ngrokBaseurl$nextRequestUrl');
+
+      if (bookSearchKeywordResponse.statusCode == 200) {
+        final BookSearchResponse bookSearchKeywordResult = BookSearchResponse(
+            status: bookSearchKeywordResponse.data['status'],
+            message: bookSearchKeywordResponse.data['message'],
+            data: BookSearchResponseData.fromJson(
+                bookSearchKeywordResponse.data['data']));
+        // print(bookSearchKeywordResult);
         return bookSearchKeywordResult;
       } else if (bookSearchKeywordResponse.statusCode == 404) {
         log('ERROR: 서버에 404 에러가 있습니다.');
