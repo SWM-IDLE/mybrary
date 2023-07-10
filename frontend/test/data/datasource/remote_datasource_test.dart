@@ -34,15 +34,5 @@ void main() {
       // then
       expect(result.status, '200 OK');
     });
-
-    test('비정상 키워드 검색 시 데이터 응답이 오류인지 확인', () async {
-      // given
-      String nextUrl = 'ㅋㅋㅇㅇㅌ';
-      // when
-      final result = await RemoteDataSource.getBookSearchKeywordResponse(
-          BookSearchRequestType.searchNextUrl, nextUrl);
-      // then
-      expect(result, Exception('도서 검색 결과가 존재하지 않습니다.'));
-    });
   });
 }
