@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
+import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.UserTestData;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
@@ -47,11 +48,13 @@ class UserServiceImplTest {
         // Given
         SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
-        given(userRepository.findByLoginId(serviceRequest.getLoginId())).willReturn(Optional.empty());
-        given(userRepository.findByNickname(serviceRequest.getNickname())).willReturn(Optional.empty());
+        given(userRepository.findByLoginId(serviceRequest.getLoginId())).willReturn(
+                Optional.empty());
+        given(userRepository.findByNickname(serviceRequest.getNickname())).willReturn(
+                Optional.empty());
         given(userRepository.findByEmail(serviceRequest.getEmail())).willReturn(Optional.empty());
         given(passwordEncoder.encode(serviceRequest.getPassword())).willReturn("encodedPassword");
-        given(userRepository.save(any(User.class))).willReturn(UserTestData.createUser());
+        given(userRepository.save(any(User.class))).willReturn(UserFixture.COMMON_USER.getUser());
 
         // When
         SignUpServiceResponse savedUser = userService.signUp(serviceRequest);
@@ -76,12 +79,8 @@ class UserServiceImplTest {
         // Given
         SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
-        User user = User.builder()
-                .loginId("loginId")
-                .build();
-
         given(userRepository.findByLoginId(serviceRequest.getLoginId())).willReturn(
-                Optional.of(user));
+                Optional.of(UserFixture.COMMON_USER.getUser()));
 
         // When
         assertThatThrownBy(() -> userService.signUp(serviceRequest))
@@ -99,12 +98,8 @@ class UserServiceImplTest {
         // Given
         SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
-        User user = User.builder()
-                .nickname("nickname")
-                .build();
-
         given(userRepository.findByNickname(serviceRequest.getNickname())).willReturn(
-                Optional.of(user));
+                Optional.of(UserFixture.COMMON_USER.getUser()));
 
         // When
         assertThatThrownBy(() -> userService.signUp(serviceRequest))
@@ -122,12 +117,8 @@ class UserServiceImplTest {
         // Given
         SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
-        User user = User.builder()
-                .email("email@mail.com")
-                .build();
-
         given(userRepository.findByEmail(serviceRequest.getEmail())).willReturn(
-                Optional.of(user));
+                Optional.of(UserFixture.COMMON_USER.getUser()));
 
         // When
         assertThatThrownBy(() -> userService.signUp(serviceRequest))
@@ -144,17 +135,21 @@ class UserServiceImplTest {
     void getUserProfile() {
         // Given
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
-                Optional.of(UserTestData.createUser()));
+                Optional.of(UserFixture.COMMON_USER.getUser()));
 
         // When
         ProfileServiceResponse userProfile = userService.getProfile(LOGIN_ID);
 
         // Then
         Assertions.assertAll(
-                () -> assertThat(userProfile.getNickname()).isEqualTo("nickname"),
-                () -> assertThat(userProfile.getEmail()).isEqualTo("email@mail.com"),
-                () -> assertThat(userProfile.getIntroduction()).isEqualTo("introduction"),
-                () -> assertThat(userProfile.getProfileImageUrl()).isEqualTo("profileImageUrl")
+                () -> assertThat(userProfile.getNickname()).isEqualTo(
+                        UserFixture.COMMON_USER.getUser().getNickname()),
+                () -> assertThat(userProfile.getEmail()).isEqualTo(
+                        UserFixture.COMMON_USER.getUser().getEmail()),
+                () -> assertThat(userProfile.getIntroduction()).isEqualTo(
+                        UserFixture.COMMON_USER.getUser().getIntroduction()),
+                () -> assertThat(userProfile.getProfileImageUrl()).isEqualTo(
+                        UserFixture.COMMON_USER.getUser().getProfileImageUrl())
         );
 
         verify(userRepository).findByLoginId(LOGIN_ID);
@@ -181,13 +176,14 @@ class UserServiceImplTest {
     void getProfileImageUrl() {
         // Given
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
-                Optional.of(UserTestData.createUser()));
+                Optional.of(UserFixture.COMMON_USER.getUser()));
 
         // When
         ProfileImageUrlServiceResponse profileImage = userService.getProfileImageUrl(LOGIN_ID);
 
         // Then
-        assertThat(profileImage.getProfileImageUrl()).isEqualTo("profileImageUrl");
+        assertThat(profileImage.getProfileImageUrl()).isEqualTo(
+                UserFixture.COMMON_USER.getUser().getProfileImageUrl());
 
         verify(userRepository).findByLoginId(LOGIN_ID);
     }
@@ -213,7 +209,7 @@ class UserServiceImplTest {
     void getProfileImageUrlWithNoProfileImageUrl() {
         // Given
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
-                Optional.of(UserTestData.createUserWithOutProfileImageUrl()));
+                Optional.of(UserFixture.USER_WITHOUT_PROFILE_IMAGE_URL.getUser()));
 
         // When
         assertThatThrownBy(() -> userService.getProfileImageUrl(LOGIN_ID))
