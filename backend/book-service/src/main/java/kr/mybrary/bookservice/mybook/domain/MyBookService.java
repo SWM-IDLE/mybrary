@@ -59,7 +59,7 @@ public class MyBookService {
         MyBook myBook = myBookRepository.findByIdAndDeletedIsFalse(request.getMybookId())
                 .orElseThrow(MyBookNotFoundException::new);
 
-        if (!myBook.isShareable() && !request.getUserId().equals(request.getLoginId())) {
+        if (!myBook.isShowable() && !request.getUserId().equals(request.getLoginId())) {
             throw new MyBookAccessDeniedException();
         }
 

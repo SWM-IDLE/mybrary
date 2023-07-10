@@ -5,10 +5,8 @@ import java.util.List;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 public class MyBookCreateRequest {
     private String title;

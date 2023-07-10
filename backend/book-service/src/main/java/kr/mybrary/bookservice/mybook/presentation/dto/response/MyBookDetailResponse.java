@@ -5,10 +5,8 @@ import java.util.List;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 public class MyBookDetailResponse {
     private Long id;
@@ -21,7 +19,6 @@ public class MyBookDetailResponse {
     private BookDetailResponse book;
 
     @Getter
-    @Setter
     @Builder
     public static class BookDetailResponse {
         private Long id;
