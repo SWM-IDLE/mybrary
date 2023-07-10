@@ -14,6 +14,7 @@ import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.domain.exception.DuplicateEmailException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateNicknameException;
+import kr.mybrary.userservice.user.domain.exception.UserNotFoundException;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
@@ -40,7 +41,8 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.INSTANCE.toEntity(serviceRequest);
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
         user.updateRole(Role.USER);
-        SignUpServiceResponse serviceResponse = UserMapper.INSTANCE.toSignUpServiceResponse(userRepository.save(user));
+        SignUpServiceResponse serviceResponse = UserMapper.INSTANCE.toSignUpServiceResponse(
+                userRepository.save(user));
 
         return serviceResponse;
     }
@@ -65,7 +67,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileServiceResponse getProfile(String loginId) {
-        return null;
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(UserNotFoundException::new);
+        ProfileServiceResponse serviceResponse = UserMapper.INSTANCE.toProfileServiceResponse(user);
+
+        return serviceResponse;
     }
 
     @Override

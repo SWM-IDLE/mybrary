@@ -1,6 +1,7 @@
 package kr.mybrary.userservice.user.domain.dto;
 
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.persistence.User;
 import org.mapstruct.Mapper;
@@ -15,4 +16,6 @@ public interface UserMapper {
     User toEntity(SignUpServiceRequest serviceRequest);
 
     SignUpServiceResponse toSignUpServiceResponse(User user);
+
+    ProfileServiceResponse toProfileServiceResponse(User user);
 }
