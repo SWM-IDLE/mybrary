@@ -45,26 +45,13 @@ class UserServiceImplTest {
     @DisplayName("회원가입 요청이 들어오면 암호화된 비밀번호와 함께 회원 권한으로 사용자 정보를 저장한다")
     void signUp() {
         // Given
-        SignUpServiceRequest serviceRequest = SignUpServiceRequest.builder()
-                .loginId("loginId")
-                .password("password123!")
-                .nickname("nickname")
-                .email("email@mail.com")
-                .build();
+        SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
         given(userRepository.findByLoginId(serviceRequest.getLoginId())).willReturn(Optional.empty());
         given(userRepository.findByNickname(serviceRequest.getNickname())).willReturn(Optional.empty());
         given(userRepository.findByEmail(serviceRequest.getEmail())).willReturn(Optional.empty());
         given(passwordEncoder.encode(serviceRequest.getPassword())).willReturn("encodedPassword");
-        given(userRepository.save(any(User.class))).willReturn(
-                User.builder()
-                        .loginId(serviceRequest.getLoginId())
-                        .password("encodedPassword")
-                        .nickname(serviceRequest.getNickname())
-                        .email(serviceRequest.getEmail())
-                        .role(Role.USER)
-                        .build()
-        );
+        given(userRepository.save(any(User.class))).willReturn(UserTestData.createUser());
 
         // When
         SignUpServiceResponse savedUser = userService.signUp(serviceRequest);
@@ -87,12 +74,7 @@ class UserServiceImplTest {
     @DisplayName("아이디가 중복되면 예외를 던진다")
     void signUpWithDuplicateLoginId() {
         // Given
-        SignUpServiceRequest serviceRequest = SignUpServiceRequest.builder()
-                .loginId("loginId")
-                .password("password123!")
-                .nickname("nickname")
-                .email("email@mail.com")
-                .build();
+        SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
         User user = User.builder()
                 .loginId("loginId")
@@ -115,12 +97,7 @@ class UserServiceImplTest {
     @DisplayName("닉네임이 중복되면 예외를 던진다")
     void signUpWithDuplicateNickname() {
         // Given
-        SignUpServiceRequest serviceRequest = SignUpServiceRequest.builder()
-                .loginId("loginId")
-                .password("password123!")
-                .nickname("nickname")
-                .email("email@mail.com")
-                .build();
+        SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
         User user = User.builder()
                 .nickname("nickname")
@@ -143,12 +120,7 @@ class UserServiceImplTest {
     @DisplayName("이메일이 중복되면 예외를 던진다")
     void signUpWithDuplicateEmail() {
         // Given
-        SignUpServiceRequest serviceRequest = SignUpServiceRequest.builder()
-                .loginId("loginId")
-                .password("password123!")
-                .nickname("nickname")
-                .email("email@mail.com")
-                .build();
+        SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
         User user = User.builder()
                 .email("email@mail.com")
@@ -172,7 +144,7 @@ class UserServiceImplTest {
     void getUserProfile() {
         // Given
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
-                Optional.of(UserTestData.createUserWithProfile()));
+                Optional.of(UserTestData.createUser()));
 
         // When
         ProfileServiceResponse userProfile = userService.getProfile(LOGIN_ID);
@@ -209,7 +181,7 @@ class UserServiceImplTest {
     void getProfileImageUrl() {
         // Given
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
-                Optional.of(UserTestData.createUserWithProfile()));
+                Optional.of(UserTestData.createUser()));
 
         // When
         ProfileImageUrlServiceResponse profileImage = userService.getProfileImageUrl(LOGIN_ID);
