@@ -232,10 +232,9 @@ class MyBookControllerTest {
         // given
         Long id = 1L;
 
-//        given(myBookService.findMyBookDetail(any(), any()));
-
         // when
-        ResultActions actions = mockMvc.perform(delete("/api/v1/mybooks/{id}", id));
+        ResultActions actions = mockMvc.perform(delete("/api/v1/mybooks/{id}", id)
+                .header("USER-ID", LOGIN_ID));
 
         // then
         actions
@@ -253,6 +252,9 @@ class MyBookControllerTest {
                                 ResourceSnippetParameters.builder()
                                         .tag("mybook")
                                         .summary("내 서재의 마이북을 삭제한다.")
+                                        .requestHeaders(
+                                                headerWithName("USER-ID").description("사용자 ID")
+                                        )
                                         .pathParameters(
                                                 parameterWithName("id").type(SimpleType.INTEGER).description("마이북 ID")
                                         )
