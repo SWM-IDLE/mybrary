@@ -180,7 +180,7 @@ class MyBookControllerTest {
         given(myBookService.findMyBookDetail(any())).willReturn(expectedResponse);
 
         // when
-        ResultActions actions = mockMvc.perform(get("/api/v1/users/{userId}/mybooks/{mybookId}", LOGIN_ID, MYBOOK_ID)
+        ResultActions actions = mockMvc.perform(get("/api/v1/mybooks/{mybookId}", MYBOOK_ID)
                 .header("USER-ID", LOGIN_ID));
 
         // then
@@ -203,7 +203,6 @@ class MyBookControllerTest {
                                                 headerWithName("USER-ID").description("사용자 ID")
                                         )
                                         .pathParameters(
-                                                parameterWithName("userId").type(SimpleType.STRING).description("사용자 ID"),
                                                 parameterWithName("mybookId").type(SimpleType.NUMBER).description("마이북 ID")
                                         )
                                         .responseSchema(Schema.schema("find-mybook-detail response body"))
