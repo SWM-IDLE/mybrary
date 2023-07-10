@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/model/book_search_data.dart';
+import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/res/colors/color.dart';
 
 class SearchBookList extends StatelessWidget {

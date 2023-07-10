@@ -24,6 +24,8 @@ const Color KAKAO_COLOR = Color(0xFFFFE502);
 
 // Search Color
 const Color SEARCH_INPUT_COLOR = Color(0xFFF3F5F6);
+const Color POPULAR_BORDER_COLOR = Color(0xCCDEDEDE);
+const Color POPULAR_TEXT_COLOR = Color(0xFF727272);
 
 // Book Data Color
 const Color BOOK_STAR_COLOR = Color(0xFFFC8C00);

@@ -1,4 +1,4 @@
-const baseUrl = "https://fc68-210-126-14-134.ngrok-free.app";
+const baseUrl = "https://c247-1-236-97-56.ngrok-free.app";
 const mybraryUrlScheme = "kr.mybrary";
 
 enum API {
@@ -6,6 +6,9 @@ enum API {
   kakaoLogin,
   googleLogin,
   getUserProfile,
+  getBookService,
+  getBookSearchKeyword,
+  getBookSearchIsbn,
 }
 
 Map<API, String> apiMap = {
@@ -13,6 +16,9 @@ Map<API, String> apiMap = {
   API.kakaoLogin: "/oauth2/authorization/kakao",
   API.googleLogin: "/oauth2/authorization/google",
   API.getUserProfile: "/api/v1/users/profile",
+  API.getBookService: "/book-service/api/v1",
+  API.getBookSearchKeyword: "/book-service/api/v1/books/search",
+  API.getBookSearchIsbn: "/book-service/api/v1/books/search/isbn", // =isbn
 };
 
 String getApi(API apiType) {
