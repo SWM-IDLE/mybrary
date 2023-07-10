@@ -8,12 +8,13 @@ import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceReques
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileImageServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.domain.exception.DuplicateEmailException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateNicknameException;
+import kr.mybrary.userservice.user.domain.exception.ProfileImageUrlNotFoundException;
 import kr.mybrary.userservice.user.domain.exception.UserNotFoundException;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
@@ -80,18 +81,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ProfileImageServiceResponse getProfileImage(String loginId) {
-        return null;
+    public ProfileImageUrlServiceResponse getProfileImageUrl(String loginId) {
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(UserNotFoundException::new);
+
+        checkProfileImageUrlExistence(user);
+
+        ProfileImageUrlServiceResponse serviceResponse = ProfileImageUrlServiceResponse.builder()
+                .profileImageUrl(user.getProfileImageUrl())
+                .build();
+
+        return serviceResponse;
+    }
+
+    private void checkProfileImageUrlExistence(User user) {
+        if (user.getProfileImageUrl() == null) {
+            throw new ProfileImageUrlNotFoundException();
+        }
     }
 
     @Override
-    public ProfileImageServiceResponse updateProfileImage(
+    public ProfileImageUrlServiceResponse updateProfileImage(
             ProfileImageUpdateServiceRequest serviceRequest) {
         return null;
     }
 
     @Override
-    public ProfileImageServiceResponse deleteProfileImage(String loginId) {
+    public ProfileImageUrlServiceResponse deleteProfileImage(String loginId) {
         return null;
     }
 

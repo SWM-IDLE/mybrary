@@ -7,7 +7,7 @@ import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceReques
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileImageServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 
@@ -19,11 +19,11 @@ public interface UserService {
 
     ProfileServiceResponse updateProfile(ProfileUpdateServiceRequest serviceRequest);
 
-    ProfileImageServiceResponse getProfileImage(String loginId);
+    ProfileImageUrlServiceResponse getProfileImageUrl(String loginId);
 
-    ProfileImageServiceResponse updateProfileImage(ProfileImageUpdateServiceRequest serviceRequest);
+    ProfileImageUrlServiceResponse updateProfileImage(ProfileImageUpdateServiceRequest serviceRequest);
 
-    ProfileImageServiceResponse deleteProfileImage(String loginId);
+    ProfileImageUrlServiceResponse deleteProfileImage(String loginId);
 
     FollowerServiceResponse getFollowers(String loginId);
 

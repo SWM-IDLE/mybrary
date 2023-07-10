@@ -19,7 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import kr.mybrary.userservice.user.domain.UserService;
@@ -31,7 +30,7 @@ import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.FollowResponse;
 import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileImageServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.persistence.Role;
@@ -310,11 +309,12 @@ class UserControllerTest {
     @Test
     void getProfileImageUrl() throws Exception {
         // given
-        ProfileImageServiceResponse profileImageServiceResponse = ProfileImageServiceResponse.builder()
+        ProfileImageUrlServiceResponse profileImageUrlServiceResponse = ProfileImageUrlServiceResponse.builder()
                 .profileImageUrl("profileImageUrl_1")
                 .build();
 
-        given(userService.getProfileImage(anyString())).willReturn(profileImageServiceResponse);
+        given(userService.getProfileImageUrl(anyString())).willReturn(
+                profileImageUrlServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -328,9 +328,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 이미지 URL입니다."))
                 .andExpect(jsonPath("$.data.profileImageUrl").value(
-                        profileImageServiceResponse.getProfileImageUrl()));
+                        profileImageUrlServiceResponse.getProfileImageUrl()));
 
-        verify(userService).getProfileImage(anyString());
+        verify(userService).getProfileImageUrl(anyString());
 
         // docs
         actions.andDo(document("get-user-profile-image",
@@ -366,12 +366,12 @@ class UserControllerTest {
         MockMultipartFile profileImage = new MockMultipartFile("profileImage", "user1.png", "image/jpg",
                 "profileImage".getBytes());
 
-        ProfileImageServiceResponse profileImageServiceResponse = ProfileImageServiceResponse.builder()
+        ProfileImageUrlServiceResponse profileImageUrlServiceResponse = ProfileImageUrlServiceResponse.builder()
                 .profileImageUrl("profileImageUrl")
                 .build();
 
         given(userService.updateProfileImage(any(ProfileImageUpdateServiceRequest.class))).willReturn(
-                profileImageServiceResponse);
+                profileImageUrlServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -390,7 +390,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 이미지를 등록했습니다."))
                 .andExpect(jsonPath("$.data.profileImageUrl").value(
-                        profileImageServiceResponse.getProfileImageUrl()));
+                        profileImageUrlServiceResponse.getProfileImageUrl()));
 
         verify(userService).updateProfileImage(any(ProfileImageUpdateServiceRequest.class));
 
@@ -427,11 +427,12 @@ class UserControllerTest {
     @Test
     void deleteProfileImage() throws Exception {
         // given
-        ProfileImageServiceResponse profileImageServiceResponse = ProfileImageServiceResponse.builder()
+        ProfileImageUrlServiceResponse profileImageUrlServiceResponse = ProfileImageUrlServiceResponse.builder()
                 .profileImageUrl("profileImageUrl_1")
                 .build();
 
-        given(userService.deleteProfileImage(anyString())).willReturn(profileImageServiceResponse);
+        given(userService.deleteProfileImage(anyString())).willReturn(
+                profileImageUrlServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -445,7 +446,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 이미지를 삭제했습니다."))
                 .andExpect(jsonPath("$.data.profileImageUrl").value(
-                        profileImageServiceResponse.getProfileImageUrl()));
+                        profileImageUrlServiceResponse.getProfileImageUrl()));
 
         verify(userService).deleteProfileImage(anyString());
 

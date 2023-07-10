@@ -10,7 +10,7 @@ import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceReques
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileImageServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.presentation.dto.request.FollowRequest;
@@ -81,9 +81,9 @@ public class UserController {
     }
 
     @GetMapping("/profile/image")
-    public ResponseEntity<SuccessResponse> getProfileImage(
+    public ResponseEntity<SuccessResponse> getProfileImageUrl(
             @RequestHeader("USER-ID") String loginId) {
-        ProfileImageServiceResponse serviceResponse = userService.getProfileImage(loginId);
+        ProfileImageUrlServiceResponse serviceResponse = userService.getProfileImageUrl(loginId);
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 프로필 이미지 URL입니다.",
@@ -96,7 +96,7 @@ public class UserController {
             @RequestHeader("USER-ID") String loginId, @RequestParam("profileImage") MultipartFile profileImage) {
         ProfileImageUpdateServiceRequest serviceRequest = ProfileImageUpdateServiceRequest.of(
                 profileImage, loginId);
-        ProfileImageServiceResponse serviceResponse = userService.updateProfileImage(
+        ProfileImageUrlServiceResponse serviceResponse = userService.updateProfileImage(
                 serviceRequest);
 
         return ResponseEntity.ok().body(
@@ -108,7 +108,7 @@ public class UserController {
     @DeleteMapping("/profile/image")
     public ResponseEntity<SuccessResponse> deleteProfileImage(
             @RequestHeader("USER-ID") String loginId) {
-        ProfileImageServiceResponse serviceResponse = userService.deleteProfileImage(loginId);
+        ProfileImageUrlServiceResponse serviceResponse = userService.deleteProfileImage(loginId);
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 프로필 이미지를 삭제했습니다.",
