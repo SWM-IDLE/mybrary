@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kr.mybrary.bookservice.book.BookTestData;
+import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
-import kr.mybrary.bookservice.mybook.MybookTestData;
+import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,8 +30,8 @@ class MyBookRepositoryTest {
     @Test
     void saveMybook() {
         // given
-        Book savedBook = bookRepository.save(BookTestData.createBook());
-        MyBook myBook = MybookTestData.createMyBook(savedBook);
+        Book savedBook = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook);
 
         // when
         MyBook savedMyBook = myBookRepository.save(myBook);
@@ -53,8 +53,8 @@ class MyBookRepositoryTest {
     @Test
     void existsByUserIdAndBook() {
         // given
-        Book savedBook = bookRepository.save(BookTestData.createBook());
-        MyBook myBook = MybookTestData.createMyBook(savedBook);
+        Book savedBook = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook);
 
         MyBook savedMyBook = myBookRepository.save(myBook);
 
@@ -68,17 +68,17 @@ class MyBookRepositoryTest {
     void findAllMyBooks() {
 
         // given
-        Book savedBook_1 = bookRepository.save(BookTestData.createBook());
-        Book savedBook_2 = bookRepository.save(BookTestData.createBook());
+        Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+        Book savedBook_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
 
-        MyBook myBook_1 = MybookTestData.createMyBook(savedBook_1);
-        MyBook myBook_2 = MybookTestData.createMyBook(savedBook_2);
+        MyBook myBook_1 = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook_1);
+        MyBook myBook_2 = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook_2);
 
         myBookRepository.save(myBook_1);
         myBookRepository.save(myBook_2);
 
         // when
-        List<MyBook> myBooks = myBookRepository.findAllByUserId("test_userId");
+        List<MyBook> myBooks = myBookRepository.findAllByUserId("LOGIN_USER_ID");
 
         // then
         assertThat(myBooks.size()).isEqualTo(2);
@@ -89,11 +89,11 @@ class MyBookRepositoryTest {
     void findMyBookById() {
 
         // given
-        Book savedBook_1 = bookRepository.save(BookTestData.createBook());
-        Book savedBook_2 = bookRepository.save(BookTestData.createBook());
+        Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+        Book savedBook_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
 
-        MyBook myBook_1 = MybookTestData.createMyBook(savedBook_1);
-        MyBook myBook_2 = MybookTestData.createDeletedMyBook(savedBook_2);
+        MyBook myBook_1 = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook_1);
+        MyBook myBook_2 = MyBookFixture.DELETED_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook_2);
 
         MyBook savedMyBook = myBookRepository.save(myBook_1);
         MyBook savedDeletedMyBook = myBookRepository.save(myBook_2);
@@ -105,5 +105,6 @@ class MyBookRepositoryTest {
                 () -> assertThatThrownBy(() -> myBookRepository.findByIdAndDeletedIsFalse(savedDeletedMyBook.getId())
                                 .orElseThrow(IllegalArgumentException::new))
         );
+
     }
 }

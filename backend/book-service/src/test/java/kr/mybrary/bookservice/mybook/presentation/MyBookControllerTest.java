@@ -26,7 +26,7 @@ import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import kr.mybrary.bookservice.mybook.MybookTestData;
+import kr.mybrary.bookservice.mybook.MybookDtoTestData;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
@@ -56,15 +56,14 @@ class MyBookControllerTest {
     @MockBean
     private MyBookService myBookService;
 
-    private static final String LOGIN_ID = "test-login-id";
-    private static final String USER_ID = "user-login-id";
+    private static final String LOGIN_ID = "LOGIN_USER_ID";
     private static final Long MYBOOK_ID = 1L;
 
     @DisplayName("내 서재에 책을 추가한다.")
     @Test
     void createMyBook() throws Exception {
         // given
-        MyBookCreateRequest request = MybookTestData.createMyBookCreateRequest();
+        MyBookCreateRequest request = MybookDtoTestData.createMyBookCreateRequest();
 
         String requestJson = objectMapper.writeValueAsString(request);
 
@@ -121,13 +120,13 @@ class MyBookControllerTest {
     @Test
     void findAllMybooks() throws Exception {
         // given
-        MyBookElementResponse expectedResponse_1 = MybookTestData.createMyBookElementResponse();
-        MyBookElementResponse expectedResponse_2 = MybookTestData.createMyBookElementResponse();
+        MyBookElementResponse expectedResponse_1 = MybookDtoTestData.createMyBookElementResponse();
+        MyBookElementResponse expectedResponse_2 = MybookDtoTestData.createMyBookElementResponse();
 
         given(myBookService.findAllMyBooks(any())).willReturn(List.of(expectedResponse_1, expectedResponse_2));
 
         // when
-        ResultActions actions = mockMvc.perform(get("/api/v1/users/{userId}/mybooks", USER_ID)
+        ResultActions actions = mockMvc.perform(get("/api/v1/users/{userId}/mybooks", LOGIN_ID)
                 .header("USER-ID", LOGIN_ID));
 
         // then
@@ -175,7 +174,7 @@ class MyBookControllerTest {
     void findMyBookDetail() throws Exception {
 
         // given
-        MyBookDetailResponse expectedResponse = MybookTestData.createMyBookDetailResponse();
+        MyBookDetailResponse expectedResponse = MybookDtoTestData.createMyBookDetailResponse();
 
         given(myBookService.findMyBookDetail(any())).willReturn(expectedResponse);
 
