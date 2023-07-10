@@ -5,7 +5,7 @@ class SearchNotFound extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text('검색 결과가 없습니다.'),
     );
   }

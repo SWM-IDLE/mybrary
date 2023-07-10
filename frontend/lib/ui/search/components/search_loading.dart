@@ -9,7 +9,7 @@ class SearchLoading extends StatelessWidget {
     return Center(
       child: CircularProgressIndicator(
         backgroundColor: PRIMARY_COLOR.withOpacity(0.2),
-        valueColor: AlwaysStoppedAnimation<Color>(PRIMARY_COLOR),
+        valueColor: const AlwaysStoppedAnimation<Color>(PRIMARY_COLOR),
       ),
     );
   }
