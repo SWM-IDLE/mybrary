@@ -44,12 +44,11 @@ public class MyBookController {
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "서재의 도서 목록입니다.", myBooks));
     }
 
-    @GetMapping("/users/{userId}/mybooks/{mybookId}")
+    @GetMapping("/mybooks/{mybookId}")
     public ResponseEntity findMyBookDetail(@RequestHeader("USER-ID") String loginId,
-            @PathVariable("userId") String userId,
             @PathVariable("mybookId") Long mybookId) {
 
-        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(userId, loginId, mybookId);
+        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(loginId, mybookId);
 
         return ResponseEntity.ok(
                 SuccessResponse.of(HttpStatus.OK.toString(), "마이북 상세보기입니다.", myBookService.findMyBookDetail(request)));

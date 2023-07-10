@@ -42,8 +42,8 @@ class MyBookServiceTest {
     @Mock
     private BookService bookService;
 
-    private static final String LOGIN_ID = "test-login-id";
-    private static final String USER_ID = "user-login-id";
+    private static final String LOGIN_ID = "login-user-id";
+    private static final String USER_ID = "user-id";
 
     @DisplayName("도서를 마이북으로 등록한다.")
     @Test
@@ -149,7 +149,7 @@ class MyBookServiceTest {
     void findMyBookDetail() {
 
         //given
-        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, LOGIN_ID, 1L);
+        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MybookTestData.createMyBook();
 
         given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
@@ -171,7 +171,7 @@ class MyBookServiceTest {
     void occurExceptionWhenFindMyBookDetailWithNotExistMyBook() {
 
         //given
-        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, LOGIN_ID, 1L);
+        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
 
         given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
                 Optional.empty());
@@ -189,7 +189,7 @@ class MyBookServiceTest {
     void occurExceptionWhenFindOtherUserPrivateMyBookDetail() {
 
         //given
-        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(USER_ID, LOGIN_ID, 1L);
+        MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MybookTestData.createMyBookNotShowable();
 
         given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
