@@ -226,7 +226,7 @@ class MyBookServiceTest {
         assertAll(
                 () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId()),
                 () -> {
-                    assert myBook != null;
+                    assertThat(myBook).isNotNull();
                     assertThat(myBook.isDeleted()).isTrue();
                 }
         );
@@ -248,7 +248,7 @@ class MyBookServiceTest {
                 () -> assertThatThrownBy(() -> myBookService.deleteMyBook(request))
                         .isInstanceOf(MyBookAccessDeniedException.class),
                 () -> {
-                    assert myBook != null;
+                    assertThat(myBook).isNotNull();
                     assertThat(myBook.isDeleted()).isFalse();
                 },
                 () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId())
