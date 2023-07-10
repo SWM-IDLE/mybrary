@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProfileServiceResponse getProfile(String loginId) {
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(UserNotFoundException::new);
@@ -81,6 +82,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProfileImageUrlServiceResponse getProfileImageUrl(String loginId) {
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(UserNotFoundException::new);
@@ -112,11 +114,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public FollowerServiceResponse getFollowers(String loginId) {
         return null;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public FollowingServiceResponse getFollowings(String loginId) {
         return null;
     }
