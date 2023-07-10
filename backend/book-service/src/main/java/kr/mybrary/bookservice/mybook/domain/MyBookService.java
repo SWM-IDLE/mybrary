@@ -5,6 +5,7 @@ import kr.mybrary.bookservice.book.domain.BookService;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.domain.dto.MyBookDtoMapper;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedException;
@@ -66,7 +67,15 @@ public class MyBookService {
         return MyBookDtoMapper.INSTANCE.entityToMyBookDetailResponse(myBook);
     }
 
-    public void deleteMyBook(String userId, Long id) {
-        // TODO
+    public void deleteMyBook(MyBookDeleteServiceRequest request) {
+
+        MyBook myBook = myBookRepository.findByIdAndDeletedIsFalse(request.getMybookId())
+                .orElseThrow(MyBookNotFoundException::new);
+
+        if (!myBook.getUserId().equals(request.getLoginId())) {
+            throw new MyBookAccessDeniedException();
+        }
+
+        myBook.deleteMyBook();
     }
 }
