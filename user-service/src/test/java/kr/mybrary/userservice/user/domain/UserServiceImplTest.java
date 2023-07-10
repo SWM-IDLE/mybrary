@@ -8,11 +8,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
+import kr.mybrary.userservice.user.UserTestData;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.domain.exception.DuplicateEmailException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateNicknameException;
+import kr.mybrary.userservice.user.domain.exception.UserNotFoundException;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
@@ -35,6 +38,8 @@ class UserServiceImplTest {
     PasswordEncoder passwordEncoder;
     @InjectMocks
     UserServiceImpl userService;
+
+    static final String LOGIN_ID = "loginId";
 
     @Test
     @DisplayName("회원가입 요청이 들어오면 암호화된 비밀번호와 함께 회원 권한으로 사용자 정보를 저장한다")
@@ -80,7 +85,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("아이디가 중복되면 예외를 던진다")
-    void DuplicateLoginId() {
+    void signUpWithDuplicateLoginId() {
         // Given
         SignUpServiceRequest serviceRequest = SignUpServiceRequest.builder()
                 .loginId("loginId")
@@ -108,7 +113,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("닉네임이 중복되면 예외를 던진다")
-    void DuplicateNickname() {
+    void signUpWithDuplicateNickname() {
         // Given
         SignUpServiceRequest serviceRequest = SignUpServiceRequest.builder()
                 .loginId("loginId")
@@ -136,7 +141,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("이메일이 중복되면 예외를 던진다")
-    void DuplicateEmail() {
+    void signUpWithDuplicateEmail() {
         // Given
         SignUpServiceRequest serviceRequest = SignUpServiceRequest.builder()
                 .loginId("loginId")
@@ -160,6 +165,43 @@ class UserServiceImplTest {
 
         // Then
         verify(userRepository).findByEmail(serviceRequest.getEmail());
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 정보를 조회한다")
+    void getUserProfile() {
+        // Given
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
+                Optional.of(UserTestData.createUserWithProfile()));
+
+        // When
+        ProfileServiceResponse userProfile = userService.getProfile(LOGIN_ID);
+
+        // Then
+        Assertions.assertAll(
+                () -> assertThat(userProfile.getNickname()).isEqualTo("nickname"),
+                () -> assertThat(userProfile.getEmail()).isEqualTo("email@mail.com"),
+                () -> assertThat(userProfile.getIntroduction()).isEqualTo("introduction"),
+                () -> assertThat(userProfile.getProfileImageUrl()).isEqualTo("profileImageUrl")
+        );
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 정보를 조회할 때 사용자가 없으면 예외를 던진다")
+    void getUserProfileWithNotExistUser() {
+        // Given
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.empty());
+
+        // When
+        assertThatThrownBy(() -> userService.getProfile(LOGIN_ID))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "U-05")
+                .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(LOGIN_ID);
     }
 
 }
