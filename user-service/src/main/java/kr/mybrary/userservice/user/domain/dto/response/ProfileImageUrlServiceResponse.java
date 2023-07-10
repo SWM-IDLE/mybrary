@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ProfileImageServiceResponse {
+public class ProfileImageUrlServiceResponse {
 
     private String profileImageUrl;
 
