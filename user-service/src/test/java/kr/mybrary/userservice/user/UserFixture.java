@@ -6,10 +6,12 @@ import kr.mybrary.userservice.user.persistence.Follow;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.SocialType;
 import kr.mybrary.userservice.user.persistence.User;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public enum UserFixture {
 
-    USER(1L, "loginId", "nickname", "encodedPassword", Role.USER, "socialId", SocialType.GOOGLE,
+    COMMON_USER(1L, "loginId", "nickname", "encodedPassword", Role.USER, "socialId", SocialType.GOOGLE,
             "refreshToken", "email@mail.com", "introduction", "profileImageUrl",
             Collections.emptyList(), Collections.emptyList()),
     USER_WITHOUT_PROFILE_IMAGE_URL(1L, "loginId", "nickname", "encodedPassword", Role.USER,
@@ -31,25 +33,6 @@ public enum UserFixture {
     private final String profileImageUrl;
     private final List<Follow> followers;
     private final List<Follow> followings;
-
-    UserFixture(Long id, String loginId, String nickname, String password, Role role,
-            String socialId, SocialType socialType, String refreshToken, String email,
-            String introduction, String profileImageUrl, List<Follow> followers,
-            List<Follow> followings) {
-        this.id = id;
-        this.loginId = loginId;
-        this.nickname = nickname;
-        this.password = password;
-        this.role = role;
-        this.socialId = socialId;
-        this.socialType = socialType;
-        this.refreshToken = refreshToken;
-        this.email = email;
-        this.introduction = introduction;
-        this.profileImageUrl = profileImageUrl;
-        this.followers = followers;
-        this.followings = followings;
-    }
 
     public User getUser() {
         return User.builder()

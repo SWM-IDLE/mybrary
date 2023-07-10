@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Optional;
-import kr.mybrary.userservice.user.UserTestData;
+import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.persistence.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class UserRepositoryTest {
     @DisplayName("로그인 아이디로 사용자를 가져온다.")
     void findByLoginId() {
         // given
-        User savedUser = userRepository.save(UserTestData.createUser());
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
 
         // when
         Optional<User> foundUser = userRepository.findByLoginId(savedUser.getLoginId());
@@ -43,7 +43,7 @@ class UserRepositoryTest {
     @DisplayName("이메일로 사용자를 가져온다.")
     void findByEmail() {
         // given
-        User savedUser = userRepository.save(UserTestData.createUser());
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
 
         // when
         Optional<User> foundUser = userRepository.findByEmail(savedUser.getEmail());
@@ -60,7 +60,7 @@ class UserRepositoryTest {
     @DisplayName("닉네임으로 사용자를 가져온다.")
     void findByNickname() {
         // given
-        User savedUser = userRepository.save(UserTestData.createUser());
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
 
         // when
         Optional<User> foundUser = userRepository.findByNickname(savedUser.getNickname());
@@ -77,7 +77,7 @@ class UserRepositoryTest {
     @DisplayName("리프레쉬 토큰으로 사용자를 가져온다.")
     void findByRefreshToken() {
         // given
-        User savedUser = userRepository.save(UserTestData.createUser());
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
 
         // when
         Optional<User> foundUser = userRepository.findByRefreshToken(savedUser.getRefreshToken());
@@ -94,7 +94,7 @@ class UserRepositoryTest {
     @DisplayName("소셜 타입과 소셜 식별자로 사용자를 가져온다.")
     void findBySocialTypeAndSocialId() {
         // given
-        User savedUser = userRepository.save(UserTestData.createUser());
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
 
         // when
         Optional<User> foundUser = userRepository.findBySocialTypeAndSocialId(savedUser.getSocialType(), savedUser.getSocialId());

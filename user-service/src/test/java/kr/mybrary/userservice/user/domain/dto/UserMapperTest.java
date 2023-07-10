@@ -2,7 +2,7 @@ package kr.mybrary.userservice.user.domain.dto;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import kr.mybrary.userservice.user.UserTestData;
+import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
@@ -39,7 +39,7 @@ class UserMapperTest {
     @DisplayName("User 엔티티를 회원가입 응답 DTO로 변환한다.")
     void toSignUpServiceResponse() {
         // given
-        User user = UserTestData.createUser();
+        User user = UserFixture.COMMON_USER.getUser();
 
         // when
         SignUpServiceResponse serviceResponse = UserMapper.INSTANCE.toSignUpServiceResponse(user);
@@ -57,7 +57,7 @@ class UserMapperTest {
     @DisplayName("User 엔티티를 프로필 응답 DTO로 변환한다.")
     void toProfileServiceResponse() {
         // given
-        User user = UserTestData.createUser();
+        User user = UserFixture.COMMON_USER.getUser();
 
         // when
         ProfileServiceResponse serviceResponse = UserMapper.INSTANCE.toProfileServiceResponse(user);
