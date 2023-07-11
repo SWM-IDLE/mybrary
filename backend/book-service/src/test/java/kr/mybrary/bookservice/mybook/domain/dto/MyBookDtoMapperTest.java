@@ -7,6 +7,7 @@ import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -68,6 +69,26 @@ class MyBookDtoMapperTest {
                 () -> assertThat(myBookDetailResponse.getBook().getTranslators()).isEqualTo(myBook.getBook().getBookTranslators().stream()
                         .map(bookTranslator -> bookTranslator.getTranslator().getName())
                         .toList())
+        );
+    }
+
+    @DisplayName("MyBook 엔티티를 MyBookUpdateResponse로 매핑한다.")
+    @Test
+    void entityToMyBookUpdateResponse() {
+
+        // given
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
+
+        // when
+        MyBookUpdateResponse myBookUpdateResponse = MyBookDtoMapper.INSTANCE.entityToMyBookUpdateResponse(
+                myBook);
+
+        // then
+        assertAll(
+                () -> assertThat(myBookUpdateResponse.getReadStatus()).isEqualTo(myBook.getReadStatus()),
+                () -> assertThat(myBookUpdateResponse.isExchangeable()).isEqualTo(myBook.isExchangeable()),
+                () -> assertThat(myBookUpdateResponse.isShareable()).isEqualTo(myBook.isShareable()),
+                () -> assertThat(myBookUpdateResponse.isShowable()).isEqualTo(myBook.isShowable())
         );
     }
 }
