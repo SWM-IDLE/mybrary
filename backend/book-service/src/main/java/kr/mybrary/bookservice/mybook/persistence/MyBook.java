@@ -63,4 +63,13 @@ public class MyBook extends BaseEntity {
     public void deleteMyBook() {
         this.deleted = true;
     }
+
+    public void updateProperties(ReadStatus readStatus, LocalDateTime startDateOfPossession,
+            boolean showable, boolean exchangeable, boolean shareable) {
+        this.readStatus = readStatus;
+        this.startDateOfPossession = startDateOfPossession;
+        this.showable = showable;
+        this.exchangeable = exchangeable;
+        this.shareable = shareable;
+    }
 }
