@@ -44,7 +44,7 @@ class SearchPopularKeyword extends StatelessWidget {
             runSpacing: 8.0,
             children: List.generate(
               popularSearchKeyword.length,
-              (index) => InkWell(
+              (index) => GestureDetector(
                 onTap: () {
                   bookSearchController.text = popularSearchKeyword[index];
                   onBookSearchBinding(true);
