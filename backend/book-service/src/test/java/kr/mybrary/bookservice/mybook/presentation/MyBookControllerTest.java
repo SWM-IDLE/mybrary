@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -29,8 +30,10 @@ import java.util.List;
 import kr.mybrary.bookservice.mybook.MybookDtoTestData;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
+import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookUpdateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -266,4 +269,63 @@ class MyBookControllerTest {
                                         ).build())));
     }
 
+    @DisplayName("내 서재의 마이북 속성을 수정한다.")
+    @Test
+    void updateMyBookProperties() throws Exception {
+
+        // given
+        MyBookUpdateRequest request = MybookDtoTestData.createMyBookUpdateRequest();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        MyBookUpdateResponse expectedResponse = MybookDtoTestData.createMyBookUpdateResponse();
+
+        given(myBookService.updateMyBookProperties(any())).willReturn(expectedResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(put("/api/v1/mybooks/{mybookId}", MYBOOK_ID)
+                .header("USER-ID", LOGIN_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("내 서재의 마이북 속성을 수정했습니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // document
+        actions
+                .andDo(document("update-mybook-properties",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("mybook")
+                                        .summary("마이북 속성을 수정한다.")
+                                        .requestSchema(Schema.schema("update-mybook-properties request body"))
+                                        .requestHeaders(
+                                                headerWithName("USER-ID").description("사용자 ID")
+                                        )
+                                        .pathParameters(
+                                                parameterWithName("mybookId").type(SimpleType.INTEGER).description("마이북 ID")
+                                        )
+                                        .requestFields(
+                                                fieldWithPath("showable").type(BOOLEAN).description("공개 여부"),
+                                                fieldWithPath("exchangeable").type(BOOLEAN).description("교환 여부"),
+                                                fieldWithPath("shareable").type(BOOLEAN).description("나눔 여부"),
+                                                fieldWithPath("readStatus").type(STRING).description("독서 진행 상태"),
+                                                fieldWithPath("startDateOfPossession").type(STRING).description("보유 시작일")
+                                        )
+                                        .responseSchema(Schema.schema("update-mybook-properties response body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data.showable").type(BOOLEAN).description("공개 여부"),
+                                                fieldWithPath("data.exchangeable").type(BOOLEAN).description("교환 여부"),
+                                                fieldWithPath("data.shareable").type(BOOLEAN).description("나눔 여부"),
+                                                fieldWithPath("data.readStatus").type(STRING).description("독서 진행 상태"),
+                                                fieldWithPath("data.startDateOfPossession").type(STRING).description("보유 시작일")
+                                        ).build())));
+    }
 }
