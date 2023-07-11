@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/data/datasource/remote_datasource.dart';
 import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
-import 'package:mybrary/ui/search/components/search_book_list.dart';
 import 'package:mybrary/ui/search/components/search_header.dart';
 import 'package:mybrary/ui/search/components/search_loading.dart';
 import 'package:mybrary/ui/search/components/search_not_found.dart';
 import 'package:mybrary/ui/search/components/search_popular_keyword.dart';
+import 'package:mybrary/ui/search/search_book_list/search_book_list.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
