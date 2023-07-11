@@ -85,7 +85,7 @@ class BookSearchControllerTest {
                                         .queryParameters(
                                                 parameterWithName("isbn").type(SimpleType.STRING).description("ISBN")
                                         )
-                                        .responseSchema(Schema.schema("book-search-with-isbn response body"))
+                                        .responseSchema(Schema.schema("book_search_with_isbn_response_body"))
                                         .responseFields(
                                                 fieldWithPath("status").type(STRING).description("응답 상태"),
                                                 fieldWithPath("message").type(STRING).description("응답 메시지"),
@@ -156,7 +156,7 @@ class BookSearchControllerTest {
                                                 parameterWithName("sort").type(SimpleType.STRING).optional().defaultValue("accuracy").description("정렬 방식"),
                                                 parameterWithName("page").type(SimpleType.NUMBER).optional().defaultValue(1).description("페이지 번호")
                                         )
-                                        .responseSchema(Schema.schema("book-search-with-keyword response body"))
+                                        .responseSchema(Schema.schema("book_search_with_keyword_response_body"))
                                         .responseFields(
                                                 fieldWithPath("status").type(STRING).description("응답 상태"),
                                                 fieldWithPath("message").type(STRING).description("응답 메시지"),
