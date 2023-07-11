@@ -94,7 +94,7 @@ class MyBookControllerTest {
                                 ResourceSnippetParameters.builder()
                                         .tag("mybook")
                                         .summary("마이북으로 등록한다.")
-                                        .requestSchema(Schema.schema("create-mybook request body"))
+                                        .requestSchema(Schema.schema("create_mybook_request_body"))
                                         .requestHeaders(
                                                 headerWithName("USER-ID").description("사용자 ID")
                                         )
@@ -111,7 +111,7 @@ class MyBookControllerTest {
                                                 fieldWithPath("publicationDate").type(STRING).description("출판일"),
                                                 fieldWithPath("thumbnailUrl").type(STRING).description("썸네일 URL")
                                         )
-                                        .responseSchema(Schema.schema("create-mybook response body"))
+                                        .responseSchema(Schema.schema("create_mybook_response_body"))
                                         .responseFields(
                                                 fieldWithPath("status").type(STRING).description("응답 상태"),
                                                 fieldWithPath("message").type(STRING).description("응답 메시지"),
@@ -153,7 +153,7 @@ class MyBookControllerTest {
                                 .requestHeaders(
                                         headerWithName("USER-ID").description("사용자 ID")
                                 )
-                                .responseSchema(Schema.schema("find-all-mybooks response body"))
+                                .responseSchema(Schema.schema("find_all_mybooks_response_body"))
                                 .responseFields(
                                         fieldWithPath("status").type(STRING).description("응답 상태"),
                                         fieldWithPath("message").type(STRING).description("응답 메시지"),
@@ -207,7 +207,7 @@ class MyBookControllerTest {
                                         .pathParameters(
                                                 parameterWithName("mybookId").type(SimpleType.NUMBER).description("마이북 ID")
                                         )
-                                        .responseSchema(Schema.schema("find-mybook-detail response body"))
+                                        .responseSchema(Schema.schema("find_mybook_detail_response_body"))
                                         .responseFields(
                                                 fieldWithPath("status").type(STRING).description("응답 상태"),
                                                 fieldWithPath("message").type(STRING).description("응답 메시지"),
@@ -261,7 +261,7 @@ class MyBookControllerTest {
                                         .pathParameters(
                                                 parameterWithName("id").type(SimpleType.INTEGER).description("마이북 ID")
                                         )
-                                        .responseSchema(Schema.schema("delete-mybook response body"))
+                                        .responseSchema(Schema.schema("delete_mybook_response_body"))
                                         .responseFields(
                                                 fieldWithPath("status").type(STRING).description("응답 상태"),
                                                 fieldWithPath("message").type(STRING).description("응답 메시지"),
@@ -303,7 +303,7 @@ class MyBookControllerTest {
                                 ResourceSnippetParameters.builder()
                                         .tag("mybook")
                                         .summary("마이북 속성을 수정한다.")
-                                        .requestSchema(Schema.schema("update-mybook-properties request body"))
+                                        .requestSchema(Schema.schema("update_mybook_properties_request_body"))
                                         .requestHeaders(
                                                 headerWithName("USER-ID").description("사용자 ID")
                                         )
@@ -317,7 +317,7 @@ class MyBookControllerTest {
                                                 fieldWithPath("readStatus").type(STRING).description("독서 진행 상태"),
                                                 fieldWithPath("startDateOfPossession").type(STRING).description("보유 시작일")
                                         )
-                                        .responseSchema(Schema.schema("update-mybook-properties response body"))
+                                        .responseSchema(Schema.schema("update_mybook_properties_response_body"))
                                         .responseFields(
                                                 fieldWithPath("status").type(STRING).description("응답 상태"),
                                                 fieldWithPath("message").type(STRING).description("응답 메시지"),

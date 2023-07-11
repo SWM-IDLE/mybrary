@@ -81,7 +81,7 @@ class BookControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("book")
                                 .summary("도서를 등록한다.")
-                                .requestSchema(Schema.schema("book-create request body"))
+                                .requestSchema(Schema.schema("book_create_request_body"))
                                 .requestFields(
                                         fieldWithPath("title").type(STRING).description("도서 제목"),
                                         fieldWithPath("description").type(STRING).description("도서 설명"),
@@ -95,7 +95,7 @@ class BookControllerTest {
                                         fieldWithPath("publicationDate").type(STRING).description("출판일"),
                                         fieldWithPath("thumbnailUrl").type(STRING).description("도서 썸네일 URL")
                                 )
-                                .responseSchema(Schema.schema("book-create response body"))
+                                .responseSchema(Schema.schema("book_create_response_body"))
                                 .responseFields(
                                         fieldWithPath("status").type(STRING).description("응답 상태"),
                                         fieldWithPath("message").type(STRING).description("응답 메시지"),
