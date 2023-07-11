@@ -19,12 +19,14 @@ import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceReque
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookNotFoundException;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,6 +48,7 @@ class MyBookServiceTest {
 
     private static final String LOGIN_ID = "LOGIN_USER_ID";
     private static final String OTHER_USER_ID = "OTHER_USER_ID";
+    private static final Long MYBOOK_ID = 1L;
 
     @DisplayName("도서를 마이북으로 등록한다.")
     @Test
@@ -252,6 +255,53 @@ class MyBookServiceTest {
                     assertThat(myBook.isDeleted()).isFalse();
                 },
                 () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId())
+        );
+    }
+
+    @DisplayName("마이북을 수정한다.")
+    @Test
+    void updateMyBook() {
+
+        //given
+        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(LOGIN_ID, MYBOOK_ID);
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
+
+        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+                Optional.ofNullable(myBook));
+
+        // when
+        MyBookUpdateResponse response = myBookService.updateMyBookProperties(request);
+
+        // then
+        assertAll(
+                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMyBookId()),
+                () -> {
+                    assertThat(myBook).isNotNull();
+                    assertThat(response.getStartDateOfPossession()).isEqualTo(request.getStartDateOfPossession());
+                    assertThat(response.isExchangeable()).isEqualTo(request.isExchangeable());
+                    assertThat(response.isShareable()).isEqualTo(request.isShareable());
+                    assertThat(response.isShowable()).isEqualTo(request.isShowable());
+                    assertThat(response.getReadStatus()).isEqualTo(request.getReadStatus());
+                }
+        );
+    }
+
+    @DisplayName("다른 유저의 마이북을 수정시, 예외가 발생한다.")
+    @Test
+    void occurExceptionWhenUpdateOtherUserMyBook() {
+
+        //given
+        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(LOGIN_ID, MYBOOK_ID);
+        MyBook myBook = MyBookFixture.COMMON_OTHER_USER_MYBOOK.getMyBook();
+
+        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+                Optional.ofNullable(myBook));
+
+        // when, then
+        assertAll(
+                () -> assertThatThrownBy(() -> myBookService.updateMyBookProperties(request))
+                        .isInstanceOf(MyBookAccessDeniedException.class),
+                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMyBookId())
         );
     }
 }

@@ -4,12 +4,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
+import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookUpdateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse.BookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse.BookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 
 public class MybookDtoTestData {
 
@@ -88,6 +91,38 @@ public class MybookDtoTestData {
         return MyBookFindAllServiceRequest.builder()
                 .userId(userId)
                 .loginId(loginId)
+                .build();
+    }
+
+    public static MyBookUpdateRequest createMyBookUpdateRequest() {
+        return MyBookUpdateRequest.builder()
+                .showable(true)
+                .exchangeable(false)
+                .shareable(true)
+                .readStatus(ReadStatus.READING)
+                .startDateOfPossession(LocalDateTime.now())
+                .build();
+    }
+
+    public static MyBookUpdateResponse createMyBookUpdateResponse() {
+        return MyBookUpdateResponse.builder()
+                .showable(true)
+                .exchangeable(false)
+                .shareable(true)
+                .readStatus(ReadStatus.READING)
+                .startDateOfPossession(LocalDateTime.now())
+                .build();
+    }
+
+    public static MybookUpdateServiceRequest createMyBookUpdateServiceRequest(String loginId, Long myBookId) {
+        return MybookUpdateServiceRequest.builder()
+                .userId(loginId)
+                .myBookId(myBookId)
+                .showable(true)
+                .exchangeable(false)
+                .shareable(true)
+                .readStatus(ReadStatus.READING)
+                .startDateOfPossession(LocalDateTime.now())
                 .build();
     }
 }
