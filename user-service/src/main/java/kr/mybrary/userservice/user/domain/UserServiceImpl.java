@@ -16,10 +16,12 @@ import kr.mybrary.userservice.user.domain.exception.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateNicknameException;
 import kr.mybrary.userservice.user.domain.exception.ProfileImageUrlNotFoundException;
 import kr.mybrary.userservice.user.domain.exception.UserNotFoundException;
+import kr.mybrary.userservice.user.domain.storage.StorageService;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +29,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    // TODO: StorageService 결합도 낮추기
+    private final StorageService storageService;
+
+    private static final String DEFAULT_PROFILE_IMAGE_URL = "https://mybrary-user-service.s3.ap-northeast-2.amazonaws.com/profile/profileImage/default.jpg";
+    private static final String PROFILE_IMAGE_PATH = "profile/profileImage";
 
     @Override
     public SignUpServiceResponse signUp(SignUpServiceRequest serviceRequest) {
@@ -42,6 +50,7 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.INSTANCE.toEntity(serviceRequest);
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
         user.updateRole(Role.USER);
+        user.updateProfileImageUrl(DEFAULT_PROFILE_IMAGE_URL);
         SignUpServiceResponse serviceResponse = UserMapper.INSTANCE.toSignUpServiceResponse(
                 userRepository.save(user));
 
@@ -85,7 +94,8 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findByLoginId(serviceRequest.getLoginId())
                 .orElseThrow(UserNotFoundException::new);
-        user.updateProfile(serviceRequest.getNickname(), serviceRequest.getEmail(), serviceRequest.getIntroduction());
+        user.updateProfile(serviceRequest.getNickname(), serviceRequest.getEmail(),
+                serviceRequest.getIntroduction());
         ProfileServiceResponse serviceResponse = UserMapper.INSTANCE.toProfileServiceResponse(user);
 
         return serviceResponse;
@@ -115,7 +125,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public ProfileImageUrlServiceResponse updateProfileImage(
             ProfileImageUpdateServiceRequest serviceRequest) {
-        return null;
+        User user = userRepository.findByLoginId(serviceRequest.getLoginId())
+                .orElseThrow(UserNotFoundException::new);
+        // TODO: 프로필 이미지 저장 경로 논의
+        String profileImageUrl = storageService.putFile(serviceRequest.getProfileImage(),
+                PROFILE_IMAGE_PATH, user.getLoginId());
+
+        user.updateProfileImageUrl(profileImageUrl);
+        ProfileImageUrlServiceResponse serviceResponse = ProfileImageUrlServiceResponse.builder()
+                .profileImageUrl(user.getProfileImageUrl())
+                .build();
+
+        return serviceResponse;
     }
 
     @Override
