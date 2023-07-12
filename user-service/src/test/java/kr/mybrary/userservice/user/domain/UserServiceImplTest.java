@@ -2,6 +2,7 @@ package kr.mybrary.userservice.user.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import java.util.Optional;
 import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.UserTestData;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
@@ -21,7 +23,6 @@ import kr.mybrary.userservice.user.domain.exception.UserNotFoundException;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,7 +61,7 @@ class UserServiceImplTest {
         SignUpServiceResponse savedUser = userService.signUp(serviceRequest);
 
         // Then
-        Assertions.assertAll(
+        assertAll(
                 () -> assertThat(savedUser.getLoginId()).isEqualTo(serviceRequest.getLoginId()),
                 () -> assertThat(savedUser.getNickname()).isEqualTo(serviceRequest.getNickname()),
                 () -> assertThat(savedUser.getEmail()).isEqualTo(serviceRequest.getEmail()),
@@ -141,7 +142,7 @@ class UserServiceImplTest {
         ProfileServiceResponse userProfile = userService.getProfile(LOGIN_ID);
 
         // Then
-        Assertions.assertAll(
+        assertAll(
                 () -> assertThat(userProfile.getNickname()).isEqualTo(
                         UserFixture.COMMON_USER.getUser().getNickname()),
                 () -> assertThat(userProfile.getEmail()).isEqualTo(
@@ -220,4 +221,84 @@ class UserServiceImplTest {
         // Then
         verify(userRepository).findByLoginId(LOGIN_ID);
     }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 정보를 수정한다")
+    void updateProfile() {
+        // Given
+        ProfileUpdateServiceRequest serviceRequest = UserTestData.createProfileUpdateServiceRequest();
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
+                Optional.of(UserFixture.COMMON_USER.getUser()));
+
+        // When
+        ProfileServiceResponse updatedProfile = userService.updateProfile(serviceRequest);
+
+        // Then
+        assertAll(
+                () -> assertThat(updatedProfile.getNickname()).isEqualTo(
+                        serviceRequest.getNickname()),
+                () -> assertThat(updatedProfile.getEmail()).isEqualTo(
+                        serviceRequest.getEmail()),
+                () -> assertThat(updatedProfile.getIntroduction()).isEqualTo(
+                        serviceRequest.getIntroduction()),
+                () -> assertThat(updatedProfile.getProfileImageUrl()).isEqualTo(
+                        UserFixture.COMMON_USER.getUser().getProfileImageUrl())
+        );
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 정보를 수정할 때 사용자가 없으면 예외를 던진다")
+    void updateProfileWithNotExistUser() {
+        // Given
+        ProfileUpdateServiceRequest serviceRequest = UserTestData.createProfileUpdateServiceRequest();
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.empty());
+
+        // When
+        assertThatThrownBy(() -> userService.updateProfile(serviceRequest))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "U-05")
+                .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 정보를 수정할 때 닉네임이 중복되면 예외를 던진다")
+    void updateProfileWithDuplicateNickname() {
+        // Given
+        ProfileUpdateServiceRequest serviceRequest = UserTestData.createProfileUpdateServiceRequest();
+        given(userRepository.findByNickname(serviceRequest.getNickname())).willReturn(
+                Optional.of(UserFixture.COMMON_USER.getUser()));
+
+        // When
+        assertThatThrownBy(() -> userService.updateProfile(serviceRequest))
+                .isInstanceOf(DuplicateNicknameException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "U-03")
+                .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 닉네임입니다.");
+
+        // Then
+        verify(userRepository).findByNickname(serviceRequest.getNickname());
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 정보를 수정할 때 이메일이 중복되면 예외를 던진다")
+    void updateProfileWithDuplicateEmail() {
+        // Given
+        ProfileUpdateServiceRequest serviceRequest = UserTestData.createProfileUpdateServiceRequest();
+        given(userRepository.findByEmail(serviceRequest.getEmail())).willReturn(
+                Optional.of(UserFixture.COMMON_USER.getUser()));
+
+        // When
+        assertThatThrownBy(() -> userService.updateProfile(serviceRequest))
+                .isInstanceOf(DuplicateEmailException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "U-04")
+                .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 이메일입니다.");
+
+        // Then
+        verify(userRepository).findByEmail(serviceRequest.getEmail());
+    }
+
 }
