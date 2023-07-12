@@ -7,6 +7,7 @@ import 'package:mybrary/ui/auth/sign_in/sign_in_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_verify_screen.dart';
 import 'package:mybrary/ui/home/home_screen.dart';
+import 'package:mybrary/ui/search/search_barcode_scan/search_barcode_scan_screen.dart';
 import 'package:mybrary/ui/search/search_screen.dart';
 
 void main() {
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
               '/signup/verify': (context) => SignUpVerifyScreen(),
               '/home': (context) => HomeScreen(),
               '/search': (context) => SearchScreen(),
+              '/search/barcode': (context) => SearchBarcodeScanScreen(),
             },
           );
         }

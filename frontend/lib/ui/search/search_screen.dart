@@ -18,7 +18,6 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   late Future<BookSearchResponse> _bookSearchResponse;
   late final List<BookSearchData> _bookSearchData = [];
-  late BookSearchResponse bookSearchNextResponse;
   late String _bookNextRequestUrl;
 
   bool _isSearching = false;
