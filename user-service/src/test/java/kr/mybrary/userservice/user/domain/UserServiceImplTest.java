@@ -7,19 +7,24 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+import java.io.FileNotFoundException;
 import java.util.Optional;
 import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.UserTestData;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
-import kr.mybrary.userservice.user.domain.exception.DuplicateEmailException;
-import kr.mybrary.userservice.user.domain.exception.DuplicateLoginIdException;
-import kr.mybrary.userservice.user.domain.exception.DuplicateNicknameException;
-import kr.mybrary.userservice.user.domain.exception.ProfileImageUrlNotFoundException;
-import kr.mybrary.userservice.user.domain.exception.UserNotFoundException;
+import kr.mybrary.userservice.user.domain.exception.file.EmptyFileException;
+import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageFileSizeExceededException;
+import kr.mybrary.userservice.user.domain.exception.user.DuplicateEmailException;
+import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
+import kr.mybrary.userservice.user.domain.exception.user.DuplicateNicknameException;
+import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFoundException;
+import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
+import kr.mybrary.userservice.user.domain.storage.StorageService;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
@@ -33,15 +38,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
+    // TODO: 예외 발생 시 상태 코드 확인 추가 필요
 
     @Mock
     UserRepository userRepository;
     @Mock
     PasswordEncoder passwordEncoder;
+    @Mock
+    StorageService storageService;
     @InjectMocks
     UserServiceImpl userService;
 
     static final String LOGIN_ID = "loginId";
+    static final String PROFILE_IMAGE_PATH = "profile/profileImage";
+    static final String PROFILE_IMAGE_BASE_URL = "https://s3.bucket.com/profile/profileImage/";
 
     @Test
     @DisplayName("회원가입 요청이 들어오면 암호화된 비밀번호와 함께 회원 권한으로 사용자 정보를 저장한다")
@@ -299,6 +309,73 @@ class UserServiceImplTest {
 
         // Then
         verify(userRepository).findByEmail(serviceRequest.getEmail());
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지를 수정한다")
+    void updateProfileImage() throws Exception {
+        // Given
+        ProfileImageUpdateServiceRequest serviceRequest = UserTestData.createProfileImageUpdateServiceRequest();
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
+                Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(storageService.putFile(serviceRequest.getProfileImage(), PROFILE_IMAGE_PATH, LOGIN_ID)).willReturn(
+                PROFILE_IMAGE_BASE_URL + LOGIN_ID);
+
+        // When
+        ProfileImageUrlServiceResponse updatedProfileImage = userService.updateProfileImage(
+                serviceRequest);
+
+        // Then
+        assertAll(
+                () -> assertThat(updatedProfileImage.getProfileImageUrl()).isEqualTo(
+                        PROFILE_IMAGE_BASE_URL + LOGIN_ID)
+        );
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+        verify(storageService).putFile(serviceRequest.getProfileImage(), PROFILE_IMAGE_PATH, LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지를 수정할 때 사용자가 없으면 예외를 던진다")
+    void updateProfileImageWithNotExistUser() throws Exception {
+        // Given
+        ProfileImageUpdateServiceRequest serviceRequest = UserTestData.createProfileImageUpdateServiceRequest();
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.empty());
+
+        // When
+        assertThatThrownBy(() -> userService.updateProfileImage(serviceRequest))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "U-05")
+                .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지를 수정할 때 프로필 이미지가 없으면 예외를 던진다")
+    void updateProfileImageWithNoProfileImage() throws Exception {
+        // Given
+        ProfileImageUpdateServiceRequest serviceRequest = UserTestData.createProfileImageUpdateServiceRequestWithEmptyFile();
+
+        // When Then
+        assertThatThrownBy(() -> userService.updateProfileImage(serviceRequest))
+                .isInstanceOf(EmptyFileException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "F-01")
+                .hasFieldOrPropertyWithValue("errorMessage", "파일이 비어있습니다. 파일을 선택해주세요.");
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지를 수정할 때 프로필 이미지가 5MB를 초과하면 예외를 던진다")
+    void updateProfileImageWithProfileImageSizeExceed() throws Exception {
+        // Given
+        ProfileImageUpdateServiceRequest serviceRequest = UserTestData.createProfileImageUpdateServiceRequestOver5MB();
+
+        // When Then
+        assertThatThrownBy(() -> userService.updateProfileImage(serviceRequest))
+                .isInstanceOf(ProfileImageFileSizeExceededException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "P-02")
+                .hasFieldOrPropertyWithValue("errorMessage", "프로필 이미지 파일의 크기가 너무 큽니다. 최대 5MB까지 업로드 가능합니다.");
     }
 
 }
