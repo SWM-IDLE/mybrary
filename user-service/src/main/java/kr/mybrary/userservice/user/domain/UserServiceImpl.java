@@ -35,9 +35,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public SignUpServiceResponse signUp(SignUpServiceRequest serviceRequest) {
 
-        validateDuplicateLoginId(serviceRequest);
-        validateDuplicateNickname(serviceRequest);
-        validateDuplicateEmail(serviceRequest);
+        validateDuplicateLoginId(serviceRequest.getLoginId());
+        validateDuplicateNickname(serviceRequest.getNickname());
+        validateDuplicateEmail(serviceRequest.getEmail());
 
         User user = UserMapper.INSTANCE.toEntity(serviceRequest);
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
@@ -48,20 +48,21 @@ public class UserServiceImpl implements UserService {
         return serviceResponse;
     }
 
-    private void validateDuplicateEmail(SignUpServiceRequest serviceRequest) {
-        if (userRepository.findByEmail(serviceRequest.getEmail()).isPresent()) {
+    private void validateDuplicateEmail(String email) {
+        // TODO: existsByEmail() 메서드를 사용하면 더 간결하게 구현할 수 있을 것 같다.
+        if (userRepository.findByEmail(email).isPresent()) {
             throw new DuplicateEmailException();
         }
     }
 
-    private void validateDuplicateNickname(SignUpServiceRequest serviceRequest) {
-        if (userRepository.findByNickname(serviceRequest.getNickname()).isPresent()) {
+    private void validateDuplicateNickname(String nickname) {
+        if (userRepository.findByNickname(nickname).isPresent()) {
             throw new DuplicateNicknameException();
         }
     }
 
-    private void validateDuplicateLoginId(SignUpServiceRequest serviceRequest) {
-        if (userRepository.findByLoginId(serviceRequest.getLoginId()).isPresent()) {
+    private void validateDuplicateLoginId(String loginId) {
+        if (userRepository.findByLoginId(loginId).isPresent()) {
             throw new DuplicateLoginIdException();
         }
     }
@@ -78,7 +79,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileServiceResponse updateProfile(ProfileUpdateServiceRequest serviceRequest) {
-        return null;
+        validateDuplicateNickname(serviceRequest.getNickname());
+        // TODO: 이메일 중복 검사는 필요한가? 프로필에 등록되는 이메일과 회원 가입 시 사용되는 이메일이 다를 수 있는가?
+        validateDuplicateEmail(serviceRequest.getEmail());
+
+        User user = userRepository.findByLoginId(serviceRequest.getLoginId())
+                .orElseThrow(UserNotFoundException::new);
+        user.updateProfile(serviceRequest.getNickname(), serviceRequest.getEmail(), serviceRequest.getIntroduction());
+        ProfileServiceResponse serviceResponse = UserMapper.INSTANCE.toProfileServiceResponse(user);
+
+        return serviceResponse;
     }
 
     @Override

@@ -65,4 +65,10 @@ public class User extends BaseEntity {
         this.refreshToken = refreshToken;
     }
 
+    public void updateProfile(String nickname, String email, String introduction) {
+        this.nickname = nickname;
+        this.email = email;
+        this.introduction = introduction;
+    }
+
 }
