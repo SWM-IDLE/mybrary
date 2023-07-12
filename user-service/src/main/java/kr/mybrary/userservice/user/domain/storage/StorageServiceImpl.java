@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.IOException;
+import kr.mybrary.userservice.user.domain.exception.FileInputStreamException;
+import kr.mybrary.userservice.user.domain.exception.StorageClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,13 +29,9 @@ public class StorageServiceImpl implements StorageService {
         try {
             amazonS3Client.putObject(generatePutObjectRequest(multipartFile, path, fileName));
         } catch (AmazonS3Exception e) {
-            log.error("AmazonS3Client putObject error", e);
-            // TODO: AmazonS3Exception 처리
-            throw e;
+            throw new StorageClientException();
         } catch (IOException e) {
-            log.error("AmazonS3Client putObject error", e);
-            // TODO: IOException 처리
-            throw new RuntimeException(e);
+            throw new FileInputStreamException();
         }
         return amazonS3Client.getUrl(bucketName, path + "/" + fileName).toString();
     }
