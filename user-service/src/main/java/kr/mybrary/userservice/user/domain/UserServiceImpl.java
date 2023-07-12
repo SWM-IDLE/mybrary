@@ -14,6 +14,8 @@ import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.domain.exception.DuplicateEmailException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.DuplicateNicknameException;
+import kr.mybrary.userservice.user.domain.exception.EmptyFileException;
+import kr.mybrary.userservice.user.domain.exception.ProfileImageFileSizeExceededException;
 import kr.mybrary.userservice.user.domain.exception.ProfileImageUrlNotFoundException;
 import kr.mybrary.userservice.user.domain.exception.UserNotFoundException;
 import kr.mybrary.userservice.user.domain.storage.StorageService;
@@ -25,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -39,6 +42,7 @@ public class UserServiceImpl implements UserService {
 
     private static final String DEFAULT_PROFILE_IMAGE_URL = "https://mybrary-user-service.s3.ap-northeast-2.amazonaws.com/profile/profileImage/default.jpg";
     private static final String PROFILE_IMAGE_PATH = "profile/profileImage";
+    private static final int MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024;
 
     @Override
     public SignUpServiceResponse signUp(SignUpServiceRequest serviceRequest) {
@@ -125,6 +129,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public ProfileImageUrlServiceResponse updateProfileImage(
             ProfileImageUpdateServiceRequest serviceRequest) {
+        checkProfileImageExistence(serviceRequest.getProfileImage());
+        checkProfileImageSize(serviceRequest.getProfileImage());
+
         User user = userRepository.findByLoginId(serviceRequest.getLoginId())
                 .orElseThrow(UserNotFoundException::new);
         // TODO: 프로필 이미지 저장 경로 논의
@@ -137,6 +144,18 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         return serviceResponse;
+    }
+
+    private void checkProfileImageExistence(MultipartFile multipartFile) {
+        if (multipartFile.isEmpty()) {
+            throw new EmptyFileException();
+        }
+    }
+
+    private void checkProfileImageSize(MultipartFile multipartFile) {
+        if (multipartFile.getSize() > MAX_PROFILE_IMAGE_SIZE) {
+            throw new ProfileImageFileSizeExceededException();
+        }
     }
 
     @Override
