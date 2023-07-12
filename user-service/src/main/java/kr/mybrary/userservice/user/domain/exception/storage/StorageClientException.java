@@ -1,4 +1,4 @@
-package kr.mybrary.userservice.user.domain.exception;
+package kr.mybrary.userservice.user.domain.exception.storage;
 
 import kr.mybrary.userservice.global.exception.ApplicationException;
 
