@@ -17,6 +17,24 @@ spring:
         format_sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
+  cloud:
+    aws:
+      s3:
+        bucket: mybrary-user-service
+      credentials:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+      region:
+        static: ap-northeast-2
+        auto: false
+      stack:
+        auto: false
+
+  servlet:
+      multipart:
+          max-file-size: 5MB
+          max-request-size: 5MB
+
 logging:
   level:
     org.hibernate.SQL: debug

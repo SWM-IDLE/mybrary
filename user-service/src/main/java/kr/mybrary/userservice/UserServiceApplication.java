@@ -20,4 +20,8 @@ public class UserServiceApplication {
 		return new BCryptPasswordEncoder();
 	}
 
+	static {
+		System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
+	}
+
 }
