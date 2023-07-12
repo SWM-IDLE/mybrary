@@ -76,7 +76,9 @@ class SearchHeader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed('/search/barcode');
+              },
               icon: Image.asset(
                 'assets/icon/barcode_scan_icon.png',
                 color: PRIMARY_COLOR,

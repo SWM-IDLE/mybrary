@@ -9,6 +9,7 @@ import 'package:mybrary/utils/dios/auth_dio.dart';
 enum BookSearchRequestType {
   searchKeyword,
   searchNextUrl,
+  searchIsbnScan,
 }
 
 class RemoteDataSource {
@@ -30,6 +31,9 @@ class RemoteDataSource {
         break;
       case BookSearchRequestType.searchNextUrl:
         requestUrl = '${getApi(API.getBookService)}/$request';
+        break;
+      case BookSearchRequestType.searchIsbnScan:
+        requestUrl = '${getApi(API.getBookSearchIsbn)}?isbn=$request';
         break;
     }
 
