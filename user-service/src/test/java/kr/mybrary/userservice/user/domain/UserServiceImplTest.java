@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import java.io.FileNotFoundException;
 import java.util.Optional;
 import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.UserTestData;
@@ -19,10 +18,10 @@ import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.domain.exception.file.EmptyFileException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageFileSizeExceededException;
+import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFoundException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateEmailException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateNicknameException;
-import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFoundException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
 import kr.mybrary.userservice.user.domain.storage.StorageService;
 import kr.mybrary.userservice.user.persistence.Role;
@@ -51,7 +50,7 @@ class UserServiceImplTest {
 
     static final String LOGIN_ID = "loginId";
     static final String PROFILE_IMAGE_PATH = "profile/profileImage";
-    static final String PROFILE_IMAGE_BASE_URL = "https://s3.bucket.com/profile/profileImage/";
+    static final String PROFILE_IMAGE_BASE_URL = "https://mybrary-user-service.s3.ap-northeast-2.amazonaws.com/profile/profileImage/";
 
     @Test
     @DisplayName("회원가입 요청이 들어오면 암호화된 비밀번호와 함께 회원 권한으로 사용자 정보를 저장한다")
@@ -318,7 +317,8 @@ class UserServiceImplTest {
         ProfileImageUpdateServiceRequest serviceRequest = UserTestData.createProfileImageUpdateServiceRequest();
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
                 Optional.of(UserFixture.COMMON_USER.getUser()));
-        given(storageService.putFile(serviceRequest.getProfileImage(), PROFILE_IMAGE_PATH, LOGIN_ID)).willReturn(
+        given(storageService.putFile(serviceRequest.getProfileImage(), PROFILE_IMAGE_PATH,
+                LOGIN_ID)).willReturn(
                 PROFILE_IMAGE_BASE_URL + LOGIN_ID);
 
         // When
@@ -332,7 +332,8 @@ class UserServiceImplTest {
         );
 
         verify(userRepository).findByLoginId(LOGIN_ID);
-        verify(storageService).putFile(serviceRequest.getProfileImage(), PROFILE_IMAGE_PATH, LOGIN_ID);
+        verify(storageService).putFile(serviceRequest.getProfileImage(), PROFILE_IMAGE_PATH,
+                LOGIN_ID);
     }
 
     @Test
@@ -354,7 +355,7 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("로그인 아이디로 사용자 프로필 이미지를 수정할 때 프로필 이미지가 없으면 예외를 던진다")
-    void updateProfileImageWithNoProfileImage() throws Exception {
+    void updateProfileImageWithNoProfileImage() {
         // Given
         ProfileImageUpdateServiceRequest serviceRequest = UserTestData.createProfileImageUpdateServiceRequestWithEmptyFile();
 
@@ -375,7 +376,44 @@ class UserServiceImplTest {
         assertThatThrownBy(() -> userService.updateProfileImage(serviceRequest))
                 .isInstanceOf(ProfileImageFileSizeExceededException.class)
                 .hasFieldOrPropertyWithValue("errorCode", "P-02")
-                .hasFieldOrPropertyWithValue("errorMessage", "프로필 이미지 파일의 크기가 너무 큽니다. 최대 5MB까지 업로드 가능합니다.");
+                .hasFieldOrPropertyWithValue("errorMessage",
+                        "프로필 이미지 파일의 크기가 너무 큽니다. 최대 5MB까지 업로드 가능합니다.");
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지를 삭제한다(기본 프로필 이미지로 대체한다)")
+    void deleteProfileImage() {
+        // Given
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
+                Optional.of(UserFixture.COMMON_USER.getUser()));
+
+        // When
+        ProfileImageUrlServiceResponse updatedProfileImage = userService.deleteProfileImage(
+                LOGIN_ID);
+
+        // Then
+        assertAll(
+                () -> assertThat(updatedProfileImage.getProfileImageUrl()).isEqualTo(
+                        PROFILE_IMAGE_BASE_URL + "default.jpg")
+        );
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지를 삭제할 때 사용자가 없으면 예외를 던진다")
+    void deleteProfileImageWithNotExistUser() {
+        // Given
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.empty());
+
+        // When
+        assertThatThrownBy(() -> userService.deleteProfileImage(LOGIN_ID))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "U-05")
+                .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(LOGIN_ID);
     }
 
 }

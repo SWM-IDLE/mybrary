@@ -1,21 +1,21 @@
 ### 1. 회원 가입
-POST http://localhost:8080/sign-up
+POST http://localhost:8080/api/v1/users/sign-up
 Content-Type: application/json
 
 {
-    "loginId": "id1",
-    "password": "password1!",
-    "email": "email1@naver.com",
-    "nickname": "nickname1"
+  "loginId": "loginId",
+  "password": "password123!",
+  "nickname": "nickname",
+  "email": "email@email.com"
 }
 
 ### 2. 로그인
-POST http://localhost:8080/login
+POST http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "loginId": "id11",
-    "password": "password1!"
+  "loginId": "loginId",
+  "password": "password123!"
 }
 
 ### 3. 구글 소셜 로그인
@@ -26,3 +26,37 @@ GET http://localhost:8080/oauth2/authorization/kakao
 
 ### 5. 네이버 소셜 로그인
 GET http://localhost:8080/oauth2/authorization/naver
+
+### 6. 인증 오류
+GET http://localhost:8080/user/profile
+
+### 7. 토큰 오류
+GET http://localhost:8080/api/v1/users/profile
+Authorization: Bearer invalidToken1234
+Authorization-Refresh: Bearer invalidRefreshToken1234
+
+### 8. API 문서 조회
+GET http://localhost:8080/docs/swagger-ui/index.html
+
+### 9. 프로필 조회
+GET http://localhost:8080/api/v1/users/profile
+USER-ID: loginId
+
+### 10. 프로필 수정
+PUT http://localhost:8080/api/v1/users/profile
+Content-Type: application/json
+USER-ID: loginId
+
+{
+  "nickname": "new-nickname",
+  "email": "new-email@mail.com",
+  "introduction": "new-introduction"
+}
+
+### 11. 프로필 이미지 조회
+GET http://localhost:8080/api/v1/users/profile/image
+USER-ID: loginId
+
+### 12. 프로필 이미지 삭제
+DELETE http://localhost:8080/api/v1/users/profile/image
+USER-ID: loginId
