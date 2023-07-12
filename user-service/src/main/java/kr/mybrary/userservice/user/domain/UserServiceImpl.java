@@ -160,7 +160,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileImageUrlServiceResponse deleteProfileImage(String loginId) {
-        return null;
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(UserNotFoundException::new);
+
+        user.updateProfileImageUrl(DEFAULT_PROFILE_IMAGE_URL);
+        ProfileImageUrlServiceResponse serviceResponse = ProfileImageUrlServiceResponse.builder()
+                .profileImageUrl(user.getProfileImageUrl())
+                .build();
+
+        return serviceResponse;
     }
 
     @Override
