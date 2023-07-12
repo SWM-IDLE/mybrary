@@ -1,7 +1,7 @@
 package kr.mybrary.userservice.user;
 
+import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
-import kr.mybrary.userservice.user.persistence.User;
 
 public class UserTestData {
 
@@ -11,6 +11,15 @@ public class UserTestData {
                 .password("password123!")
                 .nickname("nickname")
                 .email("email@mail.com")
+                .build();
+    }
+
+    public static ProfileUpdateServiceRequest createProfileUpdateServiceRequest() {
+        return ProfileUpdateServiceRequest.builder()
+                .loginId("loginId")
+                .nickname("updated_nickname")
+                .email("updated_email@mail.com")
+                .introduction("updated_introduction")
                 .build();
     }
 }
