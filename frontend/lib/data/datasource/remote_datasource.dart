@@ -6,12 +6,6 @@ import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/utils/dios/auth_dio.dart';
 
-enum BookSearchRequestType {
-  searchKeyword,
-  searchNextUrl,
-  searchIsbnScan,
-}
-
 class RemoteDataSource {
   static Future<void> getProfileData(BuildContext context) async {
     var dio = await authDio(context);
@@ -21,24 +15,10 @@ class RemoteDataSource {
   }
 
   static Future<BookSearchResponse> getBookSearchKeywordResponse(
-      BookSearchRequestType requestType, String request) async {
+      String requestUrl) async {
     final dio = Dio();
-    String requestUrl = '';
-
-    switch (requestType) {
-      case BookSearchRequestType.searchKeyword:
-        requestUrl = '${getApi(API.getBookSearchKeyword)}?keyword=$request';
-        break;
-      case BookSearchRequestType.searchNextUrl:
-        requestUrl = '${getApi(API.getBookService)}/$request';
-        break;
-      case BookSearchRequestType.searchIsbnScan:
-        requestUrl = '${getApi(API.getBookSearchIsbn)}?isbn=$request';
-        break;
-    }
 
     try {
-      print('성공!');
       final bookSearchKeywordResponse = await dio.get(requestUrl);
 
       switch (bookSearchKeywordResponse.statusCode) {
