@@ -1,0 +1,5 @@
+encrypt:
+  key-store:
+    location: /keystore/mybraryApiEncryptionKey.jks
+    password: ${KEY_STORE_PASSWORD}
+    alias: mybraryApiEncryptionKey
