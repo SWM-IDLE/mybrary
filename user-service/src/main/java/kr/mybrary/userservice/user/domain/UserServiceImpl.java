@@ -63,20 +63,19 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateDuplicateEmail(String email) {
-        // TODO: existsByEmail() 메서드를 사용하면 더 간결하게 구현할 수 있을 것 같다.
-        if (userRepository.findByEmail(email).isPresent()) {
+        if (userRepository.existsByEmail(email)) {
             throw new DuplicateEmailException();
         }
     }
 
     private void validateDuplicateNickname(String nickname) {
-        if (userRepository.findByNickname(nickname).isPresent()) {
+        if (userRepository.existsByNickname(nickname)) {
             throw new DuplicateNicknameException();
         }
     }
 
     private void validateDuplicateLoginId(String loginId) {
-        if (userRepository.findByLoginId(loginId).isPresent()) {
+        if (userRepository.existsByLoginId(loginId)) {
             throw new DuplicateLoginIdException();
         }
     }

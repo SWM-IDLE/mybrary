@@ -91,6 +91,45 @@ class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("로그인 아이디가 존재하는지 확인한다.")
+    void existsByLoginId() {
+        // given
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
+
+        // when
+        boolean exists = userRepository.existsByLoginId(savedUser.getLoginId());
+
+        // then
+        assertThat(exists).isTrue();
+    }
+
+    @Test
+    @DisplayName("이메일이 존재하는지 확인한다.")
+    void existsByEmail() {
+        // given
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
+
+        // when
+        boolean exists = userRepository.existsByEmail(savedUser.getEmail());
+
+        // then
+        assertThat(exists).isTrue();
+    }
+
+    @Test
+    @DisplayName("닉네임이 존재하는지 확인한다.")
+    void existsByNickname() {
+        // given
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
+
+        // when
+        boolean exists = userRepository.existsByNickname(savedUser.getNickname());
+
+        // then
+        assertThat(exists).isTrue();
+    }
+
+    @Test
     @DisplayName("소셜 타입과 소셜 식별자로 사용자를 가져온다.")
     void findBySocialTypeAndSocialId() {
         // given
