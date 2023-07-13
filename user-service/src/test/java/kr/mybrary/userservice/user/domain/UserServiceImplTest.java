@@ -22,6 +22,7 @@ import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFo
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateEmailException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateNicknameException;
+import kr.mybrary.userservice.user.domain.exception.user.EmailAlreadyRegisteredException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
 import kr.mybrary.userservice.user.domain.storage.StorageService;
 import kr.mybrary.userservice.user.persistence.Role;
@@ -232,10 +233,36 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("로그인 아이디로 사용자 프로필 정보를 수정한다")
-    void updateProfile() {
+    @DisplayName("로그인 아이디로 사용자 프로필 정보를 수정한다 (이메일 새로 등록)")
+    void updateProfileWithNewEmail() {
         // Given
         ProfileUpdateServiceRequest serviceRequest = UserTestData.createProfileUpdateServiceRequest();
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
+                Optional.of(UserFixture.USER_WITHOUT_EMAIL.getUser()));
+
+        // When
+        ProfileServiceResponse updatedProfile = userService.updateProfile(serviceRequest);
+
+        // Then
+        assertAll(
+                () -> assertThat(updatedProfile.getNickname()).isEqualTo(
+                        serviceRequest.getNickname()),
+                () -> assertThat(updatedProfile.getEmail()).isEqualTo(
+                        serviceRequest.getEmail()),
+                () -> assertThat(updatedProfile.getIntroduction()).isEqualTo(
+                        serviceRequest.getIntroduction()),
+                () -> assertThat(updatedProfile.getProfileImageUrl()).isEqualTo(
+                        UserFixture.COMMON_USER.getUser().getProfileImageUrl())
+        );
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 정보를 수정한다 (등록된 이메일 유지)")
+    void updateProfileWithSameEmail() {
+        // Given
+        ProfileUpdateServiceRequest serviceRequest = UserTestData.createProfileUpdateServiceRequestWithSameEmail();
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
                 Optional.of(UserFixture.COMMON_USER.getUser()));
 
@@ -308,6 +335,24 @@ class UserServiceImplTest {
 
         // Then
         verify(userRepository).findByEmail(serviceRequest.getEmail());
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 정보를 수정할 때 이메일이 이미 등록된 상태에서 이메일을 수정하려는 경우 예외를 던진다")
+    void updateProfileEmailWhenEmailIsAlreadyRegistered() {
+        // Given
+        ProfileUpdateServiceRequest serviceRequest = UserTestData.createProfileUpdateServiceRequest();
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
+                Optional.of(UserFixture.COMMON_USER.getUser()));
+
+        // When
+        assertThatThrownBy(() -> userService.updateProfile(serviceRequest))
+                .isInstanceOf(EmailAlreadyRegisteredException.class)
+                .hasFieldOrPropertyWithValue("errorCode", "U-06")
+                .hasFieldOrPropertyWithValue("errorMessage", "이미 등록된 이메일은 수정할 수 없습니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(LOGIN_ID);
     }
 
     @Test
