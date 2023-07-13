@@ -19,20 +19,19 @@ class RemoteDataSource {
     final dio = Dio();
 
     try {
-      final bookSearchKeywordResponse = await dio.get(requestUrl);
+      final searchResponse = await dio.get(requestUrl);
 
-      switch (bookSearchKeywordResponse.statusCode) {
+      switch (searchResponse.statusCode) {
         case 200:
-          final BookSearchResponse bookSearchKeywordResult = BookSearchResponse(
-            status: bookSearchKeywordResponse.data['status'],
-            message: bookSearchKeywordResponse.data['message'],
-            data: BookSearchResponseData.fromJson(
-                bookSearchKeywordResponse.data['data']),
+          final BookSearchResponse bookSearchResult = BookSearchResponse(
+            status: searchResponse.data['status'],
+            message: searchResponse.data['message'],
+            data: BookSearchResponseData.fromJson(searchResponse.data['data']),
           );
-          return bookSearchKeywordResult;
+          return bookSearchResult;
         case 404:
           log('ERROR: 서버에 404 에러가 있습니다.');
-          return bookSearchKeywordResponse.data;
+          return searchResponse.data;
         default:
           log('ERROR: 서버의 API 호출에 실패했습니다.');
           throw Exception('서버의 API 호출에 실패했습니다.');

@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:mybrary/data/datasource/remote_datasource.dart';
 import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
+import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/search/components/search_header.dart';
 import 'package:mybrary/ui/search/components/search_loading.dart';
 import 'package:mybrary/ui/search/components/search_not_found.dart';
 import 'package:mybrary/ui/search/components/search_popular_keyword.dart';
 import 'package:mybrary/ui/search/search_book_list/search_book_list.dart';
-import 'package:mybrary/utils/logics/request_type.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -54,7 +54,7 @@ class _SearchScreenState extends State<SearchScreen> {
           !scrollPosition.outOfRange) {
         if (_bookNextRequestUrl != "") {
           // nextUrl 이 있을 때 추가 데이터 호출
-          _fetchNextBookSearchResponse();
+          _fetchBookSearchNextUrlResponse();
           _bookNextRequestUrl = "";
         }
       }
@@ -89,7 +89,7 @@ class _SearchScreenState extends State<SearchScreen> {
             if (!_isSearching)
               SearchPopularKeyword(
                 bookSearchController: _bookSearchController,
-                onBookSearchBinding: getBookSearchPopularKeywordData,
+                onBookSearchBinding: getBookSearchPopularKeywordResponse,
               )
             else
               FutureBuilder<BookSearchResponse>(
@@ -133,16 +133,13 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  void getBookSearchPopularKeywordData(bool isBinding) {
+  void getBookSearchPopularKeywordResponse(bool isBinding) {
     final popularKeyword = _bookSearchController.text;
     setState(() {
       if (popularKeyword != "") {
         isBinding = true;
-        final String requestUrl = RequestType.getBookSearchRequestUrl(
-            BookSearchRequestType.searchKeyword);
-
         _bookSearchResponse = RemoteDataSource.getBookSearchKeywordResponse(
-            '$requestUrl?keyword=$popularKeyword');
+            '${getApi(API.getBookSearchKeyword)}?keyword=$popularKeyword');
         _isSearching = true;
       }
     });
@@ -151,7 +148,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void _onSubmittedSearchKeyword(value) {
     setState(() {
       _bookSearchController.text = value;
-      _bookSearchResponse = _fetchBookSearchResponse();
+      _bookSearchResponse = _fetchBookSearchKeywordResponse();
       _isSearching = true;
     });
   }
@@ -170,24 +167,18 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  Future<BookSearchResponse> _fetchBookSearchResponse() async {
-    final String requestUrl = RequestType.getBookSearchRequestUrl(
-        BookSearchRequestType.searchKeyword);
-
+  Future<BookSearchResponse> _fetchBookSearchKeywordResponse() async {
     BookSearchResponse bookSearchResponse =
         await RemoteDataSource.getBookSearchKeywordResponse(
-            '$requestUrl?keyword=${_bookSearchController.text}');
+            '${getApi(API.getBookSearchKeyword)}?keyword=${_bookSearchController.text}');
 
     return bookSearchResponse;
   }
 
-  Future<void> _fetchNextBookSearchResponse() async {
-    final String requestUrl = RequestType.getBookSearchRequestUrl(
-        BookSearchRequestType.searchNextUrl);
-
+  Future<void> _fetchBookSearchNextUrlResponse() async {
     BookSearchResponse additionalBookSearchResponse =
         await RemoteDataSource.getBookSearchKeywordResponse(
-            '$requestUrl/$_bookNextRequestUrl');
+            '${getApi(API.getBookService)}/$_bookNextRequestUrl');
 
     setState(() {
       _bookSearchData

@@ -4,13 +4,13 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mybrary/data/datasource/remote_datasource.dart';
 import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
+import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_appbar.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_box.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_description.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_header.dart';
-import 'package:mybrary/utils/logics/request_type.dart';
 
 class SearchIsbnScanScreen extends StatefulWidget {
   const SearchIsbnScanScreen({super.key});
@@ -124,11 +124,9 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
   }
 
   Future<BookSearchData> _fetchBookSearchIsbnResponse(String isbn) async {
-    final String requestUrl = RequestType.getBookSearchRequestUrl(
-        BookSearchRequestType.searchIsbnScan);
     BookSearchResponse bookSearchResponse =
         await RemoteDataSource.getBookSearchKeywordResponse(
-            '$requestUrl?isbn=$isbn');
+            '${getApi(API.getBookSearchIsbn)}?isbn=$isbn');
 
     final bookSearchData = bookSearchResponse.data!.bookSearchResult![0];
 
