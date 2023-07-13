@@ -38,7 +38,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-    // TODO: 예외 발생 시 상태 코드 확인 추가 필요
 
     @Mock
     UserRepository userRepository;
@@ -96,6 +95,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.signUp(serviceRequest))
                 .isInstanceOf(DuplicateLoginIdException.class)
+                .hasFieldOrPropertyWithValue("status", 400)
                 .hasFieldOrPropertyWithValue("errorCode", "U-02")
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 로그인 아이디입니다.");
 
@@ -115,6 +115,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.signUp(serviceRequest))
                 .isInstanceOf(DuplicateNicknameException.class)
+                .hasFieldOrPropertyWithValue("status", 400)
                 .hasFieldOrPropertyWithValue("errorCode", "U-03")
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 닉네임입니다.");
 
@@ -134,6 +135,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.signUp(serviceRequest))
                 .isInstanceOf(DuplicateEmailException.class)
+                .hasFieldOrPropertyWithValue("status", 400)
                 .hasFieldOrPropertyWithValue("errorCode", "U-04")
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 이메일입니다.");
 
@@ -175,6 +177,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.getProfile(LOGIN_ID))
                 .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
                 .hasFieldOrPropertyWithValue("errorCode", "U-05")
                 .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
 
@@ -208,6 +211,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.getProfileImageUrl(LOGIN_ID))
                 .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
                 .hasFieldOrPropertyWithValue("errorCode", "U-05")
                 .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
 
@@ -225,6 +229,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.getProfileImageUrl(LOGIN_ID))
                 .isInstanceOf(ProfileImageUrlNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
                 .hasFieldOrPropertyWithValue("errorCode", "P-01")
                 .hasFieldOrPropertyWithValue("errorMessage", "프로필 이미지 URL이 존재하지 않습니다.");
 
@@ -294,6 +299,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.updateProfile(serviceRequest))
                 .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
                 .hasFieldOrPropertyWithValue("errorCode", "U-05")
                 .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
 
@@ -312,6 +318,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.updateProfile(serviceRequest))
                 .isInstanceOf(DuplicateNicknameException.class)
+                .hasFieldOrPropertyWithValue("status", 400)
                 .hasFieldOrPropertyWithValue("errorCode", "U-03")
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 닉네임입니다.");
 
@@ -330,6 +337,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.updateProfile(serviceRequest))
                 .isInstanceOf(DuplicateEmailException.class)
+                .hasFieldOrPropertyWithValue("status", 400)
                 .hasFieldOrPropertyWithValue("errorCode", "U-04")
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 이메일입니다.");
 
@@ -348,6 +356,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.updateProfile(serviceRequest))
                 .isInstanceOf(EmailAlreadyRegisteredException.class)
+                .hasFieldOrPropertyWithValue("status", 400)
                 .hasFieldOrPropertyWithValue("errorCode", "U-06")
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 등록된 이메일은 수정할 수 없습니다.");
 
@@ -391,6 +400,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.updateProfileImage(serviceRequest))
                 .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
                 .hasFieldOrPropertyWithValue("errorCode", "U-05")
                 .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
 
@@ -407,6 +417,7 @@ class UserServiceImplTest {
         // When Then
         assertThatThrownBy(() -> userService.updateProfileImage(serviceRequest))
                 .isInstanceOf(EmptyFileException.class)
+                .hasFieldOrPropertyWithValue("status", 400)
                 .hasFieldOrPropertyWithValue("errorCode", "F-01")
                 .hasFieldOrPropertyWithValue("errorMessage", "파일이 비어있습니다. 파일을 선택해주세요.");
     }
@@ -420,6 +431,7 @@ class UserServiceImplTest {
         // When Then
         assertThatThrownBy(() -> userService.updateProfileImage(serviceRequest))
                 .isInstanceOf(ProfileImageFileSizeExceededException.class)
+                .hasFieldOrPropertyWithValue("status", 400)
                 .hasFieldOrPropertyWithValue("errorCode", "P-02")
                 .hasFieldOrPropertyWithValue("errorMessage",
                         "프로필 이미지 파일의 크기가 너무 큽니다. 최대 5MB까지 업로드 가능합니다.");
@@ -454,6 +466,7 @@ class UserServiceImplTest {
         // When
         assertThatThrownBy(() -> userService.deleteProfileImage(LOGIN_ID))
                 .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
                 .hasFieldOrPropertyWithValue("errorCode", "U-05")
                 .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
 
