@@ -10,6 +10,7 @@ import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_appbar.d
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_box.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_description.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_header.dart';
+import 'package:mybrary/utils/logics/request_type.dart';
 
 class SearchIsbnScanScreen extends StatefulWidget {
   const SearchIsbnScanScreen({super.key});
@@ -123,9 +124,11 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
   }
 
   Future<BookSearchData> _fetchBookSearchIsbnResponse(String isbn) async {
+    final String requestUrl = RequestType.getBookSearchRequestUrl(
+        BookSearchRequestType.searchIsbnScan);
     BookSearchResponse bookSearchResponse =
         await RemoteDataSource.getBookSearchKeywordResponse(
-            BookSearchRequestType.searchIsbnScan, isbn);
+            '$requestUrl?isbn=$isbn');
 
     final bookSearchData = bookSearchResponse.data!.bookSearchResult![0];
 

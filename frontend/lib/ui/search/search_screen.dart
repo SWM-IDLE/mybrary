@@ -9,6 +9,7 @@ import 'package:mybrary/ui/search/components/search_loading.dart';
 import 'package:mybrary/ui/search/components/search_not_found.dart';
 import 'package:mybrary/ui/search/components/search_popular_keyword.dart';
 import 'package:mybrary/ui/search/search_book_list/search_book_list.dart';
+import 'package:mybrary/utils/logics/request_type.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -79,8 +80,8 @@ class _SearchScreenState extends State<SearchScreen> {
               bookSearchController: _bookSearchController,
               onSubmittedSearchKeyword: _onSubmittedSearchKeyword,
               onPressedIsbnScan: onIsbnScan,
-              onPressedTextClear: _onTextClearPressed,
-              onPressedSearchCancel: _onSearchCancelPressed,
+              onPressedTextClear: _onPressedTextClear,
+              onPressedSearchCancel: _onPressedSearchCancel,
             ),
             const SizedBox(
               height: 8.0,
@@ -137,8 +138,11 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       if (popularKeyword != "") {
         isBinding = true;
+        final String requestUrl = RequestType.getBookSearchRequestUrl(
+            BookSearchRequestType.searchKeyword);
+
         _bookSearchResponse = RemoteDataSource.getBookSearchKeywordResponse(
-            BookSearchRequestType.searchKeyword, popularKeyword);
+            '$requestUrl?keyword=$popularKeyword');
         _isSearching = true;
       }
     });
@@ -152,13 +156,13 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  void _onTextClearPressed() {
+  void _onPressedTextClear() {
     setState(() {
       _bookSearchController.clear();
     });
   }
 
-  void _onSearchCancelPressed() {
+  void _onPressedSearchCancel() {
     setState(() {
       _bookSearchController.clear();
       _bookSearchData.clear();
@@ -167,17 +171,23 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<BookSearchResponse> _fetchBookSearchResponse() async {
+    final String requestUrl = RequestType.getBookSearchRequestUrl(
+        BookSearchRequestType.searchKeyword);
+
     BookSearchResponse bookSearchResponse =
         await RemoteDataSource.getBookSearchKeywordResponse(
-            BookSearchRequestType.searchKeyword, _bookSearchController.text);
+            '$requestUrl?keyword=${_bookSearchController.text}');
 
     return bookSearchResponse;
   }
 
   Future<void> _fetchNextBookSearchResponse() async {
+    final String requestUrl = RequestType.getBookSearchRequestUrl(
+        BookSearchRequestType.searchNextUrl);
+
     BookSearchResponse additionalBookSearchResponse =
         await RemoteDataSource.getBookSearchKeywordResponse(
-            BookSearchRequestType.searchNextUrl, _bookNextRequestUrl);
+            '$requestUrl/$_bookNextRequestUrl');
 
     setState(() {
       _bookSearchData
@@ -206,7 +216,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 openAppSettings();
               },
             ),
-            content: Text(
+            content: const Text(
               '카메라 권한이 없습니다. 설정에서 권한을 허용해주세요.',
               style: TextStyle(
                 color: Colors.white,
