@@ -23,8 +23,11 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
     final bookDetail = widget.searchBookData;
 
     return Scaffold(
-      appBar: BookDetailAppbar(),
+      appBar: BookDetailAppBar(
+        appBar: AppBar(),
+      ),
       body: SafeArea(
+        bottom: false,
         child: SingleChildScrollView(
           child: Column(
             children: [

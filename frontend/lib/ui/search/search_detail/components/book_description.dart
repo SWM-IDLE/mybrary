@@ -11,30 +11,36 @@ class BookDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '책 소개',
-            style: TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w700,
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '책소개',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Text(
-            bookDetail.description!,
-            style: TextStyle(
-              color: BOOK_DETAIL_COLOR,
-              fontSize: 14.0,
-              fontWeight: FontWeight.w400,
+            SizedBox(
+              height: 18.0,
             ),
-          ),
-        ],
+            Text(
+              bookDetail.description! == ''
+                  ? '책 소개가 없습니다.'
+                  : bookDetail.description!,
+              style: TextStyle(
+                height: 1.4,
+                color: BOOK_DETAIL_COLOR,
+                fontSize: 14.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
