@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    config:
+      uri: 127.0.0.1:8888
+      name: userservice
+  profiles:
+    active: ${PROFILE}
