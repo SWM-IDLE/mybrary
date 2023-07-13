@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/res/colors/color.dart';
 
-class BookDetailAppbar extends AppBar {
-  BookDetailAppbar({super.key});
+class BookDetailAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final AppBar appBar;
+  const BookDetailAppBar({
+    required this.appBar,
+    super.key,
+  });
 
+  @override
   Widget build(BuildContext context) {
     return AppBar(
-      elevation: 0,
+      elevation: 0.0,
       backgroundColor: BOOK_BACKGROUND_COLOR,
       iconTheme: IconThemeData(color: Colors.black),
       actions: [
@@ -22,4 +27,8 @@ class BookDetailAppbar extends AppBar {
       ],
     );
   }
+
+  @override
+// TODO: implement preferredSize
+  Size get preferredSize => Size.fromHeight(appBar.preferredSize.height);
 }

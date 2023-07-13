@@ -17,6 +17,7 @@ class SearchBookListInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Scrollbar(
+        controller: scrollController,
         child: ListView.builder(
           controller: scrollController,
           itemCount: searchBookList.length,
