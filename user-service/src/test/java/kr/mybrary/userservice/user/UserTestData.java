@@ -26,6 +26,15 @@ public class UserTestData {
                 .build();
     }
 
+    public static ProfileUpdateServiceRequest createProfileUpdateServiceRequestWithSameEmail() {
+        return ProfileUpdateServiceRequest.builder()
+                .loginId("loginId")
+                .nickname("updated_nickname")
+                .email("email@mail.com")
+                .introduction("updated_introduction")
+                .build();
+    }
+
     public static ProfileImageUpdateServiceRequest createProfileImageUpdateServiceRequest()
             throws Exception {
         return ProfileImageUpdateServiceRequest.builder()

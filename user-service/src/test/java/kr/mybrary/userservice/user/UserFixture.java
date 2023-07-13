@@ -11,14 +11,16 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum UserFixture {
 
-    COMMON_USER(1L, "loginId", "nickname", "encodedPassword", Role.USER, "socialId", SocialType.GOOGLE,
-            "refreshToken", "email@mail.com", "introduction", "profileImageUrl",
+    COMMON_USER(1L, "loginId", "nickname", "encodedPassword", Role.USER, "socialId",
+            SocialType.GOOGLE, "refreshToken", "email@mail.com", "introduction", "profileImageUrl",
             Collections.emptyList(), Collections.emptyList()),
     USER_WITHOUT_PROFILE_IMAGE_URL(1L, "loginId", "nickname", "encodedPassword", Role.USER,
-            "socialId",
-            SocialType.GOOGLE, "refreshToken", "email@mail.com", "introduction", null,
-            Collections.emptyList(),
-            Collections.emptyList());
+            "socialId", SocialType.GOOGLE, "refreshToken", "email@mail.com", "introduction", null,
+            Collections.emptyList(), Collections.emptyList()),
+
+    USER_WITHOUT_EMAIL(1L, "loginId", "nickname", "encodedPassword", Role.USER,
+            "socialId", SocialType.GOOGLE, "refreshToken", null, "introduction", "profileImageUrl",
+            Collections.emptyList(), Collections.emptyList());
 
     private final Long id;
     private final String loginId;

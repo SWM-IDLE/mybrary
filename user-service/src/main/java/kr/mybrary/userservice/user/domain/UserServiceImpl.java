@@ -17,6 +17,7 @@ import kr.mybrary.userservice.user.domain.exception.user.DuplicateNicknameExcept
 import kr.mybrary.userservice.user.domain.exception.file.EmptyFileException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageFileSizeExceededException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFoundException;
+import kr.mybrary.userservice.user.domain.exception.user.EmailAlreadyRegisteredException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
 import kr.mybrary.userservice.user.domain.storage.StorageService;
 import kr.mybrary.userservice.user.persistence.Role;
@@ -93,16 +94,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public ProfileServiceResponse updateProfile(ProfileUpdateServiceRequest serviceRequest) {
         validateDuplicateNickname(serviceRequest.getNickname());
-        // TODO: 이메일 중복 검사는 필요한가? 프로필에 등록되는 이메일과 회원 가입 시 사용되는 이메일이 다를 수 있는가?
         validateDuplicateEmail(serviceRequest.getEmail());
 
         User user = userRepository.findByLoginId(serviceRequest.getLoginId())
                 .orElseThrow(UserNotFoundException::new);
+        checkIfEmailRegistrationIsPossible(user, serviceRequest.getEmail());
         user.updateProfile(serviceRequest.getNickname(), serviceRequest.getEmail(),
                 serviceRequest.getIntroduction());
         ProfileServiceResponse serviceResponse = UserMapper.INSTANCE.toProfileServiceResponse(user);
 
         return serviceResponse;
+    }
+
+    // 이미 이메일이 등록된 상태라면 이메일을 변경할 수 없다.
+    private void checkIfEmailRegistrationIsPossible(User user, String requestEmail) {
+        if (user.getEmail() != null && user.getEmail() != requestEmail) {
+            throw new EmailAlreadyRegisteredException();
+        }
     }
 
     @Override
@@ -134,7 +142,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findByLoginId(serviceRequest.getLoginId())
                 .orElseThrow(UserNotFoundException::new);
-        // TODO: 프로필 이미지 저장 경로 논의
+
         String profileImageUrl = storageService.putFile(serviceRequest.getProfileImage(),
                 PROFILE_IMAGE_PATH, user.getLoginId());
 
