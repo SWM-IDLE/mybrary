@@ -17,9 +17,14 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+  cloud:
+    config:
+      server:
+        bootstrap: true
 
-  config:
-    import: application-API-KEY.yml
+kakao:
+  api:
+    key: ${KAKAO_API_KEY}
 
 eureka:
   instance:
@@ -30,3 +35,8 @@ eureka:
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health,beans
