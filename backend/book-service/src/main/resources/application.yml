@@ -21,6 +21,11 @@ spring:
     config:
       server:
         bootstrap: true
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
 
 kakao:
   api:
@@ -39,4 +44,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh,health,beans
+        include: refresh,health,beans,busrefresh
