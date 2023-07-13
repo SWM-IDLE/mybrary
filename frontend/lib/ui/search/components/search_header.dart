@@ -5,14 +5,18 @@ class SearchHeader extends StatelessWidget {
   final bool isSearching;
   final TextEditingController bookSearchController;
   final ValueChanged onSubmittedSearchKeyword;
-  final VoidCallback onTextClearPressed;
-  final VoidCallback onSearchCancelPressed;
+
+  final VoidCallback onPressedIsbnScan;
+  final VoidCallback onPressedTextClear;
+  final VoidCallback onPressedSearchCancel;
+
   const SearchHeader({
     required this.isSearching,
     required this.bookSearchController,
     required this.onSubmittedSearchKeyword,
-    required this.onTextClearPressed,
-    required this.onSearchCancelPressed,
+    required this.onPressedIsbnScan,
+    required this.onPressedTextClear,
+    required this.onPressedSearchCancel,
     super.key,
   });
 
@@ -61,7 +65,7 @@ class SearchHeader extends StatelessWidget {
                   scale: 1.2,
                 ),
                 suffixIcon: IconButton(
-                  onPressed: onTextClearPressed,
+                  onPressed: onPressedTextClear,
                   icon: Icon(
                     Icons.clear,
                     color: GREY_COLOR,
@@ -76,9 +80,7 @@ class SearchHeader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: IconButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('/search/barcode');
-              },
+              onPressed: onPressedIsbnScan,
               icon: Image.asset(
                 'assets/icon/barcode_scan_icon.png',
                 color: PRIMARY_COLOR,
@@ -87,7 +89,7 @@ class SearchHeader extends StatelessWidget {
           )
         else
           TextButton(
-            onPressed: onSearchCancelPressed,
+            onPressed: onPressedSearchCancel,
             child: Text(
               '취소',
               style: TextStyle(

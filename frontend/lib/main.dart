@@ -7,14 +7,16 @@ import 'package:mybrary/ui/auth/sign_in/sign_in_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_verify_screen.dart';
 import 'package:mybrary/ui/home/home_screen.dart';
-import 'package:mybrary/ui/search/search_barcode_scan/search_barcode_scan_screen.dart';
+import 'package:mybrary/ui/search/search_isbn_scan/search_isbn_scan_screen.dart';
 import 'package:mybrary/ui/search/search_screen.dart';
 
 void main() {
   // System Interface 글자 색상 light, dark
   // 현재는 전체 적용, 추후 일부 적용 예정
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark));
   runApp(const MyApp());
 }
 
@@ -57,7 +59,7 @@ class MyApp extends StatelessWidget {
               '/signup/verify': (context) => SignUpVerifyScreen(),
               '/home': (context) => HomeScreen(),
               '/search': (context) => SearchScreen(),
-              '/search/barcode': (context) => SearchBarcodeScanScreen(),
+              '/search/barcode': (context) => SearchIsbnScanScreen(),
             },
           );
         }
@@ -80,6 +82,8 @@ class Init {
 
     // accessToken과 refreshToken이 없으면 로그인 화면으로 이동
     if (accessToken == null || refreshToken == null) return SearchScreen();
+
+    // TODO: 초반 앱 화면에서 카메라, 앨범 권한을 획득하는 로직 필요
 
     // 토큰이 존재하면, 홈 화면으로 바로 이동
     return HomeScreen();

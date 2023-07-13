@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mybrary/data/datasource/remote_datasource.dart';
 import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
+import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/search/components/search_header.dart';
 import 'package:mybrary/ui/search/components/search_loading.dart';
 import 'package:mybrary/ui/search/components/search_not_found.dart';
 import 'package:mybrary/ui/search/components/search_popular_keyword.dart';
 import 'package:mybrary/ui/search/search_book_list/search_book_list.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -16,6 +19,20 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  @override
+  void initState() {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: LESS_GREY_COLOR.withOpacity(0.2),
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
+    super.initState();
+  }
+
   late Future<BookSearchResponse> _bookSearchResponse;
   late final List<BookSearchData> _bookSearchData = [];
   late String _bookNextRequestUrl;
@@ -61,8 +78,9 @@ class _SearchScreenState extends State<SearchScreen> {
               isSearching: _isSearching,
               bookSearchController: _bookSearchController,
               onSubmittedSearchKeyword: _onSubmittedSearchKeyword,
-              onTextClearPressed: _onTextClearPressed,
-              onSearchCancelPressed: _onSearchCancelPressed,
+              onPressedIsbnScan: onIsbnScan,
+              onPressedTextClear: _onTextClearPressed,
+              onPressedSearchCancel: _onSearchCancelPressed,
             ),
             const SizedBox(
               height: 8.0,
@@ -166,5 +184,40 @@ class _SearchScreenState extends State<SearchScreen> {
           .addAll(additionalBookSearchResponse.data!.bookSearchResult!);
       _bookNextRequestUrl = additionalBookSearchResponse.data!.nextRequestUrl!;
     });
+  }
+
+  Future onIsbnScan() async {
+    await Permission.camera.request();
+
+    final permissionCameraStatus = await Permission.camera.status;
+
+    switch (permissionCameraStatus) {
+      case PermissionStatus.granted || PermissionStatus.provisional:
+        if (!mounted) break;
+        return Navigator.of(context).pushNamed('/search/barcode');
+      case PermissionStatus.denied || PermissionStatus.permanentlyDenied:
+        if (!mounted) break;
+        return ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            action: SnackBarAction(
+              label: '설정',
+              textColor: PRIMARY_COLOR,
+              onPressed: () {
+                openAppSettings();
+              },
+            ),
+            content: Text(
+              '카메라 권한이 없습니다. 설정에서 권한을 허용해주세요.',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 13.0,
+              ),
+            ),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      default:
+        return Permission.camera.request();
+    }
   }
 }
