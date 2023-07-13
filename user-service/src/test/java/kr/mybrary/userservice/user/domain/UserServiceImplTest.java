@@ -58,11 +58,9 @@ class UserServiceImplTest {
         // Given
         SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
-        given(userRepository.findByLoginId(serviceRequest.getLoginId())).willReturn(
-                Optional.empty());
-        given(userRepository.findByNickname(serviceRequest.getNickname())).willReturn(
-                Optional.empty());
-        given(userRepository.findByEmail(serviceRequest.getEmail())).willReturn(Optional.empty());
+        given(userRepository.existsByLoginId(serviceRequest.getLoginId())).willReturn(false);
+        given(userRepository.existsByEmail(serviceRequest.getEmail())).willReturn(false);
+        given(userRepository.existsByNickname(serviceRequest.getNickname())).willReturn(false);
         given(passwordEncoder.encode(serviceRequest.getPassword())).willReturn("encodedPassword");
         given(userRepository.save(any(User.class))).willReturn(UserFixture.COMMON_USER.getUser());
 
@@ -77,9 +75,9 @@ class UserServiceImplTest {
                 () -> assertThat(savedUser.getRole()).isEqualTo(Role.USER)
         );
 
-        verify(userRepository).findByLoginId(serviceRequest.getLoginId());
-        verify(userRepository).findByEmail(serviceRequest.getEmail());
-        verify(userRepository).findByNickname(serviceRequest.getNickname());
+        verify(userRepository).existsByLoginId(serviceRequest.getLoginId());
+        verify(userRepository).existsByEmail(serviceRequest.getEmail());
+        verify(userRepository).existsByNickname(serviceRequest.getNickname());
         verify(userRepository).save(any(User.class));
     }
 
@@ -89,8 +87,7 @@ class UserServiceImplTest {
         // Given
         SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
-        given(userRepository.findByLoginId(serviceRequest.getLoginId())).willReturn(
-                Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(userRepository.existsByLoginId(serviceRequest.getLoginId())).willReturn(true);
 
         // When
         assertThatThrownBy(() -> userService.signUp(serviceRequest))
@@ -100,7 +97,7 @@ class UserServiceImplTest {
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 로그인 아이디입니다.");
 
         // Then
-        verify(userRepository).findByLoginId(serviceRequest.getLoginId());
+        verify(userRepository).existsByLoginId(serviceRequest.getLoginId());
     }
 
     @Test
@@ -109,8 +106,7 @@ class UserServiceImplTest {
         // Given
         SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
-        given(userRepository.findByNickname(serviceRequest.getNickname())).willReturn(
-                Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(userRepository.existsByNickname(serviceRequest.getNickname())).willReturn(true);
 
         // When
         assertThatThrownBy(() -> userService.signUp(serviceRequest))
@@ -120,7 +116,7 @@ class UserServiceImplTest {
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 닉네임입니다.");
 
         // Then
-        verify(userRepository).findByNickname(serviceRequest.getNickname());
+        verify(userRepository).existsByNickname(serviceRequest.getNickname());
     }
 
     @Test
@@ -129,8 +125,7 @@ class UserServiceImplTest {
         // Given
         SignUpServiceRequest serviceRequest = UserTestData.createSignUpServiceRequest();
 
-        given(userRepository.findByEmail(serviceRequest.getEmail())).willReturn(
-                Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(userRepository.existsByEmail(serviceRequest.getEmail())).willReturn(true);
 
         // When
         assertThatThrownBy(() -> userService.signUp(serviceRequest))
@@ -140,7 +135,7 @@ class UserServiceImplTest {
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 이메일입니다.");
 
         // Then
-        verify(userRepository).findByEmail(serviceRequest.getEmail());
+        verify(userRepository).existsByEmail(serviceRequest.getEmail());
     }
 
     @Test
@@ -312,8 +307,7 @@ class UserServiceImplTest {
     void updateProfileWithDuplicateNickname() {
         // Given
         ProfileUpdateServiceRequest serviceRequest = UserTestData.createProfileUpdateServiceRequest();
-        given(userRepository.findByNickname(serviceRequest.getNickname())).willReturn(
-                Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(userRepository.existsByNickname(serviceRequest.getNickname())).willReturn(true);
 
         // When
         assertThatThrownBy(() -> userService.updateProfile(serviceRequest))
@@ -323,7 +317,7 @@ class UserServiceImplTest {
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 닉네임입니다.");
 
         // Then
-        verify(userRepository).findByNickname(serviceRequest.getNickname());
+        verify(userRepository).existsByNickname(serviceRequest.getNickname());
     }
 
     @Test
@@ -331,8 +325,7 @@ class UserServiceImplTest {
     void updateProfileWithDuplicateEmail() {
         // Given
         ProfileUpdateServiceRequest serviceRequest = UserTestData.createProfileUpdateServiceRequest();
-        given(userRepository.findByEmail(serviceRequest.getEmail())).willReturn(
-                Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(userRepository.existsByEmail(serviceRequest.getEmail())).willReturn(true);
 
         // When
         assertThatThrownBy(() -> userService.updateProfile(serviceRequest))
@@ -342,7 +335,7 @@ class UserServiceImplTest {
                 .hasFieldOrPropertyWithValue("errorMessage", "이미 존재하는 이메일입니다.");
 
         // Then
-        verify(userRepository).findByEmail(serviceRequest.getEmail());
+        verify(userRepository).existsByEmail(serviceRequest.getEmail());
     }
 
     @Test
