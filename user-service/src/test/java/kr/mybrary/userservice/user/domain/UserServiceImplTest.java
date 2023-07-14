@@ -9,7 +9,7 @@ import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
-import kr.mybrary.userservice.user.domain.exception.file.EmptyFileException;
+import kr.mybrary.userservice.user.domain.exception.io.EmptyFileException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageFileSizeExceededException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFoundException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
@@ -300,7 +300,7 @@ class UserServiceImplTest {
         assertThatThrownBy(() -> userService.updateProfileImage(serviceRequest))
                 .isInstanceOf(EmptyFileException.class)
                 .hasFieldOrPropertyWithValue("status", 400)
-                .hasFieldOrPropertyWithValue("errorCode", "F-01")
+                .hasFieldOrPropertyWithValue("errorCode", "IO-01")
                 .hasFieldOrPropertyWithValue("errorMessage", "파일이 비어있습니다. 파일을 선택해주세요.");
     }
 

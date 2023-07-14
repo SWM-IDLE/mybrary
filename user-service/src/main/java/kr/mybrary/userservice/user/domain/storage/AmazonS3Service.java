@@ -4,7 +4,7 @@ import io.awspring.cloud.s3.ObjectMetadata;
 import io.awspring.cloud.s3.S3Exception;
 import io.awspring.cloud.s3.S3Template;
 import java.io.IOException;
-import kr.mybrary.userservice.user.domain.exception.file.FileInputStreamException;
+import kr.mybrary.userservice.user.domain.exception.io.FileInputStreamException;
 import kr.mybrary.userservice.user.domain.exception.storage.StorageClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
