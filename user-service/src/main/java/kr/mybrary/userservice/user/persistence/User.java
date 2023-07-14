@@ -73,4 +73,18 @@ public class User extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public void follow(User target) {
+        Follow follow = Follow.builder()
+            .source(this)
+            .target(target)
+            .build();
+        this.followings.add(follow);
+        target.followers.add(follow);
+    }
+
+    public void unfollow(User target) {
+        this.followings.removeIf(follow -> follow.getTarget().equals(target));
+        target.followers.removeIf(follow -> follow.getSource().equals(this));
+    }
+
 }

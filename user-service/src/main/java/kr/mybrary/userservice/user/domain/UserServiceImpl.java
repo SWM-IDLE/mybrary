@@ -200,6 +200,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void follow(FollowServiceRequest serviceRequest) {
+        User sourceUser = userRepository.findByLoginId(serviceRequest.getSourceId())
+                .orElseThrow(UserNotFoundException::new);
+        User targetUser = userRepository.findByLoginId(serviceRequest.getTargetId())
+                .orElseThrow(UserNotFoundException::new);
+
+        validateDifferentSourceTarget(sourceUser, targetUser);
+        validateDuplicateFollow(sourceUser, targetUser);
+
+        sourceUser.follow(targetUser);
+    }
+
+    private void validateDifferentSourceTarget(User source, User target) {
+        if (source.equals(target)) {
+            throw new SameSourceTargetUserException();
+        }
+    }
+
+    private void validateDuplicateFollow(User source, User target) {
+        if (source.getFollowings().stream()
+                .anyMatch(follow -> follow.getTarget().equals(target))) {
+            throw new DuplicateFollowException();
+        }
     }
 
     @Override
