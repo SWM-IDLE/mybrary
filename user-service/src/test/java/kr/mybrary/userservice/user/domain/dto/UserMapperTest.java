@@ -66,7 +66,6 @@ class UserMapperTest {
         assertAll(
             () -> assertEquals(user.getNickname(), serviceResponse.getNickname()),
             () -> assertEquals(user.getProfileImageUrl(), serviceResponse.getProfileImageUrl()),
-            () -> assertEquals(user.getEmail(), serviceResponse.getEmail()),
             () -> assertEquals(user.getIntroduction(), serviceResponse.getIntroduction())
         );
     }

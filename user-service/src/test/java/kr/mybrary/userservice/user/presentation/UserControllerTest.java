@@ -163,7 +163,6 @@ class UserControllerTest {
         ProfileServiceResponse profileServiceResponse = ProfileServiceResponse.builder()
                 .nickname("nickname_1")
                 .profileImageUrl("profileImageUrl_1")
-                .email("email_1")
                 .introduction("introduction_1")
                 .build();
 
@@ -183,7 +182,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.data.nickname").value(profileServiceResponse.getNickname()))
                 .andExpect(jsonPath("$.data.profileImageUrl").value(
                         profileServiceResponse.getProfileImageUrl()))
-                .andExpect(jsonPath("$.data.email").value(profileServiceResponse.getEmail()))
                 .andExpect(jsonPath("$.data.introduction").value(
                         profileServiceResponse.getIntroduction()));
 
@@ -212,8 +210,6 @@ class UserControllerTest {
                                         fieldWithPath("data.profileImageUrl").type(
                                                         JsonFieldType.STRING)
                                                 .description("사용자의 프로필 이미지 URL"),
-                                        fieldWithPath("data.email").type(JsonFieldType.STRING)
-                                                .description("사용자의 이메일"),
                                         fieldWithPath("data.introduction").type(
                                                 JsonFieldType.STRING).description("사용자의 한 줄 소개")
                                 )
@@ -228,14 +224,12 @@ class UserControllerTest {
         // given
         ProfileUpdateRequest profileUpdateRequest = ProfileUpdateRequest.builder()
                 .nickname("new_nickname")
-                .email("new_email")
                 .introduction("new_introduction")
                 .build();
 
         ProfileServiceResponse profileServiceResponse = ProfileServiceResponse.builder()
                 .nickname(profileUpdateRequest.getNickname())
                 .profileImageUrl("profileImageUrl_1")
-                .email(profileUpdateRequest.getEmail())
                 .introduction(profileUpdateRequest.getIntroduction())
                 .build();
 
@@ -261,7 +255,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.data.nickname").value(profileServiceResponse.getNickname()))
                 .andExpect(jsonPath("$.data.profileImageUrl").value(
                         profileServiceResponse.getProfileImageUrl()))
-                .andExpect(jsonPath("$.data.email").value(profileServiceResponse.getEmail()))
                 .andExpect(jsonPath("$.data.introduction").value(
                         profileServiceResponse.getIntroduction()));
 
@@ -280,8 +273,6 @@ class UserControllerTest {
                                 .requestFields(
                                         fieldWithPath("nickname").type(JsonFieldType.STRING)
                                                 .description("수정할 닉네임"),
-                                        fieldWithPath("email").type(JsonFieldType.STRING)
-                                                .description("수정할 이메일"),
                                         fieldWithPath("introduction").type(JsonFieldType.STRING)
                                                 .description("수정할 한 줄 소개")
                                 )
@@ -295,8 +286,6 @@ class UserControllerTest {
                                                 .description("수정된 닉네임"),
                                         fieldWithPath("data.profileImageUrl").type(
                                                 JsonFieldType.STRING).description("프로필 이미지 URL"),
-                                        fieldWithPath("data.email").type(JsonFieldType.STRING)
-                                                .description("수정된 이메일"),
                                         fieldWithPath("data.introduction").type(
                                                 JsonFieldType.STRING).description("수정된 한 줄 소개")
                                 )

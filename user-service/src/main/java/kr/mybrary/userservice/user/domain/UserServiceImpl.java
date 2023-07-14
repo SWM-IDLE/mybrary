@@ -12,13 +12,11 @@ import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
-import kr.mybrary.userservice.user.domain.exception.user.DuplicateEmailException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateNicknameException;
 import kr.mybrary.userservice.user.domain.exception.file.EmptyFileException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageFileSizeExceededException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFoundException;
-import kr.mybrary.userservice.user.domain.exception.user.EmailAlreadyRegisteredException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
 import kr.mybrary.userservice.user.domain.storage.StorageService;
 import kr.mybrary.userservice.user.persistence.Role;
@@ -51,7 +49,6 @@ public class UserServiceImpl implements UserService {
 
         validateDuplicateLoginId(serviceRequest.getLoginId());
         validateDuplicateNickname(serviceRequest.getNickname());
-        validateDuplicateEmail(serviceRequest.getEmail());
 
         User user = UserMapper.INSTANCE.toEntity(serviceRequest);
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
@@ -61,12 +58,6 @@ public class UserServiceImpl implements UserService {
                 userRepository.save(user));
 
         return serviceResponse;
-    }
-
-    private void validateDuplicateEmail(String email) {
-        if (userRepository.existsByEmail(email)) {
-            throw new DuplicateEmailException();
-        }
     }
 
     private void validateDuplicateNickname(String nickname) {
@@ -93,23 +84,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileServiceResponse updateProfile(ProfileUpdateServiceRequest serviceRequest) {
-        validateDuplicateNickname(serviceRequest.getNickname());
-        validateDuplicateEmail(serviceRequest.getEmail());
-
         User user = userRepository.findByLoginId(serviceRequest.getLoginId())
                 .orElseThrow(UserNotFoundException::new);
-        checkIfEmailRegistrationIsPossible(user, serviceRequest.getEmail());
-        user.updateProfile(serviceRequest.getNickname(), serviceRequest.getEmail(),
-                serviceRequest.getIntroduction());
+
+        checkIfNicknameUpdateIsPossible(user.getNickname(), serviceRequest.getNickname());
+
+        user.updateProfile(serviceRequest.getNickname(), serviceRequest.getIntroduction());
         ProfileServiceResponse serviceResponse = UserMapper.INSTANCE.toProfileServiceResponse(user);
 
         return serviceResponse;
     }
 
-    // 이미 이메일이 등록된 상태라면 이메일을 변경할 수 없다.
-    private void checkIfEmailRegistrationIsPossible(User user, String requestEmail) {
-        if (user.getEmail() != null && user.getEmail() != requestEmail) {
-            throw new EmailAlreadyRegisteredException();
+    private void checkIfNicknameUpdateIsPossible(String userNickname, String requestNickname) {
+        if (!userNickname.equals(requestNickname)) {
+            validateDuplicateNickname(requestNickname);
         }
     }
 
