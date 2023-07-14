@@ -22,10 +22,15 @@ const Color GOOGLE_COLOR = Color(0xFFD0422A);
 const Color NAVER_COLOR = Color(0xFF0AC75A);
 const Color KAKAO_COLOR = Color(0xFFFFE502);
 
-// Search Color
-const Color SEARCH_INPUT_COLOR = Color(0xFFF3F5F6);
-const Color POPULAR_BORDER_COLOR = Color(0xCCDEDEDE);
+// Book Search & Detail Color
+const Color BOOK_BORDER_COLOR = Color(0xFFE7E7E7);
+const Color BOOK_DESCRIPTION_COLOR = Color(0xFF9F9F9F);
+const Color BOOK_STAR_COLOR = Color(0xFFFFBB36);
+const Color BOOK_STAR_RATING_COLOR = Color(0xFF404040);
+const Color BOOK_STAR_DISABLED_COLOR = Color(0xFFDDDEE3);
+const Color BOOK_BACKGROUND_COLOR = Color(0xFFF2F2F2);
+const Color BOOK_DISABLED_COLOR = Color(0xFFC0C0C0);
+const Color BOOK_DETAIL_COLOR = Color(0xFF535353);
 const Color POPULAR_TEXT_COLOR = Color(0xFF727272);
-
-// Book Data Color
-const Color BOOK_STAR_COLOR = Color(0xFFFC8C00);
+const Color POPULAR_BORDER_COLOR = Color(0xCCDEDEDE);
+const Color MYBOOK_SCAN_BACKGROUND_COLOR = Color(0xFF1C1C1C);

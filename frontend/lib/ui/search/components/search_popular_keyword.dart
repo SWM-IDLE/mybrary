@@ -13,11 +13,11 @@ const List<String> popularSearchKeyword = [
 ];
 
 class SearchPopularKeyword extends StatelessWidget {
-  final TextEditingController bookSearchController;
+  final TextEditingController bookSearchKeywordController;
   final Function(bool) onBookSearchBinding;
 
   const SearchPopularKeyword({
-    required this.bookSearchController,
+    required this.bookSearchKeywordController,
     required this.onBookSearchBinding,
     super.key,
   });
@@ -44,9 +44,10 @@ class SearchPopularKeyword extends StatelessWidget {
             runSpacing: 8.0,
             children: List.generate(
               popularSearchKeyword.length,
-              (index) => InkWell(
+              (index) => GestureDetector(
                 onTap: () {
-                  bookSearchController.text = popularSearchKeyword[index];
+                  bookSearchKeywordController.text =
+                      popularSearchKeyword[index];
                   onBookSearchBinding(true);
                   FocusManager.instance.primaryFocus?.unfocus();
                 },

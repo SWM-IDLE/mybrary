@@ -163,7 +163,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             isOAuth: true,
                             isEnabled: true,
                             btnIcon: Image.asset(
-                              'assets/images/logo-google.png',
+                              'assets/logo/logo-google.png',
                               width: 30.0,
                               height: 30.0,
                             ),
@@ -179,7 +179,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             isOAuth: true,
                             isEnabled: true,
                             btnIcon: Image.asset(
-                              'assets/images/logo-naver.png',
+                              'assets/logo/logo-naver.png',
                               width: 30.0,
                               height: 30.0,
                             ),
@@ -195,7 +195,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             isOAuth: true,
                             isEnabled: true,
                             btnIcon: Image.asset(
-                              'assets/images/logo-kakao.png',
+                              'assets/logo/logo-kakao.png',
                               width: 30.0,
                               height: 30.0,
                             ),

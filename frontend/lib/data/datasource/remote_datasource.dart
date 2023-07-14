@@ -6,11 +6,6 @@ import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/utils/dios/auth_dio.dart';
 
-enum BookSearchRequestType {
-  searchKeyword,
-  searchNextUrl,
-}
-
 class RemoteDataSource {
   static Future<void> getProfileData(BuildContext context) async {
     var dio = await authDio(context);
@@ -19,35 +14,24 @@ class RemoteDataSource {
     log('profile Get 요청 응답값: $profileResponse');
   }
 
-  static Future<BookSearchResponse> getBookSearchKeywordResponse(
-      BookSearchRequestType requestType, String request) async {
+  static Future<BookSearchResponse> getBookSearchResponse(
+      String requestUrl) async {
     final dio = Dio();
-    String requestUrl = '';
-
-    switch (requestType) {
-      case BookSearchRequestType.searchKeyword:
-        requestUrl = '${getApi(API.getBookSearchKeyword)}?keyword=$request';
-        break;
-      case BookSearchRequestType.searchNextUrl:
-        requestUrl = '${getApi(API.getBookService)}/$request';
-        break;
-    }
+    final bookSearchResponse = await dio.get(requestUrl);
 
     try {
-      final bookSearchKeywordResponse = await dio.get(requestUrl);
-
-      switch (bookSearchKeywordResponse.statusCode) {
+      switch (bookSearchResponse.statusCode) {
         case 200:
-          final BookSearchResponse bookSearchKeywordResult = BookSearchResponse(
-            status: bookSearchKeywordResponse.data['status'],
-            message: bookSearchKeywordResponse.data['message'],
+          final BookSearchResponse bookSearchResult = BookSearchResponse(
+            status: bookSearchResponse.data['status'],
+            message: bookSearchResponse.data['message'],
             data: BookSearchResponseData.fromJson(
-                bookSearchKeywordResponse.data['data']),
+                bookSearchResponse.data['data']),
           );
-          return bookSearchKeywordResult;
+          return bookSearchResult;
         case 404:
           log('ERROR: 서버에 404 에러가 있습니다.');
-          return bookSearchKeywordResponse.data;
+          return bookSearchResponse.data;
         default:
           log('ERROR: 서버의 API 호출에 실패했습니다.');
           throw Exception('서버의 API 호출에 실패했습니다.');

@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by dongs on 2023/07/13.
+  
+*/
+CFBundleName="Mybrary";
+CFBundleDisplayName="Mybrary";
+NSCameraUsageDescription="This app needs camera access to Barcode scan";

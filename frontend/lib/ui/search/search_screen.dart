@@ -1,12 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mybrary/data/datasource/remote_datasource.dart';
 import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
-import 'package:mybrary/ui/search/components/search_book_list.dart';
+import 'package:mybrary/data/network/api.dart';
+import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/search/components/search_header.dart';
 import 'package:mybrary/ui/search/components/search_loading.dart';
 import 'package:mybrary/ui/search/components/search_not_found.dart';
 import 'package:mybrary/ui/search/components/search_popular_keyword.dart';
+import 'package:mybrary/ui/search/search_book_list/search_book_list.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -16,29 +22,44 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  @override
+  void initState() {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: LESS_GREY_COLOR.withOpacity(0.2),
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
+    super.initState();
+  }
+
   late Future<BookSearchResponse> _bookSearchResponse;
   late final List<BookSearchData> _bookSearchData = [];
-  late BookSearchResponse bookSearchNextResponse;
-  late String _bookNextRequestUrl;
+  late String _bookSearchNextUrl;
 
   bool _isSearching = false;
 
-  final ScrollController _scrollController = ScrollController();
-  final TextEditingController _bookSearchController = TextEditingController();
+  final ScrollController _searchScrollController = ScrollController();
+  final TextEditingController _bookSearchKeywordController =
+      TextEditingController();
 
   @override
   void setState(VoidCallback fn) {
     super.setState(fn);
 
     // 스크롤 맨 하단에 닿기 바로 이전에 실행 (max x 0.85)
-    _scrollController.addListener(() async {
-      ScrollPosition scrollPosition = _scrollController.position;
-      if (_scrollController.offset > scrollPosition.maxScrollExtent * 0.85 &&
+    _searchScrollController.addListener(() async {
+      ScrollPosition scrollPosition = _searchScrollController.position;
+      if (_searchScrollController.offset >
+              scrollPosition.maxScrollExtent * 0.85 &&
           !scrollPosition.outOfRange) {
-        if (_bookNextRequestUrl != "") {
+        if (_bookSearchNextUrl != "") {
           // nextUrl 이 있을 때 추가 데이터 호출
-          _fetchNextBookSearchResponse();
-          _bookNextRequestUrl = "";
+          _fetchBookSearchNextUrlResponse();
+          _bookSearchNextUrl = "";
         }
       }
     });
@@ -46,7 +67,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void dispose() {
-    _bookSearchController.dispose();
+    _bookSearchKeywordController.dispose();
     super.dispose();
   }
 
@@ -54,23 +75,25 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SearchHeader(
               isSearching: _isSearching,
-              bookSearchController: _bookSearchController,
+              bookSearchController: _bookSearchKeywordController,
               onSubmittedSearchKeyword: _onSubmittedSearchKeyword,
-              onTextClearPressed: _onTextClearPressed,
-              onSearchCancelPressed: _onSearchCancelPressed,
+              onPressedIsbnScan: onIsbnScan,
+              onPressedTextClear: _onPressedTextClear,
+              onPressedSearchCancel: _onPressedSearchCancel,
             ),
             const SizedBox(
               height: 8.0,
             ),
             if (!_isSearching)
               SearchPopularKeyword(
-                bookSearchController: _bookSearchController,
-                onBookSearchBinding: getBookSearchPopularKeywordData,
+                bookSearchKeywordController: _bookSearchKeywordController,
+                onBookSearchBinding: getBookSearchPopularKeywordResponse,
               )
             else
               FutureBuilder<BookSearchResponse>(
@@ -96,12 +119,12 @@ class _SearchScreenState extends State<SearchScreen> {
                     if (_bookSearchData.isEmpty) {
                       _bookSearchData
                           .addAll(bookSearchResponse.data!.bookSearchResult!);
-                      _bookNextRequestUrl = bookSearchNextRequestUrl;
+                      _bookSearchNextUrl = bookSearchNextRequestUrl;
                     }
 
                     return SearchBookList(
-                      searchBookList: _bookSearchData,
-                      scrollController: _scrollController,
+                      bookSearchDataList: _bookSearchData,
+                      scrollController: _searchScrollController,
                     );
                   }
 
@@ -114,13 +137,13 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  void getBookSearchPopularKeywordData(bool isBinding) {
-    final popularKeyword = _bookSearchController.text;
+  void getBookSearchPopularKeywordResponse(bool isBinding) {
+    final popularKeyword = _bookSearchKeywordController.text;
     setState(() {
       if (popularKeyword != "") {
         isBinding = true;
-        _bookSearchResponse = RemoteDataSource.getBookSearchKeywordResponse(
-            BookSearchRequestType.searchKeyword, popularKeyword);
+        _bookSearchResponse = RemoteDataSource.getBookSearchResponse(
+            '${getApi(API.getBookSearchKeyword)}?keyword=$popularKeyword');
         _isSearching = true;
       }
     });
@@ -128,43 +151,78 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _onSubmittedSearchKeyword(value) {
     setState(() {
-      _bookSearchController.text = value;
-      _bookSearchResponse = _fetchBookSearchResponse();
+      _bookSearchKeywordController.text = value;
+      _bookSearchResponse = _fetchBookSearchKeywordResponse();
       _isSearching = true;
     });
   }
 
-  void _onTextClearPressed() {
+  void _onPressedTextClear() {
     setState(() {
-      _bookSearchController.clear();
+      _bookSearchKeywordController.clear();
     });
   }
 
-  void _onSearchCancelPressed() {
+  void _onPressedSearchCancel() {
     setState(() {
-      _bookSearchController.clear();
+      _bookSearchKeywordController.clear();
       _bookSearchData.clear();
       _isSearching = false;
     });
   }
 
-  Future<BookSearchResponse> _fetchBookSearchResponse() async {
+  Future<BookSearchResponse> _fetchBookSearchKeywordResponse() async {
     BookSearchResponse bookSearchResponse =
-        await RemoteDataSource.getBookSearchKeywordResponse(
-            BookSearchRequestType.searchKeyword, _bookSearchController.text);
+        await RemoteDataSource.getBookSearchResponse(
+            '${getApi(API.getBookSearchKeyword)}?keyword=${_bookSearchKeywordController.text}');
 
     return bookSearchResponse;
   }
 
-  Future<void> _fetchNextBookSearchResponse() async {
+  Future<void> _fetchBookSearchNextUrlResponse() async {
     BookSearchResponse additionalBookSearchResponse =
-        await RemoteDataSource.getBookSearchKeywordResponse(
-            BookSearchRequestType.searchNextUrl, _bookNextRequestUrl);
+        await RemoteDataSource.getBookSearchResponse(
+            '${getApi(API.getBookService)}$_bookSearchNextUrl');
 
     setState(() {
       _bookSearchData
           .addAll(additionalBookSearchResponse.data!.bookSearchResult!);
-      _bookNextRequestUrl = additionalBookSearchResponse.data!.nextRequestUrl!;
+      _bookSearchNextUrl = additionalBookSearchResponse.data!.nextRequestUrl!;
     });
+  }
+
+  Future onIsbnScan() async {
+    await Permission.camera.request();
+
+    final permissionCameraStatus = await Permission.camera.status;
+
+    switch (permissionCameraStatus) {
+      case PermissionStatus.granted || PermissionStatus.provisional:
+        if (!mounted) break;
+        return Navigator.of(context).pushNamed('/search/barcode');
+      case PermissionStatus.denied || PermissionStatus.permanentlyDenied:
+        if (!mounted) break;
+        return ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            action: SnackBarAction(
+              label: '설정',
+              textColor: PRIMARY_COLOR,
+              onPressed: () {
+                openAppSettings();
+              },
+            ),
+            content: const Text(
+              '카메라 권한이 없습니다.\n설정에서 권한을 허용해주세요.',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 13,
+              ),
+            ),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      default:
+        return Permission.camera.request();
+    }
   }
 }
