@@ -3,12 +3,8 @@ package kr.mybrary.userservice.user.domain;
 import kr.mybrary.userservice.global.util.MultipartFileUtil;
 import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.UserTestData;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.request.*;
+import kr.mybrary.userservice.user.domain.dto.response.*;
 import kr.mybrary.userservice.user.domain.exception.io.EmptyFileException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageFileSizeExceededException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFoundException;
@@ -49,6 +45,8 @@ class UserServiceImplTest {
     UserServiceImpl userService;
 
     static final String LOGIN_ID = "loginId";
+    static final String FOLLOWING_ID = "followingId";
+    static final String FOLLOWER_ID = "followerId";
     static final String PROFILE_IMAGE_PATH = "profile/profileImage/";
     static final String PROFILE_IMAGE_BASE_URL = "https://mybrary-user-service.s3.ap-northeast-2.amazonaws.com/profile/profileImage/";
 
@@ -354,6 +352,78 @@ class UserServiceImplTest {
 
         // Then
         verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자의 팔로워 목록을 조회한다")
+    void getFollowers() {
+        // Given
+        given(userRepository.findByLoginId(FOLLOWING_ID)).willReturn(Optional.of(UserFixture.USER_WITH_FOLLOWER.getUser()));
+
+        // When
+        FollowerServiceResponse followerServiceResponse = userService.getFollowers(FOLLOWING_ID);
+
+        // Then
+        assertAll(
+                () -> assertThat(followerServiceResponse.getRequestLoginId()).isEqualTo(FOLLOWING_ID),
+                () -> assertThat(followerServiceResponse.getFollowers()).hasSize(1),
+                () -> assertThat(followerServiceResponse.getFollowers()).extracting("loginId").containsExactly(FOLLOWER_ID)
+        );
+
+        verify(userRepository).findByLoginId(FOLLOWING_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자의 팔로워 목록을 조회할 때 사용자가 없으면 예외를 던진다")
+    void getFollowersWithNotExistUser() {
+        // Given
+        given(userRepository.findByLoginId(FOLLOWING_ID)).willReturn(Optional.empty());
+
+        // When
+        assertThatThrownBy(() -> userService.getFollowers(FOLLOWING_ID))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
+                .hasFieldOrPropertyWithValue("errorCode", "U-05")
+                .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(FOLLOWING_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자의 팔로잉 목록을 조회한다")
+    void getFollowings() {
+        // Given
+        given(userRepository.findByLoginId(FOLLOWER_ID)).willReturn(Optional.of(UserFixture.USER_AS_FOLLOWER.getUser()));
+
+        // When
+        FollowingServiceResponse followingServiceResponse = userService.getFollowings(FOLLOWER_ID);
+
+        // Then
+        assertAll(
+                () -> assertThat(followingServiceResponse.getRequestLoginId()).isEqualTo(FOLLOWER_ID),
+                () -> assertThat(followingServiceResponse.getFollowings()).hasSize(1),
+                () -> assertThat(followingServiceResponse.getFollowings()).extracting("loginId").containsExactly(FOLLOWING_ID)
+        );
+
+        verify(userRepository).findByLoginId(FOLLOWER_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자의 팔로잉 목록을 조회할 때 사용자가 없으면 예외를 던진다")
+    void getFollowingsWithNotExistUser() {
+        // Given
+        given(userRepository.findByLoginId(FOLLOWER_ID)).willReturn(Optional.empty());
+
+        // When
+        assertThatThrownBy(() -> userService.getFollowings(FOLLOWER_ID))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
+                .hasFieldOrPropertyWithValue("errorCode", "U-05")
+                .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(FOLLOWER_ID);
     }
 
 }
