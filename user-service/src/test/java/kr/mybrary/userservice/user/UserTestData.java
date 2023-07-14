@@ -21,16 +21,6 @@ public class UserTestData {
         return ProfileUpdateServiceRequest.builder()
                 .loginId("loginId")
                 .nickname("updated_nickname")
-                .email("updated_email@mail.com")
-                .introduction("updated_introduction")
-                .build();
-    }
-
-    public static ProfileUpdateServiceRequest createProfileUpdateServiceRequestWithSameEmail() {
-        return ProfileUpdateServiceRequest.builder()
-                .loginId("loginId")
-                .nickname("updated_nickname")
-                .email("email@mail.com")
                 .introduction("updated_introduction")
                 .build();
     }

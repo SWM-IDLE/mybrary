@@ -9,7 +9,6 @@ public class ProfileServiceResponse {
 
     private String nickname;
     private String profileImageUrl;
-    private String email;
     private String introduction;
 
 }

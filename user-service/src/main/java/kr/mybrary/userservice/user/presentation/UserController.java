@@ -69,7 +69,7 @@ public class UserController {
 
     @PutMapping("/profile")
     public ResponseEntity<SuccessResponse> updateProfile(@RequestHeader("USER-ID") String loginId,
-            @RequestBody ProfileUpdateRequest profileUpdateRequest) {
+            @Valid @RequestBody ProfileUpdateRequest profileUpdateRequest) {
         ProfileUpdateServiceRequest serviceRequest = ProfileUpdateServiceRequest.of(
                 profileUpdateRequest, loginId);
         ProfileServiceResponse serviceResponse = userService.updateProfile(serviceRequest);

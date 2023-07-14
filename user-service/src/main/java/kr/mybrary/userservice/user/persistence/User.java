@@ -38,7 +38,6 @@ public class User extends BaseEntity {
 
     private String refreshToken;
 
-    @Column(unique = true)
     private String email;
 
     private String introduction;
@@ -65,9 +64,8 @@ public class User extends BaseEntity {
         this.refreshToken = refreshToken;
     }
 
-    public void updateProfile(String nickname, String email, String introduction) {
+    public void updateProfile(String nickname, String introduction) {
         this.nickname = nickname;
-        this.email = email;
         this.introduction = introduction;
     }
 
