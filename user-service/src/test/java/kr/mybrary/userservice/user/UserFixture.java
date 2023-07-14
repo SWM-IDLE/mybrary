@@ -1,12 +1,13 @@
 package kr.mybrary.userservice.user;
 
-import java.util.Collections;
-import java.util.List;
 import kr.mybrary.userservice.user.persistence.Follow;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.SocialType;
 import kr.mybrary.userservice.user.persistence.User;
 import lombok.AllArgsConstructor;
+
+import java.util.Collections;
+import java.util.List;
 
 @AllArgsConstructor
 public enum UserFixture {
@@ -20,7 +21,17 @@ public enum UserFixture {
 
     USER_WITHOUT_EMAIL(1L, "loginId", "nickname", "encodedPassword", Role.USER,
             "socialId", SocialType.GOOGLE, "refreshToken", null, "introduction", "profileImageUrl",
-            Collections.emptyList(), Collections.emptyList());
+            Collections.emptyList(), Collections.emptyList()),
+
+    USER_WITH_FOLLOWER(1L, "followingId", "nickname", "encodedPassword", Role.USER,
+            "socialId", SocialType.GOOGLE, "refreshToken", "email@mail.com", "introduction", "profileImageUrl",
+            List.of(Follow.builder().source(User.builder().loginId("followerId").build()).target(User.builder().loginId("followingId").build()).build()),
+            Collections.emptyList()),
+
+    USER_AS_FOLLOWER(1L, "followerId", "nickname", "encodedPassword", Role.USER,
+            "socialId", SocialType.GOOGLE, "refreshToken", "email@mail.com", "introduction", "profileImageUrl",
+            Collections.emptyList(),
+            List.of(Follow.builder().source(User.builder().loginId("followerId").build()).target(User.builder().loginId("followingId").build()).build()));
 
     private final Long id;
     private final String loginId;
