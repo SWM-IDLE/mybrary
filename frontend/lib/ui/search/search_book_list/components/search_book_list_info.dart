@@ -23,7 +23,6 @@ class SearchBookListInfo extends StatelessWidget {
           itemCount: searchBookList.length,
           itemBuilder: (context, index) {
             final searchBookData = searchBookList[index];
-            print(searchBookData);
             final DateTime publishDate =
                 DateTime.parse(searchBookData.publicationDate!);
 
