@@ -7,14 +7,12 @@ import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.*;
+import kr.mybrary.userservice.user.domain.exception.follow.DuplicateFollowException;
+import kr.mybrary.userservice.user.domain.exception.follow.SameSourceTargetUserException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateNicknameException;
-import kr.mybrary.userservice.user.domain.exception.file.EmptyFileException;
+import kr.mybrary.userservice.user.domain.exception.io.EmptyFileException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageFileSizeExceededException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFoundException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
@@ -28,6 +26,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -169,7 +170,26 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public FollowerServiceResponse getFollowers(String loginId) {
-        return null;
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(UserNotFoundException::new);
+
+        FollowerServiceResponse serviceResponse = FollowerServiceResponse.builder()
+                .requestLoginId(loginId)
+                .followers(getFollowerResponses(user))
+                .build();
+
+        return serviceResponse;
+    }
+
+    private static List<FollowResponse> getFollowerResponses(User user) {
+        return user.getFollowers().stream()
+                .map(follow -> FollowResponse.builder()
+                        .id(follow.getId())
+                        .loginId(follow.getSource().getLoginId())
+                        .nickname(follow.getSource().getNickname())
+                        .profileImageUrl(follow.getSource().getProfileImageUrl())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
