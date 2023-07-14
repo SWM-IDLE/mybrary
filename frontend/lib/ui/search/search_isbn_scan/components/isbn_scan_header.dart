@@ -36,7 +36,7 @@ class IsbnScanHeader extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('준비 중인 기능입니다.'),
-                    duration: Duration(seconds: 1),
+                    duration: Duration(seconds: 2),
                   ),
                 );
               },

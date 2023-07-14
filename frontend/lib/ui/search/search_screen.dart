@@ -208,10 +208,10 @@ class _SearchScreenState extends State<SearchScreen> {
               },
             ),
             content: const Text(
-              '카메라 권한이 없습니다. 설정에서 권한을 허용해주세요.',
+              '카메라 권한이 없습니다.\n설정에서 권한을 허용해주세요.',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 13.0,
+                fontSize: 13,
               ),
             ),
             duration: Duration(seconds: 3),

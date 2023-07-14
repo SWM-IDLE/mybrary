@@ -78,11 +78,11 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
                   final List<Barcode> barcodes = capture.barcodes;
                   for (final barcode in barcodes) {
                     if (barcode.rawValue != null) {
-                      setState(() {
-                        _fetchBookSearchIsbnResponse(barcode.rawValue!)
-                            .then((value) {
-                          _searchBookIsbnInfo = value;
-                        });
+                      _fetchBookSearchIsbnResponse(barcode.rawValue!)
+                          .then((value) {
+                        _searchBookIsbnInfo = value;
+                      }).catchError((error) {
+                        return;
                       });
                     }
 
