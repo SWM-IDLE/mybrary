@@ -15,6 +15,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,6 +24,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "follows")
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE follows SET deleted = true WHERE follow_id = ?")
+@Where(clause = "deleted = false")
 public class Follow extends BaseEntity {
 
     @Id
