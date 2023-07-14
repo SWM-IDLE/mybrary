@@ -125,7 +125,7 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
 
   Future<BookSearchData> _fetchBookSearchIsbnResponse(String isbn) async {
     BookSearchResponse bookSearchResponse =
-        await RemoteDataSource.getBookSearchKeywordResponse(
+        await RemoteDataSource.getBookSearchResponse(
             '${getApi(API.getBookSearchIsbn)}?isbn=$isbn');
 
     final bookSearchData = bookSearchResponse.data!.bookSearchResult![0];

@@ -12,7 +12,7 @@ class BookStatusButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(28.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
       decoration: BoxDecoration(
         border: Border.symmetric(
           horizontal: BorderSide(

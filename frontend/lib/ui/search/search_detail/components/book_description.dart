@@ -26,7 +26,7 @@ class BookDescription extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 18.0,
+              height: 16.0,
             ),
             Text(
               bookDetail.description! == ''
