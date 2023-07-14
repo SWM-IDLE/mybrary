@@ -81,7 +81,7 @@ public class FollowTest {
 
     @Test
     @Order(2)
-    @DisplayName("userA의 팔로잉 목록을 조회한다.")
+    @DisplayName("userA의 팔로잉 목록을 조회 하면 1명(userB)이 조회된다.")
     void getUserAFollowings() {
         // given
         given(userRepository.findByLoginId(userA.getLoginId())).willReturn(Optional.of(userA));
@@ -145,7 +145,7 @@ public class FollowTest {
 
     @Test
     @Order(5)
-    @DisplayName("userB의 팔로워 목록을 조회한다.")
+    @DisplayName("userB의 팔로워 목록을 조회하면 2명(userA, userC)이 조회된다.")
     void getUserBFollowers() {
         // given
         given(userRepository.findByLoginId(userB.getLoginId())).willReturn(Optional.of(userB));
@@ -186,6 +186,25 @@ public class FollowTest {
 
     @Test
     @Order(7)
+    @DisplayName("userA의 팔로잉 목록을 조회 하면 0명이 조회된다.")
+    void getUserAFollowingsAfterUnfollow() {
+        // given
+        given(userRepository.findByLoginId(userA.getLoginId())).willReturn(Optional.of(userA));
+
+        // when
+        FollowingServiceResponse response = userService.getFollowings(userA.getLoginId());
+
+        // then
+        assertAll(
+                () -> assertThat(response.getRequestLoginId()).isEqualTo(userA.getLoginId()),
+                () -> assertThat(response.getFollowings()).hasSize(0)
+        );
+
+        verify(userRepository).findByLoginId(userA.getLoginId());
+    }
+
+    @Test
+    @Order(8)
     @DisplayName("userB는 userC를 팔로워 목록에서 삭제한다.")
     void userBDeletefollowerUserC() {
         // given
@@ -206,7 +225,26 @@ public class FollowTest {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
+    @DisplayName("userB의 팔로워 목록을 조회하면 0명이 조회된다.")
+    void getUserBFollowersAfterFollowerDelete() {
+        // given
+        given(userRepository.findByLoginId(userB.getLoginId())).willReturn(Optional.of(userB));
+
+        // when
+        FollowerServiceResponse response = userService.getFollowers(userB.getLoginId());
+
+        // then
+        assertAll(
+                () -> assertThat(response.getRequestLoginId()).isEqualTo(userB.getLoginId()),
+                () -> assertThat(response.getFollowers()).hasSize(0)
+        );
+
+        verify(userRepository).findByLoginId(userB.getLoginId());
+    }
+
+    @Test
+    @Order(10)
     @DisplayName("userA가 userA 자신을 팔로우하면 예외가 발생한다.")
     void userAFollowUserA() {
         // given
@@ -223,7 +261,7 @@ public class FollowTest {
     }
 
     @Test
-    @Order(9)
+    @Order(11)
     @DisplayName("userA가 없는 사용자를 팔로우하면 예외가 발생한다.")
     void userAFollowNonExistUser() {
         // given
