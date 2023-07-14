@@ -20,8 +20,8 @@ class SearchIsbnScanScreen extends StatefulWidget {
 }
 
 class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
-  BookSearchData _searchBookIsbnInfo = BookSearchData.fromJson({});
-  MobileScannerController cameraController = MobileScannerController(
+  BookSearchData _bookSearchIsbnData = BookSearchData.fromJson({});
+  MobileScannerController isbnCameraController = MobileScannerController(
     detectionSpeed: DetectionSpeed.normal,
     facing: CameraFacing.back,
     torchEnabled: false,
@@ -72,7 +72,7 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
             SizedBox(
               width: width,
               child: MobileScanner(
-                controller: cameraController,
+                controller: isbnCameraController,
                 scanWindow: Rect.fromLTWH(0, 150, width * 0.8, height * 0.35),
                 onDetect: (capture) {
                   final List<Barcode> barcodes = capture.barcodes;
@@ -80,15 +80,15 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
                     if (barcode.rawValue != null) {
                       _fetchBookSearchIsbnResponse(barcode.rawValue!)
                           .then((value) {
-                        _searchBookIsbnInfo = value;
+                        _bookSearchIsbnData = value;
                       }).catchError((error) {
                         return;
                       });
                     }
 
-                    if (_searchBookIsbnInfo.title != null) {
+                    if (_bookSearchIsbnData.title != null) {
                       onNavigateToSearchDetailScreen();
-                      cameraController.dispose();
+                      isbnCameraController.dispose();
                     }
                   }
                 },
@@ -117,7 +117,7 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => SearchDetailScreen(
-          searchBookData: _searchBookIsbnInfo,
+          bookSearchData: _bookSearchIsbnData,
         ),
       ),
     );

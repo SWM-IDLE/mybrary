@@ -4,11 +4,11 @@ import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 
 class SearchBookListInfo extends StatelessWidget {
-  final List<BookSearchData> searchBookList;
+  final List<BookSearchData> bookSearchDataList;
   final ScrollController scrollController;
 
   const SearchBookListInfo({
-    required this.searchBookList,
+    required this.bookSearchDataList,
     required this.scrollController,
     super.key,
   });
@@ -20,9 +20,9 @@ class SearchBookListInfo extends StatelessWidget {
         controller: scrollController,
         child: ListView.builder(
           controller: scrollController,
-          itemCount: searchBookList.length,
+          itemCount: bookSearchDataList.length,
           itemBuilder: (context, index) {
-            final searchBookData = searchBookList[index];
+            final searchBookData = bookSearchDataList[index];
             final DateTime publishDate =
                 DateTime.parse(searchBookData.publicationDate!);
 
@@ -32,7 +32,7 @@ class SearchBookListInfo extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (_) => SearchDetailScreen(
-                      searchBookData: searchBookData,
+                      bookSearchData: searchBookData,
                     ),
                   ),
                 );

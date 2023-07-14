@@ -36,26 +36,28 @@ class _SearchScreenState extends State<SearchScreen> {
 
   late Future<BookSearchResponse> _bookSearchResponse;
   late final List<BookSearchData> _bookSearchData = [];
-  late String _bookNextRequestUrl;
+  late String _bookSearchNextUrl;
 
   bool _isSearching = false;
 
-  final ScrollController _scrollController = ScrollController();
-  final TextEditingController _bookSearchController = TextEditingController();
+  final ScrollController _searchScrollController = ScrollController();
+  final TextEditingController _bookSearchKeywordController =
+      TextEditingController();
 
   @override
   void setState(VoidCallback fn) {
     super.setState(fn);
 
     // 스크롤 맨 하단에 닿기 바로 이전에 실행 (max x 0.85)
-    _scrollController.addListener(() async {
-      ScrollPosition scrollPosition = _scrollController.position;
-      if (_scrollController.offset > scrollPosition.maxScrollExtent * 0.85 &&
+    _searchScrollController.addListener(() async {
+      ScrollPosition scrollPosition = _searchScrollController.position;
+      if (_searchScrollController.offset >
+              scrollPosition.maxScrollExtent * 0.85 &&
           !scrollPosition.outOfRange) {
-        if (_bookNextRequestUrl != "") {
+        if (_bookSearchNextUrl != "") {
           // nextUrl 이 있을 때 추가 데이터 호출
           _fetchBookSearchNextUrlResponse();
-          _bookNextRequestUrl = "";
+          _bookSearchNextUrl = "";
         }
       }
     });
@@ -63,7 +65,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void dispose() {
-    _bookSearchController.dispose();
+    _bookSearchKeywordController.dispose();
     super.dispose();
   }
 
@@ -77,7 +79,7 @@ class _SearchScreenState extends State<SearchScreen> {
           children: [
             SearchHeader(
               isSearching: _isSearching,
-              bookSearchController: _bookSearchController,
+              bookSearchController: _bookSearchKeywordController,
               onSubmittedSearchKeyword: _onSubmittedSearchKeyword,
               onPressedIsbnScan: onIsbnScan,
               onPressedTextClear: _onPressedTextClear,
@@ -88,7 +90,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             if (!_isSearching)
               SearchPopularKeyword(
-                bookSearchController: _bookSearchController,
+                bookSearchKeywordController: _bookSearchKeywordController,
                 onBookSearchBinding: getBookSearchPopularKeywordResponse,
               )
             else
@@ -115,12 +117,12 @@ class _SearchScreenState extends State<SearchScreen> {
                     if (_bookSearchData.isEmpty) {
                       _bookSearchData
                           .addAll(bookSearchResponse.data!.bookSearchResult!);
-                      _bookNextRequestUrl = bookSearchNextRequestUrl;
+                      _bookSearchNextUrl = bookSearchNextRequestUrl;
                     }
 
                     return SearchBookList(
-                      searchBookList: _bookSearchData,
-                      scrollController: _scrollController,
+                      bookSearchDataList: _bookSearchData,
+                      scrollController: _searchScrollController,
                     );
                   }
 
@@ -134,7 +136,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void getBookSearchPopularKeywordResponse(bool isBinding) {
-    final popularKeyword = _bookSearchController.text;
+    final popularKeyword = _bookSearchKeywordController.text;
     setState(() {
       if (popularKeyword != "") {
         isBinding = true;
@@ -147,7 +149,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _onSubmittedSearchKeyword(value) {
     setState(() {
-      _bookSearchController.text = value;
+      _bookSearchKeywordController.text = value;
       _bookSearchResponse = _fetchBookSearchKeywordResponse();
       _isSearching = true;
     });
@@ -155,13 +157,13 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _onPressedTextClear() {
     setState(() {
-      _bookSearchController.clear();
+      _bookSearchKeywordController.clear();
     });
   }
 
   void _onPressedSearchCancel() {
     setState(() {
-      _bookSearchController.clear();
+      _bookSearchKeywordController.clear();
       _bookSearchData.clear();
       _isSearching = false;
     });
@@ -170,7 +172,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<BookSearchResponse> _fetchBookSearchKeywordResponse() async {
     BookSearchResponse bookSearchResponse =
         await RemoteDataSource.getBookSearchResponse(
-            '${getApi(API.getBookSearchKeyword)}?keyword=${_bookSearchController.text}');
+            '${getApi(API.getBookSearchKeyword)}?keyword=${_bookSearchKeywordController.text}');
 
     return bookSearchResponse;
   }
@@ -178,12 +180,12 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> _fetchBookSearchNextUrlResponse() async {
     BookSearchResponse additionalBookSearchResponse =
         await RemoteDataSource.getBookSearchResponse(
-            '${getApi(API.getBookService)}/$_bookNextRequestUrl');
+            '${getApi(API.getBookService)}/$_bookSearchNextUrl');
 
     setState(() {
       _bookSearchData
           .addAll(additionalBookSearchResponse.data!.bookSearchResult!);
-      _bookNextRequestUrl = additionalBookSearchResponse.data!.nextRequestUrl!;
+      _bookSearchNextUrl = additionalBookSearchResponse.data!.nextRequestUrl!;
     });
   }
 
