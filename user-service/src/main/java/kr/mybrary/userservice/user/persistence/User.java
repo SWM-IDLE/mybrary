@@ -13,8 +13,9 @@ import org.hibernate.annotations.Where;
 @Builder
 @Table(name = "users")
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_id = ?")
-@Where(clause = "deleted = false")
+// TODO: soft delete 적용 시 unique 제약 조건 이슈
+// @SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_id = ?")
+// @Where(clause = "deleted = false")
 public class User extends BaseEntity {
 
     @Id
