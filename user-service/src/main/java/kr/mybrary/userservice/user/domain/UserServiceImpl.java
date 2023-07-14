@@ -255,9 +255,17 @@ public class UserServiceImpl implements UserService {
         sourceUser.unfollow(targetUser);
     }
 
+    // TODO: deleteFollower 로직 논의 -> 해당 유저가 본인을 다시 팔로우할 수 있는가?
     @Override
     public void deleteFollower(FollowerServiceRequest serviceRequest) {
+        User sourceUser = userRepository.findByLoginId(serviceRequest.getSourceId())
+                .orElseThrow(UserNotFoundException::new);
+        User targetUser = userRepository.findByLoginId(serviceRequest.getTargetId())
+                .orElseThrow(UserNotFoundException::new);
 
+        validateDifferentSourceTarget(sourceUser, targetUser);
+
+        sourceUser.unfollow(targetUser);
     }
 
 
