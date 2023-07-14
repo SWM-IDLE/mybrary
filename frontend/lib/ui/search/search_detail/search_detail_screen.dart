@@ -49,7 +49,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                 bookDetail: bookDetail,
               ),
               SizedBox(
-                height: 20.0,
+                height: 25.0,
               ),
               BookStatusButton(
                 children: [
@@ -74,7 +74,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                 bookDetail: bookDetail,
               ),
               SizedBox(
-                height: 32.0,
+                height: 30.0,
               ),
             ],
           ),
@@ -95,6 +95,8 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
         children: [
           Image.asset(
             assetUrl,
+            width: 32.0,
+            height: 32.0,
             color: _selectedMyBookStatus == index
                 ? PRIMARY_COLOR
                 : BOOK_DISABLED_COLOR,

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mybrary/data/datasource/remote_datasource.dart';
+import 'package:mybrary/data/network/api.dart';
 
 void main() {
   group('book-service의 keyword 검색 API 요청 테스트', () {
@@ -7,8 +8,8 @@ void main() {
       // given
       String keyword = '돈의속성';
       // when
-      final result = await RemoteDataSource.getBookSearchKeywordResponse(
-          BookSearchRequestType.searchKeyword, keyword);
+      final result = await RemoteDataSource.getBookSearchResponse(
+          '${getApi(API.getBookSearchKeyword)}?keyword=$keyword');
       // then
       expect(result.status, '200 OK');
     });
@@ -17,8 +18,8 @@ void main() {
       // given
       String keyword = 'ㅋㅋㅇㅇㅌ';
       // when
-      final result = await RemoteDataSource.getBookSearchKeywordResponse(
-          BookSearchRequestType.searchKeyword, keyword);
+      final result = await RemoteDataSource.getBookSearchResponse(
+          '${getApi(API.getBookSearchKeyword)}?keyword=$keyword');
       // then
       expect(result, Exception('도서 검색 결과가 존재하지 않습니다.'));
     });
@@ -29,8 +30,8 @@ void main() {
       // given
       String nextUrl = '/books/search?keyword=돈의속성&sort=accuracy&page=2';
       // when
-      final result = await RemoteDataSource.getBookSearchKeywordResponse(
-          BookSearchRequestType.searchNextUrl, nextUrl);
+      final result = await RemoteDataSource.getBookSearchResponse(
+          '${getApi(API.getBookService)}/$nextUrl');
       // then
       expect(result.status, '200 OK');
     });

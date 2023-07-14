@@ -138,7 +138,7 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       if (popularKeyword != "") {
         isBinding = true;
-        _bookSearchResponse = RemoteDataSource.getBookSearchKeywordResponse(
+        _bookSearchResponse = RemoteDataSource.getBookSearchResponse(
             '${getApi(API.getBookSearchKeyword)}?keyword=$popularKeyword');
         _isSearching = true;
       }
@@ -169,7 +169,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<BookSearchResponse> _fetchBookSearchKeywordResponse() async {
     BookSearchResponse bookSearchResponse =
-        await RemoteDataSource.getBookSearchKeywordResponse(
+        await RemoteDataSource.getBookSearchResponse(
             '${getApi(API.getBookSearchKeyword)}?keyword=${_bookSearchController.text}');
 
     return bookSearchResponse;
@@ -177,7 +177,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> _fetchBookSearchNextUrlResponse() async {
     BookSearchResponse additionalBookSearchResponse =
-        await RemoteDataSource.getBookSearchKeywordResponse(
+        await RemoteDataSource.getBookSearchResponse(
             '${getApi(API.getBookService)}/$_bookNextRequestUrl');
 
     setState(() {
