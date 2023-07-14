@@ -181,7 +181,7 @@ public class UserServiceImpl implements UserService {
         return serviceResponse;
     }
 
-    private static List<FollowResponse> getFollowerResponses(User user) {
+    private List<FollowResponse> getFollowerResponses(User user) {
         return user.getFollowers().stream()
                 .map(follow -> FollowResponse.builder()
                         .id(follow.getId())
@@ -195,7 +195,26 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public FollowingServiceResponse getFollowings(String loginId) {
-        return null;
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(UserNotFoundException::new);
+
+        FollowingServiceResponse serviceResponse = FollowingServiceResponse.builder()
+                .requestLoginId(loginId)
+                .followings(getFollowingResponses(user))
+                .build();
+
+        return serviceResponse;
+    }
+
+    private List<FollowResponse> getFollowingResponses(User user) {
+        return user.getFollowings().stream()
+                .map(follow -> FollowResponse.builder()
+                        .id(follow.getId())
+                        .loginId(follow.getTarget().getLoginId())
+                        .nickname(follow.getTarget().getNickname())
+                        .profileImageUrl(follow.getTarget().getProfileImageUrl())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
