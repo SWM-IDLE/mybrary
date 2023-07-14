@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.util.List;
 import kr.mybrary.userservice.global.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -11,6 +13,9 @@ import lombok.*;
 @Builder
 @Table(name = "users")
 @AllArgsConstructor
+// TODO: soft delete 적용 시 unique 제약 조건 이슈
+// @SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_id = ?")
+// @Where(clause = "deleted = false")
 public class User extends BaseEntity {
 
     @Id
@@ -71,6 +76,21 @@ public class User extends BaseEntity {
 
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public void follow(User target) {
+        Follow follow = Follow.builder()
+            .source(this)
+            .target(target)
+            .build();
+        this.followings.add(follow);
+        target.followers.add(follow);
+    }
+
+    // TODO: 팔로우를 soft delete 해야하는지 고민해보기
+    public void unfollow(User target) {
+         this.followings.removeIf(follow -> follow.getTarget().equals(target));
+         target.followers.removeIf(follow -> follow.getSource().equals(this));
     }
 
 }
