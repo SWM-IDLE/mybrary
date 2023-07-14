@@ -15,33 +15,23 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class StorageServiceImpl implements StorageService {
+public class AmazonS3Service implements StorageService {
     // TODO: LocalStack을 사용하여 테스트하기
-    private final S3Template amazonS3Client;
+    private final S3Template s3Template;
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucketName;
     private static final String BASE_PATH = "https://mybrary-user-service.s3.ap-northeast-2.amazonaws.com/";
 
     @Override
-    public String putFile(MultipartFile multipartFile, String path, String fileName) {
-        String profileImageFilePath = generateProfileImageFilePath(path, fileName, multipartFile);
+    public String putFile(MultipartFile multipartFile, String path) {
         try {
-            amazonS3Client.upload(
-                    bucketName,
-                    profileImageFilePath,
-                    multipartFile.getInputStream(),
-                    generateObjectMetadata(multipartFile)
-            );
+            s3Template.upload(bucketName, path, multipartFile.getInputStream(), generateObjectMetadata(multipartFile));
         } catch (S3Exception e) {
             throw new StorageClientException();
         } catch (IOException e) {
             throw new FileInputStreamException();
         }
-        return BASE_PATH + profileImageFilePath;
-    }
-
-    private static String generateProfileImageFilePath(String path, String fileName, MultipartFile multipartFile) {
-        return path + "/" + fileName + "." + multipartFile.getContentType().split("/")[1];
+        return BASE_PATH + path;
     }
 
     private static ObjectMetadata generateObjectMetadata(MultipartFile multipartFile) {

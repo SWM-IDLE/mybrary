@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
+import kr.mybrary.userservice.global.util.MultipartFileUtil;
 import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.UserTestData;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
@@ -49,7 +50,7 @@ class UserServiceImplTest {
     UserServiceImpl userService;
 
     static final String LOGIN_ID = "loginId";
-    static final String PROFILE_IMAGE_PATH = "profile/profileImage";
+    static final String PROFILE_IMAGE_PATH = "profile/profileImage/";
     static final String PROFILE_IMAGE_BASE_URL = "https://mybrary-user-service.s3.ap-northeast-2.amazonaws.com/profile/profileImage/";
 
     @Test
@@ -364,9 +365,9 @@ class UserServiceImplTest {
         ProfileImageUpdateServiceRequest serviceRequest = UserTestData.createProfileImageUpdateServiceRequest();
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
                 Optional.of(UserFixture.COMMON_USER.getUser()));
-        given(storageService.putFile(serviceRequest.getProfileImage(), PROFILE_IMAGE_PATH,
-                LOGIN_ID)).willReturn(
-                PROFILE_IMAGE_BASE_URL + LOGIN_ID);
+        given(storageService.putFile(serviceRequest.getProfileImage(),
+                MultipartFileUtil.generateFilePath(PROFILE_IMAGE_PATH, LOGIN_ID, serviceRequest.getProfileImage())))
+                .willReturn(PROFILE_IMAGE_BASE_URL + LOGIN_ID);
 
         // When
         ProfileImageUrlServiceResponse updatedProfileImage = userService.updateProfileImage(
@@ -379,8 +380,8 @@ class UserServiceImplTest {
         );
 
         verify(userRepository).findByLoginId(LOGIN_ID);
-        verify(storageService).putFile(serviceRequest.getProfileImage(), PROFILE_IMAGE_PATH,
-                LOGIN_ID);
+        verify(storageService).putFile(serviceRequest.getProfileImage(),
+                MultipartFileUtil.generateFilePath(PROFILE_IMAGE_PATH, LOGIN_ID, serviceRequest.getProfileImage()));
     }
 
     @Test

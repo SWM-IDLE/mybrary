@@ -1,5 +1,6 @@
 package kr.mybrary.userservice.user.domain;
 
+import kr.mybrary.userservice.global.util.MultipartFileUtil;
 import kr.mybrary.userservice.user.domain.dto.UserMapper;
 import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
@@ -42,7 +43,7 @@ public class UserServiceImpl implements UserService {
     private final StorageService storageService;
 
     private static final String DEFAULT_PROFILE_IMAGE_URL = "https://mybrary-user-service.s3.ap-northeast-2.amazonaws.com/profile/profileImage/default.jpg";
-    private static final String PROFILE_IMAGE_PATH = "profile/profileImage";
+    private static final String PROFILE_IMAGE_PATH = "profile/profileImage/";
     private static final int MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024;
 
     @Override
@@ -134,8 +135,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ProfileImageUrlServiceResponse updateProfileImage(
-            ProfileImageUpdateServiceRequest serviceRequest) {
+    public ProfileImageUrlServiceResponse updateProfileImage(ProfileImageUpdateServiceRequest serviceRequest) {
         checkProfileImageExistence(serviceRequest.getProfileImage());
         checkProfileImageSize(serviceRequest.getProfileImage());
 
@@ -143,7 +143,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(UserNotFoundException::new);
 
         String profileImageUrl = storageService.putFile(serviceRequest.getProfileImage(),
-                PROFILE_IMAGE_PATH, user.getLoginId());
+                MultipartFileUtil.generateFilePath(PROFILE_IMAGE_PATH, serviceRequest.getLoginId(), serviceRequest.getProfileImage()));
 
         user.updateProfileImageUrl(profileImageUrl);
         ProfileImageUrlServiceResponse serviceResponse = ProfileImageUrlServiceResponse.builder()
