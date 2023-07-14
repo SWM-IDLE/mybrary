@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.util.List;
 import kr.mybrary.userservice.global.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -11,6 +13,8 @@ import lombok.*;
 @Builder
 @Table(name = "users")
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_id = ?")
+@Where(clause = "deleted = false")
 public class User extends BaseEntity {
 
     @Id
@@ -82,9 +86,10 @@ public class User extends BaseEntity {
         target.followers.add(follow);
     }
 
+    // TODO: 팔로우를 soft delete 해야하는지 고민해보기
     public void unfollow(User target) {
-        this.followings.removeIf(follow -> follow.getTarget().equals(target));
-        target.followers.removeIf(follow -> follow.getSource().equals(this));
+         this.followings.removeIf(follow -> follow.getTarget().equals(target));
+         target.followers.removeIf(follow -> follow.getSource().equals(this));
     }
 
 }
