@@ -3,9 +3,9 @@ import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/res/colors/color.dart';
 
 class BookDescription extends StatelessWidget {
-  final BookSearchData bookDetail;
+  final BookSearchData bookSearchData;
   const BookDescription({
-    required this.bookDetail,
+    required this.bookSearchData,
     super.key,
   });
 
@@ -29,9 +29,9 @@ class BookDescription extends StatelessWidget {
               height: 16.0,
             ),
             Text(
-              bookDetail.description! == ''
+              bookSearchData.description! == ''
                   ? '책 소개가 없습니다.'
-                  : bookDetail.description!,
+                  : bookSearchData.description!,
               style: TextStyle(
                 height: 1.4,
                 color: BOOK_DETAIL_COLOR,

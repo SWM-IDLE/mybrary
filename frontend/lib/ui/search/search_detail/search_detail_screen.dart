@@ -7,8 +7,8 @@ import 'package:mybrary/ui/search/search_detail/components/book_status_button.da
 import 'package:mybrary/ui/search/search_detail/components/book_summary.dart';
 
 class SearchDetailScreen extends StatefulWidget {
-  final BookSearchData searchBookData;
-  const SearchDetailScreen({required this.searchBookData, super.key});
+  final BookSearchData bookSearchData;
+  const SearchDetailScreen({required this.bookSearchData, super.key});
 
   @override
   State<SearchDetailScreen> createState() => _SearchDetailScreenState();
@@ -20,7 +20,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final displaySize = MediaQuery.of(context).size;
-    final bookDetail = widget.searchBookData;
+    final bookDetail = widget.bookSearchData;
 
     return Scaffold(
       appBar: BookDetailAppBar(
@@ -46,7 +46,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                 height: 20.0,
               ),
               BookSummary(
-                bookDetail: bookDetail,
+                bookSearchData: bookDetail,
               ),
               SizedBox(
                 height: 25.0,
@@ -71,7 +71,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                 height: 20.0,
               ),
               BookDescription(
-                bookDetail: bookDetail,
+                bookSearchData: bookDetail,
               ),
               SizedBox(
                 height: 30.0,

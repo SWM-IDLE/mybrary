@@ -4,10 +4,10 @@ import 'package:mybrary/ui/search/search_book_list/components/search_book_list_h
 import 'package:mybrary/ui/search/search_book_list/components/search_book_list_info.dart';
 
 class SearchBookList extends StatefulWidget {
-  final List<BookSearchData> searchBookList;
+  final List<BookSearchData> bookSearchDataList;
   final ScrollController scrollController;
   const SearchBookList({
-    required this.searchBookList,
+    required this.bookSearchDataList,
     required this.scrollController,
     super.key,
   });
@@ -25,10 +25,10 @@ class _SearchBookListState extends State<SearchBookList> {
       child: Column(
         children: [
           SearchBookListHeader(
-            searchBookList: widget.searchBookList,
+            bookSearchDataList: widget.bookSearchDataList,
           ),
           SearchBookListInfo(
-            searchBookList: widget.searchBookList,
+            bookSearchDataList: widget.bookSearchDataList,
             scrollController: widget.scrollController,
           ),
         ],
