@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mybrary/data/datasource/remote_datasource.dart';
@@ -180,7 +182,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> _fetchBookSearchNextUrlResponse() async {
     BookSearchResponse additionalBookSearchResponse =
         await RemoteDataSource.getBookSearchResponse(
-            '${getApi(API.getBookService)}/$_bookSearchNextUrl');
+            '${getApi(API.getBookService)}$_bookSearchNextUrl');
 
     setState(() {
       _bookSearchData
