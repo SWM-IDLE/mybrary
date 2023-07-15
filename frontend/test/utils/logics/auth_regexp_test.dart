@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mybrary/utils/logics/auth_regexp.dart';
+import 'package:mybrary/utils/logics/validate_utils.dart';
 
 const CORRECT_ID = 'test123';
 const CORRECT_PASSWORD = 'test123!@';

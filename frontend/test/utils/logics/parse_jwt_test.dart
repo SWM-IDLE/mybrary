@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mybrary/utils/logics/parse_jwt.dart';
+import 'package:mybrary/utils/logics/parse_utils.dart';
 
 void main() {
   group('jwt 정상 토큰 파싱 테스트', () {
