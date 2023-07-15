@@ -76,17 +76,20 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public ProfileServiceResponse getProfile(String loginId) {
-        User user = userRepository.findByLoginId(loginId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = getUser(loginId);
         ProfileServiceResponse serviceResponse = UserMapper.INSTANCE.toProfileServiceResponse(user);
 
         return serviceResponse;
     }
 
+    private User getUser(String loginId) {
+        return userRepository.findByLoginId(loginId)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
     @Override
     public ProfileServiceResponse updateProfile(ProfileUpdateServiceRequest serviceRequest) {
-        User user = userRepository.findByLoginId(serviceRequest.getLoginId())
-                .orElseThrow(UserNotFoundException::new);
+        User user = getUser(serviceRequest.getLoginId());
 
         checkIfNicknameUpdateIsPossible(user.getNickname(), serviceRequest.getNickname());
 
@@ -105,8 +108,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public ProfileImageUrlServiceResponse getProfileImageUrl(String loginId) {
-        User user = userRepository.findByLoginId(loginId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = getUser(loginId);
 
         checkProfileImageUrlExistence(user);
 
@@ -128,8 +130,7 @@ public class UserServiceImpl implements UserService {
         checkProfileImageExistence(serviceRequest.getProfileImage());
         checkProfileImageSize(serviceRequest.getProfileImage());
 
-        User user = userRepository.findByLoginId(serviceRequest.getLoginId())
-                .orElseThrow(UserNotFoundException::new);
+        User user = getUser(serviceRequest.getLoginId());
 
         String profileImageUrl = storageService.putFile(serviceRequest.getProfileImage(),
                 MultipartFileUtil.generateFilePath(PROFILE_IMAGE_PATH, serviceRequest.getLoginId(), serviceRequest.getProfileImage()));
@@ -156,8 +157,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileImageUrlServiceResponse deleteProfileImage(String loginId) {
-        User user = userRepository.findByLoginId(loginId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = getUser(loginId);
 
         user.updateProfileImageUrl(DEFAULT_PROFILE_IMAGE_URL);
         ProfileImageUrlServiceResponse serviceResponse = ProfileImageUrlServiceResponse.builder()
@@ -170,8 +170,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public FollowerServiceResponse getFollowers(String loginId) {
-        User user = userRepository.findByLoginId(loginId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = getUser(loginId);
 
         FollowerServiceResponse serviceResponse = FollowerServiceResponse.builder()
                 .requestLoginId(loginId)
@@ -195,8 +194,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public FollowingServiceResponse getFollowings(String loginId) {
-        User user = userRepository.findByLoginId(loginId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = getUser(loginId);
 
         FollowingServiceResponse serviceResponse = FollowingServiceResponse.builder()
                 .requestLoginId(loginId)
@@ -219,10 +217,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void follow(FollowServiceRequest serviceRequest) {
-        User sourceUser = userRepository.findByLoginId(serviceRequest.getSourceId())
-                .orElseThrow(UserNotFoundException::new);
-        User targetUser = userRepository.findByLoginId(serviceRequest.getTargetId())
-                .orElseThrow(UserNotFoundException::new);
+        User sourceUser = getUser(serviceRequest.getSourceId());
+        User targetUser = getUser(serviceRequest.getTargetId());
 
         validateDifferentSourceTarget(sourceUser, targetUser);
         validateDuplicateFollow(sourceUser, targetUser);
@@ -245,10 +241,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void unfollow(FollowServiceRequest serviceRequest) {
-        User sourceUser = userRepository.findByLoginId(serviceRequest.getSourceId())
-                .orElseThrow(UserNotFoundException::new);
-        User targetUser = userRepository.findByLoginId(serviceRequest.getTargetId())
-                .orElseThrow(UserNotFoundException::new);
+        User sourceUser = getUser(serviceRequest.getSourceId());
+        User targetUser = getUser(serviceRequest.getTargetId());
 
         validateDifferentSourceTarget(sourceUser, targetUser);
 
@@ -258,10 +252,8 @@ public class UserServiceImpl implements UserService {
     // TODO: deleteFollower 로직 논의 -> 해당 유저가 본인을 다시 팔로우할 수 있는가?
     @Override
     public void deleteFollower(FollowerServiceRequest serviceRequest) {
-        User sourceUser = userRepository.findByLoginId(serviceRequest.getSourceId())
-                .orElseThrow(UserNotFoundException::new);
-        User targetUser = userRepository.findByLoginId(serviceRequest.getTargetId())
-                .orElseThrow(UserNotFoundException::new);
+        User sourceUser = getUser(serviceRequest.getSourceId());
+        User targetUser = getUser(serviceRequest.getTargetId());
 
         validateDifferentSourceTarget(sourceUser, targetUser);
 
