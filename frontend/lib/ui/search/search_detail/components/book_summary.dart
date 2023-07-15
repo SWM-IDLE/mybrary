@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/utils/logics/book_utils.dart';
 
 class BookSummary extends StatelessWidget {
   final BookSearchData bookSearchData;
@@ -12,7 +13,7 @@ class BookSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DateTime publishDate =
-        DateTime.parse(bookSearchData.publicationDate!);
+        getPublishDate(bookSearchData.publicationDate!);
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Padding(
@@ -32,9 +33,9 @@ class BookSummary extends StatelessWidget {
             ),
             Row(
               children: [
-                bookDescription('${bookSearchData.authors!.map(
-                      (e) => e,
-                    ).join(', ')} 저'),
+                bookDescription(
+                  bookAuthorsOrTranslators(bookSearchData.authors!),
+                ),
                 SizedBox(
                   width: 4.0,
                 ),

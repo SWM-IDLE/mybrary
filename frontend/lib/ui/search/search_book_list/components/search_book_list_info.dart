@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
+import 'package:mybrary/utils/logics/book_utils.dart';
 
 class SearchBookListInfo extends StatelessWidget {
   final List<BookSearchData> bookSearchDataList;
@@ -24,7 +25,7 @@ class SearchBookListInfo extends StatelessWidget {
           itemBuilder: (context, index) {
             final searchBookData = bookSearchDataList[index];
             final DateTime publishDate =
-                DateTime.parse(searchBookData.publicationDate!);
+                getPublishDate(searchBookData.publicationDate!);
 
             return GestureDetector(
               onTap: () {
@@ -83,9 +84,9 @@ class SearchBookListInfo extends StatelessWidget {
                                   height: 4.0,
                                 ),
                                 bookInfo(
-                                  infoText: '${searchBookData.authors!.map(
-                                        (e) => e,
-                                      ).join(', ')} 저',
+                                  infoText: bookAuthorsOrTranslators(
+                                    searchBookData.authors!,
+                                  ),
                                   fontSize: 14.0,
                                   fontColor: BOOK_DESCRIPTION_COLOR,
                                 ),

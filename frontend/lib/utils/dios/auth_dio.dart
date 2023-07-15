@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mybrary/res/config/config.dart';
-import 'package:mybrary/utils/logics/parse_jwt.dart';
+import 'package:mybrary/utils/logics/parse_utils.dart';
 
 Future<Dio> authDio(BuildContext context) async {
   var dio = Dio();

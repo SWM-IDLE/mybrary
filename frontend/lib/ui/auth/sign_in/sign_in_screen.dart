@@ -9,7 +9,7 @@ import 'package:mybrary/res/config/config.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
 import 'package:mybrary/ui/auth/components/sign_in_input.dart';
 import 'package:mybrary/ui/auth/components/sing_in_button.dart';
-import 'package:mybrary/utils/logics/auth_regexp.dart';
+import 'package:mybrary/utils/logics/validate_utils.dart';
 
 const LOGIN_TEST_ID = 'test123';
 const LOGIN_TEST_PASSWORD = 'test123!@';

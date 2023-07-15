@@ -5,7 +5,7 @@ import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
 import 'package:mybrary/ui/auth/components/sign_in_input.dart';
 import 'package:mybrary/ui/auth/components/sing_in_button.dart';
-import 'package:mybrary/utils/logics/auth_regexp.dart';
+import 'package:mybrary/utils/logics/validate_utils.dart';
 
 const String FIND_PASSWORD_TEST_ID = 'test123';
 
