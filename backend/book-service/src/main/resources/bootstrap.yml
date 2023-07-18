@@ -3,5 +3,3 @@ spring:
     config:
       uri: 127.0.0.1:8888
       name: bookservice
-  profiles:
-    active:

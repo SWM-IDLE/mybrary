@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: book-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mybrary
+    username: ${DB_USERNAME}
+    password : ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+
+kakao:
+  api:
+    key: ${KAKAO_API_KEY}
+
+eureka:
+  client:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health,beans
