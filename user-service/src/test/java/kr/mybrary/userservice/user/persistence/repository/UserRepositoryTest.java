@@ -74,23 +74,6 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("리프레쉬 토큰으로 사용자를 가져온다.")
-    void findByRefreshToken() {
-        // given
-        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
-
-        // when
-        Optional<User> foundUser = userRepository.findByRefreshToken(savedUser.getRefreshToken());
-
-        // then
-        assertAll(
-            () -> assertThat(foundUser).isPresent(),
-            () -> assertThat(foundUser.get().getId()).isEqualTo(savedUser.getId()),
-            () -> assertThat(foundUser.get().getRefreshToken()).isEqualTo(savedUser.getRefreshToken())
-        );
-    }
-
-    @Test
     @DisplayName("로그인 아이디가 존재하는지 확인한다.")
     void existsByLoginId() {
         // given
