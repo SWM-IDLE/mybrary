@@ -41,8 +41,6 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
-    private String refreshToken;
-
     private String email;
 
     private String introduction;
@@ -63,10 +61,6 @@ public class User extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password = password;
-    }
-
-    public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
     }
 
     public void updateProfile(String nickname, String introduction) {

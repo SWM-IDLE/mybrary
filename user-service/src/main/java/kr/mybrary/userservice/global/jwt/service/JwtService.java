@@ -2,7 +2,6 @@ package kr.mybrary.userservice.global.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.nimbusds.jose.jwk.JWKException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -63,13 +62,6 @@ public class JwtService {
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
-    // AccessToken 재발급
-    public void sendAccessToken(HttpServletResponse response, String accessToken) {
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setHeader(accessHeader, accessToken);
-        log.info("재발급된 Access Token : {}", accessToken);
-    }
-
     // AccessToken + RefreshToken 헤더에 추가
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
         response.setStatus(HttpServletResponse.SC_OK);
@@ -107,14 +99,14 @@ public class JwtService {
         }
     }
 
-    // RefreshToken DB 저장(업데이트)
-    public void updateRefreshToken(String loginId, String refreshToken) {
-        userRepository.findByLoginId(loginId)
-                .ifPresentOrElse(
-                        user -> user.updateRefreshToken(refreshToken),
-                        () -> log.error("존재하지 않는 회원입니다.")
-                );
-    }
+    // RefreshToken DB 저장(업데이트) -> Redis로 변경
+//    public void updateRefreshToken(String loginId, String refreshToken) {
+//        userRepository.findByLoginId(loginId)
+//                .ifPresentOrElse(
+//                        user -> user.updateRefreshToken(refreshToken),
+//                        () -> log.error("존재하지 않는 회원입니다.")
+//                );
+//    }
 
     public boolean isTokenValid(String token) {
         try {

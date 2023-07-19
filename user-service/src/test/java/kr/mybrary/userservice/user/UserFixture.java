@@ -13,23 +13,23 @@ import java.util.List;
 public enum UserFixture {
 
     COMMON_USER(1L, "loginId", "nickname", "encodedPassword", Role.USER, "socialId",
-            SocialType.GOOGLE, "refreshToken", "email@mail.com", "introduction", "profileImageUrl",
+            SocialType.GOOGLE, "email@mail.com", "introduction", "profileImageUrl",
             Collections.emptyList(), Collections.emptyList()),
     USER_WITHOUT_PROFILE_IMAGE_URL(1L, "loginId", "nickname", "encodedPassword", Role.USER,
-            "socialId", SocialType.GOOGLE, "refreshToken", "email@mail.com", "introduction", null,
+            "socialId", SocialType.GOOGLE, "email@mail.com", "introduction", null,
             Collections.emptyList(), Collections.emptyList()),
 
     USER_WITHOUT_EMAIL(1L, "loginId", "nickname", "encodedPassword", Role.USER,
-            "socialId", SocialType.GOOGLE, "refreshToken", null, "introduction", "profileImageUrl",
+            "socialId", SocialType.GOOGLE, null, "introduction", "profileImageUrl",
             Collections.emptyList(), Collections.emptyList()),
 
     USER_WITH_FOLLOWER(1L, "followingId", "nickname", "encodedPassword", Role.USER,
-            "socialId", SocialType.GOOGLE, "refreshToken", "email@mail.com", "introduction", "profileImageUrl",
+            "socialId", SocialType.GOOGLE, "email@mail.com", "introduction", "profileImageUrl",
             List.of(Follow.builder().source(User.builder().loginId("followerId").build()).target(User.builder().loginId("followingId").build()).build()),
             Collections.emptyList()),
 
     USER_AS_FOLLOWER(1L, "followerId", "nickname", "encodedPassword", Role.USER,
-            "socialId", SocialType.GOOGLE, "refreshToken", "email@mail.com", "introduction", "profileImageUrl",
+            "socialId", SocialType.GOOGLE, "email@mail.com", "introduction", "profileImageUrl",
             Collections.emptyList(),
             List.of(Follow.builder().source(User.builder().loginId("followerId").build()).target(User.builder().loginId("followingId").build()).build()));
 
@@ -40,7 +40,6 @@ public enum UserFixture {
     private final Role role;
     private final String socialId;
     private final SocialType socialType;
-    private final String refreshToken;
     private final String email;
     private final String introduction;
     private final String profileImageUrl;
@@ -56,7 +55,6 @@ public enum UserFixture {
                 .role(role)
                 .socialId(socialId)
                 .socialType(socialType)
-                .refreshToken(refreshToken)
                 .email(email)
                 .introduction(introduction)
                 .profileImageUrl(profileImageUrl)
