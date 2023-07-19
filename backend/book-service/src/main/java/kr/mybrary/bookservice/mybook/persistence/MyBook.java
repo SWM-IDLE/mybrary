@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.global.BaseEntity;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,16 +61,19 @@ public class MyBook extends BaseEntity {
                 .build();
     }
 
+    public boolean isPrivate() {
+        return !this.showable;
+    }
+
     public void deleteMyBook() {
         this.deleted = true;
     }
 
-    public void updateProperties(ReadStatus readStatus, LocalDateTime startDateOfPossession,
-            boolean showable, boolean exchangeable, boolean shareable) {
-        this.readStatus = readStatus;
-        this.startDateOfPossession = startDateOfPossession;
-        this.showable = showable;
-        this.exchangeable = exchangeable;
-        this.shareable = shareable;
+    public void updateFromUpdateRequest(MybookUpdateServiceRequest updateRequest) {
+        this.readStatus = updateRequest.getReadStatus();
+        this.startDateOfPossession = updateRequest.getStartDateOfPossession();
+        this.showable = updateRequest.isShowable();
+        this.exchangeable = updateRequest.isExchangeable();
+        this.shareable = updateRequest.isShareable();
     }
 }

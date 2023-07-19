@@ -116,7 +116,7 @@ public class MybookDtoTestData {
 
     public static MybookUpdateServiceRequest createMyBookUpdateServiceRequest(String loginId, Long myBookId) {
         return MybookUpdateServiceRequest.builder()
-                .userId(loginId)
+                .loginId(loginId)
                 .myBookId(myBookId)
                 .showable(true)
                 .exchangeable(false)

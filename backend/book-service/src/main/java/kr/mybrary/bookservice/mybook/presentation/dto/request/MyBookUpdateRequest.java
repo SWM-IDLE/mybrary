@@ -18,7 +18,7 @@ public class MyBookUpdateRequest {
 
     public MybookUpdateServiceRequest toServiceRequest(String userId, Long myBookId) {
         return MybookUpdateServiceRequest.builder()
-                .userId(userId)
+                .loginId(userId)
                 .myBookId(myBookId)
                 .showable(showable)
                 .exchangeable(exchangeable)
