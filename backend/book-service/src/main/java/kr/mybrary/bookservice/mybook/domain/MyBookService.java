@@ -59,10 +59,9 @@ public class MyBookService {
     @Transactional(readOnly = true)
     public MyBookDetailResponse findMyBookDetail(MyBookDetailServiceRequest request) {
 
-        MyBook myBook = myBookRepository.findByIdAndDeletedIsFalse(request.getMybookId())
-                .orElseThrow(MyBookNotFoundException::new);
+        MyBook myBook = findMyBookById(request.getMybookId());
 
-        if (!myBook.isShowable() && !myBook.getUserId().equals(request.getLoginId())) {
+        if (myBook.isPrivate() && isOwnerSameAsRequester(myBook.getUserId(), request.getLoginId())) {
             throw new MyBookAccessDeniedException();
         }
 
@@ -71,10 +70,9 @@ public class MyBookService {
 
     public void deleteMyBook(MyBookDeleteServiceRequest request) {
 
-        MyBook myBook = myBookRepository.findByIdAndDeletedIsFalse(request.getMybookId())
-                .orElseThrow(MyBookNotFoundException::new);
+        MyBook myBook = findMyBookById(request.getMybookId());
 
-        if (!myBook.getUserId().equals(request.getLoginId())) {
+        if (isOwnerSameAsRequester(myBook.getUserId(), request.getLoginId())) {
             throw new MyBookAccessDeniedException();
         }
 
@@ -83,16 +81,24 @@ public class MyBookService {
 
     public MyBookUpdateResponse updateMyBookProperties(MybookUpdateServiceRequest request) {
 
-        MyBook myBook = myBookRepository.findByIdAndDeletedIsFalse(request.getMyBookId())
-                .orElseThrow(MyBookNotFoundException::new);
+        MyBook myBook = findMyBookById(request.getMyBookId());
 
-        if (!myBook.getUserId().equals(request.getUserId())) {
+        if (isOwnerSameAsRequester(myBook.getUserId(), request.getLoginId())) {
             throw new MyBookAccessDeniedException();
         }
 
-        myBook.updateProperties(request.getReadStatus(), request.getStartDateOfPossession(),
-                request.isShowable(), request.isExchangeable(), request.isShareable());
+        myBook.updateFromUpdateRequest(request);
 
         return MyBookDtoMapper.INSTANCE.entityToMyBookUpdateResponse(myBook);
     }
+
+    private static boolean isOwnerSameAsRequester(String ownerId, String requesterId) {
+        return !ownerId.equals(requesterId);
+    }
+
+    private MyBook findMyBookById(Long myBookId) {
+        return myBookRepository.findByIdAndDeletedIsFalse(myBookId)
+                .orElseThrow(MyBookNotFoundException::new);
+    }
+
 }

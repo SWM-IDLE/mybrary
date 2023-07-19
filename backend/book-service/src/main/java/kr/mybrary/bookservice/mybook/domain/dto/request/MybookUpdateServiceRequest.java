@@ -9,7 +9,7 @@ import lombok.Getter;
 @Builder
 public class MybookUpdateServiceRequest {
 
-    private String userId;
+    private String loginId;
     private Long myBookId;
 
     private boolean showable;
