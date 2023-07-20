@@ -9,18 +9,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.global.BaseEntity;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
+import kr.mybrary.bookservice.mybooktag.persistence.MyBookMeaningTag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users_hold_books")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -39,6 +39,9 @@ public class MyBook extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private ReadStatus readStatus;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private MyBookMeaningTag myBookMeaningTag;
 
     private LocalDateTime startDateOfPossession;
 
