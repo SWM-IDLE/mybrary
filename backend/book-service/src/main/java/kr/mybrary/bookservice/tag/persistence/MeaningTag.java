@@ -1,9 +1,10 @@
-package kr.mybrary.bookservice.mybook.persistence.tag;
+package kr.mybrary.bookservice.tag.persistence;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import kr.mybrary.bookservice.global.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MeaningTag {
+public class MeaningTag extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +24,8 @@ public class MeaningTag {
     private String quote;
     private int registeredCount;
     private String createdBy;
+
+    public void increaseRegisteredCount() {
+        this.registeredCount++;
+    }
 }
