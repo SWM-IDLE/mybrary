@@ -1,6 +1,5 @@
 package kr.mybrary.bookservice.mybook.persistence;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.global.BaseEntity;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
-import kr.mybrary.bookservice.mybook.persistence.tag.MyBookMeaningTag;
+import kr.mybrary.bookservice.tag.persistence.MyBookMeaningTag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,7 +40,7 @@ public class MyBook extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReadStatus readStatus;
 
-    @OneToOne(mappedBy = "myBook", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(mappedBy = "myBook", fetch = FetchType.LAZY)
     private MyBookMeaningTag myBookMeaningTag;
 
     private LocalDateTime startDateOfPossession;

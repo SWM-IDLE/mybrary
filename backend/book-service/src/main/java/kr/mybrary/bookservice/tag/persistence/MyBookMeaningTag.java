@@ -1,13 +1,12 @@
-package kr.mybrary.bookservice.mybook.persistence.tag;
+package kr.mybrary.bookservice.tag.persistence;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import kr.mybrary.bookservice.global.BaseEntity;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MyBookMeaningTag {
+public class MyBookMeaningTag extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +30,10 @@ public class MyBookMeaningTag {
     @OneToOne(fetch = FetchType.LAZY)
     private MeaningTag meaningTag;
 
-    @Enumerated(EnumType.STRING)
-    private QuoteColor quoteColor;
+    private String meaningTagColor;
+
+    public void assignMeaningTag(MeaningTag meaningTag, String meaningTagColor) {
+        this.meaningTag = meaningTag;
+        this.meaningTagColor = meaningTagColor;
+    }
 }
