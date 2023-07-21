@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.mybooktag.persistence;
+package kr.mybrary.bookservice.mybook.persistence.tag;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
