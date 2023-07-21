@@ -6,6 +6,7 @@ import kr.mybrary.userservice.authentication.domain.login.CustomAuthenticationEn
 import kr.mybrary.userservice.authentication.domain.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
 import kr.mybrary.userservice.authentication.domain.login.handler.LoginFailureHandler;
 import kr.mybrary.userservice.authentication.domain.login.handler.LoginSuccessHandler;
+import kr.mybrary.userservice.authentication.domain.logout.filter.LogoutExceptionFilter;
 import kr.mybrary.userservice.authentication.domain.logout.handler.CustomLogoutHandler;
 import kr.mybrary.userservice.authentication.domain.oauth2.handler.OAuth2LoginFailureHandler;
 import kr.mybrary.userservice.authentication.domain.oauth2.handler.OAuth2LoginSuccessHandler;
@@ -80,6 +81,7 @@ public class WebSecurityConfig {
                 );
 
         // LogoutFilter -> JwtExceptionFilter-> JwtAuthenticationProcessingFilter -> AbstractAuthenticationProcessingFilter
+        http.addFilterBefore(logoutExceptionFilter(), LogoutFilter.class);
         http.addFilterAfter(jwtExceptionFilter(), LogoutFilter.class);
         http.addFilterAfter(jwtAuthenticationProcessingFilter(), JwtExceptionFilter.class);
         http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), JwtAuthenticationProcessingFilter.class);
@@ -131,5 +133,11 @@ public class WebSecurityConfig {
     public JwtExceptionFilter jwtExceptionFilter() {
         JwtExceptionFilter jwtExceptionFilter = new JwtExceptionFilter(objectMapper);
         return jwtExceptionFilter;
+    }
+
+    @Bean
+    public LogoutExceptionFilter logoutExceptionFilter() {
+        LogoutExceptionFilter logoutExceptionFilter = new LogoutExceptionFilter(objectMapper);
+        return logoutExceptionFilter;
     }
 }
