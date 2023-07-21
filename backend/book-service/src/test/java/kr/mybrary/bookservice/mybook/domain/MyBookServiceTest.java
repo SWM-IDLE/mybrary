@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -27,6 +28,7 @@ import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
+import kr.mybrary.bookservice.tag.domain.MeaningTagService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,6 +47,9 @@ class MyBookServiceTest {
 
     @Mock
     private BookService bookService;
+
+    @Mock
+    private MeaningTagService meaningTagService;
 
     private static final String LOGIN_ID = "LOGIN_USER_ID";
     private static final String OTHER_USER_ID = "OTHER_USER_ID";
@@ -268,6 +273,7 @@ class MyBookServiceTest {
 
         given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
                 Optional.ofNullable(myBook));
+        willDoNothing().given(meaningTagService).assignMeaningTag(any());
 
         // when
         MyBookUpdateResponse response = myBookService.updateMyBookProperties(request);
@@ -282,6 +288,8 @@ class MyBookServiceTest {
                     assertThat(response.isShareable()).isEqualTo(request.isShareable());
                     assertThat(response.isShowable()).isEqualTo(request.isShowable());
                     assertThat(response.getReadStatus()).isEqualTo(request.getReadStatus());
+                    assertThat(response.getMeaningTag().getQuote()).isEqualTo(request.getMeaningTag().getQuote());
+                    assertThat(response.getMeaningTag().getColorCode()).isEqualTo(request.getMeaningTag().getColorCode());
                 }
         );
     }

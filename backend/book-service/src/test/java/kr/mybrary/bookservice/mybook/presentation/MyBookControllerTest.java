@@ -303,6 +303,7 @@ class MyBookControllerTest {
                                 ResourceSnippetParameters.builder()
                                         .tag("mybook")
                                         .summary("마이북 속성을 수정한다.")
+                                        .description("의미 태그 색상은 hex code로 입력한다.")
                                         .requestSchema(Schema.schema("update_mybook_properties_request_body"))
                                         .requestHeaders(
                                                 headerWithName("USER-ID").description("사용자 ID")
@@ -315,7 +316,9 @@ class MyBookControllerTest {
                                                 fieldWithPath("exchangeable").type(BOOLEAN).description("교환 여부"),
                                                 fieldWithPath("shareable").type(BOOLEAN).description("나눔 여부"),
                                                 fieldWithPath("readStatus").type(STRING).description("독서 진행 상태"),
-                                                fieldWithPath("startDateOfPossession").type(STRING).description("보유 시작일")
+                                                fieldWithPath("startDateOfPossession").type(STRING).description("보유 시작일"),
+                                                fieldWithPath("meaningTag.quote").type(STRING).description("의미 태그 문구"),
+                                                fieldWithPath("meaningTag.colorCode").type(STRING).description("의미 태그 색상")
                                         )
                                         .responseSchema(Schema.schema("update_mybook_properties_response_body"))
                                         .responseFields(
@@ -325,7 +328,9 @@ class MyBookControllerTest {
                                                 fieldWithPath("data.exchangeable").type(BOOLEAN).description("교환 여부"),
                                                 fieldWithPath("data.shareable").type(BOOLEAN).description("나눔 여부"),
                                                 fieldWithPath("data.readStatus").type(STRING).description("독서 진행 상태"),
-                                                fieldWithPath("data.startDateOfPossession").type(STRING).description("보유 시작일")
+                                                fieldWithPath("data.startDateOfPossession").type(STRING).description("보유 시작일"),
+                                                fieldWithPath("data.meaningTag.quote").type(STRING).description("의미 태그 문구"),
+                                                fieldWithPath("data.meaningTag.colorCode").type(STRING).description("의미 태그 색상")
                                         ).build())));
     }
 }
