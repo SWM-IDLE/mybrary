@@ -19,6 +19,16 @@ public enum MyBookMeaningTagFixture {
 
     private final String meaningTagColor;
 
+
+    public MyBookMeaningTag getMyBookMeaningTag() {
+        return MyBookMeaningTag.builder()
+                .id(id)
+                .myBook(myBook)
+                .meaningTag(meaningTag)
+                .meaningTagColor(meaningTagColor)
+                .build();
+    }
+
     public MyBookMeaningTag getMyBookMeaningTag(MyBook myBook, MeaningTag meaningTag) {
         return MyBookMeaningTag.builder()
                 .id(id)
