@@ -101,6 +101,10 @@ public class MybookDtoTestData {
                 .shareable(true)
                 .readStatus(ReadStatus.READING)
                 .startDateOfPossession(LocalDateTime.now())
+                .meaningTag(MyBookUpdateRequest.MeaningTag.builder()
+                        .quote("the book that help me dream")
+                        .colorCode("#FFFFFF")
+                        .build())
                 .build();
     }
 
@@ -111,6 +115,10 @@ public class MybookDtoTestData {
                 .shareable(true)
                 .readStatus(ReadStatus.READING)
                 .startDateOfPossession(LocalDateTime.now())
+                .meaningTag(MyBookUpdateResponse.MeaningTag.builder()
+                        .quote("the book that help me dream")
+                        .colorCode("#FFFFFF")
+                        .build())
                 .build();
     }
 
@@ -123,6 +131,10 @@ public class MybookDtoTestData {
                 .shareable(true)
                 .readStatus(ReadStatus.READING)
                 .startDateOfPossession(LocalDateTime.now())
+                .meaningTag(MybookUpdateServiceRequest.MeaningTag.builder()
+                        .quote("the book that help me dream")
+                        .colorCode("#FFFFFF")
+                        .build())
                 .build();
     }
 }

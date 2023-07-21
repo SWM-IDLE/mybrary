@@ -16,6 +16,15 @@ public class MyBookUpdateRequest {
     private ReadStatus readStatus;
     private LocalDateTime startDateOfPossession;
 
+    private MeaningTag meaningTag;
+
+    @Getter
+    @Builder
+    public static class MeaningTag {
+        private String quote;
+        private String colorCode;
+    }
+
     public MybookUpdateServiceRequest toServiceRequest(String userId, Long myBookId) {
         return MybookUpdateServiceRequest.builder()
                 .loginId(userId)
@@ -25,6 +34,10 @@ public class MyBookUpdateRequest {
                 .shareable(shareable)
                 .readStatus(readStatus)
                 .startDateOfPossession(startDateOfPossession)
+                .meaningTag(MybookUpdateServiceRequest.MeaningTag.builder()
+                        .quote(meaningTag.quote)
+                        .colorCode(meaningTag.colorCode)
+                        .build())
                 .build();
     }
 }

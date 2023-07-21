@@ -17,6 +17,7 @@ import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
+import kr.mybrary.bookservice.tag.domain.MeaningTagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MyBookService {
 
     private final MyBookRepository myBookRepository;
+    private final MeaningTagService meaningTagService;
     private final BookService bookService;
 
     public MyBook create(MyBookCreateServiceRequest request) {
@@ -88,8 +90,9 @@ public class MyBookService {
         }
 
         myBook.updateFromUpdateRequest(request);
+        meaningTagService.assignMeaningTag(request.toMeaningTagAssignServiceRequest(myBook));
 
-        return MyBookDtoMapper.INSTANCE.entityToMyBookUpdateResponse(myBook);
+        return MyBookUpdateResponse.of(myBook, request.getMeaningTag());
     }
 
     private static boolean isOwnerSameAsRequester(String ownerId, String requesterId) {
