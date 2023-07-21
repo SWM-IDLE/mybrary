@@ -86,34 +86,31 @@ public class JwtService {
     }
 
     // AccessToken에서 LoginId 추출
-    public Optional<String> extractLoginId(String accessToken) {
-        try {
-            return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
-                    .build()
-                    .verify(accessToken)
-                    .getClaim(LOGIN_ID_CLAIM)
-                    .asString());
-        } catch (Exception e) {
-            log.error("액세스 토큰이 유효하지 않습니다.");
-            return Optional.empty();
-        }
+    public Optional<String> getLoginId(String accessToken) {
+        validateToken(accessToken);
+        return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
+                .build()
+                .verify(accessToken)
+                .getClaim(LOGIN_ID_CLAIM)
+                .asString());
+    }
+    public Long getExpirationDuration(String accessToken) {
+        return getExpiration(accessToken).getTime() - new Date().getTime();
     }
 
-    // RefreshToken DB 저장(업데이트) -> Redis로 변경
-//    public void updateRefreshToken(String loginId, String refreshToken) {
-//        userRepository.findByLoginId(loginId)
-//                .ifPresentOrElse(
-//                        user -> user.updateRefreshToken(refreshToken),
-//                        () -> log.error("존재하지 않는 회원입니다.")
-//                );
-//    }
+    public Date getExpiration(String accessToken) {
+        validateToken(accessToken);
+        return JWT.require(Algorithm.HMAC512(secretKey))
+                .build()
+                .verify(accessToken)
+                .getExpiresAt();
+    }
 
-    public boolean isTokenValid(String token) {
+    private void validateToken(String token) {
         try {
             JWT.require(Algorithm.HMAC512(secretKey))
                     .build()
                     .verify(token);
-            return true;
         } catch (Exception e) {
             log.error(INVALID_TOKEN_MESSAGE);
             throw new JwtException(INVALID_TOKEN_MESSAGE);
