@@ -1,32 +1,31 @@
-package kr.mybrary.userservice.global.jwt.filter;
+package kr.mybrary.userservice.authentication.domain.logout.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.JwtException;
-import org.springframework.web.filter.OncePerRequestFilter;
-
 @RequiredArgsConstructor
-public class JwtExceptionFilter extends OncePerRequestFilter {
+public class LogoutExceptionFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
-    private final String JWT_EXCEPTION_MESSAGE = "인증에 실패했습니다. 유효하지 않은 JWT 토큰입니다";
+    private final String LOGOUT_EXCEPTION_MESSAGE = "로그아웃에 실패했습니다.";
+
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            chain.doFilter(request, response);
-        } catch (JwtException ex) {
-            setErrorResponse(request, response, ex);
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            setErrorResponse(request, response, e);
         }
     }
 
@@ -36,7 +35,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-        body.put("error", JWT_EXCEPTION_MESSAGE);
+        body.put("error", LOGOUT_EXCEPTION_MESSAGE);
         body.put("message", exception.getMessage());
         body.put("path", request.getServletPath());
         objectMapper.writeValue(response.getOutputStream(), body);
