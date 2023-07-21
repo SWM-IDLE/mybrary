@@ -83,7 +83,7 @@ public class LoginTest {
 
         // JWT 토큰의 payload에서 아이디 검증
         String accessToken = result.getResponse().getHeader("Authorization");
-        jwtService.extractLoginId(accessToken)
+        jwtService.getLoginId(accessToken)
                 .ifPresent(loginId -> assertThat(loginId).isEqualTo(LOGIN_ID));
     }
 
