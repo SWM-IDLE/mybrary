@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
-import java.time.Duration;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 public class CustomLogoutHandler implements LogoutHandler {
@@ -25,8 +25,8 @@ public class CustomLogoutHandler implements LogoutHandler {
         // 로그인 아이디 추출
         String loginId = jwtService.getLoginId(accessToken).orElseThrow(InvalidLogoutRequest::new);
 
-        // 액세스 토큰 블랙리스트 등록 - expire 시간 설정
-        redisUtil.setBlackList(accessToken, "logout", Duration.ofMillis(jwtService.getExpirationDuration(accessToken)));
+        // 액세스 토큰 블랙리스트 등록
+        redisUtil.setBlackList(accessToken, "logout", jwtService.getExpirationDuration(accessToken, LocalDateTime.now()));
 
         // 로그인 아이디로 저장된 리프레쉬 토큰 삭제
         redisUtil.delete(loginId);

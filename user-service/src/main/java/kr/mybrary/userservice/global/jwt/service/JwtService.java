@@ -5,6 +5,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
@@ -46,20 +50,24 @@ public class JwtService {
     private final UserRepository userRepository;
 
     // AccessToken 생성 - loginId을 payload로 넣어서 생성
-    public String createAccessToken(String loginId, Date now) {
+    public String createAccessToken(String loginId, LocalDateTime now) {
         return JWT.create()
                 .withSubject(ACCESS_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
+                .withExpiresAt(new Date(getTimeFrom(now) + accessTokenExpirationPeriod))
                 .withClaim(LOGIN_ID_CLAIM, loginId)
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
     // RefreshToken 생성
-    public String createRefreshToken(Date now) {
+    public String createRefreshToken(LocalDateTime now) {
         return JWT.create()
                 .withSubject(REFRESH_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
+                .withExpiresAt(new Date(getTimeFrom(now) + refreshTokenExpirationPeriod))
                 .sign(Algorithm.HMAC512(secretKey));
+    }
+
+    private static long getTimeFrom(LocalDateTime now) {
+        return Date.from(now.atZone(ZoneId.systemDefault()).toInstant()).getTime();
     }
 
     // AccessToken + RefreshToken 헤더에 추가
@@ -94,11 +102,11 @@ public class JwtService {
                 .getClaim(LOGIN_ID_CLAIM)
                 .asString());
     }
-    public Long getExpirationDuration(String accessToken) {
-        return getExpiration(accessToken).getTime() - new Date().getTime();
+    public Duration getExpirationDuration(String accessToken, LocalDateTime now) {
+        return Duration.ofMillis(getExpiration(accessToken).getTime() - getTimeFrom(now));
     }
 
-    public Date getExpiration(String accessToken) {
+    private Date getExpiration(String accessToken) {
         validateToken(accessToken);
         return JWT.require(Algorithm.HMAC512(secretKey))
                 .build()

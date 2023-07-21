@@ -4,11 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.util.Date;
-
 import kr.mybrary.userservice.global.jwt.service.JwtService;
 import kr.mybrary.userservice.global.redis.RedisUtil;
 import kr.mybrary.userservice.user.persistence.User;
@@ -22,6 +17,10 @@ import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -88,8 +87,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     // RefreshToken을 통해 DB에서 유저를 찾고, 새로운 RefreshToken을 발급하여 DB에 저장하고, AccessToken과 함께 응답
     private void reIssueAccessTokenAndRefreshToken(HttpServletResponse response, String loginId) {
-        String reIssuedRefreshToken = jwtService.createRefreshToken(new Date());
-        String reIssuedAccessToken = jwtService.createAccessToken(loginId, new Date());
+        String reIssuedRefreshToken = jwtService.createRefreshToken(LocalDateTime.now());
+        String reIssuedAccessToken = jwtService.createAccessToken(loginId, LocalDateTime.now());
 
         redisUtil.set(loginId, reIssuedRefreshToken, Duration.ofDays(REFRESH_TOKEN_EXPIRATION));
         jwtService.sendAccessAndRefreshToken(response, reIssuedAccessToken, reIssuedRefreshToken);
