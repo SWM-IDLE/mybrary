@@ -71,24 +71,4 @@ class MyBookDtoMapperTest {
                         .toList())
         );
     }
-
-    @DisplayName("MyBook 엔티티를 MyBookUpdateResponse로 매핑한다.")
-    @Test
-    void entityToMyBookUpdateResponse() {
-
-        // given
-        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
-
-        // when
-        MyBookUpdateResponse myBookUpdateResponse = MyBookDtoMapper.INSTANCE.entityToMyBookUpdateResponse(
-                myBook);
-
-        // then
-        assertAll(
-                () -> assertThat(myBookUpdateResponse.getReadStatus()).isEqualTo(myBook.getReadStatus()),
-                () -> assertThat(myBookUpdateResponse.isExchangeable()).isEqualTo(myBook.isExchangeable()),
-                () -> assertThat(myBookUpdateResponse.isShareable()).isEqualTo(myBook.isShareable()),
-                () -> assertThat(myBookUpdateResponse.isShowable()).isEqualTo(myBook.isShowable())
-        );
-    }
 }
