@@ -3,9 +3,11 @@ package kr.mybrary.userservice.authentication.domain.oauth2.handler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Date;
 import kr.mybrary.userservice.authentication.domain.oauth2.CustomOAuth2User;
 import kr.mybrary.userservice.global.jwt.service.JwtService;
+import kr.mybrary.userservice.global.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -21,8 +23,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     static final String CALLBACK_URL = "kr.mybrary://";
     static final String ACCESS_TOKEN_PARAMETER = "Authorization";
     static final String REFRESH_TOKEN_PARAMETER = "Authorization-Refresh";
+    static final int REFRESH_TOKEN_EXPIRATION = 14;
 
     private final JwtService jwtService;
+    private final RedisUtil redisUtil;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -32,8 +36,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         String accessToken = jwtService.createAccessToken(oAuth2User.getLoginId(), new Date());
         String refreshToken = jwtService.createRefreshToken(new Date());
-        jwtService.updateRefreshToken(oAuth2User.getLoginId(), refreshToken);
 
+        redisUtil.set(oAuth2User.getLoginId(), refreshToken, Duration.ofDays(REFRESH_TOKEN_EXPIRATION));
 
         String url = UriComponentsBuilder.fromUriString(CALLBACK_URL)
                 .queryParam(ACCESS_TOKEN_PARAMETER, accessToken)

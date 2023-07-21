@@ -31,6 +31,8 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         } catch (JwtException ex) {
             // JwtAuthenticationFilter에서 예외 발생하면 바로 setErrorResponse 호출
             setErrorResponse(request, response, ex);
+        } catch(IllegalArgumentException ex) {
+            setErrorResponse(request, response, ex);
         }
     }
 

@@ -6,16 +6,19 @@ import kr.mybrary.userservice.authentication.domain.login.CustomAuthenticationEn
 import kr.mybrary.userservice.authentication.domain.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
 import kr.mybrary.userservice.authentication.domain.login.handler.LoginFailureHandler;
 import kr.mybrary.userservice.authentication.domain.login.handler.LoginSuccessHandler;
+import kr.mybrary.userservice.authentication.domain.logout.handler.CustomLogoutHandler;
 import kr.mybrary.userservice.authentication.domain.oauth2.handler.OAuth2LoginFailureHandler;
 import kr.mybrary.userservice.authentication.domain.oauth2.handler.OAuth2LoginSuccessHandler;
 import kr.mybrary.userservice.authentication.domain.oauth2.service.CustomOAuth2UserService;
 import kr.mybrary.userservice.global.jwt.filter.JwtAuthenticationProcessingFilter;
 import kr.mybrary.userservice.global.jwt.filter.JwtExceptionFilter;
 import kr.mybrary.userservice.global.jwt.service.JwtService;
+import kr.mybrary.userservice.global.redis.RedisUtil;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,6 +28,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
@@ -32,22 +36,20 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
+    private final UserRepository userRepository;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final RedisUtil redisUtil;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
     private static final String[] AUTH_WHITELIST = {
-            "/login",
-            "/api/v1/oauth2/**",
-            "/api/v1/auth/sign-up",
+            "/api/v1/users/**",
             "/docs/**",
             "/v3/api-docs/swagger-config/**",
-            "/api/v1/users/**",
             "/error",
             "/actuator/**"
     };
@@ -61,7 +63,7 @@ public class WebSecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint(objectMapper)))
-                .authorizeRequests(request -> request
+                .authorizeHttpRequests(request -> request
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -70,12 +72,17 @@ public class WebSecurityConfig {
                         .failureHandler(oAuth2LoginFailureHandler)
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/api/v1/auth/logout")
+                        .addLogoutHandler(customLogoutHandler())
+                        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
                 );
 
-        http.addFilterBefore(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
-        http.addFilterBefore(jwtAuthenticationProcessingFilter(),
-                CustomJsonUsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtExceptionFilter(), JwtAuthenticationProcessingFilter.class);
+        // LogoutFilter -> JwtExceptionFilter-> JwtAuthenticationProcessingFilter -> AbstractAuthenticationProcessingFilter
+        http.addFilterAfter(jwtExceptionFilter(), LogoutFilter.class);
+        http.addFilterAfter(jwtAuthenticationProcessingFilter(), JwtExceptionFilter.class);
+        http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), JwtAuthenticationProcessingFilter.class);
 
         return http.build();
     }
@@ -91,12 +98,17 @@ public class WebSecurityConfig {
 
     @Bean
     public LoginSuccessHandler loginSuccessHandler() {
-        return new LoginSuccessHandler(jwtService, userRepository);
+        return new LoginSuccessHandler(jwtService, redisUtil);
     }
 
     @Bean
     public LoginFailureHandler loginFailureHandler() {
         return new LoginFailureHandler();
+    }
+
+    @Bean
+    public CustomLogoutHandler customLogoutHandler() {
+        return new CustomLogoutHandler(jwtService, redisUtil);
     }
 
     @Bean
@@ -111,7 +123,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-        JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository);
+        JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, redisUtil, userRepository);
         return jwtAuthenticationFilter;
     }
 
