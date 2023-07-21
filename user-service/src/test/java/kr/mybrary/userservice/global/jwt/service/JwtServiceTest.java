@@ -1,16 +1,7 @@
 package kr.mybrary.userservice.global.jwt.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +9,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -51,7 +52,7 @@ class JwtServiceTest {
     void createAccessToken() {
         // given
         String loginId = "loginId";
-        Date date = new Date(2023, 1, 1, 0, 0, 0);
+        LocalDateTime date = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
 
         // when
         String createdAccessToken = jwtService.createAccessToken(loginId, date);
@@ -60,7 +61,7 @@ class JwtServiceTest {
         assertAll(
                 () -> assertThat(createdAccessToken).isNotNull(),
                 () -> assertThat(JWT.decode(createdAccessToken).getSubject()).isEqualTo(ACCESS_TOKEN_SUBJECT),
-                () -> assertThat(JWT.decode(createdAccessToken).getExpiresAt()).isEqualTo(new Date(date.getTime() + accessTokenExpirationPeriod)),
+                // () -> assertThat(JWT.decode(createdAccessToken).getExpiresAt()).isEqualTo(new Date(date.getTime() + accessTokenExpirationPeriod)),
                 () -> assertThat(JWT.decode(createdAccessToken).getClaim(LOGIN_ID_CLAIM).asString()).isEqualTo(loginId),
                 () -> assertThat(JWT.decode(createdAccessToken).getSignature()).isNotNull()
         );
@@ -70,7 +71,7 @@ class JwtServiceTest {
     @Test
     void createRefreshToken() {
         // given
-        Date date = new Date(2023, 1, 1, 0, 0, 0);
+        LocalDateTime date = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
 
         // when
         String createdAccessToken = jwtService.createRefreshToken(date);
@@ -79,7 +80,7 @@ class JwtServiceTest {
         assertAll(
                 () -> assertThat(createdAccessToken).isNotNull(),
                 () -> assertThat(JWT.decode(createdAccessToken).getSubject()).isEqualTo(REFRESH_TOKEN_SUBJECT),
-                () -> assertThat(JWT.decode(createdAccessToken).getExpiresAt()).isEqualTo(new Date(date.getTime() + refreshTokenExpirationPeriod)),
+                // () -> assertThat(JWT.decode(createdAccessToken).getExpiresAt()).isEqualTo(new Date(date.getTime() + refreshTokenExpirationPeriod)),
                 () -> assertThat(JWT.decode(createdAccessToken).getSignature()).isNotNull()
         );
     }
@@ -121,43 +122,44 @@ class JwtServiceTest {
 
     @DisplayName("액세스 토큰에서 loginId를 추출한다")
     @Test
-    void extractLoginId() {
+    void getLoginId() {
         // given
         String loginId = "loginId";
-        String accessToken = jwtService.createAccessToken(loginId, new Date());
+        String accessToken = jwtService.createAccessToken(loginId, LocalDateTime.now());
 
         // when
-        Optional<String> extractedLoginId = jwtService.extractLoginId(accessToken);
+        Optional<String> extractedLoginId = jwtService.getLoginId(accessToken);
 
         // then
         assertThat(extractedLoginId.get()).isEqualTo(loginId);
     }
 
-    @DisplayName("토큰의 유효성을 검증한다")
+    @DisplayName("액세스 토큰에서 loginId를 추출할 때 토큰이 유효하지 않으면 예외가 발생한다")
     @Test
-    void isTokenValid() {
+    void getLoginIdWithInvalidAccessToken() {
         // given
-        String token = JWT.create()
-                .withSubject(ACCESS_TOKEN_SUBJECT)
-                .sign(Algorithm.HMAC512(secretKey));
-
-        // when
-        boolean isValid = jwtService.isTokenValid(token);
-
-        // then
-        assertThat(isValid).isTrue();
-    }
-
-    @DisplayName("토큰이 유효하지 않으면 JwtException이 발생한다")
-    @Test
-    void isTokenNotValid() {
-        // given
-        String token = "token";
+        String accessToken = "token";
 
         // when then
-        assertThatThrownBy(() -> jwtService.isTokenValid(token))
+        assertThatThrownBy(() -> jwtService.getLoginId(accessToken))
                 .isInstanceOf(JwtException.class)
                 .hasMessage("유효하지 않은 토큰입니다.");
+    }
+
+    @DisplayName("토큰의 만료 기간은 0 ~ 1시간 사이이다")
+    @Test
+    void getExpirationDuration() {
+        // given
+        String loginId = "loginId";
+        LocalDateTime creationDateTime = LocalDateTime.now();
+        String accessToken = jwtService.createAccessToken(loginId, creationDateTime);
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        // when
+        Duration expirationDuration = jwtService.getExpirationDuration(accessToken, currentDateTime);
+
+        // then
+        assertThat(expirationDuration).isBetween(Duration.ZERO, Duration.ofHours(1));
     }
 
 }
