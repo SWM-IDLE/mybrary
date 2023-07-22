@@ -21,4 +21,13 @@ public enum MeaningTagFixture {
                 .createdBy(createdBy)
                 .build();
     }
+
+    public MeaningTag getMeaningTag(Long id, int registeredCount) {
+        return MeaningTag.builder()
+                .id(id)
+                .quote(quote)
+                .registeredCount(registeredCount)
+                .createdBy(createdBy)
+                .build();
+    }
 }
