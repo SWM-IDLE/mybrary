@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -36,6 +38,27 @@ class MeaningTagRepositoryTest {
                     assertThat(findTag.isPresent()).isTrue();
                     assertThat(findTag.get().getQuote()).isEqualTo(quote);
                 }
+        );
+    }
+
+    @DisplayName("가장 많이 등록된 의미 태그를 순서로 페이징 조회한다.")
+    @Test
+    void findPageOrderByRegisteredCountDesc() {
+
+        // given
+        for (int i = 1; i <= 20; i++) {
+            meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag((long) i, i));
+        }
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        // when
+        Page<MeaningTag> result = meaningTagRepository.findAllByOrderByRegisteredCountDesc(pageRequest);
+
+        // then
+        assertAll(
+                () -> assertThat(result.getContent().size()).isEqualTo(10),
+                () -> assertThat(result.getContent().get(0).getRegisteredCount()).isEqualTo(20),
+                () -> assertThat(result.getContent().get(9).getRegisteredCount()).isEqualTo(11)
         );
     }
 }
