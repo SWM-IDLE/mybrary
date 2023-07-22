@@ -2,6 +2,7 @@ package kr.mybrary.bookservice.tag;
 
 import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.tag.domain.dto.request.MeaningTagAssignServiceRequest;
+import kr.mybrary.bookservice.tag.domain.dto.request.MeaningTagFindPageServiceRequest;
 
 public class MeaningTagDtoTestData {
 
@@ -14,4 +15,9 @@ public class MeaningTagDtoTestData {
                 .build();
     }
 
+    public static MeaningTagFindPageServiceRequest createMeaningTagFindPageServiceRequest(int size) {
+        return MeaningTagFindPageServiceRequest.builder()
+                .size(size)
+                .build();
+    }
 }
