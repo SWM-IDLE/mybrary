@@ -12,6 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +63,8 @@ class JwtServiceTest {
         assertAll(
                 () -> assertThat(createdAccessToken).isNotNull(),
                 () -> assertThat(JWT.decode(createdAccessToken).getSubject()).isEqualTo(ACCESS_TOKEN_SUBJECT),
-                // () -> assertThat(JWT.decode(createdAccessToken).getExpiresAt()).isEqualTo(new Date(date.getTime() + accessTokenExpirationPeriod)),
+                () -> assertThat(JWT.decode(createdAccessToken).getExpiresAt()).isEqualTo(new Date(
+                        Date.from(date.atZone(ZoneId.systemDefault()).toInstant()).getTime() + accessTokenExpirationPeriod)),
                 () -> assertThat(JWT.decode(createdAccessToken).getClaim(LOGIN_ID_CLAIM).asString()).isEqualTo(loginId),
                 () -> assertThat(JWT.decode(createdAccessToken).getSignature()).isNotNull()
         );
@@ -77,10 +80,11 @@ class JwtServiceTest {
         String createdAccessToken = jwtService.createRefreshToken(date);
 
         // then
-        assertAll(
+        assertAll( // TODO: 수정 필요~~
                 () -> assertThat(createdAccessToken).isNotNull(),
                 () -> assertThat(JWT.decode(createdAccessToken).getSubject()).isEqualTo(REFRESH_TOKEN_SUBJECT),
-                // () -> assertThat(JWT.decode(createdAccessToken).getExpiresAt()).isEqualTo(new Date(date.getTime() + refreshTokenExpirationPeriod)),
+                () -> assertThat(JWT.decode(createdAccessToken).getExpiresAt()).isEqualTo(new Date(
+                        Date.from(date.atZone(ZoneId.systemDefault()).toInstant()).getTime() + refreshTokenExpirationPeriod)),
                 () -> assertThat(JWT.decode(createdAccessToken).getSignature()).isNotNull()
         );
     }
