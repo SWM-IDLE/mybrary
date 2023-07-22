@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.tag;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.tag.domain.dto.request.MeaningTagAssignServiceRequest;
 import kr.mybrary.bookservice.tag.domain.dto.request.MeaningTagFindPageServiceRequest;
+import kr.mybrary.bookservice.tag.presentation.dto.response.MeaningTagElementResponse;
 
 public class MeaningTagDtoTestData {
 
@@ -18,6 +19,14 @@ public class MeaningTagDtoTestData {
     public static MeaningTagFindPageServiceRequest createMeaningTagFindPageServiceRequest(int size) {
         return MeaningTagFindPageServiceRequest.builder()
                 .size(size)
+                .build();
+    }
+
+    public static MeaningTagElementResponse createMeaningTagElementResponse(Long id, int registeredCount) {
+        return MeaningTagElementResponse.builder()
+                .id(id)
+                .quote("TEST_QUOTE")
+                .registeredCount(registeredCount)
                 .build();
     }
 }

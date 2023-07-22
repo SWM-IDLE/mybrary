@@ -9,4 +9,9 @@ public class MeaningTagFindPageServiceRequest {
 
     private int size;
 
+    public static MeaningTagFindPageServiceRequest of(int size) {
+        return MeaningTagFindPageServiceRequest.builder()
+                .size(size)
+                .build();
+    }
 }
