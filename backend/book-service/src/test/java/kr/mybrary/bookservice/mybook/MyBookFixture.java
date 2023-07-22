@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
+import kr.mybrary.bookservice.mybook.persistence.MyBook.MyBookBuilder;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import lombok.AllArgsConstructor;
 
@@ -43,6 +44,19 @@ public enum MyBookFixture {
                 .shareable(shareable)
                 .deleted(deleted)
                 .build();
+    }
+
+    public MyBookBuilder getMyBookBuilder() {
+        return MyBook.builder()
+                .id(id)
+                .userId(userId)
+                .book(book)
+                .readStatus(readStatus)
+                .startDateOfPossession(startDateOfPossession)
+                .showable(showable)
+                .exchangeable(exchangeable)
+                .shareable(shareable)
+                .deleted(deleted);
     }
 
     public MyBook getMyBookWithBook(Book book) {

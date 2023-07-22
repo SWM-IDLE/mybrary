@@ -16,6 +16,7 @@ public class MyBookDetailResponse {
     private ReadStatus readStatus;
     private LocalDateTime startDateOfPossession;
 
+    private MeaningTag meaningTag;
     private BookDetailResponse book;
 
     @Getter
@@ -29,5 +30,12 @@ public class MyBookDetailResponse {
         private String publisher;
         private String thumbnailUrl;
         private Double stars;
+    }
+
+    @Getter
+    @Builder
+    public static class MeaningTag {
+        private String quote;
+        private String colorCode;
     }
 }

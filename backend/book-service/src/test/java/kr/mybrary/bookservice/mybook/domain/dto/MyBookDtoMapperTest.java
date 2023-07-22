@@ -7,6 +7,7 @@ import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
+import kr.mybrary.bookservice.tag.MyBookMeaningTagFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,9 @@ class MyBookDtoMapperTest {
     void entityToMyBookDetailResponse() {
 
         // given
-        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .myBookMeaningTag(MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTag())
+                .build();
 
         // when
         MyBookDetailResponse myBookDetailResponse = MyBookDtoMapper.INSTANCE.entityToMyBookDetailResponse(

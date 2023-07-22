@@ -68,6 +68,11 @@ public class MybookDtoTestData {
                         .stars(5.0)
                         .build()
                 )
+                .meaningTag(MyBookDetailResponse.MeaningTag.builder()
+                        .quote("the book that help me to understand spring")
+                        .colorCode("#FFFFFF")
+                        .build()
+                )
                 .build();
     }
 
