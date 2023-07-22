@@ -224,7 +224,9 @@ class MyBookControllerTest {
                                                 fieldWithPath("data.book.authors").type(ARRAY).description("도서 저자"),
                                                 fieldWithPath("data.book.translators").type(ARRAY).description("도서 번역자"),
                                                 fieldWithPath("data.book.stars").type(NUMBER).description("도서 별점"),
-                                                fieldWithPath("data.book.publisher").type(STRING).description("출판사")
+                                                fieldWithPath("data.book.publisher").type(STRING).description("출판사"),
+                                                fieldWithPath("data.meaningTag.quote").type(STRING).description("의미 태그 문구"),
+                                                fieldWithPath("data.meaningTag.colorCode").type(STRING).description("의미 태그 색상")
                                         ).build())));
     }
 
