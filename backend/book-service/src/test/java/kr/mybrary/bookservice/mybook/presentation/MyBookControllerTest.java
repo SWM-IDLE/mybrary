@@ -335,4 +335,57 @@ class MyBookControllerTest {
                                                 fieldWithPath("data.meaningTag.colorCode").type(STRING).description("의미 태그 색상")
                                         ).build())));
     }
+
+    @DisplayName("의미 태그를 통해서 마이북을 조회한다.")
+    @Test
+    void getMyBookByMeaningTag() throws Exception {
+
+        // given
+        MyBookElementResponse expectedResponse_1 = MybookDtoTestData.createMyBookElementResponse();
+        MyBookElementResponse expectedResponse_2 = MybookDtoTestData.createMyBookElementResponse();
+
+        given(myBookService.findByMeaningTagQuote(any())).willReturn(List.of(expectedResponse_1, expectedResponse_2));
+
+        // when
+        ResultActions actions = mockMvc.perform(get("/api/v1/mybooks/meaning-tags/{meaningTagQuote}", "의미 태그 문구 예시")
+                        .header("USER-ID", LOGIN_ID));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("의미 태그를 통해서 마이북을 조회했습니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // document
+        actions.andDo(document("get-mybook-by-meaning-tag-quote",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("mybook")
+                                        .summary("의미 태그를 통해서 마이북을 조회한다.")
+                                        .requestHeaders(
+                                                headerWithName("USER-ID").description("사용자 ID")
+                                        )
+                                        .pathParameters(
+                                                parameterWithName("meaningTagQuote").type(SimpleType.STRING).description("의미 태그 문구")
+                                        )
+                                        .responseSchema(Schema.schema("get_mybook_by_meaning_tag_quote_response_body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data[].id").type(NUMBER).description("마이북 ID"),
+                                                fieldWithPath("data[].readStatus").type(STRING).description("독서 진행 상태"),
+                                                fieldWithPath("data[].startDateOfPossession").type(STRING).description("보유 시작일"),
+                                                fieldWithPath("data[].book.id").type(NUMBER).description("도서 ID"),
+                                                fieldWithPath("data[].book.title").type(STRING).description("도서 제목"),
+                                                fieldWithPath("data[].book.description").type(STRING).description("도서 설명"),
+                                                fieldWithPath("data[].book.thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
+                                                fieldWithPath("data[].book.stars").type(NUMBER).description("도서 별점"),
+                                                fieldWithPath("data[].showable").type(BOOLEAN).description("공개 여부"),
+                                                fieldWithPath("data[].exchangeable").type(BOOLEAN).description("교환 여부"),
+                                                fieldWithPath("data[].shareable").type(BOOLEAN).description("나눔 여부"))
+                                        .build())));
+    }
 }
