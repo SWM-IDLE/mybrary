@@ -6,6 +6,7 @@ import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindByMeaningTagQuoteServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookUpdateRequest;
@@ -83,5 +84,15 @@ public class MyBookController {
         return ResponseEntity.ok(
                 SuccessResponse.of(HttpStatus.OK.toString(), "내 서재의 마이북 속성을 수정했습니다.",
                         myBookService.updateMyBookProperties(serviceRequest)));
+    }
+
+    @GetMapping("/mybooks/meaning-tags/{meaningTagQuote}")
+    public ResponseEntity findMyBooksByMeaningTag(@RequestHeader("USER-ID") String loginId,
+            @PathVariable String meaningTagQuote) {
+
+        MyBookFindByMeaningTagQuoteServiceRequest request = MyBookFindByMeaningTagQuoteServiceRequest.of(meaningTagQuote);
+
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "의미 태그를 통해서 마이북을 조회했습니다.",
+                        myBookService.findByMeaningTagQuote(request)));
     }
 }
