@@ -47,8 +47,11 @@ class MeaningTagRepositoryTest {
 
         // given
         for (int i = 1; i <= 20; i++) {
-            meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag((long) i, i));
+            meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTagBuilder()
+                    .id((long) i)
+                    .registeredCount(i).build());
         }
+
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
