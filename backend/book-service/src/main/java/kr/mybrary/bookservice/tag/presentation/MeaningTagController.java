@@ -20,11 +20,17 @@ public class MeaningTagController {
     private final MeaningTagService meaningTagService;
 
     @GetMapping
+    public ResponseEntity getAllMeaningTags(@RequestHeader("USER-ID") String loginId) {
+
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "전체 의미 태그 조회 결과입니다.",
+                meaningTagService.findAll()));
+    }
+
+    @GetMapping("/sort-by-registered-count")
     public ResponseEntity getPageMeaningTags(@RequestHeader("USER-ID") String loginId,
             @RequestParam int size) {
 
-        return ResponseEntity.ok(
-                SuccessResponse.of(HttpStatus.OK.toString(), "의미 태그 페이징 조회 결과입니다.",
-                        meaningTagService.findPageOrderByRegisteredCount(MeaningTagFindPageServiceRequest.of(size))));
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "등록된 수가 큰 순서대로 의미 태그 페이징 조회 결과입니다.",
+                meaningTagService.findPageOrderByRegisteredCount(MeaningTagFindPageServiceRequest.of(size))));
     }
 }

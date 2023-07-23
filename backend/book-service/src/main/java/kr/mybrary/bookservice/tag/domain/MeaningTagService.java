@@ -23,6 +23,14 @@ public class MeaningTagService {
     private final MyBookMeaningTagRepository myBookMeaningTagRepository;
 
     @Transactional(readOnly = true)
+    public List<MeaningTagElementResponse> findAll() {
+        return meaningTagRepository.findAll()
+                .stream()
+                .map(MeaningTagDtoMapper.INSTANCE::entityToMeaningTagElementResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<MeaningTagElementResponse> findPageOrderByRegisteredCount(
             MeaningTagFindPageServiceRequest request) {
 
