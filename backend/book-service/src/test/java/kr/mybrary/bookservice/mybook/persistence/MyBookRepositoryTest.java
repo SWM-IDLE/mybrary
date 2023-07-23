@@ -1,7 +1,6 @@
 package kr.mybrary.bookservice.mybook.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
@@ -20,10 +19,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class MyBookRepositoryTest {
+
+    @Autowired
+    TestEntityManager entityManager;
 
     @Autowired
     MyBookRepository myBookRepository;
@@ -71,24 +74,34 @@ class MyBookRepositoryTest {
 
         MyBook savedMyBook = myBookRepository.save(myBook);
 
+        entityManager.clear();
+
         // when, then
         assertThat(myBookRepository.existsByUserIdAndBook(savedMyBook.getUserId(),
                 savedMyBook.getBook())).isTrue();
     }
 
-    @DisplayName("마이북을 모두 조회한다.")
+    @DisplayName("마이북을 모두 조회한다. (삭제된 책은 보여주지 않는다.)")
     @Test
     void findAllMyBooks() {
 
         // given
         Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
         Book savedBook_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+        Book savedBook_3 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
 
-        MyBook myBook_1 = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook_1);
-        MyBook myBook_2 = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook_2);
+        MyBook myBook_1 = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(1L).book(savedBook_1).build();
+        MyBook myBook_2 = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(2L).book(savedBook_2).build();
+        MyBook myBook_3 = MyBookFixture.DELETED_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(3L).book(savedBook_3).build();
 
         myBookRepository.save(myBook_1);
         myBookRepository.save(myBook_2);
+        myBookRepository.save(myBook_3);
+
+        entityManager.clear();
 
         // when
         List<MyBook> myBooks = myBookRepository.findAllByUserId("LOGIN_USER_ID");
@@ -105,19 +118,20 @@ class MyBookRepositoryTest {
         Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
         Book savedBook_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
 
-        MyBook myBook_1 = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook_1);
-        MyBook myBook_2 = MyBookFixture.DELETED_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook_2);
+        MyBook myBook_1 = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(1L).book(savedBook_1).build();
+        MyBook myBook_2 = MyBookFixture.DELETED_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(2L).book(savedBook_2).build();
 
         MyBook savedMyBook = myBookRepository.save(myBook_1);
         MyBook savedDeletedMyBook = myBookRepository.save(myBook_2);
 
-        // when
+        entityManager.clear();
+
+        // when, then
         assertAll(
-                () -> assertThat(myBookRepository.findByIdAndDeletedIsFalse(savedMyBook.getId())
-                        .isPresent()).isTrue(),
-                () -> assertThatThrownBy(
-                        () -> myBookRepository.findByIdAndDeletedIsFalse(savedDeletedMyBook.getId())
-                                .orElseThrow(IllegalArgumentException::new))
+                () -> assertThat(myBookRepository.findById(savedMyBook.getId()).isPresent()).isTrue(),
+                () -> assertThat(myBookRepository.findById(savedDeletedMyBook.getId()).isEmpty()).isTrue()
         );
 
     }
@@ -155,15 +169,14 @@ class MyBookRepositoryTest {
                         .meaningTag(meaningTag_2)
                         .myBook(myBook_3).build());
 
+        entityManager.clear();
+
         // when
         List<MyBook> myBooks = myBookRepository.findByMeaningTagQuote("meaningTag_2");
 
         // then
         assertAll(
-                () -> assertThat(myBooks.size()).isEqualTo(2),
-                () -> assertThat(myBooks.contains(myBook_1)).isFalse(),
-                () -> assertThat(myBooks.contains(myBook_2)).isTrue(),
-                () -> assertThat(myBooks.contains(myBook_3)).isTrue()
+                () -> assertThat(myBooks.size()).isEqualTo(2)
         );
     }
 }

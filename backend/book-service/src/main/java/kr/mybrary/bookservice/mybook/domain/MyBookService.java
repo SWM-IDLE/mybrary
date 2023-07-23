@@ -101,7 +101,7 @@ public class MyBookService {
     }
 
     private MyBook findMyBookById(Long myBookId) {
-        return myBookRepository.findByIdAndDeletedIsFalse(myBookId)
+        return myBookRepository.findById(myBookId)
                 .orElseThrow(MyBookNotFoundException::new);
     }
 
