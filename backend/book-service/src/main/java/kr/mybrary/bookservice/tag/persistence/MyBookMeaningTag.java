@@ -5,6 +5,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import kr.mybrary.bookservice.global.BaseEntity;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
@@ -27,7 +28,7 @@ public class MyBookMeaningTag extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private MyBook myBook;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private MeaningTag meaningTag;
 
     private String meaningTagColor;
