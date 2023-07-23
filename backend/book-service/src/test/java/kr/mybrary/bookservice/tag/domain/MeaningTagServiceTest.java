@@ -107,4 +107,29 @@ class MeaningTagServiceTest {
                 () -> assertThat(result.size()).isEqualTo(10)
         );
     }
+
+    @DisplayName("모든 의미 태그를 조회한다.")
+    @Test
+    void findAll() {
+
+        // given
+        List<MeaningTag> meaningTags = new ArrayList<>() {{
+            IntStream.range(0, 10)
+                    .forEach(i -> add(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTagBuilder()
+                            .quote("MEANING_TAG_" + i)
+                            .registeredCount(i)
+                            .build()));
+        }};
+
+        given(meaningTagRepository.findAll()).willReturn(meaningTags);
+
+        // when
+        List<MeaningTagElementResponse> result = meaningTagService.findAll();
+
+        // then
+        assertAll(
+                () -> verify(meaningTagRepository, times(1)).findAll(),
+                () -> assertThat(result.size()).isEqualTo(10)
+        );
+    }
 }
