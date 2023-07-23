@@ -4,6 +4,7 @@ import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.tag.persistence.MeaningTag;
 import kr.mybrary.bookservice.tag.persistence.MyBookMeaningTag;
+import kr.mybrary.bookservice.tag.persistence.MyBookMeaningTag.MyBookMeaningTagBuilder;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -19,6 +20,13 @@ public enum MyBookMeaningTagFixture {
 
     private final String meaningTagColor;
 
+    public MyBookMeaningTagBuilder getMyBookMeaningTagBuilder() {
+        return MyBookMeaningTag.builder()
+                .id(id)
+                .myBook(myBook)
+                .meaningTag(meaningTag)
+                .meaningTagColor(meaningTagColor);
+    }
 
     public MyBookMeaningTag getMyBookMeaningTag() {
         return MyBookMeaningTag.builder()

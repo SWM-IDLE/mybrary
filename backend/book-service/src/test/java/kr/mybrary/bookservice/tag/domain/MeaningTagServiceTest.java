@@ -24,7 +24,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
@@ -91,7 +90,9 @@ class MeaningTagServiceTest {
         List<MeaningTag> meaningTags = new ArrayList<>() {{
             IntStream.range(0, 10)
                     .map(i -> 10-i)
-                    .forEach(i -> add(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag((long) i, i)));
+                    .forEach(i -> add(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTagBuilder()
+                            .registeredCount(i)
+                            .build()));
         }};
 
         given(meaningTagRepository.findAllByOrderByRegisteredCountDesc(pageRequest)).willReturn(

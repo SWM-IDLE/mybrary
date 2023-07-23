@@ -1,6 +1,7 @@
 package kr.mybrary.bookservice.tag;
 
 import kr.mybrary.bookservice.tag.persistence.MeaningTag;
+import kr.mybrary.bookservice.tag.persistence.MeaningTag.MeaningTagBuilder;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -13,16 +14,15 @@ public enum MeaningTagFixture {
     private final int registeredCount;
     private final String createdBy;
 
-    public MeaningTag getMeaningTag() {
+    public MeaningTagBuilder getMeaningTagBuilder() {
         return MeaningTag.builder()
                 .id(id)
                 .quote(quote)
                 .registeredCount(registeredCount)
-                .createdBy(createdBy)
-                .build();
+                .createdBy(createdBy);
     }
 
-    public MeaningTag getMeaningTag(Long id, int registeredCount) {
+    public MeaningTag getMeaningTag() {
         return MeaningTag.builder()
                 .id(id)
                 .quote(quote)
