@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceReque
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindByMeaningTagQuoteServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
@@ -28,6 +30,7 @@ import kr.mybrary.bookservice.mybook.domain.exception.MyBookNotFoundException;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import kr.mybrary.bookservice.tag.domain.MeaningTagService;
 import org.junit.jupiter.api.DisplayName;
@@ -272,7 +275,8 @@ class MyBookServiceTest {
     void updateMyBook() {
 
         //given
-        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(LOGIN_ID, MYBOOK_ID);
+        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(
+                LOGIN_ID, MYBOOK_ID);
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
         given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
@@ -287,13 +291,16 @@ class MyBookServiceTest {
                 () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMyBookId()),
                 () -> {
                     assertThat(myBook).isNotNull();
-                    assertThat(response.getStartDateOfPossession()).isEqualTo(request.getStartDateOfPossession());
+                    assertThat(response.getStartDateOfPossession()).isEqualTo(
+                            request.getStartDateOfPossession());
                     assertThat(response.isExchangeable()).isEqualTo(request.isExchangeable());
                     assertThat(response.isShareable()).isEqualTo(request.isShareable());
                     assertThat(response.isShowable()).isEqualTo(request.isShowable());
                     assertThat(response.getReadStatus()).isEqualTo(request.getReadStatus());
-                    assertThat(response.getMeaningTag().getQuote()).isEqualTo(request.getMeaningTag().getQuote());
-                    assertThat(response.getMeaningTag().getColorCode()).isEqualTo(request.getMeaningTag().getColorCode());
+                    assertThat(response.getMeaningTag().getQuote()).isEqualTo(
+                            request.getMeaningTag().getQuote());
+                    assertThat(response.getMeaningTag().getColorCode()).isEqualTo(
+                            request.getMeaningTag().getColorCode());
                 }
         );
     }
@@ -303,7 +310,8 @@ class MyBookServiceTest {
     void occurExceptionWhenUpdateOtherUserMyBook() {
 
         //given
-        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(LOGIN_ID, MYBOOK_ID);
+        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(
+                LOGIN_ID, MYBOOK_ID);
         MyBook myBook = MyBookFixture.COMMON_OTHER_USER_MYBOOK.getMyBook();
 
         given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
@@ -314,6 +322,26 @@ class MyBookServiceTest {
                 () -> assertThatThrownBy(() -> myBookService.updateMyBookProperties(request))
                         .isInstanceOf(MyBookAccessDeniedException.class),
                 () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMyBookId())
+        );
+    }
+
+    @DisplayName("의미 태그 문구를 통해서 마이북을 조회한다.")
+    @Test
+    void findMyBookByMeaningTagQuote() {
+
+        // given
+        MyBookFindByMeaningTagQuoteServiceRequest request = MyBookFindByMeaningTagQuoteServiceRequest.of("quote");
+
+        given(myBookRepository.findByMeaningTagQuote(request.getQuote())).willReturn(
+                List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()));
+
+        // when
+        List<MyBookElementResponse> result = myBookService.findByMeaningTagQuote(request);
+
+        // then
+        assertAll(
+                () -> verify(myBookRepository, times(1)).findByMeaningTagQuote(request.getQuote()),
+                () -> assertThat(result.size()).isEqualTo(1)
         );
     }
 }
