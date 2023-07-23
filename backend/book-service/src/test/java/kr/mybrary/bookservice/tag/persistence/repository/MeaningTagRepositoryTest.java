@@ -11,12 +11,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class MeaningTagRepositoryTest {
+
+    @Autowired
+    TestEntityManager entityManager;
 
     @Autowired
     private MeaningTagRepository meaningTagRepository;
@@ -32,6 +36,8 @@ class MeaningTagRepositoryTest {
         // when
         Optional<MeaningTag> findTag = meaningTagRepository.findByQuote(quote);
 
+        entityManager.clear();
+
         // when, then
         assertAll(
                 () -> {
@@ -46,13 +52,14 @@ class MeaningTagRepositoryTest {
     void findPageOrderByRegisteredCountDesc() {
 
         // given
+        PageRequest pageRequest = PageRequest.of(0, 10);
         for (int i = 1; i <= 20; i++) {
             meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTagBuilder()
                     .id((long) i)
                     .registeredCount(i).build());
         }
 
-        PageRequest pageRequest = PageRequest.of(0, 10);
+        entityManager.clear();
 
         // when
         Page<MeaningTag> result = meaningTagRepository.findAllByOrderByRegisteredCountDesc(pageRequest);

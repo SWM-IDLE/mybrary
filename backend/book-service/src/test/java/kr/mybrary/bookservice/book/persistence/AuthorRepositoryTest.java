@@ -9,10 +9,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class AuthorRepositoryTest {
+
+    @Autowired
+    TestEntityManager entityManager;
 
     @Autowired
     AuthorRepository authorRepository;
@@ -37,6 +41,8 @@ class AuthorRepositoryTest {
 
         // given
         Author savedAuthor = authorRepository.save(createAuthor());
+
+        entityManager.clear();
 
         // when
         Author foundAuthor = authorRepository.findByName(savedAuthor.getName()).orElseThrow();

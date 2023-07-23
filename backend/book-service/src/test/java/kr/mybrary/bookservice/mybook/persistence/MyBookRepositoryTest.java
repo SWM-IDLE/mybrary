@@ -53,10 +53,8 @@ class MyBookRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(savedMyBook.getUserId()).isEqualTo(myBook.getUserId()),
-                () -> assertThat(savedMyBook.getBook().getIsbn10()).isEqualTo(
-                        myBook.getBook().getIsbn10()),
-                () -> assertThat(savedMyBook.getBook().getIsbn13()).isEqualTo(
-                        myBook.getBook().getIsbn13()),
+                () -> assertThat(savedMyBook.getBook().getIsbn10()).isEqualTo(myBook.getBook().getIsbn10()),
+                () -> assertThat(savedMyBook.getBook().getIsbn13()).isEqualTo(myBook.getBook().getIsbn13()),
                 () -> assertThat(savedMyBook.getReadStatus()).isEqualTo(ReadStatus.TO_READ),
                 () -> assertThat(savedMyBook.isShowable()).isEqualTo(true),
                 () -> assertThat(savedMyBook.isDeleted()).isEqualTo(false),

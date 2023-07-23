@@ -9,10 +9,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class TranslatorRepositoryTest {
+
+    @Autowired
+    TestEntityManager entityManager;
 
     @Autowired
     TranslatorRepository translatorRepository;
@@ -37,6 +41,8 @@ class TranslatorRepositoryTest {
 
         // given
         Translator savedTranslator = translatorRepository.save(createTranslator());
+
+        entityManager.clear();
 
         // when
         Translator foundTranslator = translatorRepository.findByName(savedTranslator.getName()).orElseThrow();

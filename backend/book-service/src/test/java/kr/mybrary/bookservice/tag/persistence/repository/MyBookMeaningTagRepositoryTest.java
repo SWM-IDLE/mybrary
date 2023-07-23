@@ -19,10 +19,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class MyBookMeaningTagRepositoryTest {
+
+    @Autowired
+    TestEntityManager entityManager;
 
     @Autowired
     private MyBookMeaningTagRepository myBookMeaningTagRepository;
@@ -42,10 +46,12 @@ class MyBookMeaningTagRepositoryTest {
         // given
         Book savedBook = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
         MyBook savedMyBook = myBookRepository.save(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook));
-        MeaningTag savedMeaningTag = meaningTagRepository.save(
-                MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag());
+        MeaningTag savedMeaningTag = meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag());
 
-        myBookMeaningTagRepository.save(MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTag(savedMyBook, savedMeaningTag));
+        myBookMeaningTagRepository.save(
+                MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTag(savedMyBook, savedMeaningTag));
+
+        entityManager.clear();
 
         // when
         Optional<MyBookMeaningTag> findMyBookMeaningTag = myBookMeaningTagRepository.findByMyBook(savedMyBook);
@@ -54,8 +60,10 @@ class MyBookMeaningTagRepositoryTest {
         assertAll(
                 () -> {
                     assertThat(findMyBookMeaningTag.isPresent()).isTrue();
-                    assertThat(findMyBookMeaningTag.get().getMyBook()).isEqualTo(savedMyBook);
-                    assertThat(findMyBookMeaningTag.get().getMeaningTag()).isEqualTo(savedMeaningTag);
+                    assertThat(findMyBookMeaningTag.get().getMyBook().getBook().getIsbn10()).isEqualTo(
+                                    savedMyBook.getBook().getIsbn10());
+                    assertThat(findMyBookMeaningTag.get().getMeaningTag().getQuote()).isEqualTo(
+                                    savedMeaningTag.getQuote());
                 }
         );
     }
