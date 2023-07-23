@@ -8,6 +8,7 @@ import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceReque
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindByMeaningTagQuoteServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
@@ -104,4 +105,12 @@ public class MyBookService {
                 .orElseThrow(MyBookNotFoundException::new);
     }
 
+    public List<MyBookElementResponse> findByMeaningTagQuote(
+            MyBookFindByMeaningTagQuoteServiceRequest request) {
+
+        return myBookRepository.findByMeaningTagQuote(request.getQuote())
+                .stream()
+                .map(MyBookDtoMapper.INSTANCE::entityToMyBookElementResponse)
+                .toList();
+    }
 }
