@@ -10,6 +10,11 @@ import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
+import kr.mybrary.bookservice.tag.MeaningTagFixture;
+import kr.mybrary.bookservice.tag.MyBookMeaningTagFixture;
+import kr.mybrary.bookservice.tag.persistence.MeaningTag;
+import kr.mybrary.bookservice.tag.persistence.repository.MeaningTagRepository;
+import kr.mybrary.bookservice.tag.persistence.repository.MyBookMeaningTagRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +31,12 @@ class MyBookRepositoryTest {
     @Autowired
     BookRepository bookRepository;
 
+    @Autowired
+    MeaningTagRepository meaningTagRepository;
+
+    @Autowired
+    MyBookMeaningTagRepository myBookMeaningTagRepository;
+
     @DisplayName("마이북을 저장한다.")
     @Test
     void saveMybook() {
@@ -39,8 +50,10 @@ class MyBookRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(savedMyBook.getUserId()).isEqualTo(myBook.getUserId()),
-                () -> assertThat(savedMyBook.getBook().getIsbn10()).isEqualTo(myBook.getBook().getIsbn10()),
-                () -> assertThat(savedMyBook.getBook().getIsbn13()).isEqualTo(myBook.getBook().getIsbn13()),
+                () -> assertThat(savedMyBook.getBook().getIsbn10()).isEqualTo(
+                        myBook.getBook().getIsbn10()),
+                () -> assertThat(savedMyBook.getBook().getIsbn13()).isEqualTo(
+                        myBook.getBook().getIsbn13()),
                 () -> assertThat(savedMyBook.getReadStatus()).isEqualTo(ReadStatus.TO_READ),
                 () -> assertThat(savedMyBook.isShowable()).isEqualTo(true),
                 () -> assertThat(savedMyBook.isDeleted()).isEqualTo(false),
@@ -102,9 +115,55 @@ class MyBookRepositoryTest {
         assertAll(
                 () -> assertThat(myBookRepository.findByIdAndDeletedIsFalse(savedMyBook.getId())
                         .isPresent()).isTrue(),
-                () -> assertThatThrownBy(() -> myBookRepository.findByIdAndDeletedIsFalse(savedDeletedMyBook.getId())
+                () -> assertThatThrownBy(
+                        () -> myBookRepository.findByIdAndDeletedIsFalse(savedDeletedMyBook.getId())
                                 .orElseThrow(IllegalArgumentException::new))
         );
 
+    }
+
+    @DisplayName("의미 태그 문구를 통해서 모든 마이북을 조회한다.")
+    @Test
+    void findAllMyBooksByMeaningTag() {
+
+        // given
+        MeaningTag meaningTag_1 = meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTagBuilder()
+                .id(1L).quote("meaningTag_1").build());
+
+        MeaningTag meaningTag_2 = meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTagBuilder()
+                .id(2L).quote("meaningTag_2").build());
+
+        Book book_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+        Book book_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+
+        MyBook myBook_1 = myBookRepository.save(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(1L).book(book_1).build());
+        MyBook myBook_2 = myBookRepository.save(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(2L).book(book_2).build());
+        MyBook myBook_3 = myBookRepository.save(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(3L).book(book_2).build());
+
+        myBookMeaningTagRepository.save(MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTagBuilder()
+                        .id(1L)
+                        .meaningTag(meaningTag_1)
+                        .myBook(myBook_1).build());
+
+        myBookMeaningTagRepository.save(MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTagBuilder()
+                        .id(2L)
+                        .meaningTag(meaningTag_2)
+                        .myBook(myBook_2).build());
+
+        myBookMeaningTagRepository.save(MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTagBuilder()
+                        .id(3L)
+                        .meaningTag(meaningTag_2)
+                        .myBook(myBook_3).build());
+
+        // when
+        List<MyBook> myBooks = myBookRepository.findByMeaningTagQuote("meaningTag_2");
+
+        // then
+        assertAll(
+                () -> assertThat(myBooks.size()).isEqualTo(2),
+                () -> assertThat(myBooks.contains(myBook_1)).isFalse(),
+                () -> assertThat(myBooks.contains(myBook_2)).isTrue(),
+                () -> assertThat(myBooks.contains(myBook_3)).isTrue()
+        );
     }
 }
