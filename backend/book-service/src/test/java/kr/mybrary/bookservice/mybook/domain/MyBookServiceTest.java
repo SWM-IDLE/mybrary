@@ -169,7 +169,7 @@ class MyBookServiceTest {
         MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+        given(myBookRepository.findById(any())).willReturn(
                 Optional.ofNullable(myBook));
 
         // when
@@ -182,7 +182,7 @@ class MyBookServiceTest {
                     assertNotNull(myBook);
                     assertThat(myBookDetail.getId()).isEqualTo(myBook.getId());
                 },
-                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId())
+                () -> verify(myBookRepository).findById(request.getMybookId())
         );
     }
 
@@ -193,14 +193,14 @@ class MyBookServiceTest {
         //given
         MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
 
-        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+        given(myBookRepository.findById(any())).willReturn(
                 Optional.empty());
 
         // when, then
         assertAll(
                 () -> assertThatThrownBy(() -> myBookService.findMyBookDetail(request))
                         .isInstanceOf(MyBookNotFoundException.class),
-                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId())
+                () -> verify(myBookRepository).findById(request.getMybookId())
         );
     }
 
@@ -212,14 +212,14 @@ class MyBookServiceTest {
         MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MyBookFixture.NOT_SHOWABLE_OTHER_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+        given(myBookRepository.findById(any())).willReturn(
                 Optional.ofNullable(myBook));
 
         // when, then
         assertAll(
                 () -> assertThatThrownBy(() -> myBookService.findMyBookDetail(request))
                         .isInstanceOf(MyBookAccessDeniedException.class),
-                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId())
+                () -> verify(myBookRepository).findById(request.getMybookId())
         );
     }
 
@@ -231,7 +231,7 @@ class MyBookServiceTest {
         MyBookDeleteServiceRequest request = MyBookDeleteServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+        given(myBookRepository.findById(any())).willReturn(
                 Optional.ofNullable(myBook));
 
         // when
@@ -239,7 +239,7 @@ class MyBookServiceTest {
 
         // then
         assertAll(
-                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId()),
+                () -> verify(myBookRepository).findById(request.getMybookId()),
                 () -> {
                     assertThat(myBook).isNotNull();
                     assertThat(myBook.isDeleted()).isTrue();
@@ -255,7 +255,7 @@ class MyBookServiceTest {
         MyBookDeleteServiceRequest request = MyBookDeleteServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MyBookFixture.COMMON_OTHER_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+        given(myBookRepository.findById(any())).willReturn(
                 Optional.ofNullable(myBook));
 
         // when, then
@@ -266,7 +266,7 @@ class MyBookServiceTest {
                     assertThat(myBook).isNotNull();
                     assertThat(myBook.isDeleted()).isFalse();
                 },
-                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMybookId())
+                () -> verify(myBookRepository).findById(request.getMybookId())
         );
     }
 
@@ -279,7 +279,7 @@ class MyBookServiceTest {
                 LOGIN_ID, MYBOOK_ID);
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+        given(myBookRepository.findById(any())).willReturn(
                 Optional.ofNullable(myBook));
         willDoNothing().given(meaningTagService).assignMeaningTag(any());
 
@@ -288,7 +288,7 @@ class MyBookServiceTest {
 
         // then
         assertAll(
-                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMyBookId()),
+                () -> verify(myBookRepository).findById(request.getMyBookId()),
                 () -> {
                     assertThat(myBook).isNotNull();
                     assertThat(response.getStartDateOfPossession()).isEqualTo(
@@ -314,14 +314,14 @@ class MyBookServiceTest {
                 LOGIN_ID, MYBOOK_ID);
         MyBook myBook = MyBookFixture.COMMON_OTHER_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findByIdAndDeletedIsFalse(any())).willReturn(
+        given(myBookRepository.findById(any())).willReturn(
                 Optional.ofNullable(myBook));
 
         // when, then
         assertAll(
                 () -> assertThatThrownBy(() -> myBookService.updateMyBookProperties(request))
                         .isInstanceOf(MyBookAccessDeniedException.class),
-                () -> verify(myBookRepository).findByIdAndDeletedIsFalse(request.getMyBookId())
+                () -> verify(myBookRepository).findById(request.getMyBookId())
         );
     }
 
