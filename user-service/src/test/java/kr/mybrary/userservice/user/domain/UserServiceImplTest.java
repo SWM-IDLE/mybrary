@@ -11,6 +11,7 @@ import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFo
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateNicknameException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
+import kr.mybrary.userservice.user.domain.exception.user.UserNotSearchedException;
 import kr.mybrary.userservice.user.domain.storage.StorageService;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
@@ -23,6 +24,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -425,5 +428,42 @@ class UserServiceImplTest {
         // Then
         verify(userRepository).findByLoginId(FOLLOWER_ID);
     }
+
+    @Test
+    @DisplayName("닉네임으로 사용자를 검색하면 해당 닉네임을 포함하는 사용자 목록을 조회한다")
+    void searchUsersByNickname() {
+        // Given
+        given(userRepository.findByNicknameContaining("nickname")).willReturn(
+                Arrays.asList(UserFixture.COMMON_USER.getUser(), UserFixture.USER_WITH_SIMILAR_NICKNAME.getUser()));
+
+        // When
+        SearchServiceResponse searchServiceResponse = userService.searchByNickname("nickname");
+
+        // Then
+        assertAll(
+                () -> assertThat(searchServiceResponse.getSearchedUsers()).hasSize(2),
+                () -> assertThat(searchServiceResponse.getSearchedUsers()).extracting("nickname").containsExactly("nickname", "nickname123")
+        );
+
+        verify(userRepository).findByNicknameContaining("nickname");
+    }
+
+    @Test
+    @DisplayName("닉네임으로 사용자를 검색할 때 사용자가 검색되지 않으면 예외를 던진다")
+    void searchUsersByNicknameAndUserNotSearched() {
+        // Given
+        given(userRepository.findByNicknameContaining("nickname")).willReturn(Collections.emptyList());
+
+        // When
+        assertThatThrownBy(() -> userService.searchByNickname("nickname"))
+                .isInstanceOf(UserNotSearchedException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
+                .hasFieldOrPropertyWithValue("errorCode", "U-07")
+                .hasFieldOrPropertyWithValue("errorMessage", "검색된 사용자가 없습니다.");
+
+        // Then
+        verify(userRepository).findByNicknameContaining("nickname");
+    }
+
 
 }

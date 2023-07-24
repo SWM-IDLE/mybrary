@@ -12,8 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 public enum UserFixture {
 
-    COMMON_USER(1L, "loginId", "nickname", "encodedPassword", Role.USER, "socialId",
-            SocialType.GOOGLE, "email@mail.com", "introduction", "profileImageUrl",
+    COMMON_USER(1L, "loginId", "nickname", "encodedPassword", Role.USER,
+            "socialId", SocialType.GOOGLE, "email@mail.com", "introduction", "profileImageUrl",
             Collections.emptyList(), Collections.emptyList()),
     USER_WITHOUT_PROFILE_IMAGE_URL(1L, "loginId", "nickname", "encodedPassword", Role.USER,
             "socialId", SocialType.GOOGLE, "email@mail.com", "introduction", null,
@@ -31,7 +31,11 @@ public enum UserFixture {
     USER_AS_FOLLOWER(1L, "followerId", "nickname", "encodedPassword", Role.USER,
             "socialId", SocialType.GOOGLE, "email@mail.com", "introduction", "profileImageUrl",
             Collections.emptyList(),
-            List.of(Follow.builder().source(User.builder().loginId("followerId").build()).target(User.builder().loginId("followingId").build()).build()));
+            List.of(Follow.builder().source(User.builder().loginId("followerId").build()).target(User.builder().loginId("followingId").build()).build())),
+
+    USER_WITH_SIMILAR_NICKNAME(1L, "loginId", "nickname123", "encodedPassword", Role.USER,
+            "socialId", SocialType.GOOGLE, "email@mail.com", "introduction", "profileImageUrl",
+            Collections.emptyList(), Collections.emptyList());
 
     private final Long id;
     private final String loginId;
