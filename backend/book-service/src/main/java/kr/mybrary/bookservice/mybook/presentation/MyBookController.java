@@ -90,7 +90,7 @@ public class MyBookController {
     public ResponseEntity findMyBooksByMeaningTag(@RequestHeader("USER-ID") String loginId,
             @PathVariable String meaningTagQuote) {
 
-        MyBookFindByMeaningTagQuoteServiceRequest request = MyBookFindByMeaningTagQuoteServiceRequest.of(meaningTagQuote);
+        MyBookFindByMeaningTagQuoteServiceRequest request = MyBookFindByMeaningTagQuoteServiceRequest.of(loginId, meaningTagQuote);
 
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "의미 태그를 통해서 마이북을 조회했습니다.",
                         myBookService.findByMeaningTagQuote(request)));

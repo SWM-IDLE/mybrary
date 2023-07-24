@@ -141,26 +141,6 @@ class MyBookServiceTest {
         );
     }
 
-    @DisplayName("마이북 조회시, 마이북에서 삭제한 도서는 조회되지 않는다.")
-    @Test
-    void findAllMyBooksWithoutDeletedMyBook() {
-
-        //given
-        MyBookFindAllServiceRequest request = MybookDtoTestData.createMyBookFindAllServiceRequest(
-                LOGIN_ID, LOGIN_ID);
-
-        given(myBookRepository.findAllByUserId(any())).willReturn(
-                List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(),
-                        MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(),
-                        MyBookFixture.DELETED_LOGIN_USER_MYBOOK.getMyBook()));
-
-        // when, then
-        assertAll(
-                () -> assertThat(myBookService.findAllMyBooks(request).size()).isEqualTo(2),
-                () -> verify(myBookRepository).findAllByUserId(request.getUserId())
-        );
-    }
-
     @DisplayName("내 마이북 상세보기한다.")
     @Test
     void findMyBookDetail() {
@@ -330,7 +310,7 @@ class MyBookServiceTest {
     void findMyBookByMeaningTagQuote() {
 
         // given
-        MyBookFindByMeaningTagQuoteServiceRequest request = MyBookFindByMeaningTagQuoteServiceRequest.of("quote");
+        MyBookFindByMeaningTagQuoteServiceRequest request = MyBookFindByMeaningTagQuoteServiceRequest.of(LOGIN_ID, "quote");
 
         given(myBookRepository.findByMeaningTagQuote(request.getQuote())).willReturn(
                 List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()));
@@ -342,6 +322,29 @@ class MyBookServiceTest {
         assertAll(
                 () -> verify(myBookRepository, times(1)).findByMeaningTagQuote(request.getQuote()),
                 () -> assertThat(result.size()).isEqualTo(1)
+        );
+    }
+
+    @DisplayName("의미 태그 문구를 통해서 마이북을 조회시, 다른 유저의 비공개 마이북은 조회되지 않는다.")
+    @Test
+    void findMyBookByMeaningTagQuoteAndNotShowable() {
+
+        // given
+        MyBookFindByMeaningTagQuoteServiceRequest request = MyBookFindByMeaningTagQuoteServiceRequest.of(LOGIN_ID, "quote");
+
+        given(myBookRepository.findByMeaningTagQuote(request.getQuote())).willReturn(
+                List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(),
+                        MyBookFixture.NOT_SHOWABLE_LOGIN_USER_MYBOOK.getMyBook(),
+                        MyBookFixture.NOT_SHOWABLE_OTHER_USER_MYBOOK.getMyBook(),
+                        MyBookFixture.NOT_SHOWABLE_OTHER_USER_MYBOOK.getMyBook()));
+
+        // when
+        List<MyBookElementResponse> result = myBookService.findByMeaningTagQuote(request);
+
+        // then
+        assertAll(
+                () -> verify(myBookRepository, times(1)).findByMeaningTagQuote(request.getQuote()),
+                () -> assertThat(result.size()).isEqualTo(2)
         );
     }
 }

@@ -41,19 +41,12 @@ public class MyBookService {
         return myBookRepository.save(myBook);
     }
 
-    private void checkBookAlreadyRegisteredAsMyBook(String userId, Book book) {
-        if (myBookRepository.existsByUserIdAndBook(userId, book)) {
-            throw new MyBookAlreadyExistsException();
-        }
-    }
-
     @Transactional(readOnly = true)
     public List<MyBookElementResponse> findAllMyBooks(MyBookFindAllServiceRequest request) {
 
         List<MyBook> mybooks = myBookRepository.findAllByUserId(request.getUserId());
 
         return mybooks.stream()
-                .filter(myBook -> !myBook.isDeleted())
                 .filter(myBook -> request.getUserId().equals(request.getLoginId()) || myBook.isShowable())
                 .map(MyBookDtoMapper.INSTANCE::entityToMyBookElementResponse)
                 .toList();
@@ -69,6 +62,17 @@ public class MyBookService {
         }
 
         return MyBookDtoMapper.INSTANCE.entityToMyBookDetailResponse(myBook);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MyBookElementResponse> findByMeaningTagQuote(
+            MyBookFindByMeaningTagQuoteServiceRequest request) {
+
+        return myBookRepository.findByMeaningTagQuote(request.getQuote())
+                .stream()
+                .filter(myBook -> myBook.getUserId().equals(request.getLoginId()) || myBook.isShowable())
+                .map(MyBookDtoMapper.INSTANCE::entityToMyBookElementResponse)
+                .toList();
     }
 
     public void deleteMyBook(MyBookDeleteServiceRequest request) {
@@ -96,21 +100,17 @@ public class MyBookService {
         return MyBookUpdateResponse.of(myBook, request.getMeaningTag());
     }
 
+    private void checkBookAlreadyRegisteredAsMyBook(String userId, Book book) {
+        if (myBookRepository.existsByUserIdAndBook(userId, book)) {
+            throw new MyBookAlreadyExistsException();
+        }
+    }
+
     private static boolean isOwnerSameAsRequester(String ownerId, String requesterId) {
         return !ownerId.equals(requesterId);
     }
 
     private MyBook findMyBookById(Long myBookId) {
-        return myBookRepository.findById(myBookId)
-                .orElseThrow(MyBookNotFoundException::new);
-    }
-
-    public List<MyBookElementResponse> findByMeaningTagQuote(
-            MyBookFindByMeaningTagQuoteServiceRequest request) {
-
-        return myBookRepository.findByMeaningTagQuote(request.getQuote())
-                .stream()
-                .map(MyBookDtoMapper.INSTANCE::entityToMyBookElementResponse)
-                .toList();
+        return myBookRepository.findById(myBookId).orElseThrow(MyBookNotFoundException::new);
     }
 }
