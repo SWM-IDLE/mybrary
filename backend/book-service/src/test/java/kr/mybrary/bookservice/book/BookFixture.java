@@ -1,17 +1,13 @@
 package kr.mybrary.bookservice.book;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import kr.mybrary.bookservice.book.persistence.Book;
+import kr.mybrary.bookservice.book.persistence.Book.BookBuilder;
 import kr.mybrary.bookservice.book.persistence.author.Author;
 import kr.mybrary.bookservice.book.persistence.author.BookAuthor;
 import kr.mybrary.bookservice.book.persistence.translator.BookTranslator;
 import kr.mybrary.bookservice.book.persistence.translator.Translator;
-import kr.mybrary.bookservice.mybook.persistence.MyBook;
-import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -56,6 +52,27 @@ public enum BookFixture {
                 .bookTranslators(bookTranslators)
                 .build();
     }
+
+    public BookBuilder getBookBuilder() {
+        return Book.builder()
+                .id(id)
+                .title(title)
+                .description(description)
+                .detailsUrl(detailsUrl)
+                .isbn10(isbn10)
+                .isbn13(isbn13)
+                .publisher(publisher)
+                .publishDate(publishDate)
+                .price(price)
+                .thumbnailUrl(thumbnailUrl)
+                .holderCount(holderCount)
+                .readCount(readCount)
+                .interestCount(interestCount)
+                .bookAuthors(bookAuthors)
+                .bookTranslators(bookTranslators);
+    }
+
+
 
     private static List<BookAuthor> createBookAuthors() {
         BookAuthor testAuthor_1 = BookAuthor.builder()

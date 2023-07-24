@@ -36,6 +36,7 @@ class MeaningTagRepositoryTest {
         // when
         Optional<MeaningTag> findTag = meaningTagRepository.findByQuote(quote);
 
+        entityManager.flush();
         entityManager.clear();
 
         // when, then
@@ -59,6 +60,7 @@ class MeaningTagRepositoryTest {
                     .registeredCount(i).build());
         }
 
+        entityManager.flush();
         entityManager.clear();
 
         // when

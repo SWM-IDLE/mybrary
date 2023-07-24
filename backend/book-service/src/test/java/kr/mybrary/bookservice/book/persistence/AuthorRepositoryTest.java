@@ -42,6 +42,7 @@ class AuthorRepositoryTest {
         // given
         Author savedAuthor = authorRepository.save(createAuthor());
 
+        entityManager.flush();
         entityManager.clear();
 
         // when
