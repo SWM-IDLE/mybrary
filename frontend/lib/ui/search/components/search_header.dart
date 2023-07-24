@@ -31,7 +31,7 @@ class SearchHeader extends StatelessWidget {
         IconButton(
           onPressed: () {
             Navigator.of(context)
-                .pushNamedAndRemoveUntil('/home', (route) => false);
+                .pushNamedAndRemoveUntil('/screen', (route) => false);
           },
           icon: Icon(
             Icons.arrow_back,
@@ -43,7 +43,6 @@ class SearchHeader extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 14.0),
             child: TextField(
-              autofocus: true,
               textInputAction: TextInputAction.search,
               controller: bookSearchController,
               cursorColor: PRIMARY_COLOR,
@@ -60,7 +59,7 @@ class SearchHeader extends StatelessWidget {
                 enabledBorder: searchInputBorderStyle,
                 focusColor: GREY_COLOR,
                 prefixIcon: Image.asset(
-                  'assets/svg/icon/search.svg',
+                  'assets/img/icon/search.png',
                   color: LESS_GREY_COLOR,
                   scale: 1.2,
                 ),
