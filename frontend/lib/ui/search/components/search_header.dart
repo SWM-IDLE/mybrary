@@ -60,7 +60,7 @@ class SearchHeader extends StatelessWidget {
                 enabledBorder: searchInputBorderStyle,
                 focusColor: GREY_COLOR,
                 prefixIcon: Image.asset(
-                  'assets/icon/search_icon.png',
+                  'assets/svg/icon/search.svg',
                   color: LESS_GREY_COLOR,
                   scale: 1.2,
                 ),
@@ -82,7 +82,7 @@ class SearchHeader extends StatelessWidget {
             child: IconButton(
               onPressed: onPressedIsbnScan,
               icon: Image.asset(
-                'assets/icon/barcode_scan_icon.png',
+                'assets/img/icon/barcode_scan.png',
                 color: PRIMARY_COLOR,
               ),
             ),

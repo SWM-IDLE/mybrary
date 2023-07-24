@@ -21,7 +21,7 @@ class BookDetailAppBar extends StatelessWidget implements PreferredSizeWidget {
                 .pushNamedAndRemoveUntil('/home', (route) => false);
           },
           icon: Image.asset(
-            'assets/icon/home_icon.png',
+            'assets/img/icon/home.png',
           ),
         ),
       ],
