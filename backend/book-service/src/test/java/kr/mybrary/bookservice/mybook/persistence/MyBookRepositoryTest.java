@@ -75,6 +75,7 @@ class MyBookRepositoryTest {
 
         MyBook savedMyBook = myBookRepository.save(myBook);
 
+        entityManager.flush();
         entityManager.clear();
 
         // when, then
@@ -102,6 +103,7 @@ class MyBookRepositoryTest {
         myBookRepository.save(myBook_2);
         myBookRepository.save(myBook_3);
 
+        entityManager.flush();
         entityManager.clear();
 
         // when
@@ -127,6 +129,7 @@ class MyBookRepositoryTest {
         MyBook savedMyBook = myBookRepository.save(myBook_1);
         MyBook savedDeletedMyBook = myBookRepository.save(myBook_2);
 
+        entityManager.flush();
         entityManager.clear();
 
         // when, then
@@ -148,15 +151,19 @@ class MyBookRepositoryTest {
         MeaningTag meaningTag_2 = meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTagBuilder()
                 .id(2L).quote("meaningTag_2").build());
 
-        Book book_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
-        Book book_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+        Book book_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(1L).build());
+        Book book_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(2L).build());
+        Book book_3 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(3L).build());
+        Book book_4 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(4L).build());
 
         MyBook myBook_1 = myBookRepository.save(
                 MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(1L).book(book_1).build());
         MyBook myBook_2 = myBookRepository.save(
                 MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(2L).book(book_2).build());
         MyBook myBook_3 = myBookRepository.save(
-                MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(3L).book(book_2).build());
+                MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(3L).book(book_3).build());
+        MyBook myBook_4 = myBookRepository.save(
+                MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(4L).book(book_4).build());
 
         myBookMeaningTagRepository.save(MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTagBuilder()
                 .id(1L)
@@ -173,6 +180,7 @@ class MyBookRepositoryTest {
                 .meaningTag(meaningTag_2)
                 .myBook(myBook_3).build());
 
+        entityManager.flush();
         entityManager.clear();
 
         // when
@@ -204,6 +212,7 @@ class MyBookRepositoryTest {
 
         myBookMeaningTagRepository.save(myBookMeaningTag);
 
+        entityManager.flush();
         entityManager.clear();
 
         // then
@@ -234,6 +243,7 @@ class MyBookRepositoryTest {
         MyBook myBook = myBookRepository.saveAndFlush(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
                 .id(1L).book(book).build());
 
+        entityManager.flush();
         entityManager.clear();
 
         // then

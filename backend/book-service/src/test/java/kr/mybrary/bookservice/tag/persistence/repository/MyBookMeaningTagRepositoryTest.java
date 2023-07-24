@@ -51,6 +51,7 @@ class MyBookMeaningTagRepositoryTest {
         myBookMeaningTagRepository.save(
                 MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTag(savedMyBook, savedMeaningTag));
 
+        entityManager.flush();
         entityManager.clear();
 
         // when

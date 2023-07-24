@@ -42,6 +42,7 @@ class TranslatorRepositoryTest {
         // given
         Translator savedTranslator = translatorRepository.save(createTranslator());
 
+        entityManager.flush();
         entityManager.clear();
 
         // when
