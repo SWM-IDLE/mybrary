@@ -1,38 +1,12 @@
 package kr.mybrary.userservice.user.presentation;
 
-import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
-import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
-import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
+import com.epages.restdocs.apispec.SimpleType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.List;
 import kr.mybrary.userservice.user.domain.UserService;
-import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.response.FollowResponse;
-import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.request.*;
+import kr.mybrary.userservice.user.domain.dto.response.*;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.presentation.dto.request.FollowRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.FollowerRequest;
@@ -53,6 +27,22 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
 @MockBean(JpaMetamodelMappingContext.class)
@@ -813,6 +803,74 @@ class UserControllerTest {
                                                 .description(MESSAGE_FIELD_DESCRIPTION),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT)
                                                 .description("응답 데이터").optional()
+                                )
+                                .build()
+                ))
+        );
+    }
+
+    @DisplayName("닉네임으로 사용자를 검색한다.")
+    @Test
+    void searchByNickname() throws Exception {
+        // given
+        SearchServiceResponse searchServiceResponse = SearchServiceResponse.builder()
+                .searchedUsers(List.of(
+                        SearchServiceResponse.SearchedUser.builder()
+                                .loginId("loginId1")
+                                .nickname("nickname1")
+                                .profileImageUrl("profileImageUrl1")
+                                .build(),
+                        SearchServiceResponse.SearchedUser.builder()
+                                .loginId("loginId2")
+                                .nickname("nickname2")
+                                .profileImageUrl("profileImageUrl2")
+                                .build()
+                )).build();
+
+        given(userService.searchByNickname(any()))
+                .willReturn(searchServiceResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.get(BASE_URL + "/search")
+                        .header("USER-ID", LOGIN_ID)
+                        .param("nickname", "nickname"));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
+                .andExpect(jsonPath("$.message").value("닉네임으로 사용자를 검색했습니다."))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data.searchedUsers[0].nickname").value(searchServiceResponse.getSearchedUsers().get(0).getNickname()))
+                .andExpect(jsonPath("$.data.searchedUsers[1].nickname").value(searchServiceResponse.getSearchedUsers().get(1).getNickname()));
+
+        verify(userService).searchByNickname(any());
+
+        // docs
+        actions.andDo(document("search-user-by-nickname",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-search")
+                                .summary("닉네임으로 사용자를 검색한다.")
+                                .queryParameters(
+                                        parameterWithName("nickname").type(SimpleType.STRING).description("검색할 닉네임")
+                                )
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .responseSchema(Schema.schema("search_user_by_nickname_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.searchedUsers").type(JsonFieldType.ARRAY).description("검색된 사용자 목록"),
+                                        fieldWithPath("data.searchedUsers[].loginId").type(JsonFieldType.STRING).description("검색된 사용자의 아이디"),
+                                        fieldWithPath("data.searchedUsers[].nickname").type(JsonFieldType.STRING).description("검색된 사용자의 닉네임"),
+                                        fieldWithPath("data.searchedUsers[].profileImageUrl").type(JsonFieldType.STRING).description("검색된 사용자의 프로필 이미지 URL")
                                 )
                                 .build()
                 ))
