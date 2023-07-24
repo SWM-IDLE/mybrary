@@ -42,6 +42,15 @@ public class MeaningTagService {
     }
 
     public void assignMeaningTag(MeaningTagAssignServiceRequest request) {
+
+        if (request.getQuote().equals("") && myBookMeaningTagRepository.findByMyBook(request.getMyBook()).isPresent()) {
+            MyBookMeaningTag myBookMeaningTag = myBookMeaningTagRepository.findByMyBook(request.getMyBook()).get();
+            myBookMeaningTag.getMeaningTag().decreaseRegisteredCount();
+
+            myBookMeaningTagRepository.deleteByMyBook(request.getMyBook());
+            return;
+        }
+
         MeaningTag meaningTag = meaningTagRepository.findByQuote(request.getQuote())
                 .orElseGet(() -> saveAndGetMeaningTag(request.getLoginId(), request.getQuote()));
 

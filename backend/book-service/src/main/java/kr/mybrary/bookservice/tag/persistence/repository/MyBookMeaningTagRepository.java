@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MyBookMeaningTagRepository extends JpaRepository<MyBookMeaningTag, Long> {
 
     Optional<MyBookMeaningTag> findByMyBook(MyBook myBook);
+
+    void deleteByMyBook(MyBook myBook);
 }
