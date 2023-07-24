@@ -13,9 +13,11 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
 
     List<MyBook> findAllByUserId(String userId);
 
-    @Query("select m from MyBook m join fetch m.myBookMeaningTag mbt "
-            + "join fetch mbt.meaningTag "
-            + "mt where mt.quote = :quote")
+    @Query("select m from MyBook m "
+            + "left join fetch m.book "
+            + "left join fetch m.myBookMeaningTag mbt "
+            + "left join fetch mbt.meaningTag mt "
+            + "where mt.quote = :quote")
     List<MyBook> findByMeaningTagQuote(String quote);
 
     @Query("select m from MyBook m "
