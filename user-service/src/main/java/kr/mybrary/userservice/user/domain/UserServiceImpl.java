@@ -16,6 +16,7 @@ import kr.mybrary.userservice.user.domain.exception.io.EmptyFileException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageFileSizeExceededException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFoundException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
+import kr.mybrary.userservice.user.domain.exception.user.UserNotSearchedException;
 import kr.mybrary.userservice.user.domain.storage.StorageService;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
@@ -262,19 +263,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SearchServiceResponse searchByNickname(String nickname) {
-        return null;
-//        List<User> users = userRepository.findByNicknameContaining(nickname);
-//        List<SearchUserResponse> searchUserResponses = users.stream()
-//                .map(user -> SearchUserResponse.builder()
-//                        .loginId(user.getLoginId())
-//                        .nickname(user.getNickname())
-//                        .profileImageUrl(user.getProfileImageUrl())
-//                        .build())
-//                .collect(Collectors.toList());
-//
-//        return SearchServiceResponse.builder()
-//                .searchUserResponses(searchUserResponses)
-//                .build();
+        List<SearchServiceResponse.SearchedUser> searchedUsers = userRepository.findByNicknameContaining(nickname).stream()
+                .map(user -> SearchServiceResponse.SearchedUser.builder()
+                        .loginId(user.getLoginId())
+                        .nickname(user.getNickname())
+                        .profileImageUrl(user.getProfileImageUrl())
+                        .build())
+                .collect(Collectors.toList());
+
+        checkIfUserNotSearched(searchedUsers);
+
+        SearchServiceResponse serviceResponse = SearchServiceResponse.builder()
+                .searchedUsers(searchedUsers)
+                .build();
+
+        return serviceResponse;
+    }
+
+    private static void checkIfUserNotSearched(List<SearchServiceResponse.SearchedUser> searchedUsers) {
+        if(searchedUsers.isEmpty()) {
+            throw new UserNotSearchedException();
+        }
     }
 
 
