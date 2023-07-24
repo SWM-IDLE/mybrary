@@ -8,11 +8,7 @@ import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.*;
 import kr.mybrary.userservice.user.presentation.dto.request.FollowRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.FollowerRequest;
 import kr.mybrary.userservice.user.presentation.dto.request.ProfileUpdateRequest;
@@ -178,6 +174,16 @@ public class UserController {
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "사용자를 팔로워 목록에서 삭제했습니다.", null)
+        );
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<SuccessResponse> searchByNickname(@RequestParam(value = "nickname") String nickname) {
+        SearchServiceResponse serviceResponse = userService.searchByNickname(nickname);
+
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(HttpStatus.OK.toString(), "닉네임으로 사용자를 검색했습니다.",
+                        serviceResponse)
         );
     }
 

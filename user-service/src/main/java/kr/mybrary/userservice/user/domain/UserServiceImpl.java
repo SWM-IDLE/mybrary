@@ -260,5 +260,22 @@ public class UserServiceImpl implements UserService {
         sourceUser.unfollow(targetUser);
     }
 
+    @Override
+    public SearchServiceResponse searchByNickname(String nickname) {
+        return null;
+//        List<User> users = userRepository.findByNicknameContaining(nickname);
+//        List<SearchUserResponse> searchUserResponses = users.stream()
+//                .map(user -> SearchUserResponse.builder()
+//                        .loginId(user.getLoginId())
+//                        .nickname(user.getNickname())
+//                        .profileImageUrl(user.getProfileImageUrl())
+//                        .build())
+//                .collect(Collectors.toList());
+//
+//        return SearchServiceResponse.builder()
+//                .searchUserResponses(searchUserResponses)
+//                .build();
+    }
+
 
 }
