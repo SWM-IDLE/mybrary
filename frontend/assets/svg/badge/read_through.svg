@@ -1,0 +1,48 @@
+<svg width="73" height="72" viewBox="0 0 73 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="badge">
+<g clip-path="url(#clip0_361_691)">
+<rect x="0.5" width="72" height="72" rx="36" fill="#DAE4F7"/>
+<g id="Group 3090">
+<g id="Group 3089">
+<path id="Vector 84 (Stroke)" fill-rule="evenodd" clip-rule="evenodd" d="M35.8008 17H49.3008L45.1625 21.0903L49.3008 25.1806H37.431V41H35.8008V17Z" fill="#4C70B4"/>
+<g id="Mask group">
+<mask id="mask0_361_691" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="1" y="30" width="72" height="60">
+<path id="Vector 85" d="M37.4388 31.4393C37.0463 30.7902 36.1024 30.7973 35.7197 31.4521L1.5 90H72.8513L37.4388 31.4393Z" fill="#E0BB5B"/>
+</mask>
+<g mask="url(#mask0_361_691)">
+<path id="Vector 78" d="M36.5684 30L1.5 90H72.8513L36.5684 30Z" fill="#BBCAE6"/>
+<path id="Vector 79 (Stroke)" fill-rule="evenodd" clip-rule="evenodd" d="M36.2778 26L40.9444 32.7097L42.5 35.2903L41.9815 37.885L38 41.5L35.4879 38.6008L32.8569 42L28.5 36.5223L29.537 34.7742L31.6111 29.6129L36.2778 26Z" fill="white"/>
+</g>
+</g>
+<g id="Mask group_2">
+<mask id="mask1_361_691" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="27" y="37" width="54" height="47">
+<path id="Vector 85_2" d="M54.4023 38.4393C54.0098 37.7902 53.0659 37.7973 52.6832 38.4521L27.3794 81.7454C26.9898 82.412 27.4706 83.25 28.2428 83.25H79.7267C80.5055 83.25 80.9854 82.399 80.5824 81.7325L54.4023 38.4393Z" fill="#E0BB5B"/>
+</mask>
+<g mask="url(#mask1_361_691)">
+<path id="Vector 78_2" d="M53.5319 37L26.5 83.25H81.5L53.5319 37Z" fill="#A5BDED"/>
+<path id="Vector 79 (Stroke)_2" fill-rule="evenodd" clip-rule="evenodd" d="M54.625 35.125L60.25 43.25L62 49.5L57.5 47.8668L55.5 52.5L52.5 47.8668L49 51.5L44.5 49.5L46.5 45.75L49 39.5L54.625 35.125Z" fill="white"/>
+</g>
+</g>
+<g id="Mask group_3">
+<mask id="mask2_361_691" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="-2" y="39" width="43" height="37">
+<path id="Vector 85_3" d="M19.9959 40.4393C19.6034 39.7902 18.6595 39.7973 18.2768 40.4521L-1.6206 74.4954C-2.01024 75.162 -1.52942 76 -0.757248 76H39.7267C40.5055 76 40.9854 75.149 40.5824 74.4825L19.9959 40.4393Z" fill="#E0BB5B"/>
+</mask>
+<g mask="url(#mask2_361_691)">
+<path id="Vector 78_3" d="M19.1255 39L-2.5 76H41.5L19.1255 39Z" fill="#91A6CE"/>
+<path id="Vector 79 (Stroke)_3" fill-rule="evenodd" clip-rule="evenodd" d="M20 37.5L24.5 44L26 46.5L25.5 49.0136L22.8311 52.073L19.2383 49.707L16.7013 53L12.5 47.6934L13.5 46L15.5 41L20 37.5Z" fill="white"/>
+</g>
+</g>
+</g>
+<path id="Vector 86" d="M36 11L33.5 6" stroke="#4C70B4" stroke-width="2"/>
+<path id="Vector 87" d="M32.4763 14.3812L27.084 11.75" stroke="#4C70B4" stroke-width="2"/>
+<path id="Vector 88" d="M30.2726 17.7571L25.1429 19.1484" stroke="#4C70B4" stroke-width="2"/>
+</g>
+</g>
+<rect x="1" y="0.5" width="71" height="71" rx="35.5" stroke="#EEEEEE"/>
+</g>
+<defs>
+<clipPath id="clip0_361_691">
+<rect x="0.5" width="72" height="72" rx="36" fill="white"/>
+</clipPath>
+</defs>
+</svg>

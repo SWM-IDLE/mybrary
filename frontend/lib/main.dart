@@ -6,6 +6,7 @@ import 'package:mybrary/ui/auth/find_pw/find_password_screen.dart';
 import 'package:mybrary/ui/auth/sign_in/sign_in_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_verify_screen.dart';
+import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/home/home_screen.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/search_isbn_scan_screen.dart';
 import 'package:mybrary/ui/search/search_screen.dart';
@@ -48,6 +49,9 @@ class MyApp extends StatelessWidget {
           );
         } else {
           return MaterialApp(
+            theme: ThemeData(
+              fontFamily: 'NotoSansKR',
+            ),
             debugShowCheckedModeBanner: false,
             title: 'Mybrary',
             home: snapshot.data,
@@ -81,7 +85,7 @@ class Init {
     final refreshToken = await secureStorage.read(key: refreshTokenKey);
 
     // accessToken과 refreshToken이 없으면 로그인 화면으로 이동
-    if (accessToken == null || refreshToken == null) return HomeScreen();
+    if (accessToken == null || refreshToken == null) return RootTab();
 
     // TODO: 초반 앱 화면에서 카메라, 앨범 권한을 획득하는 로직 필요
 
