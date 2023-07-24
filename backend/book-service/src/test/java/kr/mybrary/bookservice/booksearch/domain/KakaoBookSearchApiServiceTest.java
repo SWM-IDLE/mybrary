@@ -20,9 +20,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
+@ActiveProfiles("test")
 @MockBean(JpaMetamodelMappingContext.class)
 @RestClientTest(value = KakaoBookSearchApiService.class)
 class KakaoBookSearchApiServiceTest {
