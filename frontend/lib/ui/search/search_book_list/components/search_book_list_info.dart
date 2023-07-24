@@ -106,7 +106,7 @@ class SearchBookListInfo extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Image.asset(
-                                      'assets/icon/star_icon.png',
+                                      'assets/img/icon/star.png',
                                       color: BOOK_STAR_COLOR,
                                       width: 20.0,
                                     ),

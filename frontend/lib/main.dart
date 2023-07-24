@@ -81,7 +81,7 @@ class Init {
     final refreshToken = await secureStorage.read(key: refreshTokenKey);
 
     // accessToken과 refreshToken이 없으면 로그인 화면으로 이동
-    if (accessToken == null || refreshToken == null) return SearchScreen();
+    if (accessToken == null || refreshToken == null) return HomeScreen();
 
     // TODO: 초반 앱 화면에서 카메라, 앨범 권한을 획득하는 로직 필요
 

@@ -13,6 +13,14 @@ const Color LESS_GREY_COLOR = Color(0xFFBEC2C6);
 const Color DIVIDER_COLOR = Color(0xFFDDDDDD);
 const Color DESCRIPTION_GREY_COLOR = Color(0xFF666666);
 
+// Common Grey Color
+const Color GREY_01_COLOR = Color(0xFFF1F2F5);
+const Color GREY_02_COLOR = Color(0xFFDDDDDD);
+const Color GREY_03_COLOR = Color(0xFFACACAC);
+const Color GREY_04_COLOR = Color(0xFF999999);
+const Color GREY_05_COLOR = Color(0xFF777777);
+const Color GREY_06_COLOR = Color(0xFF262626);
+
 // Auth Color
 const Color LOGIN_PRIMARY_COLOR = Color(0xFFCDE7BE);
 const Color LOGIN_BACKGROUND_COLOR = Color(0xFF313333);

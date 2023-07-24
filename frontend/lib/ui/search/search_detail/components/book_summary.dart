@@ -58,7 +58,7 @@ class BookSummary extends StatelessWidget {
                 Row(
                   children: List.generate(5, (index) => index)
                       .map((e) => Image.asset(
-                            'assets/icon/star_icon.png',
+                            'assets/img/icon/star.png',
                             // 별점의 소수점을 버림 처리하여 별점을 표시
                             // 예를 들어, 3.3은 3점이며 4.8은 4점으로 표시
                             color: e < bookSearchData.starRating!.floor()
