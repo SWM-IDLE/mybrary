@@ -42,9 +42,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+@ActiveProfiles("test")
 @WebMvcTest(MyBookController.class)
 @MockBean(JpaMetamodelMappingContext.class)
 @AutoConfigureRestDocs
