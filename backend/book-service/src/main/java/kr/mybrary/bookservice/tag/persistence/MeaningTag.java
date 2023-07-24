@@ -28,4 +28,8 @@ public class MeaningTag extends BaseEntity {
     public void increaseRegisteredCount() {
         this.registeredCount++;
     }
+
+    public void decreaseRegisteredCount() {
+        this.registeredCount--;
+    }
 }

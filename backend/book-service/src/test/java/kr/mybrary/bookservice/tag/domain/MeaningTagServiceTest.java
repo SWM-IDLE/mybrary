@@ -81,6 +81,29 @@ class MeaningTagServiceTest {
         );
     }
 
+    @DisplayName("의미 태그 문구가 \"\"인 경우에 마이북 의미 태그를 삭제한다.")
+    @Test
+    void deleteMyBookMeaningTag() {
+
+        // given
+        MeaningTagAssignServiceRequest request = MeaningTagDtoTestData.createMeaningTagAssignServiceRequestWithEmptyQuote();
+        MyBookMeaningTag myBookMeaningTag = MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTag();
+
+        given(myBookMeaningTagRepository.findByMyBook(any())).willReturn(
+                Optional.of(myBookMeaningTag));
+
+        // when
+        meaningTagService.assignMeaningTag(request);
+
+        // then
+        assertAll(
+                () -> verify(meaningTagRepository, never()).findByQuote(any()),
+                () -> verify(myBookMeaningTagRepository, times(2)).findByMyBook(any()),
+                () -> verify(myBookMeaningTagRepository, never()).save(any()),
+                () -> assertThat(myBookMeaningTag.getMeaningTag().getRegisteredCount()).isEqualTo(0)
+        );
+    }
+
     @DisplayName("가장 많이 등록된 수에 따라 의미 태그를 페이징 조회한다.")
     @Test
     void findPageByRegisteredCount() {

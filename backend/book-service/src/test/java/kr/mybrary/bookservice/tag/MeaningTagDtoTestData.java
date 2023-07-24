@@ -15,6 +15,14 @@ public class MeaningTagDtoTestData {
                 .colorCode("#TEST_COLOR_CODE")
                 .build();
     }
+    public static MeaningTagAssignServiceRequest createMeaningTagAssignServiceRequestWithEmptyQuote() {
+        return MeaningTagAssignServiceRequest.builder()
+                .loginId("LOGIN_USER_ID")
+                .myBook(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook())
+                .quote("")
+                .colorCode("#TEST_COLOR_CODE")
+                .build();
+    }
 
     public static MeaningTagFindPageServiceRequest createMeaningTagFindPageServiceRequest(int size) {
         return MeaningTagFindPageServiceRequest.builder()
