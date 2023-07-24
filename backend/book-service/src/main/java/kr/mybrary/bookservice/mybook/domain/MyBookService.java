@@ -55,7 +55,8 @@ public class MyBookService {
     @Transactional(readOnly = true)
     public MyBookDetailResponse findMyBookDetail(MyBookDetailServiceRequest request) {
 
-        MyBook myBook = findMyBookById(request.getMybookId());
+        MyBook myBook = myBookRepository.findMyBookDetail(request.getMybookId())
+                .orElseThrow(MyBookNotFoundException::new);
 
         if (myBook.isPrivate() && isOwnerSameAsRequester(myBook.getUserId(), request.getLoginId())) {
             throw new MyBookAccessDeniedException();

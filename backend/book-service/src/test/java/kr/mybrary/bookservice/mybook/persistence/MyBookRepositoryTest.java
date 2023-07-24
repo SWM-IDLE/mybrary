@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import java.util.Optional;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
@@ -12,8 +13,10 @@ import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.tag.MeaningTagFixture;
 import kr.mybrary.bookservice.tag.MyBookMeaningTagFixture;
 import kr.mybrary.bookservice.tag.persistence.MeaningTag;
+import kr.mybrary.bookservice.tag.persistence.MyBookMeaningTag;
 import kr.mybrary.bookservice.tag.persistence.repository.MeaningTagRepository;
 import kr.mybrary.bookservice.tag.persistence.repository.MyBookMeaningTagRepository;
+import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,24 +151,27 @@ class MyBookRepositoryTest {
         Book book_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
         Book book_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
 
-        MyBook myBook_1 = myBookRepository.save(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(1L).book(book_1).build());
-        MyBook myBook_2 = myBookRepository.save(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(2L).book(book_2).build());
-        MyBook myBook_3 = myBookRepository.save(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(3L).book(book_2).build());
+        MyBook myBook_1 = myBookRepository.save(
+                MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(1L).book(book_1).build());
+        MyBook myBook_2 = myBookRepository.save(
+                MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(2L).book(book_2).build());
+        MyBook myBook_3 = myBookRepository.save(
+                MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(3L).book(book_2).build());
 
         myBookMeaningTagRepository.save(MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTagBuilder()
-                        .id(1L)
-                        .meaningTag(meaningTag_1)
-                        .myBook(myBook_1).build());
+                .id(1L)
+                .meaningTag(meaningTag_1)
+                .myBook(myBook_1).build());
 
         myBookMeaningTagRepository.save(MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTagBuilder()
-                        .id(2L)
-                        .meaningTag(meaningTag_2)
-                        .myBook(myBook_2).build());
+                .id(2L)
+                .meaningTag(meaningTag_2)
+                .myBook(myBook_2).build());
 
         myBookMeaningTagRepository.save(MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTagBuilder()
-                        .id(3L)
-                        .meaningTag(meaningTag_2)
-                        .myBook(myBook_3).build());
+                .id(3L)
+                .meaningTag(meaningTag_2)
+                .myBook(myBook_3).build());
 
         entityManager.clear();
 
@@ -175,6 +181,73 @@ class MyBookRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(myBooks.size()).isEqualTo(2)
+        );
+    }
+
+    @DisplayName("마이북 상세 조회 시, fetch join을 통해 연관된 의미 태그를 함께 조회한다.")
+    @Test
+    void findMyBookDetailUsingFetchJoin() {
+
+        // given
+        MeaningTag meaningTag = meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTagBuilder()
+                .id(1L).quote("meaningTag").build());
+
+        Book book = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+
+        MyBook myBook = myBookRepository.saveAndFlush(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(1L).book(book).build());
+
+        MyBookMeaningTag myBookMeaningTag = MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTagBuilder()
+                .id(1L)
+                .meaningTag(meaningTag)
+                .myBook(myBook).build();
+
+        myBookMeaningTagRepository.save(myBookMeaningTag);
+
+        entityManager.clear();
+
+        // then
+        Optional<MyBook> myBookDetail = myBookRepository.findMyBookDetail(myBook.getId());
+
+        // when
+        assertAll(
+                () -> {
+                    assertThat(myBookDetail.isPresent()).isTrue();
+                    assertThat(myBookDetail.get().getBook() instanceof HibernateProxy).isFalse();
+                    assertThat(myBookDetail.get().getMyBookMeaningTag() instanceof HibernateProxy).isFalse();
+                    assertThat(myBookDetail.get().getMyBookMeaningTag().getMeaningTag() instanceof HibernateProxy).isFalse();
+                    assertThat(myBookDetail.get().getBook().getTitle()).isEqualTo(book.getTitle());
+                    assertThat(myBookDetail.get().getBook().getIsbn13()).isEqualTo(book.getIsbn13());
+                    assertThat(myBookDetail.get().getMyBookMeaningTag().getMeaningTagColor()).isEqualTo(myBookMeaningTag.getMeaningTagColor());
+                    assertThat(myBookDetail.get().getMyBookMeaningTag().getMeaningTag().getQuote()).isEqualTo(meaningTag.getQuote());
+                }
+        );
+    }
+
+    @DisplayName("fetch join을 통해 의미 태그가 적용되지 않은 마이북 상세 조회한다.")
+    @Test
+    void findMyBookDetailWithOutMeaningTag() {
+
+        // given
+        Book book = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+
+        MyBook myBook = myBookRepository.saveAndFlush(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(1L).book(book).build());
+
+        entityManager.clear();
+
+        // then
+        Optional<MyBook> myBookDetail = myBookRepository.findMyBookDetail(myBook.getId());
+
+        // when
+        assertAll(
+                () -> {
+                    assertThat(myBookDetail.isPresent()).isTrue();
+                    assertThat(myBookDetail.get().getBook() instanceof HibernateProxy).isFalse();
+                    assertThat(myBookDetail.get().getBook().getTitle()).isEqualTo(book.getTitle());
+                    assertThat(myBookDetail.get().getBook().getIsbn13()).isEqualTo(book.getIsbn13());
+                    assertThat(myBookDetail.get().getMyBookMeaningTag()).isNull();
+                }
         );
     }
 }
