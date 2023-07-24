@@ -43,11 +43,8 @@ public class MeaningTagService {
 
     public void assignMeaningTag(MeaningTagAssignServiceRequest request) {
 
-        if (request.getQuote().equals("") && myBookMeaningTagRepository.findByMyBook(request.getMyBook()).isPresent()) {
-            MyBookMeaningTag myBookMeaningTag = myBookMeaningTagRepository.findByMyBook(request.getMyBook()).get();
-            myBookMeaningTag.getMeaningTag().decreaseRegisteredCount();
-
-            myBookMeaningTagRepository.deleteByMyBook(request.getMyBook());
+        if (isQuoteEmpty(request)) {
+            deleteMeaningTagIfMeaningTagQuoteEmpty(request);
             return;
         }
 
@@ -60,7 +57,19 @@ public class MeaningTagService {
                 .orElseGet(() -> saveAndGetMyBookMeaningTag(request, meaningTag));
 
         myBookMeaningTag.assignMeaningTag(meaningTag, request.getColorCode());
-        myBookMeaningTagRepository.save(myBookMeaningTag);
+    }
+
+    private boolean isQuoteEmpty(MeaningTagAssignServiceRequest request) {
+        return request.getQuote().equals("");
+    }
+
+    private void deleteMeaningTagIfMeaningTagQuoteEmpty(MeaningTagAssignServiceRequest request) {
+        myBookMeaningTagRepository.findByMyBook(request.getMyBook()).ifPresent(
+                myBookMeaningTag -> {
+                        myBookMeaningTag.getMeaningTag().decreaseRegisteredCount();
+                        myBookMeaningTagRepository.deleteByMyBook(request.getMyBook());
+                }
+        );
     }
 
     private MeaningTag saveAndGetMeaningTag(String loginId, String quote) {

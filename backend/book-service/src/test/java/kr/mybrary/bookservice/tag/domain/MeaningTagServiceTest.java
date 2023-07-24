@@ -53,9 +53,7 @@ class MeaningTagServiceTest {
         int originalRegisteredCount = meaningTag.getRegisteredCount();
 
         given(meaningTagRepository.findByQuote(any())).willReturn(Optional.of(meaningTag));
-        given(myBookMeaningTagRepository.findByMyBook(any())).willReturn(
-                Optional.of(myBookMeaningTag));
-        given(myBookMeaningTagRepository.save(any())).willReturn(any());
+        given(myBookMeaningTagRepository.findByMyBook(any())).willReturn(Optional.of(myBookMeaningTag));
 
         // when
         meaningTagService.assignMeaningTag(request);
@@ -64,7 +62,6 @@ class MeaningTagServiceTest {
         assertAll(
                 () -> verify(meaningTagRepository, times(1)).findByQuote(any()),
                 () -> verify(myBookMeaningTagRepository, times(1)).findByMyBook(any()),
-                () -> verify(myBookMeaningTagRepository, times(1)).save(any()),
                 () -> assertThat(meaningTag.getRegisteredCount()).isEqualTo(
                         originalRegisteredCount + 1),
                 () -> {
@@ -98,8 +95,7 @@ class MeaningTagServiceTest {
         // then
         assertAll(
                 () -> verify(meaningTagRepository, never()).findByQuote(any()),
-                () -> verify(myBookMeaningTagRepository, times(2)).findByMyBook(any()),
-                () -> verify(myBookMeaningTagRepository, never()).save(any()),
+                () -> verify(myBookMeaningTagRepository, times(1)).findByMyBook(any()),
                 () -> assertThat(myBookMeaningTag.getMeaningTag().getRegisteredCount()).isEqualTo(0)
         );
     }
