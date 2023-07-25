@@ -44,16 +44,7 @@ public class UserController {
         );
     }
 
-    /*
-    - Profile API 문서 작성
-        - 프로필 조회: get users/profile
-        - 프로필 수정: put users/profile
-        - 프로필 이미지 조회: get users/profile/image
-        - 프로필 이미지 등록: put users/profile/image
-        - 프로필 이미지 삭제: delete users/profile/image
-     */
-
-    @GetMapping("/profile")
+     @GetMapping("/profile")
     public ResponseEntity<SuccessResponse> getProfile(@RequestHeader("USER-ID") String loginId) {
         ProfileServiceResponse serviceResponse = userService.getProfile(loginId);
 
@@ -111,15 +102,6 @@ public class UserController {
                         serviceResponse)
         );
     }
-
-    /*
-    - Follow API 문서 작성
-        - 팔로워 목록 조회: get users/followers
-        - 팔로잉 목록 조회: get users/followings
-        - 팔로우: post users/follow
-        - 언팔로우: delete users/follow
-        - 언팔로잉: delete users/following
-     */
 
     @GetMapping("/followers")
     public ResponseEntity<SuccessResponse> getFollowers(@RequestHeader("USER-ID") String loginId) {
