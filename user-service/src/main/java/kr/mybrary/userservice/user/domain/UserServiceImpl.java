@@ -264,11 +264,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public SearchServiceResponse searchByNickname(String nickname) {
         List<SearchServiceResponse.SearchedUser> searchedUsers = userRepository.findByNicknameContaining(nickname).stream()
-                .map(user -> SearchServiceResponse.SearchedUser.builder()
-                        .loginId(user.getLoginId())
-                        .nickname(user.getNickname())
-                        .profileImageUrl(user.getProfileImageUrl())
-                        .build())
+                .map(user -> UserMapper.INSTANCE.toSearchedUser(user))
                 .collect(Collectors.toList());
 
         checkIfUserNotSearched(searchedUsers);
