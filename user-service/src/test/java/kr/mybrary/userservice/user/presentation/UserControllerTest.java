@@ -827,8 +827,7 @@ class UserControllerTest {
                                 .build()
                 )).build();
 
-        given(userService.searchByNickname(any()))
-                .willReturn(searchServiceResponse);
+        given(userService.searchByNickname(any())).willReturn(searchServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
