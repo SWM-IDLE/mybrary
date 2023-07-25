@@ -3,6 +3,7 @@ package kr.mybrary.userservice.user.persistence.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.persistence.User;
@@ -127,6 +128,26 @@ class UserRepositoryTest {
             () -> assertThat(foundUser.get().getId()).isEqualTo(savedUser.getId()),
             () -> assertThat(foundUser.get().getSocialType()).isEqualTo(savedUser.getSocialType()),
             () -> assertThat(foundUser.get().getSocialId()).isEqualTo(savedUser.getSocialId())
+        );
+    }
+
+    @Test
+    @DisplayName("닉네임에 해당 문자열을 포함하는 사용자를 가져온다.")
+    void findByNicknameContaining() {
+        // given
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
+        User savedUser2 = userRepository.save(UserFixture.USER_WITH_SIMILAR_NICKNAME.getUser());
+
+        // when
+        List<User> foundUser = userRepository.findByNicknameContaining(savedUser.getNickname());
+
+        // then
+        assertAll(
+            () -> assertThat(foundUser).hasSize(2),
+            () -> assertThat(foundUser.get(0).getId()).isEqualTo(savedUser.getId()),
+            () -> assertThat(foundUser.get(0).getNickname()).contains(savedUser.getNickname()),
+            () -> assertThat(foundUser.get(1).getId()).isEqualTo(savedUser2.getId()),
+            () -> assertThat(foundUser.get(1).getNickname()).contains(savedUser.getNickname())
         );
     }
 }
