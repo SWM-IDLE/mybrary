@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
+import 'package:mybrary/ui/mybrary/components/my_profile.dart';
 import 'package:mybrary/ui/mybrary/my_book/my_book_screen.dart';
 import 'package:mybrary/ui/mybrary/my_intro/my_intro_screen.dart';
 
@@ -31,11 +32,6 @@ class _MybraryScreenState extends State<MybraryScreen>
 
   @override
   Widget build(BuildContext context) {
-    final followTextStyle = TextStyle(
-      fontSize: 14.0,
-      fontWeight: FontWeight.w400,
-    );
-
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -45,89 +41,11 @@ class _MybraryScreenState extends State<MybraryScreen>
       ),
       child: DefaultLayout(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: Text('마이브러리'),
-          titleTextStyle: TextStyle(
-            color: BLACK_COLOR,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-          ),
-          centerTitle: false,
-          foregroundColor: BLACK_COLOR,
-          actions: [
-            Wrap(
-              spacing: -10,
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: SvgPicture.asset('assets/svg/icon/write.svg'),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: SvgPicture.asset('assets/svg/icon/menu.svg'),
-                ),
-              ],
-            ),
-          ],
-        ),
+        appBar: mybraryAppBar(),
         child: SafeArea(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 20.0,
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 82.0,
-                      height: 82.0,
-                      decoration: ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(width: 2, color: BOOK_BORDER_COLOR),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            // 프로필 임시 이미지
-                            'https://blog.kakaocdn.net/dn/SDhEI/btqZWOAubQF/cNfyvunWb9cKg7DlaPE9mK/img.jpg',
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12.0),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '박보영',
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 4.0,
-                        ),
-                        Wrap(
-                          spacing: 5,
-                          children: [
-                            Text('팔로워', style: followTextStyle),
-                            Text('264', style: followTextStyle),
-                            SizedBox(width: 6.0),
-                            Text('팔로잉', style: followTextStyle),
-                            Text('123', style: followTextStyle),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              MyProfile(),
               SizedBox(height: 20.0),
               Expanded(
                 child: Container(
@@ -220,6 +138,36 @@ class _MybraryScreenState extends State<MybraryScreen>
           ),
         ),
       ),
+    );
+  }
+
+  AppBar mybraryAppBar() {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      title: Text('마이브러리'),
+      titleTextStyle: TextStyle(
+        color: BLACK_COLOR,
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+      ),
+      centerTitle: false,
+      foregroundColor: BLACK_COLOR,
+      actions: [
+        Wrap(
+          spacing: -10,
+          children: [
+            IconButton(
+              onPressed: () {},
+              icon: SvgPicture.asset('assets/svg/icon/write.svg'),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: SvgPicture.asset('assets/svg/icon/menu.svg'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
