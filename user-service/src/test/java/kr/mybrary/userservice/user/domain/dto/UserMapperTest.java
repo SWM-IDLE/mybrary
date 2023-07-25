@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.SearchServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
 import kr.mybrary.userservice.user.persistence.User;
 import org.junit.jupiter.api.DisplayName;
@@ -67,6 +68,23 @@ class UserMapperTest {
             () -> assertEquals(user.getNickname(), serviceResponse.getNickname()),
             () -> assertEquals(user.getProfileImageUrl(), serviceResponse.getProfileImageUrl()),
             () -> assertEquals(user.getIntroduction(), serviceResponse.getIntroduction())
+        );
+    }
+
+    @Test
+    @DisplayName("User 엔티티를 검색된 사용자 DTO로 변환한다.")
+    void toSearchedUser() {
+        // given
+        User user = UserFixture.COMMON_USER.getUser();
+
+        // when
+        SearchServiceResponse.SearchedUser searchedUser = UserMapper.INSTANCE.toSearchedUser(user);
+
+        // then
+        assertAll(
+            () -> assertEquals(user.getLoginId(), searchedUser.getLoginId()),
+            () -> assertEquals(user.getNickname(), searchedUser.getNickname()),
+            () -> assertEquals(user.getProfileImageUrl(), searchedUser.getProfileImageUrl())
         );
     }
 }
