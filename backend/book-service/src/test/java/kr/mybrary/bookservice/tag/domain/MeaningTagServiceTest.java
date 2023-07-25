@@ -41,19 +41,25 @@ class MeaningTagServiceTest {
     @Mock
     private MyBookMeaningTagRepository myBookMeaningTagRepository;
 
-    @DisplayName("마이북에 의미 태그를 설정한다.")
+    @DisplayName("기존 의미 태그가 지정되어 있을 경우, 마이북에 의미 태그를 변경한다.")
     @Test
-    void assignMeaningTag() {
+    void assignMeaningTagExistingOriginalMeaningTag() {
 
         // given
         MeaningTagAssignServiceRequest request = MeaningTagDtoTestData.createMeaningTagAssignServiceRequest();
-        MeaningTag meaningTag = MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag();
-        MyBookMeaningTag myBookMeaningTag = MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTag();
+        MeaningTag meaningTag = MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTagBuilder()
+                .quote(request.getQuote()).build();
 
-        int originalRegisteredCount = meaningTag.getRegisteredCount();
+        MeaningTag originalMeaningTag = MeaningTagFixture.COMMON_MEANING_REGISTERED_COUNT_10_TAG.getMeaningTag();
+        MyBookMeaningTag myBookMeaningTag = MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTagBuilder()
+                .meaningTag(originalMeaningTag)
+                .build();
 
-        given(meaningTagRepository.findByQuote(any())).willReturn(Optional.of(meaningTag));
-        given(myBookMeaningTagRepository.findByMyBook(any())).willReturn(Optional.of(myBookMeaningTag));
+        int newMeaningTagRegisteredCount = meaningTag.getRegisteredCount();
+        int originalMeaningTagRegisteredCount = originalMeaningTag.getRegisteredCount();
+
+        given(meaningTagRepository.findByQuote(any())).willReturn(Optional.ofNullable(meaningTag));
+        given(myBookMeaningTagRepository.findByMyBook(any())).willReturn(Optional.ofNullable(myBookMeaningTag));
 
         // when
         meaningTagService.assignMeaningTag(request);
@@ -62,19 +68,71 @@ class MeaningTagServiceTest {
         assertAll(
                 () -> verify(meaningTagRepository, times(1)).findByQuote(any()),
                 () -> verify(myBookMeaningTagRepository, times(1)).findByMyBook(any()),
-                () -> assertThat(meaningTag.getRegisteredCount()).isEqualTo(
-                        originalRegisteredCount + 1),
+                () -> assertThat(meaningTag.getRegisteredCount()).isEqualTo(newMeaningTagRegisteredCount + 1),
+                () -> assertThat(originalMeaningTag.getRegisteredCount()).isEqualTo(originalMeaningTagRegisteredCount - 1),
                 () -> {
                     assertThat(myBookMeaningTag).isNotNull();
                     assertThat(myBookMeaningTag.getMeaningTagColor()).isEqualTo(
                             request.getColorCode());
                 },
                 () -> {
-
                     assertThat(myBookMeaningTag).isNotNull();
                     assertThat(myBookMeaningTag.getMeaningTag().getQuote()).isEqualTo(
                             meaningTag.getQuote());
                 }
+        );
+    }
+
+    @DisplayName("기존 의미 태그가 지정되어 있을 경우, 마이북에 의미 태그를 변경한다.")
+    @Test
+    void assignMeaningTagInitially() {
+
+        // given
+        MeaningTagAssignServiceRequest request = MeaningTagDtoTestData.createMeaningTagAssignServiceRequest();
+        MeaningTag meaningTag = MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTagBuilder()
+                .quote(request.getQuote()).build();
+
+        int newMeaningTagRegisteredCount = meaningTag.getRegisteredCount();
+
+        given(meaningTagRepository.findByQuote(any())).willReturn(Optional.ofNullable(meaningTag));
+        given(myBookMeaningTagRepository.findByMyBook(any())).willReturn(Optional.empty());
+
+        // when
+        meaningTagService.assignMeaningTag(request);
+
+        // then
+        assertAll(
+                () -> verify(meaningTagRepository, times(1)).findByQuote(any()),
+                () -> verify(myBookMeaningTagRepository, times(1)).findByMyBook(any()),
+                () -> verify(myBookMeaningTagRepository, times(1)).save(any()),
+                () -> assertThat(meaningTag.getRegisteredCount()).isEqualTo(newMeaningTagRegisteredCount + 1)
+        );
+    }
+
+    @DisplayName("새로운 의미 태그의 문구를 마이북에 지정한다.")
+    @Test
+    void assignNewMeaningTag() {
+
+        // given
+        MeaningTagAssignServiceRequest request = MeaningTagDtoTestData.createMeaningTagAssignServiceRequest();
+
+        MeaningTag meaningTag = MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag();
+        int newMeaningTagRegisteredCount = meaningTag.getRegisteredCount();
+
+        given(meaningTagRepository.findByQuote(any())).willReturn(Optional.empty());
+        given(myBookMeaningTagRepository.findByMyBook(any())).willReturn(Optional.empty());
+        given(meaningTagRepository.save(any())).willReturn(meaningTag);
+
+        // when
+        meaningTagService.assignMeaningTag(request);
+
+        // then
+        assertAll(
+                () -> verify(meaningTagRepository, times(1)).findByQuote(any()),
+                () -> verify(myBookMeaningTagRepository, times(1)).findByMyBook(any()),
+                () -> verify(meaningTagRepository, times(1)).save(any()),
+                () -> verify(myBookMeaningTagRepository, times(1)).save(any()),
+                () -> assertThat(meaningTag.getRegisteredCount()).isEqualTo(newMeaningTagRegisteredCount + 1)
         );
     }
 

@@ -53,10 +53,13 @@ public class MeaningTagService {
 
         meaningTag.increaseRegisteredCount();
 
-        MyBookMeaningTag myBookMeaningTag = myBookMeaningTagRepository.findByMyBook(request.getMyBook())
-                .orElseGet(() -> saveAndGetMyBookMeaningTag(request, meaningTag));
-
-        myBookMeaningTag.assignMeaningTag(meaningTag, request.getColorCode());
+        myBookMeaningTagRepository.findByMyBook(request.getMyBook()).ifPresentOrElse(
+                myBookMeaningTag -> {
+                    myBookMeaningTag.getMeaningTag().decreaseRegisteredCount();
+                    myBookMeaningTag.assignMeaningTag(meaningTag, request.getColorCode());
+                },
+                () -> saveAndGetMyBookMeaningTag(request, meaningTag)
+        );
     }
 
     private boolean isQuoteEmpty(MeaningTagAssignServiceRequest request) {
