@@ -26,7 +26,7 @@ public class MeaningTagController {
                 meaningTagService.findAll()));
     }
 
-    @GetMapping("/sort-by-registered-count")
+    @GetMapping("/most")
     public ResponseEntity getPageMeaningTags(@RequestHeader("USER-ID") String loginId,
             @RequestParam int size) {
 

@@ -83,7 +83,7 @@ class MeaningTagServiceTest {
         );
     }
 
-    @DisplayName("기존 의미 태그가 지정되어 있을 경우, 마이북에 의미 태그를 변경한다.")
+    @DisplayName("기존 의미 태그가 지정되어 있지 않는 경우, 마이북에 의미 태그를 변경한다.")
     @Test
     void assignMeaningTagInitially() {
 
