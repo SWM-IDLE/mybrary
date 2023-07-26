@@ -1,6 +1,6 @@
 package kr.mybrary.bookservice.booksearch.domain.dto;
 
-import kr.mybrary.bookservice.booksearch.domain.dto.kakaoapi.Document;
+import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.Document;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

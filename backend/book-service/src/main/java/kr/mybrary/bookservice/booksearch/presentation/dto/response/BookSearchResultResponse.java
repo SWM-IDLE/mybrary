@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.booksearch.presentation.response;
+package kr.mybrary.bookservice.booksearch.presentation.dto.response;
 
 import java.util.List;
 import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchResultDto;

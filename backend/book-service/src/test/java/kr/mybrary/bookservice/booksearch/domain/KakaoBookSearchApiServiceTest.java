@@ -9,8 +9,9 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.KakaoServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
-import kr.mybrary.bookservice.booksearch.presentation.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,7 @@ class KakaoBookSearchApiServiceTest {
         // given
         String expectNextRequestUrl = "/books/search?keyword=docker&sort=accuracy&page=2";
         String expectResult = readJsonFile("resultMoreThan10FromKeyword.json");
+        KakaoServiceRequest request = KakaoServiceRequest.of("docker", "accuracy", 1);
 
         mockServer
                 .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "?query=docker&sort=accuracy&page=1"))
@@ -62,7 +64,7 @@ class KakaoBookSearchApiServiceTest {
 
         // when
         BookSearchResultResponse bookSearchResultResponse = kakaoBookSearchApiService
-                .searchWithKeyword("docker", "accuracy", 1);
+                .searchWithKeyword(request);
 
         // then
         assertAll(
@@ -77,6 +79,7 @@ class KakaoBookSearchApiServiceTest {
 
         // given
         String expectNextRequestUrl = "";
+        KakaoServiceRequest request = KakaoServiceRequest.of("Docker Container", "accuracy", 1);
 
         String expectResult = readJsonFile("resultLessThan10FromKeyword.json");
 
@@ -86,7 +89,7 @@ class KakaoBookSearchApiServiceTest {
 
         // when
         BookSearchResultResponse bookSearchResultResponse = kakaoBookSearchApiService
-                .searchWithKeyword("Docker Container", "accuracy", 1);
+                .searchWithKeyword(request);
 
         // then
         assertAll(
@@ -107,9 +110,11 @@ class KakaoBookSearchApiServiceTest {
                 .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "/isbn?isbn=" + EXIST_ISBN))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
+        KakaoServiceRequest request = KakaoServiceRequest.of(EXIST_ISBN);
+
         // when
         BookSearchResultResponse bookSearchResultResponse =
-                kakaoBookSearchApiService.searchWithISBN(EXIST_ISBN);
+                kakaoBookSearchApiService.searchWithISBN(request);
 
         // then
         assertAll(
@@ -129,10 +134,12 @@ class KakaoBookSearchApiServiceTest {
                 .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "/isbn?isbn=" + NOT_EXIST_ISBN))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
+        KakaoServiceRequest request = KakaoServiceRequest.of(NOT_EXIST_ISBN);
+
         // when then
         BookSearchResultNotFoundException exception = assertThrows(
                 BookSearchResultNotFoundException.class,
-                () -> kakaoBookSearchApiService.searchWithISBN(NOT_EXIST_ISBN));
+                () -> kakaoBookSearchApiService.searchWithISBN(request));
 
         assertAll(
                 () -> assertThat(exception.getStatus()).isEqualTo(404),

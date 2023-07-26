@@ -1,6 +1,7 @@
 package kr.mybrary.bookservice.booksearch.presentation;
 
 import kr.mybrary.bookservice.booksearch.domain.PlatformBookSearchApiService;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.KakaoServiceRequest;
 import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,14 +23,20 @@ public class BookSearchController {
             @RequestParam(value = "keyword") String keyword,
             @RequestParam(value = "sort", required = false, defaultValue = "accuracy") String sort,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+
+        KakaoServiceRequest request = KakaoServiceRequest.of(keyword, sort, page);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(SuccessResponse.of(HttpStatus.OK.toString(), "키워드 검색에 성공했습니다.", bookService.searchWithKeyword(keyword, sort, page)));
+                .body(SuccessResponse.of(HttpStatus.OK.toString(), "키워드 검색에 성공했습니다.", bookService.searchWithKeyword(request)));
     }
 
     @GetMapping("/search/isbn")
     public ResponseEntity searchWithISBNBarcodeScan(
             @RequestParam("isbn") String isbn) {
+
+        KakaoServiceRequest request = KakaoServiceRequest.of(isbn);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(SuccessResponse.of(HttpStatus.OK.toString(), "ISBN 검색에 성공했습니다.", bookService.searchWithISBN(isbn)));
+                .body(SuccessResponse.of(HttpStatus.OK.toString(), "ISBN 검색에 성공했습니다.", bookService.searchWithISBN(request)));
     }
 }

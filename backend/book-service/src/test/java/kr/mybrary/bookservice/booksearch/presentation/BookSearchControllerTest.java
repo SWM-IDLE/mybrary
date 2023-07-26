@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.booksearch.presentation;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -20,7 +21,8 @@ import com.epages.restdocs.apispec.SimpleType;
 import java.util.List;
 import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
 import kr.mybrary.bookservice.booksearch.domain.KakaoBookSearchApiService;
-import kr.mybrary.bookservice.booksearch.presentation.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.KakaoServiceRequest;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,7 @@ class BookSearchControllerTest {
                 .nextRequestUrl("")
                 .build();
 
-        given(kakaoBookSearchApiService.searchWithISBN("9788980782970")).willReturn(response);
+        given(kakaoBookSearchApiService.searchWithISBN(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/books/search/isbn")
@@ -120,8 +122,7 @@ class BookSearchControllerTest {
                 .nextRequestUrl("/books/search?keyword=자바&sort=accuracy&page=2")
                 .build();
 
-        given(kakaoBookSearchApiService.searchWithKeyword("자바", "accuracy", 1))
-                .willReturn(response);
+        given(kakaoBookSearchApiService.searchWithKeyword(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/books/search")
