@@ -61,7 +61,7 @@ class MeaningTagControllerTest {
                 .willReturn(List.of(response_1, response_2));
 
         // when
-        ResultActions actions = mockMvc.perform(get("/api/v1/meaning-tags/sort-by-registered-count")
+        ResultActions actions = mockMvc.perform(get("/api/v1/meaning-tags/most")
                 .param("size", String.valueOf(size))
                 .header("USER-ID", LOGIN_ID));
 
