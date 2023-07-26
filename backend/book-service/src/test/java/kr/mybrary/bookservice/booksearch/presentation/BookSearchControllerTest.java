@@ -21,8 +21,7 @@ import com.epages.restdocs.apispec.SimpleType;
 import java.util.List;
 import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
 import kr.mybrary.bookservice.booksearch.domain.KakaoBookSearchApiService;
-import kr.mybrary.bookservice.booksearch.domain.dto.request.KakaoServiceRequest;
-import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.KakaoBookSearchResultResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +51,7 @@ class BookSearchControllerTest {
     void searchWithISBNBarcodeScan() throws Exception {
 
         // given
-        BookSearchResultResponse response = BookSearchResultResponse.builder()
+        KakaoBookSearchResultResponse response = KakaoBookSearchResultResponse.builder()
                 .bookSearchResult(List.of(BookSearchDtoTestData.createBookSearchDto()))
                 .nextRequestUrl("")
                 .build();
@@ -117,7 +116,7 @@ class BookSearchControllerTest {
     void searchWithKeyword() throws Exception {
 
         // given
-        BookSearchResultResponse response = BookSearchResultResponse.builder()
+        KakaoBookSearchResultResponse response = KakaoBookSearchResultResponse.builder()
                 .bookSearchResult(List.of(BookSearchDtoTestData.createBookSearchDto()))
                 .nextRequestUrl("/books/search?keyword=자바&sort=accuracy&page=2")
                 .build();

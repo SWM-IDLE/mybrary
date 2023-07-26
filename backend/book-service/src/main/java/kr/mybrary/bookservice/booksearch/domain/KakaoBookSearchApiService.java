@@ -8,7 +8,7 @@ import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.Document;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.KakaoServiceRequest;
-import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.KakaoBookSearchResultResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -39,20 +39,20 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
     private static final String KAKAO_AUTHORIZATION_HEADER_PREFIX = "KakaoAK ";
 
     @Override
-    public BookSearchResultResponse searchWithKeyword(Object serviceRequest) {
+    public KakaoBookSearchResultResponse searchWithKeyword(Object serviceRequest) {
         KakaoServiceRequest request = (KakaoServiceRequest) serviceRequest;
 
         return searchBookFromKakaoApi(API_URL_WITH_KEYWORD, request);
     }
 
     @Override
-    public BookSearchResultResponse searchWithISBN(Object serviceRequest) {
+    public KakaoBookSearchResultResponse searchWithISBN(Object serviceRequest) {
         KakaoServiceRequest request = (KakaoServiceRequest) serviceRequest;
 
         return searchBookFromKakaoApi(API_URL_WITH_ISBN, request);
     }
 
-    private BookSearchResultResponse searchBookFromKakaoApi(String baseUrl, KakaoServiceRequest request) {
+    private KakaoBookSearchResultResponse searchBookFromKakaoApi(String baseUrl, KakaoServiceRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTHORIZATION_HEADER, KAKAO_AUTHORIZATION_HEADER_PREFIX + API_KEY);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -74,11 +74,11 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
                 .toList();
 
         if (isLastPage(response)) {
-            return BookSearchResultResponse.of(bookSearchResultDtos, "");
+            return KakaoBookSearchResultResponse.of(bookSearchResultDtos, "");
         }
 
         String nextRequestUrl = String.format(REQUEST_NEXT_URL, request.getKeyword(), request.getSort(), request.getPage() + 1);
-        return BookSearchResultResponse.of(bookSearchResultDtos, nextRequestUrl);
+        return KakaoBookSearchResultResponse.of(bookSearchResultDtos, nextRequestUrl);
     }
 
     private Boolean isLastPage(ResponseEntity<KakaoBookSearchResponse> response) {

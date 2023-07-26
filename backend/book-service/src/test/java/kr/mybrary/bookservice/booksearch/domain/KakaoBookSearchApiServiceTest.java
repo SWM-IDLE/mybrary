@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.KakaoServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
-import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.KakaoBookSearchResultResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,13 +63,13 @@ class KakaoBookSearchApiServiceTest {
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
-        BookSearchResultResponse bookSearchResultResponse = kakaoBookSearchApiService
+        KakaoBookSearchResultResponse kakaoBookSearchResultResponse = kakaoBookSearchApiService
                 .searchWithKeyword(request);
 
         // then
         assertAll(
-                () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isEqualTo(10),
-                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
+                () -> assertThat(kakaoBookSearchResultResponse.getBookSearchResult().size()).isEqualTo(10),
+                () -> assertThat(kakaoBookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
         );
     }
 
@@ -88,13 +88,13 @@ class KakaoBookSearchApiServiceTest {
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
-        BookSearchResultResponse bookSearchResultResponse = kakaoBookSearchApiService
+        KakaoBookSearchResultResponse kakaoBookSearchResultResponse = kakaoBookSearchApiService
                 .searchWithKeyword(request);
 
         // then
         assertAll(
-                () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isLessThan(10),
-                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
+                () -> assertThat(kakaoBookSearchResultResponse.getBookSearchResult().size()).isLessThan(10),
+                () -> assertThat(kakaoBookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
         );
     }
 
@@ -113,13 +113,13 @@ class KakaoBookSearchApiServiceTest {
         KakaoServiceRequest request = KakaoServiceRequest.of(EXIST_ISBN);
 
         // when
-        BookSearchResultResponse bookSearchResultResponse =
+        KakaoBookSearchResultResponse kakaoBookSearchResultResponse =
                 kakaoBookSearchApiService.searchWithISBN(request);
 
         // then
         assertAll(
-                () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isEqualTo(1),
-                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
+                () -> assertThat(kakaoBookSearchResultResponse.getBookSearchResult().size()).isEqualTo(1),
+                () -> assertThat(kakaoBookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
         );
     }
 

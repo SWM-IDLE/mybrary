@@ -7,13 +7,13 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class BookSearchResultResponse {
+public class KakaoBookSearchResultResponse {
 
     private List<BookSearchResultDto> bookSearchResult;
     private String nextRequestUrl;
 
-    public static BookSearchResultResponse of(List<BookSearchResultDto> bookSearchResultDtos, String nextRequestUrl) {
-        return BookSearchResultResponse.builder()
+    public static KakaoBookSearchResultResponse of(List<BookSearchResultDto> bookSearchResultDtos, String nextRequestUrl) {
+        return KakaoBookSearchResultResponse.builder()
                 .bookSearchResult(bookSearchResultDtos)
                 .nextRequestUrl(nextRequestUrl)
                 .build();
