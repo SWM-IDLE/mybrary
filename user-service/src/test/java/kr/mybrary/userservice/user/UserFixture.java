@@ -33,7 +33,7 @@ public enum UserFixture {
             Collections.emptyList(),
             List.of(Follow.builder().source(User.builder().loginId("followerId").build()).target(User.builder().loginId("followingId").build()).build())),
 
-    USER_WITH_SIMILAR_NICKNAME(1L, "loginId123", "nickname123", "encodedPassword", Role.USER,
+    USER_WITH_SIMILAR_NICKNAME(2L, "loginId123", "nickname123", "encodedPassword", Role.USER,
             "socialId123", SocialType.GOOGLE, "email@mail.com", "introduction", "profileImageUrl",
             Collections.emptyList(), Collections.emptyList());
 
