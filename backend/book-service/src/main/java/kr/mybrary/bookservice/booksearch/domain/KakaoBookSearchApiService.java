@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.Objects;
 import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchDtoMapper;
 import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchResultDto;
-import kr.mybrary.bookservice.booksearch.domain.dto.kakaoapi.Document;
-import kr.mybrary.bookservice.booksearch.domain.dto.kakaoapi.KakaoBookSearchResponse;
+import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.Document;
+import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
-import kr.mybrary.bookservice.booksearch.presentation.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.KakaoServiceRequest;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -38,23 +39,27 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
     private static final String KAKAO_AUTHORIZATION_HEADER_PREFIX = "KakaoAK ";
 
     @Override
-    public BookSearchResultResponse searchWithKeyword(String keyword, String sort, int page) {
-        return searchBookFromKakaoApi(API_URL_WITH_KEYWORD, keyword, sort, page);
+    public BookSearchResultResponse searchWithKeyword(Object serviceRequest) {
+        KakaoServiceRequest request = (KakaoServiceRequest) serviceRequest;
+
+        return searchBookFromKakaoApi(API_URL_WITH_KEYWORD, request);
     }
 
     @Override
-    public BookSearchResultResponse searchWithISBN(String isbn) {
-        return searchBookFromKakaoApi(API_URL_WITH_ISBN, isbn, "accuracy", 1);
+    public BookSearchResultResponse searchWithISBN(Object serviceRequest) {
+        KakaoServiceRequest request = (KakaoServiceRequest) serviceRequest;
+
+        return searchBookFromKakaoApi(API_URL_WITH_ISBN, request);
     }
 
-    private BookSearchResultResponse searchBookFromKakaoApi(String baseUrl, String searchKeyword, String sort, int page) {
+    private BookSearchResultResponse searchBookFromKakaoApi(String baseUrl, KakaoServiceRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTHORIZATION_HEADER, KAKAO_AUTHORIZATION_HEADER_PREFIX + API_KEY);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<HttpHeaders> httpEntity = new HttpEntity<>(headers);
 
-        String requestUri = String.format(baseUrl, searchKeyword, sort, page);
+        String requestUri = String.format(baseUrl, request.getKeyword(), request.getSort(), request.getPage());
         ResponseEntity<KakaoBookSearchResponse> response = restTemplate.exchange(requestUri,
                 HttpMethod.GET, httpEntity, KakaoBookSearchResponse.class);
 
@@ -72,7 +77,7 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
             return BookSearchResultResponse.of(bookSearchResultDtos, "");
         }
 
-        String nextRequestUrl = String.format(REQUEST_NEXT_URL, searchKeyword, sort, page + 1);
+        String nextRequestUrl = String.format(REQUEST_NEXT_URL, request.getKeyword(), request.getSort(), request.getPage() + 1);
         return BookSearchResultResponse.of(bookSearchResultDtos, nextRequestUrl);
     }
 
