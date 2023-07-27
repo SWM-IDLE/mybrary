@@ -2,48 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
-import 'package:mybrary/ui/mybrary/components/my_profile.dart';
-import 'package:mybrary/ui/mybrary/my_intro/my_intro_screen.dart';
+import 'package:mybrary/ui/profile/components/profile_header.dart';
+import 'package:mybrary/ui/profile/components/profile_intro.dart';
 
-class MybraryScreen extends StatefulWidget {
-  const MybraryScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  State<MybraryScreen> createState() => _MybraryScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _MybraryScreenState extends State<MybraryScreen>
+class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _mybraryTabController;
+  late TabController _profileTabController;
 
   @override
   void initState() {
     super.initState();
 
-    _mybraryTabController = TabController(length: 5, vsync: this);
+    _profileTabController = TabController(length: 5, vsync: this);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _mybraryTabController.dispose();
+    _profileTabController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      appBar: mybraryAppBar(),
+      appBar: profileAppBar(),
       child: SafeArea(
         child: Column(
           children: [
-            MyProfile(),
+            ProfileHeader(),
             SizedBox(height: 10.0),
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 24.0,
                 vertical: 16.0,
               ),
-              child: MyIntroScreen(),
+              child: ProfileIntro(),
             ),
           ],
         ),
@@ -51,7 +51,7 @@ class _MybraryScreenState extends State<MybraryScreen>
     );
   }
 
-  AppBar mybraryAppBar() {
+  AppBar profileAppBar() {
     return AppBar(
       toolbarHeight: 70.0,
       backgroundColor: WHITE_COLOR,
