@@ -1,4 +1,4 @@
-package kr.mybrary.userservice.user.persistence.repository;
+package kr.mybrary.userservice.user.persistence;
 
 import jakarta.persistence.*;
 import kr.mybrary.userservice.global.BaseEntity;

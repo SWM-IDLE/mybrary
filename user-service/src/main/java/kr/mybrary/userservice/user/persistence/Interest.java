@@ -2,7 +2,6 @@ package kr.mybrary.userservice.user.persistence;
 
 import jakarta.persistence.*;
 import kr.mybrary.userservice.global.BaseEntity;
-import kr.mybrary.userservice.user.persistence.repository.UserInterest;
 import lombok.*;
 
 import java.util.List;
