@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
-            child: Text('마이브러리 메인 화면입니다.'),
+            child: Text('홈 화면'),
           ),
         ],
       ),
