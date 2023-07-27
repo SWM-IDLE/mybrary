@@ -2,7 +2,7 @@ package kr.mybrary.userservice.interest.domain;
 
 import kr.mybrary.userservice.interest.InterestCategoryFixture;
 import kr.mybrary.userservice.interest.InterestFixture;
-import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
+import kr.mybrary.userservice.interest.domain.dto.response.InterestsGroupByCategoryServiceResponse;
 import kr.mybrary.userservice.interest.persistence.InterestCategory;
 import kr.mybrary.userservice.interest.persistence.repository.InterestCategoryRepository;
 import kr.mybrary.userservice.interest.persistence.repository.InterestRepository;
@@ -17,8 +17,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class InterestServiceImplTest {
@@ -41,32 +41,31 @@ class InterestServiceImplTest {
 
         given(interestCategoryRepository.findAll()).willReturn(
                 List.of(literatureSensibility, learningGrowth, cultureHistory));
-        given(interestRepository.findAllByCategory(literatureSensibility)).willReturn(
-                List.of(InterestFixture.DOMESTIC_NOVEL.getInterestBuilder().category(literatureSensibility).build(),
-                        InterestFixture.FOREIGN_NOVEL.getInterestBuilder().category(literatureSensibility).build(),
-                        InterestFixture.POEM.getInterestBuilder().category(literatureSensibility).build()));
-        given(interestRepository.findAllByCategory(learningGrowth)).willReturn(
-                List.of(InterestFixture.SELF_IMPROVEMENT.getInterestBuilder().category(learningGrowth).build(),
-                        InterestFixture.SCIENCE.getInterestBuilder().category(learningGrowth).build()));
-        given(interestRepository.findAllByCategory(cultureHistory)).willReturn(
-                    List.of(InterestFixture.KOREAN_HISTORY.getInterestBuilder().category(cultureHistory).build()));
 
         // when
-        InterestCategoryServiceResponse interestCategoryServiceResponse = interestService.getInterestsGroupByCategory();
+        InterestsGroupByCategoryServiceResponse interestsGroupByCategoryServiceResponse = interestService.getInterestsGroupByCategory();
 
         // then
         assertAll(
-                () -> assertEquals(3, interestCategoryServiceResponse.getInterestsGroupByCategory().size()),
-                () -> assertThat(interestCategoryServiceResponse.getInterestsGroupByCategory().keySet())
-                        .containsExactlyInAnyOrder(literatureSensibility, learningGrowth, cultureHistory),
-                () -> assertEquals(3, interestCategoryServiceResponse. getInterestsGroupByCategory()
-                        .get(literatureSensibility).size()),
-                () -> assertEquals(2, interestCategoryServiceResponse.getInterestsGroupByCategory()
-                        .get(learningGrowth).size()),
-                () -> assertEquals(1, interestCategoryServiceResponse.getInterestsGroupByCategory()
-                        .get(cultureHistory).size())
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory()).hasSize(3),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(0).getName()).isEqualTo(literatureSensibility.getName()),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(1).getName()).isEqualTo(learningGrowth.getName()),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(2).getName()).isEqualTo(cultureHistory.getName()),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(0).getDescription()).isEqualTo(literatureSensibility.getDescription()),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(1).getDescription()).isEqualTo(learningGrowth.getDescription()),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(2).getDescription()).isEqualTo(cultureHistory.getDescription()),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(0).getInterestResponses()).hasSize(3),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(1).getInterestResponses()).hasSize(2),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(2).getInterestResponses()).hasSize(1),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(0).getInterestResponses()).extracting("name").containsExactly(
+                        InterestFixture.DOMESTIC_NOVEL.getInterest().getName(), InterestFixture.FOREIGN_NOVEL.getInterest().getName(), InterestFixture.POEM.getInterest().getName()),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(1).getInterestResponses()).extracting("name").containsExactly(
+                        InterestFixture.SELF_IMPROVEMENT.getInterest().getName(), InterestFixture.SCIENCE.getInterest().getName()),
+                () -> assertThat(interestsGroupByCategoryServiceResponse.getInterestsGroupByCategory().get(2).getInterestResponses()).extracting("name").containsExactly(
+                        InterestFixture.KOREAN_HISTORY.getInterest().getName())
         );
 
+        verify(interestCategoryRepository).findAll();
     }
 
 }
