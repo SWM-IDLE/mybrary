@@ -37,11 +37,12 @@ class _ProfileScreenState extends State<ProfileScreen>
         child: Column(
           children: [
             ProfileHeader(),
-            SizedBox(height: 10.0),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 16.0,
+              padding: const EdgeInsets.only(
+                left: 20.0,
+                top: 24.0,
+                right: 4.0,
+                bottom: 24.0,
               ),
               child: ProfileIntro(),
             ),
