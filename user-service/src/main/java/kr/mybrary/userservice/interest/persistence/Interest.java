@@ -20,6 +20,10 @@ public class Interest extends BaseEntity {
     @Column(name = "interest_id")
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "interest_category_id")
+    private InterestCategory category;
+
     @Column(nullable = false, unique = true)
     private String name;
 
