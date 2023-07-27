@@ -1,8 +1,9 @@
 package kr.mybrary.userservice.interest.domain;
 
 import jakarta.validation.constraints.NotNull;
-import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
-import kr.mybrary.userservice.interest.persistence.Interest;
+import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryResponse;
+import kr.mybrary.userservice.interest.domain.dto.response.InterestResponse;
+import kr.mybrary.userservice.interest.domain.dto.response.InterestsGroupByCategoryServiceResponse;
 import kr.mybrary.userservice.interest.persistence.InterestCategory;
 import kr.mybrary.userservice.interest.persistence.repository.InterestCategoryRepository;
 import kr.mybrary.userservice.interest.persistence.repository.InterestRepository;
@@ -11,9 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -24,20 +22,37 @@ public class InterestServiceImpl implements InterestService {
     private final InterestCategoryRepository interestCategoryRepository;
 
     @Override
-    public InterestCategoryServiceResponse getInterestsGroupByCategory() {
-        return InterestCategoryServiceResponse.builder()
-                .interestsGroupByCategory(getCategoryMap())
+    public InterestsGroupByCategoryServiceResponse getInterestsGroupByCategory() {
+        return InterestsGroupByCategoryServiceResponse.builder()
+                .interestsGroupByCategory(getInterestCategoryResponses())
                 .build();
     }
 
     @NotNull
-    private Map<InterestCategory, List<Interest>> getCategoryMap() {
+    private List<InterestCategoryResponse> getInterestCategoryResponses() {
         return interestCategoryRepository.findAll()
                 .stream()
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        interestCategory -> interestRepository.findAllByCategory(interestCategory)
-                ));
+                .map(interestCategory -> getInterestCategoryResponse(interestCategory))
+                .toList();
+    }
+
+    private InterestCategoryResponse getInterestCategoryResponse(InterestCategory interestCategory) {
+        return InterestCategoryResponse.builder()
+                .id(interestCategory.getId())
+                .name(interestCategory.getName())
+                .description(interestCategory.getDescription())
+                .interestResponses(getInterestResponses(interestCategory))
+                .build();
+    }
+
+    private List<InterestResponse> getInterestResponses(InterestCategory interestCategory) {
+        return interestCategory.getInterests()
+                .stream()
+                .map(interest -> InterestResponse.builder()
+                        .id(interest.getId())
+                        .name(interest.getName())
+                        .build())
+                .toList();
     }
 
 
