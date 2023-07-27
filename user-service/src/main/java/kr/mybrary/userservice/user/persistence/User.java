@@ -3,10 +3,7 @@ package kr.mybrary.userservice.user.persistence;
 import jakarta.persistence.*;
 import java.util.List;
 import kr.mybrary.userservice.global.BaseEntity;
-import kr.mybrary.userservice.user.persistence.repository.UserInterest;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
