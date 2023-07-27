@@ -1,9 +1,9 @@
 package kr.mybrary.userservice.interest.domain;
 
-import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
+import kr.mybrary.userservice.interest.domain.dto.response.InterestsGroupByCategoryServiceResponse;
 
 public interface InterestService {
 
-    InterestCategoryServiceResponse getInterestsGroupByCategory();
+    InterestsGroupByCategoryServiceResponse getInterestsGroupByCategory();
 
 }
