@@ -3,6 +3,8 @@ package kr.mybrary.userservice.user.persistence;
 import jakarta.persistence.*;
 import java.util.List;
 import kr.mybrary.userservice.global.BaseEntity;
+import kr.mybrary.userservice.interest.persistence.Interest;
+import kr.mybrary.userservice.interest.persistence.UserInterest;
 import lombok.*;
 
 @Getter
