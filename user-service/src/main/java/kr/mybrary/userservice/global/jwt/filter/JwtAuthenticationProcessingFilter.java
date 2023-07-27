@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private static final String USER_SERVICE_URL = "/api/v1/users";
+    private static final String INTEREST_SERVICE_URL = "/api/v1/interests";
     private static final String LOGIN_URL = "/api/v1/auth/login";
     private static final String OAUTH2_URL = "/oauth2/authorization";
     private static final String TOKEN_LOGOUT = "로그아웃된 토큰입니다.";
@@ -72,7 +73,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private boolean tokenAuthenticationNotRequired(HttpServletRequest request) {
         return request.getRequestURI().contains(USER_SERVICE_URL) || request.getRequestURI().contains(LOGIN_URL) ||
-                request.getRequestURI().contains(OAUTH2_URL);
+                request.getRequestURI().contains(OAUTH2_URL) || request.getRequestURI().contains(INTEREST_SERVICE_URL);
     }
 
     private void checkIfTokenIsLogout(String accessToken) {
