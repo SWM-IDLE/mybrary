@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/res/colors/color.dart';
 
-class MyIntroScreen extends StatelessWidget {
-  const MyIntroScreen({super.key});
+class ProfileIntro extends StatelessWidget {
+  const ProfileIntro({super.key});
 
   @override
   Widget build(BuildContext context) {

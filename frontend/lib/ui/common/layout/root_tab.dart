@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/home/home_screen.dart';
-import 'package:mybrary/ui/mybrary/mybrary_screen.dart';
+import 'package:mybrary/ui/profile/profile_screen.dart';
 import 'package:mybrary/ui/search/search_screen.dart';
 
 const bottomNavigationBarItemList = [
@@ -74,7 +74,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
           Center(
             child: Text('마이북'),
           ),
-          MybraryScreen(),
+          ProfileScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

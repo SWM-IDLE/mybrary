@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/res/colors/color.dart';
 
-class MyProfile extends StatelessWidget {
-  const MyProfile({super.key});
+class ProfileHeader extends StatelessWidget {
+  const ProfileHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
