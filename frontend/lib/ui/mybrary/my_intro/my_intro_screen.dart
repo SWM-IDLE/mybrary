@@ -17,7 +17,7 @@ class MyIntroScreen extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: 14.0),
+        SizedBox(height: 16.0),
         Text(
           '마이브러리는 도서의 가치를 발견하고,\n사람을 잇는 서비스입니다.',
           style: TextStyle(
@@ -27,16 +27,26 @@ class MyIntroScreen extends StatelessWidget {
           ),
         ),
         SizedBox(height: 28.0),
-        Text(
-          '마이 관심사',
-          style: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w700,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              '마이 관심사',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: SvgPicture.asset('assets/svg/icon/right_arrow.svg'),
+            ),
+          ],
         ),
-        SizedBox(height: 14.0),
+        SizedBox(height: 4.0),
         Text(
-          '인문학, 스릴러, IT/프로그래밍',
+          '장르소설, 심리학, 여행',
           style: TextStyle(
             color: GREY_05_COLOR,
             fontSize: 13.0,
@@ -57,15 +67,11 @@ class MyIntroScreen extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {},
-              icon: Icon(
-                Icons.keyboard_arrow_right_outlined,
-                color: GREY_06_COLOR,
-                size: 26.0,
-              ),
+              icon: SvgPicture.asset('assets/svg/icon/right_arrow.svg'),
             ),
           ],
         ),
-        SizedBox(height: 14.0),
+        SizedBox(height: 4.0),
         Container(
           width: MediaQuery.of(context).size.width * 0.9,
           height: 72.0,

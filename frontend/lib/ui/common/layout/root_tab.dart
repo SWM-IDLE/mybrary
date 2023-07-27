@@ -16,8 +16,12 @@ const bottomNavigationBarItemList = [
     'iconPath': 'assets/svg/icon/search.svg',
   },
   {
-    'label': '마이브러리',
+    'label': '마이북',
     'iconPath': 'assets/svg/icon/mybrary.svg',
+  },
+  {
+    'label': '프로필',
+    'iconPath': 'assets/svg/icon/profile.svg',
   },
 ];
 
@@ -38,7 +42,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
     super.initState();
 
     tabController = TabController(
-      length: 3,
+      length: 4,
       vsync: this,
       animationDuration: Duration.zero,
     );
@@ -67,6 +71,9 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         children: [
           HomeScreen(),
           SearchScreen(),
+          Center(
+            child: Text('마이북'),
+          ),
           MybraryScreen(),
         ],
       ),
@@ -74,6 +81,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         selectedItemColor: BLACK_COLOR,
         unselectedItemColor: GREY_03_COLOR,
         selectedFontSize: 12,
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.w700),
         unselectedFontSize: 12,
         type: BottomNavigationBarType.fixed,
         onTap: (int index) {
@@ -83,12 +91,22 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         items: bottomNavigationBarItemList
             .map((e) => BottomNavigationBarItem(
                   label: e['label'],
-                  icon: SvgPicture.asset(
-                    e['iconPath']!,
-                    colorFilter:
-                        ColorFilter.mode(GREY_03_COLOR, BlendMode.srcIn),
+                  icon: Column(
+                    children: [
+                      SvgPicture.asset(
+                        e['iconPath']!,
+                        colorFilter:
+                            ColorFilter.mode(GREY_03_COLOR, BlendMode.srcIn),
+                      ),
+                      SizedBox(height: 4.0),
+                    ],
                   ),
-                  activeIcon: SvgPicture.asset(e['iconPath']!),
+                  activeIcon: Column(
+                    children: [
+                      SvgPicture.asset(e['iconPath']!),
+                      SizedBox(height: 4.0),
+                    ],
+                  ),
                 ))
             .toList(),
       ),

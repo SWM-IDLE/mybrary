@@ -14,10 +14,13 @@ import 'package:mybrary/ui/search/search_screen.dart';
 void main() {
   // System Interface 글자 색상 light, dark
   // 현재는 전체 적용, 추후 일부 적용 예정
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.dark));
+      statusBarBrightness: Brightness.dark,
+    ),
+  );
   runApp(const MyApp());
 }
 
