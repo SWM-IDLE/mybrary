@@ -1,7 +1,6 @@
-package kr.mybrary.userservice.user.persistence.repository;
+package kr.mybrary.userservice.interest.persistence.repository;
 
-import kr.mybrary.userservice.user.persistence.Interest;
-import org.junit.jupiter.api.BeforeAll;
+import kr.mybrary.userservice.interest.persistence.Interest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +23,17 @@ class InterestRepositoryTest {
     void findByName() {
         // given
         Interest savedInterest = interestRepository.save(Interest.builder()
-            .name("테스트 관심사")
-            .build());
+                .name("테스트 관심사")
+                .build());
 
         // when
         Interest foundInterest = interestRepository.findByName(savedInterest.getName()).get();
 
         // then
         assertAll(
-            () -> assertNotNull(foundInterest),
-            () -> assertEquals(savedInterest.getId(), foundInterest.getId()),
-            () -> assertEquals(savedInterest.getName(), foundInterest.getName())
+                () -> assertNotNull(foundInterest),
+                () -> assertEquals(savedInterest.getId(), foundInterest.getId()),
+                () -> assertEquals(savedInterest.getName(), foundInterest.getName())
         );
     }
 

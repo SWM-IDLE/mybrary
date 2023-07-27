@@ -1,6 +1,6 @@
-package kr.mybrary.userservice.user.persistence.repository;
+package kr.mybrary.userservice.interest.persistence.repository;
 
-import kr.mybrary.userservice.user.persistence.Interest;
+import kr.mybrary.userservice.interest.persistence.Interest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

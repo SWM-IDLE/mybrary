@@ -1,8 +1,7 @@
-package kr.mybrary.userservice.user.persistence;
+package kr.mybrary.userservice.interest.persistence;
 
 import jakarta.persistence.*;
 import kr.mybrary.userservice.global.BaseEntity;
-import kr.mybrary.userservice.user.persistence.Interest;
 import kr.mybrary.userservice.user.persistence.User;
 import lombok.*;
 
