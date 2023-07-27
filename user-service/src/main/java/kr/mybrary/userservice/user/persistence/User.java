@@ -3,6 +3,7 @@ package kr.mybrary.userservice.user.persistence;
 import jakarta.persistence.*;
 import java.util.List;
 import kr.mybrary.userservice.global.BaseEntity;
+import kr.mybrary.userservice.user.persistence.repository.UserInterest;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -53,6 +54,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "source", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Follow> followings;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<UserInterest> interests;
+
     // 주소, 직장, 직장 공개 여부, 성별, 생년월일, 학력, 본인인증 여부 추가 예정
 
     public void updateRole(Role role) {
@@ -85,6 +89,15 @@ public class User extends BaseEntity {
     public void unfollow(User target) {
          this.followings.removeIf(follow -> follow.getTarget().equals(target));
          target.followers.removeIf(follow -> follow.getSource().equals(this));
+    }
+
+    public void addInterest(Interest interest) {
+        UserInterest userInterest = UserInterest.builder()
+            .user(this)
+            .interest(interest)
+            .build();
+        this.interests.add(userInterest);
+        interest.addRegisteredUser(this);
     }
 
 }
