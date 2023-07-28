@@ -23,7 +23,7 @@ POST http://localhost:8080/api/v1/auth/logout
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImxvZ2luSWQiOiJsb2dpbklkIiwiZXhwIjoxNjg5OTUwNjI5fQ.xVTWvIsUbaES_rYcfel-TuGy944Gtlf5XuNhkZO_MioWX2xhKFiMJjmYPcF6f9IogbDebjbiSVxMNJ9PwoIx8w
 
 ### 4. 인가 테스트
-GET http://localhost:8080/api/v1/auth/test
+GET http://localhost:8080/auth/v1/test
 # Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImxvZ2luSWQiOiJsb2dpbklkIiwiZXhwIjoxNjg5OTUwNjI5fQ.xVTWvIsUbaES_rYcfel-TuGy944Gtlf5XuNhkZO_MioWX2xhKFiMJjmYPcF6f9IogbDebjbiSVxMNJ9PwoIx8w
 
 ### 3. 구글 소셜 로그인

@@ -116,7 +116,7 @@ public class LogoutTest {
         String requestAccessToken = "Bearer " + accessToken;
 
         // when
-        mockMvc.perform(post("/api/v1/auth/test")
+        mockMvc.perform(post("/auth/v1/test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(ACCESS_TOKEN_HEADER, requestAccessToken))
                 .andExpect(status().isUnauthorized())
