@@ -18,6 +18,10 @@ kakao:
   api:
     key: ${KAKAO_API_KEY}
 
+aladin:
+  api:
+    key: ${ALADIN_API_KEY}
+
 eureka:
   client:
     enabled: false
