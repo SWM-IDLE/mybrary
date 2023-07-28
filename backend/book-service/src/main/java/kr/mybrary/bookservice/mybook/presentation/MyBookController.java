@@ -48,8 +48,7 @@ public class MyBookController {
         List<MyBookElementResponse> myBooks = myBookService.findAllMyBooks(
                 MyBookFindAllServiceRequest.of(userId, loginId));
 
-        return ResponseEntity.ok(
-                SuccessResponse.of(HttpStatus.OK.toString(), "서재의 도서 목록입니다.", myBooks));
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "서재의 도서 목록입니다.", myBooks));
     }
 
     @GetMapping("/mybooks/{mybookId}")
@@ -58,8 +57,7 @@ public class MyBookController {
 
         MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(loginId, mybookId);
 
-        return ResponseEntity.ok(
-                SuccessResponse.of(HttpStatus.OK.toString(), "마이북 상세보기입니다.",
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "마이북 상세보기입니다.",
                         myBookService.findMyBookDetail(request)));
     }
 
@@ -71,8 +69,7 @@ public class MyBookController {
 
         myBookService.deleteMyBook(request);
 
-        return ResponseEntity.ok(
-                SuccessResponse.of(HttpStatus.OK.toString(), "내 서재의 도서를 삭제했습니다.", null));
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "내 서재의 도서를 삭제했습니다.", null));
     }
 
     @PutMapping("/mybooks/{mybookId}")
@@ -81,8 +78,7 @@ public class MyBookController {
 
         MybookUpdateServiceRequest serviceRequest = request.toServiceRequest(loginId, mybookId);
 
-        return ResponseEntity.ok(
-                SuccessResponse.of(HttpStatus.OK.toString(), "내 서재의 마이북 속성을 수정했습니다.",
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "내 서재의 마이북 속성을 수정했습니다.",
                         myBookService.updateMyBookProperties(serviceRequest)));
     }
 
