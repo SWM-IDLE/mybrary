@@ -27,7 +27,8 @@ public interface BookSearchDtoMapper {
     @Mapping(target = "thumbnailUrl", source = "thumbnail")
     @Mapping(target = "publicationDate", expression = "java(kakaoBookSearchResponse.getDatetime().split(\"T\")[0])")
     @Mapping(target = "starRating", constant = "0.0")
-    BookSearchResultServiceResponse kakaoSearchResponseToServiceResponse(KakaoBookSearchResponse.Document kakaoBookSearchResponse);
+    BookSearchResultServiceResponse kakaoSearchResponseToServiceResponse(
+            KakaoBookSearchResponse.Document kakaoBookSearchResponse);
 
     @Mapping(target = "thumbnailUrl", source = "cover")
     @Mapping(target = "publicationDate", source = "pubDate")
@@ -39,8 +40,8 @@ public interface BookSearchDtoMapper {
     @Mapping(target = "link", source = "url")
     @Mapping(target = "isbn10", source = "isbn", qualifiedByName = "getISBN10")
     @Mapping(target = "isbn13", source = "isbn", qualifiedByName = "getISBN13")
-    @Mapping(target = "authors",  source = "authors", qualifiedByName = "mappingAuthorNames")
-    @Mapping(target = "translators",  source = "translators", qualifiedByName = "mappingTranslatorNames")
+    @Mapping(target = "authors", source = "authors", qualifiedByName = "mappingAuthorNames")
+    @Mapping(target = "translators", source = "translators", qualifiedByName = "mappingTranslatorNames")
     @Mapping(target = "starRating", constant = "0.0")
     @Mapping(target = "reviewCount", constant = "0")
     @Mapping(target = "publicationDate", source = "datetime")
@@ -55,9 +56,26 @@ public interface BookSearchDtoMapper {
     @Mapping(target = "sizeWidth", constant = "0")
     @Mapping(target = "priceSales", source = "sale_price")
     @Mapping(target = "priceStandard", source = "price")
-    BookSearchDetailResponse kakaoSearchResponseToDetailResponse(KakaoBookSearchResponse.Document kakaoBookSearchResponse);
+    BookSearchDetailResponse kakaoSearchResponseToDetailResponse(
+            KakaoBookSearchResponse.Document kakaoBookSearchResponse);
 
 
+    @Mapping(target = "subTitle", source = "subInfo.subTitle")
+    @Mapping(target = "thumbnail", source = "cover")
+    @Mapping(target = "starRating", expression = "java(aladinBookSearchResponse.getCustomerReviewRank() / 2.0)")
+    @Mapping(target = "reviewCount", source = "subInfo.ratingInfo.myReviewCount")
+    @Mapping(target = "authors", source = "subInfo.authors", qualifiedByName = "mappingAuthorNamesAndIds")
+    @Mapping(target = "translators", source = "subInfo.authors", qualifiedByName = "mappingTranslatorNamesAndIds")
+    @Mapping(target = "publicationDate", source = "pubDate")
+    @Mapping(target = "category", source = "categoryName")
+    @Mapping(target = "pages", source = "subInfo.itemPage")
+    @Mapping(target = "description", source = "fullDescription")
+    @Mapping(target = "toc", source = "subInfo.toc")
+    @Mapping(target = "isbn10", source = "isbn")
+    @Mapping(target = "weight", source = "subInfo.packing.weight")
+    @Mapping(target = "sizeDepth", source = "subInfo.packing.sizeDepth")
+    @Mapping(target = "sizeHeight", source = "subInfo.packing.sizeHeight")
+    @Mapping(target = "sizeWidth", source = "subInfo.packing.sizeWidth")
     BookSearchDetailResponse aladinSearchResponseToDetailResponse(AladinBookSearchDetailResponse.Item aladinBookSearchResponse);
 
     @Named("getISBN10")
@@ -94,6 +112,28 @@ public interface BookSearchDtoMapper {
                 .map(name -> Translator.builder()
                         .name(name)
                         .translatorId(0)
+                        .build())
+                .toList();
+    }
+
+    @Named("mappingAuthorNamesAndIds")
+    static List<BookSearchDetailResponse.Author> mappingAuthorNamesAndIds(List<AladinBookSearchDetailResponse.Author> authors) {
+        return authors.stream()
+                .filter(author -> author.getAuthorType().equals("author"))
+                .map(author -> BookSearchDetailResponse.Author.builder()
+                        .name(author.getAuthorName())
+                        .authorId(author.getAuthorId())
+                        .build())
+                .toList();
+    }
+
+    @Named("mappingTranslatorNamesAndIds")
+    static List<BookSearchDetailResponse.Translator> mappingTranslatorNamesAndIds(List<AladinBookSearchDetailResponse.Author> authors) {
+        return authors.stream()
+                .filter(author -> author.getAuthorType().equals("translator"))
+                .map(author -> BookSearchDetailResponse.Translator.builder()
+                        .name(author.getAuthorName())
+                        .translatorId(author.getAuthorId())
                         .build())
                 .toList();
     }

@@ -7,6 +7,7 @@ import java.util.List;
 import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.BookSearchResultServiceResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchDtoMapper;
+import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse.Item;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse;
@@ -182,6 +183,98 @@ class BookSearchDtoMapperTest {
                 () -> assertThat(translators.get(1).getTranslatorId()).isEqualTo(0),
                 () -> assertThat(translators.get(2).getName()).isEqualTo("번역가3"),
                 () -> assertThat(translators.get(2).getTranslatorId()).isEqualTo(0)
+        );
+    }
+
+    @DisplayName("알라딘 API Response의 Translator (Id, Name)를 BookSearchDetailResponse의 translators 매핑한다.")
+    @Test
+    void mappingTranslatorNamesAndIds() {
+
+        // given
+        List<AladinBookSearchDetailResponse.Author> authorList = List.of(
+                AladinBookSearchDetailResponse.Author.builder().authorId(1).authorName("번역가1").authorType("translator").build(),
+                AladinBookSearchDetailResponse.Author.builder().authorId(2).authorName("번역가2").authorType("translator").build(),
+                AladinBookSearchDetailResponse.Author.builder().authorId(3).authorName("번역가3").authorType("translator").build(),
+                AladinBookSearchDetailResponse.Author.builder().authorId(4).authorName("지은이1").authorType("author").build()
+        );
+
+        // when
+        List<Translator> translators = BookSearchDtoMapper.mappingTranslatorNamesAndIds(authorList);
+
+        // then
+        assertAll(
+                () -> assertThat(translators).hasSize(3),
+                () -> assertThat(translators).extracting(
+                        Translator::getTranslatorId,
+                        Translator::getName
+                ).containsExactly(
+                        tuple(1, "번역가1"),
+                        tuple(2, "번역가2"),
+                        tuple(3, "번역가3")
+                )
+        );
+    }
+
+    @DisplayName("알라딘 API Response의 Author (Id, Name)를 BookSearchDetailResponse 의 authors 매핑한다.")
+    @Test
+    void mappingAuthorNamesAndIds() {
+
+        // given
+        List<AladinBookSearchDetailResponse.Author> authorList = List.of(
+                AladinBookSearchDetailResponse.Author.builder().authorId(1).authorName("번역가1").authorType("translator").build(),
+                AladinBookSearchDetailResponse.Author.builder().authorId(2).authorName("번역가2").authorType("translator").build(),
+                AladinBookSearchDetailResponse.Author.builder().authorId(3).authorName("번역가3").authorType("translator").build(),
+                AladinBookSearchDetailResponse.Author.builder().authorId(4).authorName("지은이1").authorType("author").build()
+        );
+
+        // when
+        List<Author> authors = BookSearchDtoMapper.mappingAuthorNamesAndIds(authorList);
+
+        // then
+        assertAll(
+                () -> assertThat(authors).hasSize(1),
+                () -> assertThat(authors).extracting(
+                        Author::getAuthorId,
+                        Author::getName
+                ).containsExactly(
+                        tuple(4, "지은이1")
+                )
+        );
+    }
+
+    @DisplayName("알라딘 도서 검색 응답 값을 BookSearchDetailResponse 로 매핑한다.")
+    @Test
+    void aladinSearchResponseToDetailResponse() {
+
+        AladinBookSearchDetailResponse.Item response = BookSearchDtoTestData.createAladinBookSearchDetailResponseItem();
+
+        BookSearchDetailResponse dto = BookSearchDtoMapper.INSTANCE.aladinSearchResponseToDetailResponse(
+                response);
+
+        assertAll(
+                () -> assertThat(dto.getTitle()).isEqualTo(response.getTitle()),
+                () -> assertThat(dto.getSubTitle()).isEqualTo(response.getSubInfo().getSubTitle()),
+                () -> assertThat(dto.getLink()).isEqualTo(response.getLink()),
+                () -> assertThat(dto.getThumbnail()).isEqualTo(response.getCover()),
+                () -> assertThat(dto.getDescription()).isEqualTo(response.getFullDescription()),
+                () -> assertThat(dto.getIsbn10()).isEqualTo(response.getIsbn()),
+                () -> assertThat(dto.getIsbn13()).isEqualTo(response.getIsbn13()),
+                () -> assertThat(dto.getPublicationDate()).isEqualTo(response.getPubDate()),
+                () -> assertThat(dto.getPublisher()).isEqualTo(response.getPublisher()),
+                () -> assertThat(dto.getPriceSales()).isEqualTo(response.getPriceSales()),
+                () -> assertThat(dto.getAuthors().size()).isEqualTo(1),
+                () -> assertThat(dto.getTranslators().size()).isEqualTo(1),
+                () -> assertThat(dto.getToc()).isEqualTo(response.getSubInfo().getToc()),
+                () -> assertThat(dto.getCategory()).isEqualTo(response.getCategoryName()),
+                () -> assertThat(dto.getCategoryId()).isEqualTo(response.getCategoryId()),
+                () -> assertThat(dto.getReviewCount()).isEqualTo(response.getSubInfo().getRatingInfo().getMyReviewCount()),
+                () -> assertThat(dto.getStarRating()).isEqualTo(response.getCustomerReviewRank() / 2.0),
+                () -> assertThat(dto.getWeight()).isEqualTo(response.getSubInfo().getPacking().getWeight()),
+                () -> assertThat(dto.getSizeDepth()).isEqualTo(response.getSubInfo().getPacking().getSizeDepth()),
+                () -> assertThat(dto.getSizeHeight()).isEqualTo(response.getSubInfo().getPacking().getSizeHeight()),
+                () -> assertThat(dto.getSizeWidth()).isEqualTo(response.getSubInfo().getPacking().getSizeWidth()),
+                () -> assertThat(dto.getPriceStandard()).isEqualTo(response.getPriceStandard()),
+                () -> assertThat(dto.getPriceSales()).isEqualTo(response.getPriceSales())
         );
     }
 }
