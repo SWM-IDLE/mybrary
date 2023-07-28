@@ -37,4 +37,9 @@ public class Interest extends BaseEntity {
                 .build());
     }
 
+    public void updateCategory(InterestCategory category) {
+        this.category = category;
+        category.getInterests().add(this);
+    }
+
 }
