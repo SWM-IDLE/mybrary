@@ -41,7 +41,7 @@ class BookSearchDtoMapperTest {
                 () -> assertThat(dto.getAuthor()).isEqualTo(String.join(",", response.getAuthors())),
                 () -> assertThat(dto.getIsbn13()).isEqualTo(ISBN_13),
                 () -> assertThat(dto.getThumbnailUrl()).isEqualTo(response.getThumbnail()),
-                () -> assertThat(dto.getPublicationDate()).isEqualTo(response.getDatetime()),
+                () -> assertThat(dto.getPublicationDate()).isEqualTo(response.getDatetime().split("T")[0]),
                 () -> assertThat(dto.getStarRating()).isEqualTo(0.0)
         );
     }

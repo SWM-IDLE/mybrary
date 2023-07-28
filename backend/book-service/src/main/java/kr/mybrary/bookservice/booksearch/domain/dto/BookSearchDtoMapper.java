@@ -2,6 +2,7 @@ package kr.mybrary.bookservice.booksearch.domain.dto;
 
 import java.util.List;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.BookSearchResultServiceResponse;
+import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
@@ -24,10 +25,9 @@ public interface BookSearchDtoMapper {
     @Mapping(target = "author", expression = "java(String.join(\",\", kakaoBookSearchResponse.getAuthors()))")
     @Mapping(target = "isbn13", source = "isbn", qualifiedByName = "getISBN13")
     @Mapping(target = "thumbnailUrl", source = "thumbnail")
-    @Mapping(target = "publicationDate", source = "datetime")
+    @Mapping(target = "publicationDate", expression = "java(kakaoBookSearchResponse.getDatetime().split(\"T\")[0])")
     @Mapping(target = "starRating", constant = "0.0")
-    BookSearchResultServiceResponse kakaoSearchResponseToServiceResponse(
-            KakaoBookSearchResponse.Document kakaoBookSearchResponse);
+    BookSearchResultServiceResponse kakaoSearchResponseToServiceResponse(KakaoBookSearchResponse.Document kakaoBookSearchResponse);
 
     @Mapping(target = "thumbnailUrl", source = "cover")
     @Mapping(target = "publicationDate", source = "pubDate")
@@ -57,6 +57,8 @@ public interface BookSearchDtoMapper {
     @Mapping(target = "priceStandard", source = "price")
     BookSearchDetailResponse kakaoSearchResponseToDetailResponse(KakaoBookSearchResponse.Document kakaoBookSearchResponse);
 
+
+    BookSearchDetailResponse aladinSearchResponseToDetailResponse(AladinBookSearchDetailResponse.Item aladinBookSearchResponse);
 
     @Named("getISBN10")
     static String getISBN10(String isbn) {
