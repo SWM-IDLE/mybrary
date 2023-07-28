@@ -39,7 +39,7 @@ class InterestServiceImplTest {
         InterestCategory learningGrowth = InterestCategoryFixture.LEARNING_GROWTH.getInterestCategory();
         InterestCategory cultureHistory = InterestCategoryFixture.CULTURE_HISTORY.getInterestCategory();
 
-        given(interestCategoryRepository.findAll()).willReturn(
+        given(interestCategoryRepository.findAllWithInterestUsingFetchJoin()).willReturn(
                 List.of(literatureSensibility, learningGrowth, cultureHistory));
 
         // when
@@ -65,7 +65,7 @@ class InterestServiceImplTest {
                         InterestFixture.KOREAN_HISTORY.getInterest().getName())
         );
 
-        verify(interestCategoryRepository).findAll();
+        verify(interestCategoryRepository).findAllWithInterestUsingFetchJoin();
     }
 
 }

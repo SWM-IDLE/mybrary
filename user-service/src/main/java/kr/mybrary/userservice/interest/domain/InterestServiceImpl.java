@@ -30,7 +30,7 @@ public class InterestServiceImpl implements InterestService {
 
     @NotNull
     private List<InterestCategoryResponse> getInterestCategoryResponses() {
-        return interestCategoryRepository.findAll()
+        return interestCategoryRepository.findAllWithInterestUsingFetchJoin()
                 .stream()
                 .map(interestCategory -> InterestCategoryMapper.INSTANCE.toInterestCategoryResponse(interestCategory))
                 .toList();
