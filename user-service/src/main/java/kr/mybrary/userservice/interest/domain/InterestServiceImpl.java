@@ -3,7 +3,7 @@ package kr.mybrary.userservice.interest.domain;
 import jakarta.validation.constraints.NotNull;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestResponse;
-import kr.mybrary.userservice.interest.domain.dto.response.InterestsGroupByCategoryServiceResponse;
+import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
 import kr.mybrary.userservice.interest.persistence.InterestCategory;
 import kr.mybrary.userservice.interest.persistence.repository.InterestCategoryRepository;
 import kr.mybrary.userservice.interest.persistence.repository.InterestRepository;
@@ -22,9 +22,9 @@ public class InterestServiceImpl implements InterestService {
     private final InterestCategoryRepository interestCategoryRepository;
 
     @Override
-    public InterestsGroupByCategoryServiceResponse getInterestsGroupByCategory() {
-        return InterestsGroupByCategoryServiceResponse.builder()
-                .interestsGroupByCategory(getInterestCategoryResponses())
+    public InterestCategoryServiceResponse getInterestCategories() {
+        return InterestCategoryServiceResponse.builder()
+                .interestCategories(getInterestCategoryResponses())
                 .build();
     }
 
