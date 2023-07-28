@@ -2,6 +2,7 @@ package kr.mybrary.bookservice.booksearch;
 
 import java.util.List;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.BookSearchResultServiceResponse;
+import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
@@ -118,6 +119,89 @@ public class BookSearchDtoTestData {
                 .sizeWidth(157)
                 .priceSales(10620)
                 .priceStandard(11800)
+                .build();
+    }
+
+    public static AladinBookSearchDetailResponse.Item createAladinBookSearchDetailResponseItem() {
+        return AladinBookSearchDetailResponse.Item.builder()
+                .title("Sample Book Title")
+                .link("https://sample-link.com")
+                .author("John Doe")
+                .pubDate("2023-07-27")
+                .description("Sample book description.")
+                .isbn("1234567890")
+                .isbn13("9781234567890")
+                .itemId(1)
+                .priceSales(10000)
+                .priceStandard(12000)
+                .mallType("Sample Mall")
+                .stockStatus("In Stock")
+                .mileage(100)
+                .cover("https://sample-cover.com")
+                .categoryId(1)
+                .categoryName("Fiction")
+                .publisher("Sample Publisher")
+                .salesPoint(500)
+                .adult(false)
+                .fixedPrice(true)
+                .customerReviewRank(4)
+                .fullDescription("Full book description.")
+                .fullDescription2("Another full book description.")
+                .subInfo(buildSubInfo())
+                .build();
+    }
+
+    public static AladinBookSearchDetailResponse.SubInfo buildSubInfo() {
+        return AladinBookSearchDetailResponse.SubInfo.builder()
+                .subTitle("Sub Title")
+                .originalTitle("Original Title")
+                .itemPage(100)
+                .toc("Table of Contents")
+                .authors(List.of(buildAuthor(), buildTranslator()))
+                .ratingInfo(buildRatingInfo())
+                .packing(buildPacking())
+                .build();
+    }
+
+    public static AladinBookSearchDetailResponse.Author buildAuthor() {
+        return AladinBookSearchDetailResponse.Author.builder()
+                .authorId(1)
+                .authorName("John Doe")
+                .authorType("author")
+                .authorTypeDesc("Sample Type Description")
+                .authorInfo("Author Information")
+                .authorInfoLink("https://sample-author-info.com")
+                .authorPhoto("https://sample-author-photo.com")
+                .build();
+    }
+    public static AladinBookSearchDetailResponse.Author buildTranslator() {
+        return AladinBookSearchDetailResponse.Author.builder()
+                .authorId(1)
+                .authorName("John Doe")
+                .authorType("translator")
+                .authorTypeDesc("Sample Type Description")
+                .authorInfo("translator Information")
+                .authorInfoLink("https://sample-author-info.com")
+                .authorPhoto("https://sample-author-photo.com")
+                .build();
+    }
+
+    public static AladinBookSearchDetailResponse.RatingInfo buildRatingInfo() {
+        return AladinBookSearchDetailResponse.RatingInfo.builder()
+                .ratingScore(4.5)
+                .ratingCount(100)
+                .commentReviewCount(50)
+                .myReviewCount(10)
+                .build();
+    }
+
+    public static AladinBookSearchDetailResponse.Packing buildPacking() {
+        return AladinBookSearchDetailResponse.Packing.builder()
+                .styleDesc("Sample Packing Style")
+                .weight(300)
+                .sizeDepth(20)
+                .sizeHeight(30)
+                .sizeWidth(10)
                 .build();
     }
 }
