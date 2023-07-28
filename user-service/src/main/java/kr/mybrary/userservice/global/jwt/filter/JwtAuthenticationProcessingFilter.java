@@ -22,15 +22,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
-    private static final String USER_SERVICE_URL = "/api/v1/users";
-    private static final String INTEREST_CATEGORY_SERVICE_URL = "/api/v1/interest-categories";
-    private static final String LOGIN_URL = "/api/v1/auth/login";
+    private static final String USER_SERVICE_API_URL = "/api/v1";
     private static final String OAUTH2_URL = "/oauth2/authorization";
+    private static final List<String> TOKEN_AUTH_WHITELIST = List.of(USER_SERVICE_API_URL, OAUTH2_URL);
     private static final String TOKEN_LOGOUT = "로그아웃된 토큰입니다.";
     private static final String DIFFERENT_REFRESH_TOKEN = "저장된 리프레쉬 토큰과 다릅니다.";
     private static final String USER_NOT_FOUND_BY_LOGIN_ID = "존재하지 않는 유저입니다.";
@@ -72,8 +72,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     private boolean tokenAuthenticationNotRequired(HttpServletRequest request) {
-        return request.getRequestURI().contains(USER_SERVICE_URL) || request.getRequestURI().contains(LOGIN_URL) ||
-                request.getRequestURI().contains(OAUTH2_URL) || request.getRequestURI().contains(INTEREST_CATEGORY_SERVICE_URL);
+        return TOKEN_AUTH_WHITELIST.stream()
+                .anyMatch(uri -> request.getRequestURI().contains(uri));
     }
 
     private void checkIfTokenIsLogout(String accessToken) {

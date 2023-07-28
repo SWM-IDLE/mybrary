@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/auth/v1/")
 public class AuthController {
 
     @GetMapping("/test")
-    public ResponseEntity<SuccessResponse> signUp(HttpServletRequest request) {
+    public ResponseEntity<SuccessResponse> authorizationTest(HttpServletRequest request) {
         String userId = request.getAttribute("USER-ID").toString();
         return ResponseEntity.status(200).body(
                 SuccessResponse.of(HttpStatus.CREATED.toString(), "인가된 사용자입니다. 로그인된 아이디: " + userId, null)
