@@ -48,8 +48,7 @@ public class WebSecurityConfig {
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
     private static final String[] AUTH_WHITELIST = {
-            "/api/v1/users/**",
-            "/api/v1/interests/**",
+            "/api/v1/**",
             "/docs/**",
             "/v3/api-docs/swagger-config/**",
             "/error",

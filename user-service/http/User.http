@@ -24,7 +24,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb
 
 ### 4. 인가 테스트
 GET http://localhost:8080/api/v1/auth/test
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImxvZ2luSWQiOiJsb2dpbklkIiwiZXhwIjoxNjg5OTUwNjI5fQ.xVTWvIsUbaES_rYcfel-TuGy944Gtlf5XuNhkZO_MioWX2xhKFiMJjmYPcF6f9IogbDebjbiSVxMNJ9PwoIx8w
+# Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImxvZ2luSWQiOiJsb2dpbklkIiwiZXhwIjoxNjg5OTUwNjI5fQ.xVTWvIsUbaES_rYcfel-TuGy944Gtlf5XuNhkZO_MioWX2xhKFiMJjmYPcF6f9IogbDebjbiSVxMNJ9PwoIx8w
 
 ### 3. 구글 소셜 로그인
 GET http://localhost:8080/oauth2/authorization/google
@@ -68,3 +68,6 @@ USER-ID: loginId
 ### 12. 프로필 이미지 삭제
 DELETE http://localhost:8080/api/v1/users/profile/image
 USER-ID: loginId
+
+### 13. 카테고리별 관심사 모두 조회
+GET http://localhost:8080/api/v1/interest-categories

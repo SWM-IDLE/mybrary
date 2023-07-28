@@ -7,8 +7,8 @@ import java.util.List;
 
 @Getter
 @Builder
-public class InterestsGroupByCategoryServiceResponse {
+public class InterestCategoryServiceResponse {
 
-    List<InterestCategoryResponse> interestsGroupByCategory;
+    List<InterestCategoryResponse> interestCategories;
 
 }
