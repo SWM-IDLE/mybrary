@@ -22,6 +22,7 @@ public class InterestServiceImpl implements InterestService {
     private final InterestCategoryRepository interestCategoryRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public InterestCategoryServiceResponse getInterestCategories() {
         return InterestCategoryServiceResponse.builder()
                 .interestCategories(getInterestCategoryResponses())
