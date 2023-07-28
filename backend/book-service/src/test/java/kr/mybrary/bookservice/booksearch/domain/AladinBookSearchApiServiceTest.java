@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,8 +37,6 @@ class AladinBookSearchApiServiceTest {
     private static final String ITEM_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx";
     private static final String ITEM_DETAIL_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx";
     private static final String JSON_FILE_PATH = "src/test/resources/aladinapi/";
-    private static final String EXIST_ISBN = "9788980782970";
-    private static final String NOT_EXIST_ISBN = "978898078297011";
 
     @Autowired
     private AladinBookSearchApiService aladinBookSearchApiService;
@@ -145,6 +144,50 @@ class AladinBookSearchApiServiceTest {
         // when, then
         assertThatThrownBy(() -> aladinBookSearchApiService.searchWithKeyword(request))
                 .isInstanceOf(BookSearchResultNotFoundException.class);
+    }
+
+    @DisplayName("알라딘 도서 상세 조회 한다.")
+    @Test
+    void searchBookDetailWithISBN() throws IOException {
+
+        // given
+        BookSearchServiceRequest request = BookSearchServiceRequest.of("9788965402602");
+        String expectResult = readJsonFile("bookDetailResultFromISBN.json");
+
+        mockServer
+                .expect(requestTo(ITEM_DETAIL_SEARCH_URL
+                        + "?itemIdType=ISBN13&ItemId=9788965402602&output=js&Version=20131101&OptResult=packing,ratingInfo,authors,fulldescription,Toc&ttbkey="
+                        + API_KEY))
+                .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
+
+        // when
+        BookSearchDetailResponse bookSearchDetailResponse = aladinBookSearchApiService.searchBookDetailWithISBN(request);
+
+        // then
+        assertAll(
+                () -> assertThat(bookSearchDetailResponse.getIsbn13()).isEqualTo("9788965402602"),
+                () -> assertThat(bookSearchDetailResponse.getIsbn10()).isEqualTo("8965402603")
+        );
+    }
+
+    @DisplayName("알라딘 도서 상세 조회 시, 결과가 없으면 예외가 발생한다.")
+    @Test
+    void searchBookDetailWithISBNAndResultEmpty() throws IOException {
+
+        // given
+        BookSearchServiceRequest request = BookSearchServiceRequest.of("978898078297011");
+        String expectResult = readJsonFile("aladinBookNotFoundError.json");
+
+        mockServer
+                .expect(requestTo(ITEM_DETAIL_SEARCH_URL
+                        + "?cover=big&itemIdType=ISBN13&ItemId=978898078297011&output=js&Version=20131101&OptResult=packing,ratingInfo,authors,fulldescription,Toc&ttbkey="
+                        + API_KEY))
+                .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
+
+        // when, then
+        assertThatThrownBy(() -> aladinBookSearchApiService.searchBookDetailWithISBN(request))
+                .isInstanceOf(BookSearchResultNotFoundException.class);
+
     }
 
     private String readJsonFile(String fileName) throws IOException {
