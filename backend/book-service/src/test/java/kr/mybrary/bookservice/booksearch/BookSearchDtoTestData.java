@@ -16,7 +16,7 @@ public class BookSearchDtoTestData {
                 .author("남궁성")
                 .thumbnailUrl("https://bookthumb-phinf.pstatic.net/cover/150/077/15007773.jpg?type=m1&udate=20180726")
                 .starRating(0.0)
-                .publicationDate("2008-08-01T00:00:00+09:00")
+                .publicationDate("2008-08-01")
                 .build();
     }
 

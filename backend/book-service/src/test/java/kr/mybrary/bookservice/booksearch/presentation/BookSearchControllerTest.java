@@ -47,7 +47,7 @@ class BookSearchControllerTest {
     @MockBean
     private KakaoBookSearchApiService kakaoBookSearchApiService;
 
-    @DisplayName("ISBN 바코드 인식시, ISBN을 통해 책을 검색한다.")
+    @DisplayName("ISBN을 통해 도서의 상세 정보를 조회한다.")
     @Test
     void searchWithISBNBarcodeScan() throws Exception {
 
@@ -166,7 +166,7 @@ class BookSearchControllerTest {
                 .andExpect(jsonPath("$.data.bookSearchResult[0].isbn13").value("9788980782970"))
                 .andExpect(jsonPath("$.data.bookSearchResult[0].thumbnailUrl").value("https://bookthumb-phinf.pstatic.net/cover/150/077/15007773.jpg?type=m1&udate=20180726"))
                 .andExpect(jsonPath("$.data.bookSearchResult[0].starRating").value("0.0"))
-                .andExpect(jsonPath("$.data.bookSearchResult[0].publicationDate").value("2008-08-01T00:00:00+09:00"))
+                .andExpect(jsonPath("$.data.bookSearchResult[0].publicationDate").value("2008-08-01"))
 
                 .andExpect(jsonPath("$.data.nextRequestUrl").value(
                         "/books/search?keyword=자바&sort=accuracy&page=2"));
@@ -180,8 +180,8 @@ class BookSearchControllerTest {
                                 ResourceSnippetParameters.builder()
                                         .tag("search")
                                         .summary("키워드으로 도서 검색한다. (최대 10권)")
-                                        .description(("예시로는 검색된 도서가 1권이지만, 실제 검색된 도서가 10권이면 nextRequestUrl에 다음 페이지를 요청할 수 있는 URL이 반환된다."
-                                                + " 만일 10권 이하로 검색된다면 nextRequestUrl은 빈 문자열이다."))
+                                        .description(("예시로는 검색된 도서가 1권이지만, 실제 검색된 도서가 50권이면 nextRequestUrl에 다음 페이지를 요청할 수 있는 URL이 반환된다."
+                                                + " 만일 50권 이하로 검색된다면 nextRequestUrl은 빈 문자열이다."))
                                         .queryParameters(
                                                 parameterWithName("keyword").type(SimpleType.STRING).description("키워드"),
                                                 parameterWithName("sort").type(SimpleType.STRING).optional().defaultValue("accuracy").description("정렬 방식"),
