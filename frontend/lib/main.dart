@@ -8,6 +8,7 @@ import 'package:mybrary/ui/auth/sign_up/sign_up_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_verify_screen.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/home/home_screen.dart';
+import 'package:mybrary/ui/profile/profile_edit/profile_edit_screen.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/search_isbn_scan_screen.dart';
 import 'package:mybrary/ui/search/search_screen.dart';
 
@@ -67,6 +68,7 @@ class MyApp extends StatelessWidget {
               '/home': (context) => HomeScreen(),
               '/search': (context) => SearchScreen(),
               '/search/barcode': (context) => SearchIsbnScanScreen(),
+              '/profile/edit': (context) => ProfileEditScreen(),
             },
           );
         }

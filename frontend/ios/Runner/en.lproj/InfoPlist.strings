@@ -8,3 +8,4 @@
 CFBundleName="Mybrary";
 CFBundleDisplayName="Mybrary";
 NSCameraUsageDescription="This app needs camera access to Barcode scan";
+NSPhotoLibraryUsageDescription="This app needs album access for profile editing";
