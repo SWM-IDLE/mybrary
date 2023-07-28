@@ -1,0 +1,28 @@
+name: 'rest docs'
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'backend/book-service/'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'backend/book-service/'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Openapi3
+        run: |
+          cd /backend/book-service 
+          ./gradlew openapi3 --no-build-cache
+      - name: Upload OpenApi Specification to S3
+        run: |
+          aws s3 cp backend/book-service/src/main/resources/static/docs/book-service.json s3://mybrary-swagger-ui/docs/book-service.json
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.OPEN_API_GIT_ACTIONS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.OPEN_API_GIT_ACTIONS_SECRET_KEY }}
