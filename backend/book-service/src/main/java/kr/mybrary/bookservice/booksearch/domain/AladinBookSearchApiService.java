@@ -83,7 +83,29 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
 
     @Override
     public BookSearchDetailResponse searchBookDetailWithISBN(BookSearchServiceRequest request) {
-        return null;
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(ITEM_DETAIL_SEARCH_URL)
+                .queryParam("TTBKey", API_KEY)
+                .queryParam("Output", REQUEST_OUTPUT)
+                .queryParam("Version", REQUEST_VERSION)
+                .queryParam("ItemId", request.getKeyword())
+                .queryParam("Cover", REQUEST_COVER_SIZE)
+                .queryParam("ItemIdType", "ISBN13")
+                .queryParam("OptResult", "packing,ratingInfo,authors,fulldescription,Toc");
+
+        ResponseEntity<AladinBookSearchDetailResponse> response = restTemplate.exchange(
+                uriBuilder.build(false).toUriString(),
+                HttpMethod.GET,
+                null,
+                AladinBookSearchDetailResponse.class);
+
+        AladinBookSearchDetailResponse aladinBookSearchResponse = Objects.requireNonNull(response.getBody());
+
+        if (aladinBookSearchResponse.getTotalResults() == 0) {
+            throw new BookSearchResultNotFoundException();
+        }
+
+        return BookSearchDtoMapper.INSTANCE.aladinSearchResponseToDetailResponse(aladinBookSearchResponse.getItem().get(0));
     }
 
     private String getNextRequestUrl(BookSearchServiceRequest request) {

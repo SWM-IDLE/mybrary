@@ -1,0 +1,70 @@
+{
+  "version": "20131101",
+  "logo": "http://image.aladin.co.kr/img/header/2011/aladin_logo_new.gif",
+  "title": "알라딘 상품정보 - 스프링 부트와 AWS로 혼자 구현하는 웹 서비스",
+  "link": "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=218568947&amp;partner=openAPI",
+  "pubDate": "Fri, 28 Jul 2023 06:52:19 GMT",
+  "totalResults": 1,
+  "startIndex": 1,
+  "itemsPerPage": 1,
+  "query": "isbn13=9788965402602",
+  "searchCategoryId": 0,
+  "searchCategoryName": "",
+  "item": [
+    {
+      "title": "스프링 부트와 AWS로 혼자 구현하는 웹 서비스 - 인텔리제이, JPA, JUnit 테스트, 그레이들, 소셜 로그인, AWS 인프라로 무중단 배포까지",
+      "link": "http://www.aladin.co.kr/shop/wproduct.aspx?ItemId=218568947&amp;partner=openAPI&amp;start=api",
+      "author": "이동욱(향로) (지은이)",
+      "pubDate": "2019-11-29",
+      "description": "스프링 부트와 AWS로 웹 서비스를 구현한다. JPA와 JUnit 테스트, 그레이들, 머스테치, 스프링 시큐리티를 활용한 소셜 로그인 등으로 애플리케이션을 개발하고, 뒤이어 AWS 인프라의 기본 사용법과 AWS EC2와 RDS를 사용해 서비스가 가능하도록 한다.",
+      "isbn": "8965402603",
+      "isbn13": "9788965402602",
+      "itemId": 218568947,
+      "priceSales": 19800,
+      "priceStandard": 22000,
+      "mallType": "BOOK",
+      "stockStatus": "",
+      "mileage": 1100,
+      "cover": "https://image.aladin.co.kr/product/21856/89/coversum/8965402603_2.jpg",
+      "categoryId": 6627,
+      "categoryName": "국내도서>컴퓨터/모바일>프로그래밍 개발/방법론>웹 서비스/웹 프로그래밍",
+      "publisher": "프리렉",
+      "salesPoint": 4288,
+      "adult": false,
+      "fixedPrice": true,
+      "customerReviewRank": 8,
+      "fullDescription": "스프링 부트와 AWS로 웹 서비스를 구현한다. JPA와 JUnit 테스트, 그레이들, 머스테치, 스프링 시큐리티를 활용한 소셜 로그인 등으로 애플리케이션을 개발하고, 뒤이어 AWS 인프라의 기본 사용법과 AWS EC2와 RDS를 사용해 서비스가 가능하도록 한다. 이렇게 점진적으로 스프링 부트 프로젝트를 개선해서 배포 자동화하고 무중단 배포까지 경험한다. 실무 현장에서의 노하우와 테스트 방법, 객체지향 프로그래밍 등을 소개하고 다룬다.",
+      "fullDescription2": "<b>가장 빠르고 쉽게 웹 서비스의 모든 과정을 경험한다. </b><BR>\n<b>경험이 실력이 되는 순간!</b><BR>\n이 책은 제목 그대로 스프링 부트와 AWS로 웹 서비스를 구현합니다. JPA와 JUnit 테스트, 그레이들, 머스테치, 스프링 시큐리티를 활용한 소셜 로그인 등으로 애플리케이션을 개발하고, 뒤이어 AWS 인프라의 기본 사용법과 AWS EC2와 RDS를 사용해 서비스가 가능하도록 합니다. 이렇게 점진적으로 스프링 부트 프로젝트를 개선해서 배포 자동화하고 무중단 배포까지 경험합니다. 실무 현장에서의 노하우와 테스트 방법, 객체지향 프로그래밍 등을 소개하고 다룹니다.<BR>\n <BR>\n스프링으로 하는 웹 개발이 이제는 어렵고 복잡하지 않습니다. 이 책은 기초 자바 지식만 있다면 편하게 진행할 수 있습니다. 스프링 부트 개념 설명에 집중하기 보단, 만드는 재미와 책을 보고 무엇을 만들 수 있을까에 집중했습니다. 국내 많은 서비스 회사들은 자바와 스프링을 사용하고 있습니다. 원하는 회사의 기술 스택과도 일치하고 구현하고 싶은 서비스도 쉽고 빠르게 만들고자 합니다. 전공 과제나 졸작, 취업 포트폴리오를 만들고 싶은 분들이나 실제 서비스 경험이 없는 주니어 개발자분들에게 추천합니다.",
+      "subInfo": {
+        "subTitle": "인텔리제이, JPA, JUnit 테스트, 그레이들, 소셜 로그인, AWS 인프라로 무중단 배포까지",
+        "originalTitle": "",
+        "itemPage": 416,
+        "toc": "<p><B>01장  인텔리제이로 스프링 부트 시작하기</B><BR>\n_1.1 인텔리제이 소개<BR>\n_1.2 인텔리제이 설치하기<BR>\n_1.3 인텔리제이 커뮤니티에서 프로젝트 생성하기<BR>\n_1.4 그레이들 프로젝트를 스프링 부트 프로젝트로 변경하기<BR>\n_1.5 인텔리제이에서 깃과 깃허브 사용하기<BR>\n<BR>\n<B>02장  스프링 부트에서 테스트 코드를 작성하자</B><BR>\n_2.1 테스트 코드 소개<BR>\n_2.2 Hello Controller 테스트 코드 작성하기<BR>\n_2.3 롬복 소개 및 설치하기<BR>\n_2.4 Hello Controller 코드를 롬복으로 전환하기<BR>\n<BR>\n<B>03장  스프링 부트에서 JPA로 데이터베이스 다뤄보자</B><BR>\n_3.1 JPA 소개<BR>\n__Spring Data JPA<BR>\n__실무에서 JPA<BR>\n__요구사항 분석<BR>\n_3.2 프로젝트에 Spring Data Jpa 적용하기<BR>\n_3.3 Spring Data JPA 테스트 코드 작성하기<BR>\n_3.4 등록/수정/조회 API 만들기<BR>\n_3.5 JPA Auditing으로 생성시간/수정시간 자동화하기<BR>\n__LocalDate 사용<BR>\n__JPA Auditing 테스트 코드 작성하기<BR>\n<BR>\n<B>04장  머스테치로 화면 구성하기</B><BR>\n_4.1 서버 템플릿 엔진과 머스테치 소개<BR>\n__머스테치란<BR>\n__머스테치 플러그인 설치<BR>\n_4.2 기본 페이지 만들기<BR>\n_4.3 게시글 등록 화면 만들기<BR>\n_4.4 전체 조회 화면 만들기<BR>\n_4.5 게시글 수정, 삭제 화면 만들기<BR>\n__게시글 수정<BR>\n__게시글 삭제<BR>\n<BR>\n<B>05장  스프링 시큐리티와 OAuth 2.0으로 로그인 기능 구현하기</B><BR>\n_5.1 스프링 시큐리티와 스프링 시큐리티 Oauth2 클라이언트<BR>\n_5.2 구글 서비스 등록<BR>\n_5.3 구글 로그인 연동하기<BR>\n__스프링 시큐리티 설정<BR>\n__로그인 테스트<BR>\n_5.4 어노테이션 기반으로 개선하기<BR>\n_5.5 세션 저장소로 데이터베이스 사용하기<BR>\n_5.6 네이버 로그인<BR>\n__네이버 API 등록<BR>\n__스프링 시큐리티 설정 등록<BR>\n_5.7 기존 테스트에 시큐리티 적용하기<BR>\n<BR>\n<B>06장  AWS 서버 환경을 만들어보자 - AWS EC2</B><BR>\n_6.1 AWS 회원 가입<BR>\n_6.2 EC2 인스턴스 생성하기<BR>\n_6.3 EC2 서버에 접속하기<BR>\n_6.4 아마존 리눅스 1 서버 생성 시 꼭 해야 할 설정들<BR>\n<BR>\n<B>07장  AWS에 데이터베이스 환경을 만들어보자 - AWS RDS</B><BR>\n_7.1 RDS 인스턴스 생성하기<BR>\n_7.2 RDS 운영환경에 맞는 파라미터 설정하기<BR>\n_7.3 내 PC에서 RDS에서 접속해 보기<BR>\n__Database 플러그인 설치<BR>\n_7.4 EC2에서 RDS에서 접근 확인<BR>\n<BR>\n<B>08장  EC2 서버에 프로젝트를 배포해 보자</B><BR>\n_8.1 EC2에 프로젝트 Clone 받기<BR>\n_8.2 배포 스크립트 만들기<BR>\n_8.3 외부 Security 파일 등록하기<BR>\n_8.4 스프링 부트 프로젝트로 RDS 접근하기<BR>\n__RDS 테이블 생성<BR>\n__프로젝트 설정<BR>\n__EC2 설정<BR>\n_8.5 EC2에서 소셜 로그인하기<BR>\n<BR>\n<B>09장  코드가 푸시되면 자동으로 배포해 보자 - Travis CI 배포 자동화</B><BR>\n_9.1 CI & CD 소개<BR>\n_9.2 Travis CI 연동하기<BR>\n__Travis CI 웹 서비스 설정<BR>\n__프로젝트 설정<BR>\n_9.3 Travis CI와 AWS S3 연동하기<BR>\n__AWS Key 발급<BR>\n__Travis CI에 키 등록<BR>\n__S3 버킷 생성<BR>\n__.travis.yml 추가<BR>\n_9.4 Travis CI와 AWS S3, CodeDeploy 연동하기<BR>\n__EC2에 IAM 역할 추가하기<BR>\n__CodeDeploy 에이전트 설치<BR>\n__CodeDeploy를 위한 권한 생성<BR>\n__CodeDeploy 생성<BR>\n__Travis CI, S3, CodeDeploy 연동<BR>\n_9.5 배포 자동화 구성<BR>\n__deploy.sh 파일 추가<BR>\n__.travis.yml 파일 수정<BR>\n__appspec.yml 파일 수정<BR>\n__실제 배포 과정 체험<BR>\n_9.6 CodeDeploy 로그 확인<BR>\n<BR>\n<B>10장  24시간 365일 중단 없는 서비스를 만들자</B><BR>\n_10.1 무중단 배포 소개<BR>\n_10.2 엔진엑스 설치와 스프링 부트 연동하기<BR>\n_10.3 무중단 배포 스크립트 만들기<BR>\n__profile API 추가<BR>\n__real1, real2 profile 생성<BR>\n__엔진엑스 설정 수정<BR>\n__배포 스크립트들 작성<BR>\n_10.4 무중단 배포 테스트<BR>\n<BR>\n<B>11장  1인 개발 시 도움이 될 도구와 조언들</B><BR>\n_11.1 추천 도구 소개<BR>\n__댓글<BR>\n__외부 서비스 연동<BR>\n__방문자 분석<BR>\n__CDN<BR>\n__이메일 마케팅<BR>\n_11.2 1인 개발 팁<BR>\n_11.3 마무리<BR>\n<BR>\n찾아보기</p>",
+        "ratingInfo": {
+          "ratingScore": 8.3,
+          "ratingCount": 14,
+          "commentReviewCount": 13,
+          "myReviewCount": 1
+        },
+        "authors": [
+          {
+            "authorId": 9100644,
+            "authorName": "이동욱(향로)",
+            "authorType": "author",
+            "authorTypeDesc": "지은이",
+            "authorInfo": "10여 년 동안 SI, 인터넷 포털, O2O 스타트업, 에듀테크 등 분야에서 개발자, 리드 엔지니어로 활동했습니다. 누적 조회수 800만 기술 블로그 ‘기억보단 기록을’에 기술을 공유하고 있으며, 개발 유튜브 채널 ‘개발바닥’에 개발에 대한 여러 생각을 공유합니다.\n\n_현) 인프랩(인프런) CTO\n_전) 우아한형제들 시니어 엔지니어\n_전) 줌인터넷 소프트웨어 엔지니어",
+            "authorInfoLink": "https://www.aladin.co.kr/author/wauthor_overview.aspx?AuthorSearch=@9100644&amp;partner=openAPI",
+            "authorPhoto": "https://image.aladin.co.kr/author/photo/9100644/9100644_1.jpg"
+          }
+        ],
+        "packing": {
+          "styleDesc": "미확인",
+          "weight": 790,
+          "sizeDepth": 21,
+          "sizeHeight": 225,
+          "sizeWidth": 152
+        }
+      }
+    }
+  ]
+}
