@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Openapi3
-        working-directory: ./backend/book-service
+        working-directory: backend/book-service
         run: |
           ./gradlew openapi3 --no-build-cache
       - name: Upload OpenApi Specification to S3
