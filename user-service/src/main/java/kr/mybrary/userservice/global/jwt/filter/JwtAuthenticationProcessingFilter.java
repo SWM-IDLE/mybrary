@@ -30,7 +30,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private static final String USER_SERVICE_API_URL = "/api/v1";
     private static final String OAUTH2_URL = "/oauth2/authorization";
-    private static final List<String> TOKEN_AUTH_WHITELIST = List.of(USER_SERVICE_API_URL, OAUTH2_URL);
+    private static final String OAUTH2_REDIRECT_URL = "/login/oauth2/code";
+    private static final List<String> TOKEN_AUTH_WHITELIST = List.of(USER_SERVICE_API_URL, OAUTH2_URL, OAUTH2_REDIRECT_URL);
     private static final String TOKEN_LOGOUT = "로그아웃된 토큰입니다.";
     private static final String DIFFERENT_REFRESH_TOKEN = "저장된 리프레쉬 토큰과 다릅니다.";
     private static final String USER_NOT_FOUND_BY_LOGIN_ID = "존재하지 않는 유저입니다.";
