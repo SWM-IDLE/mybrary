@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Openapi3
         run: |
-          cd /backend/book-service 
+          cd backend/book-service/ 
           ./gradlew openapi3 --no-build-cache
       - name: Upload OpenApi Specification to S3
         run: |
