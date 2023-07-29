@@ -5,12 +5,12 @@ on:
     branches:
       - master
     paths:
-      - 'backend/book-service/'
+      - 'backend/book-service/**'
   pull_request:
     branches:
       - master
     paths:
-      - 'backend/book-service/'
+      - 'backend/book-service/**'
 
 jobs:
   build:
