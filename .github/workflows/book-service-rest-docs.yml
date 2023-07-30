@@ -19,9 +19,11 @@ jobs:
       - name: ls step
         run: |
           ls -alR 
-          ls -alR ${GITHUB_WORKSPACE}/backend/book-service
+      - name: ls step
+        run: |
+          ls -alR home/runner/work/mybrary/backend/book-service
       - name: Openapi3
-        working-directory: ${GITHUB_WORKSPACE}/backend/book-service
+        working-directory: home/runner/work/mybrary/backend/book-service
         run: |
           ./gradlew openapi3 --no-build-cache
       - name: Upload OpenApi Specification to S3
