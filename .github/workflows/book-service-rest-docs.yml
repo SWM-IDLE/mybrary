@@ -18,8 +18,8 @@ jobs:
     steps:
       - name: ls step
         run: |
-          ls -alR backend/book-service
           ls -alR 
+          ls -alR ${GITHUB_WORKSPACE}/backend/book-service
       - name: Openapi3
         working-directory: ${GITHUB_WORKSPACE}/backend/book-service
         run: |
