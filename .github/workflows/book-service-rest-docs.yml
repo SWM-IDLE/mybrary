@@ -1,4 +1,4 @@
-name: 'rest docs'
+name: 'book-service api specification to s3'
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v2
         
       - name: Setup Java
@@ -42,7 +42,7 @@ jobs:
             mkdir -p build/resources/main/static/docs
             echo "test" > build/resources/main/static/docs/book-service.json
                   
-      - name: Openapi3
+      - name: Run Openapi3
         working-directory: backend/book-service
         run: |
           ./gradlew openapi3
