@@ -39,7 +39,8 @@ jobs:
       - name: Openapi3
         working-directory: backend/book-service
         run: |
-          ./gradlew openapi3 --no-build-cache
+          ./gradlew build
+          ./gradlew openapi3
           
       - name: Upload OpenApi Specification to S3
         working-directory: backend/book-service
