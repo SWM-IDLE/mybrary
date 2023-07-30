@@ -1,10 +1,13 @@
 package kr.mybrary.bookservice.book.persistence;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import kr.mybrary.bookservice.book.persistence.author.BookAuthor;
@@ -32,28 +35,39 @@ public class Book extends BaseEntity {
     private Long id;
 
     private String title;
-
-    private String description;
-
-    private String detailsUrl;
-
+    private String subTitle;
+    private String thumbnailUrl;
+    private String link;
+    @Column(unique = true)
     private String isbn10;
 
+    @Column(unique = true, nullable = false)
     private String isbn13;
 
+    private Integer pages;
     private String publisher;
+    private LocalDateTime publicationDate;
+    private String description;
+    private String toc;
 
-    private LocalDateTime publishDate;
-
-    private Integer price;
-
-    private String thumbnailUrl;
+    private Integer weight;
+    private Integer sizeDepth;
+    private Integer sizeHeight;
+    private Integer sizeWidth;
+    private Integer priceSales;
+    private Integer priceStandard;
 
     private Integer holderCount;
-
     private Integer readCount;
-
     private Integer interestCount;
+    private Double starRating;
+    private Integer reviewCount;
+
+    private Double aladinStarRating;
+    private Integer aladinReviewCount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BookCategory bookCategory;
 
     @Builder.Default
     @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST)
@@ -64,7 +78,6 @@ public class Book extends BaseEntity {
     private List<BookTranslator> bookTranslators = new ArrayList<>();
 
     public void addBookAuthor(List<BookAuthor> bookAuthorList) {
-
         bookAuthorList.forEach(bookAuthor -> {
             this.bookAuthors.add(bookAuthor);
             bookAuthor.assignBook(this);

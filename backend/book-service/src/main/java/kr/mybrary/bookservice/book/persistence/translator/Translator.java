@@ -23,5 +23,6 @@ public class Translator extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String tid;
     private String name;
 }
