@@ -19,6 +19,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu' 
+          java-version: '17'
+      
       - name: Openapi3
         working-directory: backend/book-service
         run: |
@@ -26,7 +32,7 @@ jobs:
           
       - name: Upload OpenApi Specification to S3
         run: |
-          aws s3 cp backend/book-service/src/main/resources/static/docs/book-service.json s3://mybrary-swagger-ui/docs/book-service.json
+          aws s3 cp src/main/resources/static/docs/book-service.json s3://mybrary-swagger-ui/docs/book-service.json
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.OPEN_API_GIT_ACTIONS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.OPEN_API_GIT_ACTIONS_SECRET_KEY }}
