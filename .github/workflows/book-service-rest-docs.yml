@@ -16,14 +16,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: ls step
-        run: |
-          ls -alR 
-      - name: ls step
-        run: |
-          ls -alR home/runner/work/mybrary/backend/book-service
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
       - name: Openapi3
-        working-directory: home/runner/work/mybrary/backend/book-service
+        working-directory: mybrary/backend/book-service
         run: |
           ./gradlew openapi3 --no-build-cache
       - name: Upload OpenApi Specification to S3
