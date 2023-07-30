@@ -7,6 +7,7 @@ import kr.mybrary.userservice.interest.domain.InterestService;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
+import kr.mybrary.userservice.interest.domain.dto.response.UserInterestServiceResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ class InterestControllerTest {
     private MockMvc mockMvc;
 
     private final String BASE_URL = "/api/v1";
+    private final String LOGIN_ID = "loginId_1";
     private final String STATUS_FIELD_DESCRIPTION = "응답 상태";
     private final String MESSAGE_FIELD_DESCRIPTION = "응답 메시지";
 
@@ -139,6 +141,65 @@ class InterestControllerTest {
                                         fieldWithPath("data.interestCategories[].description").type(JsonFieldType.STRING).description("카테고리 설명"),
                                         fieldWithPath("data.interestCategories[].interestResponses[].id").type(JsonFieldType.NUMBER).description("관심사 ID"),
                                         fieldWithPath("data.interestCategories[].interestResponses[].name").type(JsonFieldType.STRING).description("관심사 이름")
+                                )
+                                .build()
+                ))
+        );
+    }
+
+    @DisplayName("사용자의 관심사를 모두 조회한다.")
+    @Test
+    void getUserInterests() throws Exception {
+        // given
+        UserInterestServiceResponse interestServiceResponse = UserInterestServiceResponse.builder()
+                .loginId(LOGIN_ID)
+                .userInterests(List.of(
+                        InterestResponse.builder()
+                                .id(1L)
+                                .name("국내소설")
+                                .build(),
+                        InterestResponse.builder()
+                                .id(2L)
+                                .name("외국소설")
+                                .build()
+                ))
+                .build();
+
+        given(interestService.getUserInterests(LOGIN_ID)).willReturn(interestServiceResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.get(String.format(BASE_URL + "/users/%s/interests", LOGIN_ID))
+                        .with(csrf()));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
+                .andExpect(jsonPath("$.message").value("사용자의 관심사를 모두 조회했습니다."))
+                .andExpect(jsonPath("$.data.loginId").value(LOGIN_ID))
+                .andExpect(jsonPath("$.data.userInterests[0].id").value(1L))
+                .andExpect(jsonPath("$.data.userInterests[0].name").value("국내소설"))
+                .andExpect(jsonPath("$.data.userInterests[1].id").value(2L))
+                .andExpect(jsonPath("$.data.userInterests[1].name").value("외국소설"));
+
+        verify(interestService).getUserInterests(LOGIN_ID);
+
+        // docs
+        actions.andDo(document("get-user-interests",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-interest")
+                                .summary("사용자의 관심사를 모두 조회한다.")
+                                .responseSchema(Schema.schema("get_user_interests_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING).description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.loginId").type(JsonFieldType.STRING).description("사용자 ID"),
+                                        fieldWithPath("data.userInterests[].id").type(JsonFieldType.NUMBER).description("관심사 ID"),
+                                        fieldWithPath("data.userInterests[].name").type(JsonFieldType.STRING).description("관심사 이름")
                                 )
                                 .build()
                 ))
