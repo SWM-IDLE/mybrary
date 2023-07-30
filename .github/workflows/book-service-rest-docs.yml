@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v2
         
       - name: Openapi3
-        working-directory: mybrary/backend/book-service
+        working-directory: backend/book-service
         run: |
           ./gradlew openapi3 --no-build-cache
           
