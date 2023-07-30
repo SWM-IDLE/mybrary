@@ -37,10 +37,15 @@ jobs:
           kakao.api.key : ${{ secrets.KAKAO_API_KEY }}
           
       - name: Create Output Directory
-        working-directory: backend/book-service
+        working-directory: backend/book-service 
         run: |
             mkdir -p build/resources/main/static/docs
-            chmod -R 777 build/resources/main/static/docs
+            echo "test" > build/resources/main/static/docs/book-service.json
+            
+      - name: Check FILE
+        working-directory: backend/book-service
+        run: |
+          cat build/resources/main/static/docs/book-service.json
                   
       - name: Openapi3
         working-directory: backend/book-service
