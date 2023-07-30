@@ -7,10 +7,8 @@ import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryRespo
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.UserInterestServiceResponse;
-import kr.mybrary.userservice.interest.domain.exception.UserInterestNotFoundException;
 import kr.mybrary.userservice.interest.persistence.UserInterest;
 import kr.mybrary.userservice.interest.persistence.repository.InterestCategoryRepository;
-import kr.mybrary.userservice.interest.persistence.repository.InterestRepository;
 import kr.mybrary.userservice.interest.persistence.repository.UserInterestRepository;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
@@ -25,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InterestServiceImpl implements InterestService {
 
-    private final InterestRepository interestRepository;
     private final InterestCategoryRepository interestCategoryRepository;
     private final UserInterestRepository userInterestRepository;
     private final UserRepository userRepository;
@@ -63,16 +60,9 @@ public class InterestServiceImpl implements InterestService {
 
     @NotNull
     private static List<InterestResponse> getInterestResponses(List<UserInterest> userInterests) {
-        checkUserInterestExistence(userInterests);
         return userInterests.stream()
                 .map(UserInterestMapper.INSTANCE::toInterestResponse)
                 .toList();
-    }
-
-    private static void checkUserInterestExistence(List<UserInterest> userInterests) {
-        if(userInterests.isEmpty()) {
-            throw new UserInterestNotFoundException();
-        }
     }
 
 }
