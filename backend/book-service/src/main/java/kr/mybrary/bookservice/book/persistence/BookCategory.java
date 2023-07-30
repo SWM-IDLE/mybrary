@@ -1,28 +1,27 @@
-package kr.mybrary.bookservice.book.persistence.author;
+package kr.mybrary.bookservice.book.persistence;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import kr.mybrary.bookservice.global.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "authors")
+@Table(name = "book_categories")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Author extends BaseEntity {
+public class BookCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String aid;
+    private String cid;
     private String name;
 }
