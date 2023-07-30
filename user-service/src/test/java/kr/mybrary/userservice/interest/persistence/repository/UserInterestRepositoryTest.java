@@ -38,28 +38,24 @@ class UserInterestRepositoryTest {
     @DisplayName("페치 조인을 사용하여 해당 사용자의 관심사를 모두 가져온다.")
     void findAllByUserWithInterestUsingFetchJoin() {
         // given
-        User user = UserFixture.COMMON_USER.getUser();
-        Interest interest1 = InterestFixture.DOMESTIC_NOVEL.getInterest();
-        Interest interest2 = InterestFixture.FOREIGN_NOVEL.getInterest();
-
-        userRepository.save(user);
-        interestRepository.save(interest1);
-        interestRepository.save(interest2);
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
+        Interest savedInterest1 =  interestRepository.save(InterestFixture.DOMESTIC_NOVEL.getInterest());
+        Interest savedInterest2 =  interestRepository.save(InterestFixture.FOREIGN_NOVEL.getInterest());
 
         userInterestRepository.save(UserInterest.builder()
-                .user(user)
-                .interest(interest1)
+                .user(savedUser)
+                .interest(savedInterest1)
                 .build());
         userInterestRepository.save(UserInterest.builder()
-                .user(user)
-                .interest(interest2)
+                .user(savedUser)
+                .interest(savedInterest2)
                 .build());
 
         entityManager.flush();
         entityManager.clear();
 
         // when
-        List<UserInterest> foundUserInterests = userInterestRepository.findAllByUserWithInterestUsingFetchJoin(user);
+        List<UserInterest> foundUserInterests = userInterestRepository.findAllByUserWithInterestUsingFetchJoin(savedUser);
 
         // then
         assertAll(
