@@ -30,11 +30,11 @@ jobs:
         with:
           files: backend/book-service/src/main/resources/application-test.yml
         env:
-          spring.datasource.url: ${{ secrets.DB_URL }} 
-          spring.datasource.username: ${{ DOCS_SERVER_DATABASE_USER }} 
-          spring.datasource.password: ${{ DOCS_SERVER_DATABASE_PASSWORD }}
-          aladin.api.key : ${{ ALADIN_API_KEY }}
-          kakao.api.key : ${{ KAKAO_API_KEY }}
+          spring.datasource.url: ${{ secrets.DOCS_SERVER_BS_DATABASE_URL }} 
+          spring.datasource.username: ${{ secrets.DOCS_SERVER_DATABASE_USER }} 
+          spring.datasource.password: ${{ secrets.DOCS_SERVER_DATABASE_PASSWORD }}
+          aladin.api.key : ${{ secrets.ALADIN_API_KEY }}
+          kakao.api.key : ${{ secrets.KAKAO_API_KEY }}
           
       - name: Openapi3
         working-directory: backend/book-service
