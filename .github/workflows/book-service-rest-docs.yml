@@ -25,12 +25,24 @@ jobs:
           distribution: 'zulu' 
           java-version: '17'
       
+      - name: Setup Applcaiton Test Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/book-service/src/main/resources/application-test.yml
+        env:
+          spring.datasource.url: ${{ secrets.DB_URL }} 
+          spring.datasource.username: ${{ DOCS_SERVER_DATABASE_USER }} 
+          spring.datasource.password: ${{ DOCS_SERVER_DATABASE_PASSWORD }}
+          aladin.api.key : ${{ ALADIN_API_KEY }}
+          kakao.api.key : ${{ KAKAO_API_KEY }}
+          
       - name: Openapi3
         working-directory: backend/book-service
         run: |
           ./gradlew openapi3 --no-build-cache
           
       - name: Upload OpenApi Specification to S3
+        working-directory: backend/book-service
         run: |
           aws s3 cp src/main/resources/static/docs/book-service.json s3://mybrary-swagger-ui/docs/book-service.json
         env:
