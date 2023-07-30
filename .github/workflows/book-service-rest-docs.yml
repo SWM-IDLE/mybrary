@@ -36,10 +36,15 @@ jobs:
           aladin.api.key : ${{ secrets.ALADIN_API_KEY }}
           kakao.api.key : ${{ secrets.KAKAO_API_KEY }}
           
+      - name: Create Output Directory
+        working-directory: backend/book-service
+        run: |
+            mkdir -p build/resources/main/static/docs
+            chmod -R 777 build/resources/main/static/docs
+                  
       - name: Openapi3
         working-directory: backend/book-service
         run: |
-          ./gradlew build
           ./gradlew openapi3
           
       - name: Upload OpenApi Specification to S3
