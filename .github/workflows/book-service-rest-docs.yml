@@ -52,10 +52,16 @@ jobs:
         run: |
           ./gradlew openapi3
           
+      - name: Check FILE
+        working-directory: backend/book-service
+        run: |
+          cat build/resources/main/static/docs/book-service.json
+          cat src/main/resources/static/docs/book-service.json
+          
       - name: Upload OpenApi Specification to S3
         working-directory: backend/book-service
         run: |
-          aws s3 cp src/main/resources/static/docs/book-service.json s3://mybrary-swagger-ui/docs/book-service.json
+          aws s3 cp build/resources/main/static/docs/book-service.json s3://mybrary-swagger-ui/docs/book-service.json
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.OPEN_API_GIT_ACTIONS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.OPEN_API_GIT_ACTIONS_SECRET_KEY }}
