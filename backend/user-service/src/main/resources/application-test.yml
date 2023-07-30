@@ -12,7 +12,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -20,14 +19,3 @@ spring:
     sql:
       init:
         mode: never
-
-jwt:
-  secretKey: uNZBk5i5P20/KnqGpv+siyWE1H0oQ1oBu9RaCJ84AsyDjvp73Gd+ML1K4yHXuqj2wck0sGqfIdQcjaI0ypI52A==
-
-  access:
-    expiration: 3600000 # 1시간
-    header: Authorization
-
-  refresh:
-    expiration: 1209600000 # 2주
-    header: Authorization-Refresh

@@ -69,5 +69,11 @@ USER-ID: loginId
 DELETE http://localhost:8080/api/v1/users/profile/image
 USER-ID: loginId
 
-### 13. 카테고리별 관심사 모두 조회
+### 13. 사용자 검색
+GET http://localhost:8080/api/v1/users/search?nickname=
+
+### 14. 카테고리별 관심사 모두 조회
 GET http://localhost:8080/api/v1/interest-categories
+
+### 15. 사용자 관심사 조회
+GET http://localhost:8080/api/v1/users/loginId/interests

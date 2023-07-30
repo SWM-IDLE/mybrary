@@ -6,8 +6,7 @@ build/
 !**/src/test/**/build/
 
 ### PROPERTIES ###
-/src/main/resources/application-oauth.yml
-/src/main/resources/application-test.yml
+/src/main/resources/application-dev.yml
 
 ### STS ###
 .apt_generated
