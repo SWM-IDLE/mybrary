@@ -2,6 +2,7 @@ package kr.mybrary.userservice.interest.persistence.repository;
 
 import kr.mybrary.userservice.interest.persistence.Interest;
 import kr.mybrary.userservice.interest.persistence.InterestCategory;
+import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,8 @@ class InterestCategoryRepositoryTest {
                 () -> assertThat(foundInterestCategories.get(0).getDescription()).isEqualTo(interestCategory.getDescription()),
                 () -> assertThat(foundInterestCategories.get(0).getInterests().size()).isEqualTo(interestCategory.getInterests().size()),
                 () -> assertThat(foundInterestCategories.get(0).getInterests().get(0).getId()).isEqualTo(interestCategory.getInterests().get(0).getId()),
-                () -> assertThat(foundInterestCategories.get(0).getInterests().get(0).getName()).isEqualTo(interestCategory.getInterests().get(0).getName())
+                () -> assertThat(foundInterestCategories.get(0).getInterests().get(0).getName()).isEqualTo(interestCategory.getInterests().get(0).getName()),
+                () -> assertThat(foundInterestCategories.get(0).getInterests().get(0)).isNotInstanceOf(HibernateProxy.class)
         );
     }
 }
