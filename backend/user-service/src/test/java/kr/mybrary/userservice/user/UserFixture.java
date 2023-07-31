@@ -15,6 +15,7 @@ public enum UserFixture {
     COMMON_USER(1L, "loginId", "nickname", "encodedPassword", Role.USER,
             "socialId", SocialType.GOOGLE, "email@mail.com", "introduction", "profileImageUrl",
             Collections.emptyList(), Collections.emptyList()),
+    
     USER_WITHOUT_PROFILE_IMAGE_URL(1L, "loginId", "nickname", "encodedPassword", Role.USER,
             "socialId", SocialType.GOOGLE, "email@mail.com", "introduction", null,
             Collections.emptyList(), Collections.emptyList()),
