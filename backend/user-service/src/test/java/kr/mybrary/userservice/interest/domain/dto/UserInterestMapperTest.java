@@ -21,7 +21,8 @@ class UserInterestMapperTest {
 
         // then
         assertAll(
-            () -> assertEquals(userInterest.getInterest().getName(), interestResponse.getName())
+            () -> assertEquals(userInterest.getInterest().getName(), interestResponse.getName()),
+            () -> assertEquals(userInterest.getInterest().getId(), interestResponse.getId())
         );
     }
 }
