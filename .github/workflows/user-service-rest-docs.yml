@@ -1,0 +1,55 @@
+name: 'user-service api specification to s3'
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'backend/user-service/**'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'backend/user-service/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu' 
+          java-version: '17'
+      
+      - name: Setup Applcaiton Test Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/user-service/src/main/resources/application-test.yml
+        env:
+          spring.datasource.url: ${{ secrets.DOCS_SERVER_US_DATABASE_URL }} 
+          spring.datasource.username: ${{ secrets.DOCS_SERVER_DATABASE_USER }} 
+          spring.datasource.password: ${{ secrets.DOCS_SERVER_DATABASE_PASSWORD }}
+          
+      - name: Create Output Directory
+        working-directory: backend/user-service 
+        run: |
+            mkdir -p build/resources/main/static/docs
+            echo "test" > build/resources/main/static/docs/user-service.json
+                  
+      - name: Run Openapi3
+        working-directory: backend/user-service
+        run: |
+          ./gradlew openapi3
+          
+      - name: Upload OpenApi Specification to S3
+        working-directory: backend/user-service
+        run: |
+          aws s3 cp build/resources/main/static/docs/user-service.json s3://mybrary-swagger-ui/docs/user-service.json
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.OPEN_API_GIT_ACTIONS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.OPEN_API_GIT_ACTIONS_SECRET_KEY }}
+          AWS_REGION: ap-northeast-2
