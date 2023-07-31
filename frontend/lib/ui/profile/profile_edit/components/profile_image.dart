@@ -22,7 +22,7 @@ class ProfileImage extends StatelessWidget {
           height: 96.0,
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-              side: BorderSide(
+              side: const BorderSide(
                 width: 1,
                 color: BOOK_BORDER_COLOR,
               ),
@@ -33,7 +33,9 @@ class ProfileImage extends StatelessWidget {
                   ? NetworkImage(
                       '$originProfileImageUrl?time=${DateTime.now().millisecondsSinceEpoch}',
                     )
-                  : Image.file(File(profileImage!.path)).image,
+                  : Image.file(
+                      File(profileImage!.path),
+                    ).image,
               fit: BoxFit.cover,
             ),
           ),

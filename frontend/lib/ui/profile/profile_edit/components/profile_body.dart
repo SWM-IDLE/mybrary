@@ -35,7 +35,7 @@ class ProfileBody extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
         TextFormField(
           controller: nicknameController,
           maxLength: 20,
@@ -69,12 +69,12 @@ class ProfileBody extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 18.0),
-        Text(
+        const SizedBox(height: 18.0),
+        const Text(
           '한 줄 소개',
           style: profileEditTitleStyle,
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
         TextFormField(
           maxLines: 3,
           maxLength: 100,
@@ -94,19 +94,21 @@ class ProfileBody extends StatelessWidget {
             focusedBorder: introInputBorderStyle,
           ),
         ),
-        SizedBox(height: 18.0),
+        const SizedBox(height: 18.0),
         ElevatedButton(
           onPressed: saveProfileEditButton,
           style: ElevatedButton.styleFrom(
-            minimumSize: Size(double.infinity, 52.0),
+            minimumSize: const Size(
+              double.infinity,
+              52.0,
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
-            textStyle: TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w700,
+            textStyle: commonButtonTextStyle,
+            padding: const EdgeInsets.symmetric(
+              vertical: 14.0,
             ),
-            padding: EdgeInsets.symmetric(vertical: 14.0),
             backgroundColor: PRIMARY_COLOR,
             disabledForegroundColor: WHITE_COLOR,
           ),

@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
-import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
@@ -26,49 +25,27 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late TextEditingController _introductionController;
 
   final _profileRepository = ProfileRepository();
-  late Future<ProfileResponseData> _profileData;
+  late Future<ProfileResponseData> _profileResponseData;
 
-  Future<ProfileResponseData> getProfileEditData() async {
-    final dio = Dio();
-    final profileResponse = await dio.get(getApi(API.getUserProfile),
-        options: Options(headers: {'User-Id': 'testId'}));
-
-    final ProfileResponse result = commonResponseResult(
-      profileResponse,
-      () => ProfileResponse(
-        status: profileResponse.data['status'],
-        message: profileResponse.data['message'],
-        data: ProfileResponseData.fromJson(
-          profileResponse.data['data'],
-        ),
-      ),
-    );
-
-    _nicknameController = TextEditingController(text: result.data!.nickname!);
-    _introductionController =
-        TextEditingController(text: result.data!.introduction!);
-    _originProfileImageUrl = result.data!.profileImageUrl!;
-
-    return result.data!;
-  }
-
-  Future<void> _refreshData() async {
+  Future<void> _refreshProfileData() async {
     setState(() {
-      _profileData = getProfileEditData();
+      _profileResponseData = _profileRepository.getProfileData();
     });
   }
 
-  File? _profileImage;
-  late FormData profileImageData;
-  final ImagePicker picker = ImagePicker();
+  File? _selectedImageFile;
+  late FormData _profileImageFormData;
+  final ImagePicker profileImagePicker = ImagePicker();
 
   Future pickProfileImage(ImageSource imageSource) async {
-    final image = await picker.pickImage(source: imageSource);
+    final image = await profileImagePicker.pickImage(
+      source: imageSource,
+    );
 
     if (image == null) return;
 
     setState(() {
-      _profileImage = File(image.path);
+      _selectedImageFile = File(image.path);
     });
   }
 
@@ -76,12 +53,23 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   void initState() {
     super.initState();
 
-    _refreshData();
+    final result = _profileRepository.getProfileData();
+    result.then((value) {
+      _nicknameController = TextEditingController(
+        text: value.nickname!,
+      );
+      _introductionController = TextEditingController(
+        text: value.introduction!,
+      );
+      _originProfileImageUrl = value.profileImageUrl!;
+    });
+
+    _refreshProfileData();
   }
 
   @override
   void dispose() {
-    _profileImage = null;
+    _selectedImageFile = null;
     _nicknameController.dispose();
     super.dispose();
   }
@@ -91,17 +79,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     double bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Scaffold(
-      appBar: profileEditAppBar(),
+      appBar: _profileEditAppBar(),
       backgroundColor: WHITE_COLOR,
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 24.0,
             vertical: 16.0,
           ),
           child: FutureBuilder(
-            future: _profileData,
+            future: _profileResponseData,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final profileData = snapshot.data!;
@@ -114,22 +102,22 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
                         if (!isDefaultImage) {
-                          profileImageMenuBottomSheet();
+                          _profileImageMenuBottomSheet();
                         } else {
                           pickProfileImage(ImageSource.gallery);
                         }
                       },
                       child: ProfileImage(
                         originProfileImageUrl: _originProfileImageUrl,
-                        profileImage: _profileImage,
+                        profileImage: _selectedImageFile,
                       ),
                     ),
-                    SizedBox(height: 24.0),
+                    const SizedBox(height: 24.0),
                     ProfileBody(
                       bottomInset: bottomInset,
                       nicknameController: _nicknameController,
                       introductionController: _introductionController,
-                      saveProfileEditButton: _saveProfileEditButton,
+                      saveProfileEditButton: _saveUserProfile,
                     ),
                   ],
                 );
@@ -144,50 +132,45 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  void savedProfileSnackBar({
+  void _showProfileSavedMessage({
     required BuildContext context,
     required String snackBarText,
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(snackBarText),
-        duration: Duration(seconds: 1),
+        duration: const Duration(
+          seconds: 1,
+        ),
       ),
     );
   }
 
-  AppBar profileEditAppBar() {
+  AppBar _profileEditAppBar() {
     return AppBar(
       elevation: 0,
       title: const Text('프로필 편집'),
-      titleTextStyle: appBarTitleStyle,
+      titleTextStyle: appBarTitleStyle.copyWith(
+        fontSize: 18.0,
+      ),
       centerTitle: true,
       backgroundColor: WHITE_COLOR,
       foregroundColor: BLACK_COLOR,
     );
   }
 
-  Widget profileImageMenuTab({
-    required String tabText,
-  }) {
-    return Text(
-      tabText,
-      style: bottomSheetMenuTextStyle,
-    );
-  }
-
-  void onTapPhotoAlbum() {
+  void _onTapSelectToPhotoAlbum() {
     pickProfileImage(ImageSource.gallery);
     Navigator.pop(context);
   }
 
-  void onTapDefaultImage() async {
+  void _onTapChangeToDefaultImage() async {
     await _profileRepository.deleteProfileImage();
 
-    _refreshData();
+    _refreshProfileData();
 
     if (!mounted) return;
-    savedProfileSnackBar(
+    _showProfileSavedMessage(
       context: context,
       snackBarText: '기본 이미지로 변경 되었습니다.',
     );
@@ -195,22 +178,21 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     Navigator.of(context).pop();
   }
 
-  void validateAlert(BuildContext context) {
+  void _showValidationFailedMessage(BuildContext context) {
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
         elevation: 0,
-        content: Text(
+        content: const Text(
           '닉네임을 다시 한 번 확인해주세요.',
           textAlign: TextAlign.center,
         ),
-        contentTextStyle: TextStyle(
-          color: BLACK_COLOR,
-          fontSize: 15.0,
-          fontWeight: FontWeight.w400,
+        contentTextStyle: commonDialogMessageStyle,
+        contentPadding: const EdgeInsets.only(
+          top: 24.0,
+          bottom: 12.0,
         ),
-        contentPadding: EdgeInsets.only(top: 24.0, bottom: 12.0),
         actions: [
           Center(
             child: confirmButton(),
@@ -220,50 +202,48 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  void profileImageMenuBottomSheet() {
+  void _profileImageMenuBottomSheet() {
     showModalBottomSheet(
       shape: bottomSheetStyle,
       backgroundColor: Colors.white,
       context: context,
       builder: (_) {
         return SizedBox(
-          height: 180,
+          height: 160,
           child: Padding(
             padding: const EdgeInsets.symmetric(
+              vertical: 20.0,
               horizontal: 28.0,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: Colors.transparent,
-                    surfaceTintColor: Colors.transparent,
-                    splashFactory: NoSplash.splashFactory,
-                  ),
-                  onPressed: onTapPhotoAlbum,
-                  child: Text(
-                    '📷  라이브러리에서 선택',
-                    style: bottomSheetMenuTextStyle,
-                  ),
-                ),
-                SizedBox(height: 12.0),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: Colors.transparent,
-                    surfaceTintColor: Colors.transparent,
-                    splashFactory: NoSplash.splashFactory,
-                  ),
-                  onPressed: onTapDefaultImage,
-                  child: Text(
-                    '📚  기본 이미지로 변경',
-                    style: bottomSheetMenuTextStyle,
+                Expanded(
+                  child: TextButton(
+                    style: commonMenuButtonStyle.copyWith(
+                      alignment: Alignment.centerLeft,
+                    ),
+                    onPressed: _onTapSelectToPhotoAlbum,
+                    child: const Text(
+                      '📷  라이브러리에서 선택',
+                      style: bottomSheetMenuTextStyle,
+                    ),
                   ),
                 ),
-                SizedBox(height: 12.0),
+                Expanded(
+                  child: TextButton(
+                    style: commonMenuButtonStyle.copyWith(
+                      alignment: Alignment.centerLeft,
+                    ),
+                    onPressed: _onTapChangeToDefaultImage,
+                    child: const Text(
+                      '📚  기본 이미지로 변경',
+                      style: bottomSheetMenuTextStyle,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6.0),
               ],
             ),
           ),
@@ -284,38 +264,41 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         onPressed: () {
           Navigator.pop(context);
         },
-        child: Text('확인'),
+        child: const Text('확인'),
       ),
     );
   }
 
-  void _saveProfileEditButton() async {
+  void _saveUserProfile() async {
     if (_nicknameController.text == '' ||
         checkAuthValidator(
-            _nicknameController.text, LoginRegExp.nicknameRegExp, 2, 20)) {
-      return validateAlert(context);
+          _nicknameController.text,
+          LoginRegExp.nicknameRegExp,
+          2,
+          20,
+        )) {
+      return _showValidationFailedMessage(context);
     } else {
       await _profileRepository.editProfileData(
         newNickname: _nicknameController.text,
         introduction: _introductionController.text,
       );
 
-      if (_profileImage != null) {
-        profileImageData = FormData.fromMap(
+      if (_selectedImageFile != null) {
+        _profileImageFormData = FormData.fromMap(
           {
-            'profileImage': await MultipartFile.fromFile(_profileImage!.path),
+            'profileImage':
+                await MultipartFile.fromFile(_selectedImageFile!.path),
           },
         );
 
         await _profileRepository.editProfileImage(
-          newProfileImage: profileImageData,
+          newProfileImage: _profileImageFormData,
         );
       }
 
-      _refreshData();
-
       if (!mounted) return;
-      savedProfileSnackBar(
+      _showProfileSavedMessage(
         context: context,
         snackBarText: '변경 사항이 저장 되었습니다.',
       );

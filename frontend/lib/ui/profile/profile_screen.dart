@@ -9,6 +9,7 @@ import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/profile/components/profile_header.dart';
 import 'package:mybrary/ui/profile/components/profile_intro.dart';
 import 'package:mybrary/ui/profile/profile_edit/profile_edit_screen.dart';
+import 'package:mybrary/ui/setting/setting_screen.dart';
 import 'package:mybrary/utils/animation/route_animation.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -88,7 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               context: context,
               builder: (_) {
                 return SingleChildScrollView(
-                  child: profileMenu(),
+                  child: _profileMenuBottomSheet(),
                 );
               },
             );
@@ -99,26 +100,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget profileMenu() {
-    return Container(
+  Widget _profileMenuBottomSheet() {
+    return SizedBox(
       height: 220,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 28.0,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            profileMenuTab('👤  프로필 편집', ProfileEditScreen()),
-            profileMenuTab('🔗️️  설정', Container()),
-            SizedBox(height: 12.0),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
+            profileMenuTab('👤  프로필 편집', const ProfileEditScreen()),
+            profileMenuTab('🔗️️  설정', const SettingScreen()),
+            const SizedBox(height: 12.0),
+            const Padding(
+              padding: EdgeInsets.only(left: 8.0),
               child: Text(
                 '🔖  프로필 공유하기',
                 style: bottomSheetMenuTextStyle,
               ),
             ),
-            SizedBox(height: 18.0),
+            const SizedBox(height: 18.0),
           ],
         ),
       ),
@@ -129,12 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: TextButton(
-        style: TextButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          foregroundColor: Colors.transparent,
-          surfaceTintColor: Colors.transparent,
-          splashFactory: NoSplash.splashFactory,
-        ),
+        style: commonMenuButtonStyle,
         onPressed: () {
           onPressedProfileMenu(screen);
         },
@@ -146,7 +144,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               tabText,
               style: bottomSheetMenuTextStyle,
             ),
-            SvgPicture.asset('assets/svg/icon/profile_menu_arrow.svg'),
+            SvgPicture.asset(
+              'assets/svg/icon/profile_menu_arrow.svg',
+            ),
           ],
         ),
       ),
@@ -155,7 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void onTapWriteIntroduction() {
     RouteAnimation routeAnimation = RouteAnimation(
-      ProfileEditScreen(),
+      const ProfileEditScreen(),
     );
     _navigateToNextScreen(routeAnimation);
   }
@@ -171,11 +171,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context,
       routeAnimation.slideRightToLeft(),
     ).then(
-      (value) => setState(
-        () {
-          _profileResponseData = _profileRepository.getProfileData();
-        },
-      ),
+      (value) => setState(() {
+        _profileResponseData = _profileRepository.getProfileData();
+      }),
     );
   }
 }
