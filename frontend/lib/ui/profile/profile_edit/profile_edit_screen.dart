@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/network/api.dart';
@@ -10,6 +9,8 @@ import 'package:mybrary/data/repository/profile_repository.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
+import 'package:mybrary/ui/profile/profile_edit/components/profile_body.dart';
+import 'package:mybrary/ui/profile/profile_edit/components/profile_image.dart';
 import 'package:mybrary/utils/logics/validate_utils.dart';
 
 class ProfileEditScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final _profileRepository = ProfileRepository();
   late Future<ProfileResponseData> _profileData;
 
-  Future<ProfileResponseData> getProfileData() async {
+  Future<ProfileResponseData> getProfileEditData() async {
     final dio = Dio();
     final profileResponse = await dio.get(getApi(API.getUserProfile),
         options: Options(headers: {'User-Id': 'testId'}));
@@ -53,7 +54,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   Future<void> _refreshData() async {
     setState(() {
-      _profileData = getProfileData();
+      _profileData = getProfileEditData();
     });
   }
 
@@ -113,261 +114,22 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
                         if (!isDefaultImage) {
-                          showModalBottomSheet(
-                            shape: bottomSheetStyle,
-                            backgroundColor: Colors.white,
-                            context: context,
-                            builder: (_) {
-                              return SizedBox(
-                                height: 180,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 28.0,
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      TextButton(
-                                        style: TextButton.styleFrom(
-                                          backgroundColor: Colors.transparent,
-                                          foregroundColor: Colors.transparent,
-                                          surfaceTintColor: Colors.transparent,
-                                          splashFactory: NoSplash.splashFactory,
-                                        ),
-                                        onPressed: onTapPhotoAlbum,
-                                        child: Text(
-                                          '📷  라이브러리에서 선택',
-                                          style: bottomSheetMenuTextStyle,
-                                        ),
-                                      ),
-                                      SizedBox(height: 12.0),
-                                      TextButton(
-                                        style: TextButton.styleFrom(
-                                          backgroundColor: Colors.transparent,
-                                          foregroundColor: Colors.transparent,
-                                          surfaceTintColor: Colors.transparent,
-                                          splashFactory: NoSplash.splashFactory,
-                                        ),
-                                        onPressed: onTapDefaultImage,
-                                        child: Text(
-                                          '📚  기본 이미지로 변경',
-                                          style: bottomSheetMenuTextStyle,
-                                        ),
-                                      ),
-                                      SizedBox(height: 12.0),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
+                          profileImageMenuBottomSheet();
                         } else {
                           pickProfileImage(ImageSource.gallery);
                         }
                       },
-                      child: Stack(
-                        children: [
-                          Container(
-                            width: 96.0,
-                            height: 96.0,
-                            decoration: ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  width: 1,
-                                  color: BOOK_BORDER_COLOR,
-                                ),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              image: DecorationImage(
-                                image: _profileImage == null
-                                    ? NetworkImage(
-                                        '$_originProfileImageUrl?time=${DateTime.now().millisecondsSinceEpoch}')
-                                    : Image.file(File(_profileImage!.path))
-                                        .image,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: SvgPicture.asset(
-                              'assets/svg/icon/profile_album.svg',
-                            ),
-                          ),
-                        ],
+                      child: ProfileImage(
+                        originProfileImageUrl: _originProfileImageUrl,
+                        profileImage: _profileImage,
                       ),
                     ),
                     SizedBox(height: 24.0),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Row(
-                          children: [
-                            Text(
-                              '닉네임',
-                              style: profileEditTitleStyle,
-                            ),
-                            Text(
-                              '*',
-                              style: TextStyle(
-                                color: commonOrangeColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8.0),
-                        TextFormField(
-                          controller: _nicknameController,
-                          maxLength: 20,
-                          scrollPadding: EdgeInsets.only(
-                            bottom: bottomInset,
-                          ),
-                          onEditingComplete: () {
-                            FocusScope.of(context).unfocus();
-                          },
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.all(16.0),
-                            hintText: '이름을 입력해주세요.',
-                            hintStyle: inputHintStyle,
-                            counter: SizedBox.shrink(),
-                            border: introInputBorderStyle,
-                            enabledBorder: introInputBorderStyle,
-                            focusedBorder: introInputBorderStyle,
-                            errorStyle: TextStyle(
-                              decoration: TextDecoration.none,
-                            ),
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 2.0),
-                          child: Text(
-                            '한글, 영문, 숫자 (2-20자)',
-                            style: TextStyle(
-                              color: GREY_05_COLOR,
-                              fontSize: 13.0,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 18.0),
-                        Text(
-                          '한 줄 소개',
-                          style: profileEditTitleStyle,
-                        ),
-                        SizedBox(height: 8.0),
-                        TextFormField(
-                          maxLines: 3,
-                          maxLength: 100,
-                          controller: _introductionController,
-                          scrollPadding: EdgeInsets.only(
-                            bottom: bottomInset,
-                          ),
-                          onEditingComplete: () {
-                            FocusScope.of(context).unfocus();
-                          },
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.all(16.0),
-                            hintText: '나를 한 줄로 표현해보세요.',
-                            hintStyle: inputHintStyle,
-                            border: introInputBorderStyle,
-                            enabledBorder: introInputBorderStyle,
-                            focusedBorder: introInputBorderStyle,
-                          ),
-                        ),
-                        SizedBox(height: 18.0),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (_nicknameController.text == '' ||
-                                checkAuthValidator(_nicknameController.text,
-                                    LoginRegExp.nicknameRegExp, 2, 20)) {
-                              return showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  elevation: 0,
-                                  content: Text(
-                                    '닉네임을 다시 한 번 확인해주세요.',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  contentTextStyle: TextStyle(
-                                    color: BLACK_COLOR,
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  contentPadding:
-                                      EdgeInsets.only(top: 24.0, bottom: 12.0),
-                                  actions: [
-                                    Center(
-                                      child: SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.6,
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: PRIMARY_COLOR,
-                                            foregroundColor: WHITE_COLOR,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text('확인'),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              await _profileRepository.editProfileData(
-                                newNickname: _nicknameController.text,
-                                introduction: _introductionController.text,
-                              );
-
-                              if (_profileImage != null) {
-                                profileImageData = FormData.fromMap(
-                                  {
-                                    'profileImage':
-                                        await MultipartFile.fromFile(
-                                            _profileImage!.path),
-                                  },
-                                );
-
-                                await _profileRepository.editProfileImage(
-                                  newProfileImage: profileImageData,
-                                );
-                              }
-
-                              _refreshData();
-
-                              if (!mounted) return;
-                              savedProfileSnackBar(
-                                context: context,
-                                snackBarText: '변경 사항이 저장 되었습니다.',
-                              );
-
-                              Navigator.pop(context);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(double.infinity, 52.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            textStyle: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 14.0),
-                            backgroundColor: PRIMARY_COLOR,
-                            disabledForegroundColor: WHITE_COLOR,
-                          ),
-                          child: const Text('저장'),
-                        ),
-                      ],
+                    ProfileBody(
+                      bottomInset: bottomInset,
+                      nicknameController: _nicknameController,
+                      introductionController: _introductionController,
+                      saveProfileEditButton: _saveProfileEditButton,
                     ),
                   ],
                 );
@@ -431,5 +193,134 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
 
     Navigator.of(context).pop();
+  }
+
+  void validateAlert(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => AlertDialog(
+        elevation: 0,
+        content: Text(
+          '닉네임을 다시 한 번 확인해주세요.',
+          textAlign: TextAlign.center,
+        ),
+        contentTextStyle: TextStyle(
+          color: BLACK_COLOR,
+          fontSize: 15.0,
+          fontWeight: FontWeight.w400,
+        ),
+        contentPadding: EdgeInsets.only(top: 24.0, bottom: 12.0),
+        actions: [
+          Center(
+            child: confirmButton(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void profileImageMenuBottomSheet() {
+    showModalBottomSheet(
+      shape: bottomSheetStyle,
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (_) {
+        return SizedBox(
+          height: 180,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 28.0,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.transparent,
+                    surfaceTintColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
+                  ),
+                  onPressed: onTapPhotoAlbum,
+                  child: Text(
+                    '📷  라이브러리에서 선택',
+                    style: bottomSheetMenuTextStyle,
+                  ),
+                ),
+                SizedBox(height: 12.0),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.transparent,
+                    surfaceTintColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
+                  ),
+                  onPressed: onTapDefaultImage,
+                  child: Text(
+                    '📚  기본 이미지로 변경',
+                    style: bottomSheetMenuTextStyle,
+                  ),
+                ),
+                SizedBox(height: 12.0),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget confirmButton() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.6,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          backgroundColor: PRIMARY_COLOR,
+          foregroundColor: WHITE_COLOR,
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: Text('확인'),
+      ),
+    );
+  }
+
+  void _saveProfileEditButton() async {
+    if (_nicknameController.text == '' ||
+        checkAuthValidator(
+            _nicknameController.text, LoginRegExp.nicknameRegExp, 2, 20)) {
+      return validateAlert(context);
+    } else {
+      await _profileRepository.editProfileData(
+        newNickname: _nicknameController.text,
+        introduction: _introductionController.text,
+      );
+
+      if (_profileImage != null) {
+        profileImageData = FormData.fromMap(
+          {
+            'profileImage': await MultipartFile.fromFile(_profileImage!.path),
+          },
+        );
+
+        await _profileRepository.editProfileImage(
+          newProfileImage: profileImageData,
+        );
+      }
+
+      _refreshData();
+
+      if (!mounted) return;
+      savedProfileSnackBar(
+        context: context,
+        snackBarText: '변경 사항이 저장 되었습니다.',
+      );
+
+      Navigator.pop(context);
+    }
   }
 }

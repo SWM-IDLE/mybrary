@@ -19,13 +19,13 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late Future<ProfileResponseData> _profileData;
+  late Future<ProfileResponseData> _profileResponseData;
   final _profileRepository = ProfileRepository();
 
   @override
   void initState() {
     super.initState();
-    _profileData = _profileRepository.getProfileData();
+    _profileResponseData = _profileRepository.getProfileData();
   }
 
   @override
@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: profileAppBar(),
       child: SingleChildScrollView(
         child: FutureBuilder(
-          future: _profileData,
+          future: _profileResponseData,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final profileData = snapshot.data!;
@@ -87,7 +87,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               backgroundColor: Colors.white,
               context: context,
               builder: (_) {
-                return SingleChildScrollView(child: profileMenu());
+                return SingleChildScrollView(
+                  child: profileMenu(),
+                );
               },
             );
           },
@@ -134,18 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           splashFactory: NoSplash.splashFactory,
         ),
         onPressed: () {
-          RouteAnimation routeAnimation = RouteAnimation(screen);
-          Navigator.pop(context);
-          Navigator.push(
-            context,
-            routeAnimation.slideRightToLeft(),
-          ).then(
-            (value) => setState(
-              () {
-                _profileData = _profileRepository.getProfileData();
-              },
-            ),
-          );
+          onPressedProfileMenu(screen);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -163,14 +154,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void onTapWriteIntroduction() {
-    RouteAnimation routeAnimation = RouteAnimation(ProfileEditScreen());
+    RouteAnimation routeAnimation = RouteAnimation(
+      ProfileEditScreen(),
+    );
+    _navigateToNextScreen(routeAnimation);
+  }
+
+  void onPressedProfileMenu(Widget screen) {
+    RouteAnimation routeAnimation = RouteAnimation(screen);
+    Navigator.pop(context);
+    _navigateToNextScreen(routeAnimation);
+  }
+
+  void _navigateToNextScreen(RouteAnimation routeAnimation) {
     Navigator.push(
       context,
       routeAnimation.slideRightToLeft(),
     ).then(
       (value) => setState(
         () {
-          _profileData = _profileRepository.getProfileData();
+          _profileResponseData = _profileRepository.getProfileData();
         },
       ),
     );
