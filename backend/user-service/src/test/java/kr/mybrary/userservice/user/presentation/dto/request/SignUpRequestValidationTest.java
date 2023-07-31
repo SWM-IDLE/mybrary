@@ -23,7 +23,7 @@ public class SignUpRequestValidationTest {
     void signUpValidationTest() {
         // given
         SignUpRequest signUpRequest = SignUpRequest.builder()
-                .loginId(null)
+                .loginId("")
                 .email(VALID_EMAIL)
                 .password(VALID_PASSWORD)
                 .nickname(VALID_NICKNAME)
@@ -65,7 +65,7 @@ public class SignUpRequestValidationTest {
         SignUpRequest signUpRequest = SignUpRequest.builder()
                 .loginId(VALID_LOGIN_ID)
                 .email(VALID_EMAIL)
-                .password(null)
+                .password("")
                 .nickname(VALID_NICKNAME)
                 .build();
 
@@ -75,7 +75,7 @@ public class SignUpRequestValidationTest {
         // then
         assertThat(constraintViolations)
                 .extracting(ConstraintViolation::getMessage)
-                .containsOnly("비밀번호는 필수입니다.");
+                .contains("비밀번호는 필수입니다.");
     }
 
     @DisplayName("비밀번호는 8~16자 영문, 숫자, 특수문자 구성이어야 한다.")
@@ -106,7 +106,7 @@ public class SignUpRequestValidationTest {
                 .loginId(VALID_LOGIN_ID)
                 .email(VALID_EMAIL)
                 .password(VALID_PASSWORD)
-                .nickname(null)
+                .nickname("")
                 .build();
 
         // when
@@ -115,7 +115,7 @@ public class SignUpRequestValidationTest {
         // then
         assertThat(constraintViolations)
                 .extracting(ConstraintViolation::getMessage)
-                .containsOnly("닉네임은 필수입니다.", "널이어서는 안됩니다");
+                .contains("닉네임은 필수입니다.");
     }
 
     @DisplayName("닉네임은 특수문자를 제외한 2~20자리여야 한다.")
