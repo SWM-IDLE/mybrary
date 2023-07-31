@@ -69,30 +69,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     setState(() {
       _profileImage = File(image.path);
     });
-    profileImageData = FormData.fromMap(
-      {
-        'profileImage': await MultipartFile.fromFile(_profileImage!.path),
-      },
-    );
-
-    final editProfileImageUrl = await _profileRepository.editProfileImage(
-      newProfileImage: profileImageData,
-    );
-
-    print(_originProfileImageUrl == editProfileImageUrl.profileImageUrl);
-
-    setState(() {
-      _originProfileImageUrl = editProfileImageUrl.profileImageUrl;
-    });
-
-    if (!mounted) return;
-    savedProfileSnackBar(
-      context: context,
-      snackBarText: '프로필 사진이 변경 되었습니다.',
-    );
-
-    _profileImage = null;
-    _refreshData();
   }
 
   @override
@@ -104,6 +80,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   @override
   void dispose() {
+    _profileImage = null;
     _nicknameController.dispose();
     super.dispose();
   }
@@ -153,10 +130,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                     children: [
                                       GestureDetector(
                                         behavior: HitTestBehavior.opaque,
-                                        onTap: () async {
+                                        onTap: () {
                                           Navigator.pop(context);
-                                          await pickProfileImage(
-                                              ImageSource.gallery);
+                                          pickProfileImage(ImageSource.gallery);
                                         },
                                         child: profileImageMenuTab(
                                           tabText: '📷  라이브러리에서 선택',
@@ -166,16 +142,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                       GestureDetector(
                                         behavior: HitTestBehavior.opaque,
                                         onTap: () async {
-                                          Navigator.pop(context);
-                                          final defaultProfileImageUrl =
-                                              await _profileRepository
-                                                  .deleteProfileImage();
+                                          await _profileRepository
+                                              .deleteProfileImage();
 
-                                          setState(() {
-                                            _originProfileImageUrl =
-                                                defaultProfileImageUrl
-                                                    .profileImageUrl;
-                                          });
+                                          _refreshData();
 
                                           if (!mounted) return;
                                           savedProfileSnackBar(
@@ -183,7 +153,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                             snackBarText: '기본 이미지로 변경 되었습니다.',
                                           );
 
-                                          _refreshData();
+                                          Navigator.of(context).pop();
                                         },
                                         child: profileImageMenuTab(
                                           tabText: '📚  기본 이미지로 변경',
@@ -213,7 +183,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               image: DecorationImage(
-                                image: NetworkImage(_originProfileImageUrl),
+                                image: _profileImage == null
+                                    ? NetworkImage(_originProfileImageUrl)
+                                    : Image.file(File(_profileImage!.path))
+                                        .image,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -355,6 +328,20 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                 introduction: _introductionController.text,
                               );
 
+                              if (_profileImage != null) {
+                                profileImageData = FormData.fromMap(
+                                  {
+                                    'profileImage':
+                                        await MultipartFile.fromFile(
+                                            _profileImage!.path),
+                                  },
+                                );
+
+                                await _profileRepository.editProfileImage(
+                                  newProfileImage: profileImageData,
+                                );
+                              }
+
                               if (!mounted) return;
                               savedProfileSnackBar(
                                 context: context,
@@ -424,4 +411,31 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       style: bottomSheetMenuTextStyle,
     );
   }
+
+//   () async {
+//   Navigator.pop(context);
+//   await pickProfileImage(
+//   ImageSource.gallery);
+// }
+//
+// () async {
+// Navigator.pop(context);
+// final defaultProfileImageUrl =
+// await _profileRepository
+//     .deleteProfileImage();
+//
+// setState(() {
+// _originProfileImageUrl =
+// defaultProfileImageUrl
+//     .profileImageUrl;
+// });
+//
+// if (!mounted) return;
+// savedProfileSnackBar(
+// context: context,
+// snackBarText: '기본 이미지로 변경 되었습니다.',
+// );
+//
+// _refreshData();
+// }
 }

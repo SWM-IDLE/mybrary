@@ -34,36 +34,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: profileAppBar(),
       child: SingleChildScrollView(
         child: FutureBuilder(
-            future: _profileData,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final profileData = snapshot.data!;
+          future: _profileData,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final profileData = snapshot.data!;
 
-                return SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: Column(
-                    children: [
-                      ProfileHeader(
-                        nickname: profileData.nickname!,
-                        profileImageUrl: profileData.profileImageUrl!,
+              return SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  children: [
+                    ProfileHeader(
+                      nickname: profileData.nickname!,
+                      profileImageUrl: profileData.profileImageUrl!,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 20.0,
+                        top: 24.0,
+                        right: 4.0,
+                        bottom: 24.0,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20.0,
-                          top: 24.0,
-                          right: 4.0,
-                          bottom: 24.0,
-                        ),
-                        child: ProfileIntro(
-                          introduction: profileData.introduction!,
-                        ),
+                      child: ProfileIntro(
+                        introduction: profileData.introduction!,
                       ),
-                    ],
-                  ),
-                );
-              }
-              return const CircularLoading();
-            }),
+                    ),
+                  ],
+                ),
+              );
+            }
+            return const CircularLoading();
+          },
+        ),
       ),
     );
   }
@@ -127,10 +128,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: () {
         RouteAnimation routeAnimation = RouteAnimation(screen);
         Navigator.pop(context);
-        Navigator.push(context, routeAnimation.slideRightToLeft())
-            .then((value) => setState(() {
-                  _profileData = _profileRepository.getProfileData();
-                }));
+        Navigator.push(
+          context,
+          routeAnimation.slideRightToLeft(),
+        ).then(
+          (value) => setState(
+            () {
+              _profileData = _profileRepository.getProfileData();
+            },
+          ),
+        );
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
