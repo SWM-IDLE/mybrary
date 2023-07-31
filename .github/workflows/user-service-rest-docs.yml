@@ -34,6 +34,28 @@ jobs:
           spring.datasource.username: ${{ secrets.DOCS_SERVER_DATABASE_USER }} 
           spring.datasource.password: ${{ secrets.DOCS_SERVER_DATABASE_PASSWORD }}
           
+      - name: Setup Applcaiton Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/user-service/src/main/resources/application.yml
+        env:
+          spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
+          spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }} 
+          spring.security.oauth2.client.registration.naver.client-id: ${{ secrets.NAVER_CLIENT_ID }} 
+          spring.security.oauth2.client.registration.naver.client-secret: ${{ secrets.NAVER_CLIENT_SECRET }} 
+          spring.security.oauth2.client.registration.kakao.client-id: ${{ secrets.KAKAO_CLIENT_ID }} 
+          spring.security.oauth2.client.registration.kakao.client-secret: ${{ secrets.KAKAO_CLIENT_SECRET }} 
+          spring.cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY }}
+          spring.cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_KEY }}
+          jwt.secretKey: ${{ secrets.JWT_SECRET_KEY }}
+          
+      - name: Setup Bootstrap Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/user-service/src/main/resources/bootstrap.yml
+        env:
+          spring.profiles.active: test
+          
       - name: Create Output Directory
         working-directory: backend/user-service 
         run: |
