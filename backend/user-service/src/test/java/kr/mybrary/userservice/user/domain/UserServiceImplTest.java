@@ -119,6 +119,48 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("로그인 아이디로 사용자를 가져와 반환한다")
+    void getUserResponseByLoginId() {
+        // Given
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
+                Optional.of(UserFixture.COMMON_USER.getUser()));
+
+        // When
+        UserResponse userResponse = userService.getUserResponse(LOGIN_ID);
+
+        // Then
+        assertAll(
+                () -> assertThat(userResponse.getUser().getLoginId()).isEqualTo(
+                        UserFixture.COMMON_USER.getUser().getLoginId()),
+                () -> assertThat(userResponse.getUser().getNickname()).isEqualTo(
+                        UserFixture.COMMON_USER.getUser().getNickname()),
+                () -> assertThat(userResponse.getUser().getEmail()).isEqualTo(
+                        UserFixture.COMMON_USER.getUser().getEmail()),
+                () -> assertThat(userResponse.getUser().getRole()).isEqualTo(
+                        UserFixture.COMMON_USER.getUser().getRole())
+        );
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자를 가져올 때 사용자가 없으면 예외를 던진다")
+    void getUserResponseByLoginIdWithNotExistUser() {
+        // Given
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.empty());
+
+        // When
+        assertThatThrownBy(() -> userService.getUserResponse(LOGIN_ID))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
+                .hasFieldOrPropertyWithValue("errorCode", "U-05")
+                .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
     @DisplayName("로그인 아이디로 사용자 프로필 정보를 조회한다")
     void getUserProfile() {
         // Given

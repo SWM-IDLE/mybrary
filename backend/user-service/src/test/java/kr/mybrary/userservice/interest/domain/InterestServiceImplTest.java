@@ -9,9 +9,10 @@ import kr.mybrary.userservice.interest.persistence.InterestCategory;
 import kr.mybrary.userservice.interest.persistence.repository.InterestCategoryRepository;
 import kr.mybrary.userservice.interest.persistence.repository.UserInterestRepository;
 import kr.mybrary.userservice.user.UserFixture;
+import kr.mybrary.userservice.user.domain.UserService;
+import kr.mybrary.userservice.user.domain.dto.response.UserResponse;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
 import kr.mybrary.userservice.user.persistence.User;
-import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,7 +36,7 @@ class InterestServiceImplTest {
     @Mock
     private UserInterestRepository userInterestRepository;
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
 
     @InjectMocks
     private InterestServiceImpl interestService;
@@ -85,7 +85,7 @@ class InterestServiceImplTest {
     void getUserInterests() {
         // given
         User user = UserFixture.COMMON_USER.getUser();
-        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(user));
+        given(userService.getUserResponse(LOGIN_ID)).willReturn(UserResponse.builder().user(user).build());
         given(userInterestRepository.findAllByUserWithInterestUsingFetchJoin(user)).willReturn(
                 List.of(UserInterestFixture.COMMON_USER_INTEREST_1.getUserInterest(),
                         UserInterestFixture.COMMON_USER_INTEREST_2.getUserInterest()));
@@ -101,7 +101,7 @@ class InterestServiceImplTest {
                         UserInterestFixture.COMMON_USER_INTEREST_2.getUserInterest().getInterest().getName())
         );
 
-        verify(userRepository).findByLoginId(LOGIN_ID);
+        verify(userService).getUserResponse(LOGIN_ID);
         verify(userInterestRepository).findAllByUserWithInterestUsingFetchJoin(user);
     }
 
@@ -109,7 +109,7 @@ class InterestServiceImplTest {
     @DisplayName("사용자의 관심사를 모두 조회할 때 사용자가 존재하지 않으면 예외가 발생한다.")
     void getUserInterestsWithNotExistUser() {
         // given
-        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.empty());
+         given(userService.getUserResponse(LOGIN_ID)).willThrow(new UserNotFoundException());
 
         // when then
         assertThatThrownBy(() -> interestService.getUserInterests(LOGIN_ID))
@@ -118,7 +118,7 @@ class InterestServiceImplTest {
                 .hasFieldOrPropertyWithValue("errorCode", "U-05")
                 .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
 
-        verify(userRepository).findByLoginId(LOGIN_ID);
+        verify(userService).getUserResponse(LOGIN_ID);
     }
 
     @Test
@@ -126,7 +126,7 @@ class InterestServiceImplTest {
     void getUserInterestsWithEmptyUserInterest() {
         // given
         User user = UserFixture.COMMON_USER.getUser();
-        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(user));
+        given(userService.getUserResponse(LOGIN_ID)).willReturn(UserResponse.builder().user(user).build());
         given(userInterestRepository.findAllByUserWithInterestUsingFetchJoin(user)).willReturn(List.of());
 
         // when
@@ -135,7 +135,7 @@ class InterestServiceImplTest {
         // then
         assertThat(userInterests.getUserInterests()).isEmpty();
 
-        verify(userRepository).findByLoginId(LOGIN_ID);
+        verify(userService).getUserResponse(LOGIN_ID);
         verify(userInterestRepository).findAllByUserWithInterestUsingFetchJoin(user);
     }
 
