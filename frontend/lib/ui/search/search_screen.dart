@@ -1,8 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mybrary/data/datasource/remote_datasource.dart';
+import 'package:mybrary/data/datasource/search/search_datasource.dart';
 import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/data/network/api.dart';
@@ -142,7 +140,7 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       if (popularKeyword != "") {
         isBinding = true;
-        _bookSearchResponse = RemoteDataSource.getBookSearchResponse(
+        _bookSearchResponse = SearchDataSource.getBookSearchResponse(
             '${getApi(API.getBookSearchKeyword)}?keyword=$popularKeyword');
         _isSearching = true;
       }
@@ -173,7 +171,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<BookSearchResponse> _fetchBookSearchKeywordResponse() async {
     BookSearchResponse bookSearchResponse =
-        await RemoteDataSource.getBookSearchResponse(
+        await SearchDataSource.getBookSearchResponse(
             '${getApi(API.getBookSearchKeyword)}?keyword=${_bookSearchKeywordController.text}');
 
     return bookSearchResponse;
@@ -181,7 +179,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> _fetchBookSearchNextUrlResponse() async {
     BookSearchResponse additionalBookSearchResponse =
-        await RemoteDataSource.getBookSearchResponse(
+        await SearchDataSource.getBookSearchResponse(
             '${getApi(API.getBookService)}$_bookSearchNextUrl');
 
     setState(() {

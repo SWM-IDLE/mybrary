@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:mybrary/data/datasource/remote_datasource.dart';
+import 'package:mybrary/data/datasource/search/search_datasource.dart';
 import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/data/network/api.dart';
@@ -125,7 +125,7 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
 
   Future<BookSearchData> _fetchBookSearchIsbnResponse(String isbn) async {
     BookSearchResponse bookSearchResponse =
-        await RemoteDataSource.getBookSearchResponse(
+        await SearchDataSource.getBookSearchResponse(
             '${getApi(API.getBookSearchIsbn)}?isbn=$isbn');
 
     final bookSearchData = bookSearchResponse.data!.bookSearchResult![0];

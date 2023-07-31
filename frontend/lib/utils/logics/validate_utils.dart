@@ -1,6 +1,6 @@
 bool checkAuthValidator(
     String val, RegExp regExp, int minLength, int maxLength) {
-  final bool authValidator = val.length < minLength ||
+  bool authValidator = val.length < minLength ||
       val.length > maxLength ||
       !(regExp.hasMatch(val));
   return authValidator;
