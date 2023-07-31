@@ -61,6 +61,8 @@ class UserInterestRepositoryTest {
         assertAll(
                 () -> assertThat(foundUserInterests).isNotNull(),
                 () -> assertThat(foundUserInterests.size()).isEqualTo(2),
+                () -> assertThat(foundUserInterests.get(0).getUser().getId()).isEqualTo(savedUser.getId()),
+                () -> assertThat(foundUserInterests.get(1).getUser().getId()).isEqualTo(savedUser.getId()),
                 () -> assertThat(foundUserInterests.get(0).getInterest().getName()).isEqualTo("국내소설"),
                 () -> assertThat(foundUserInterests.get(1).getInterest().getName()).isEqualTo("외국소설"),
                 () -> assertThat(foundUserInterests.get(0).getInterest()).isNotInstanceOf(HibernateProxy.class),
