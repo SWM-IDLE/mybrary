@@ -13,5 +13,6 @@ public interface UserInterestMapper {
     UserInterestMapper INSTANCE = Mappers.getMapper(UserInterestMapper.class);
 
     @Mapping(target = "name", source = "interest.name")
+    @Mapping(target = "id", source = "interest.id")
     InterestResponse toInterestResponse(UserInterest userInterest);
 }
