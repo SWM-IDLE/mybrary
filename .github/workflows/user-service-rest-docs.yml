@@ -39,6 +39,7 @@ jobs:
         with:
           files: backend/user-service/src/main/resources/application.yml
         env:
+          spring.data.redis.host: ${{ secrets.DOCS_SERVER_US_REDIS_HOST }}
           spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
           spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }} 
           spring.security.oauth2.client.registration.naver.client-id: ${{ secrets.NAVER_CLIENT_ID }} 
