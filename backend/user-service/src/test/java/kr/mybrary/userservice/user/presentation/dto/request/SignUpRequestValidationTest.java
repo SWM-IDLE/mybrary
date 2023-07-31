@@ -157,5 +157,4 @@ public class SignUpRequestValidationTest {
                 .extracting(ConstraintViolation::getMessage)
                 .containsOnly("이메일 형식이 올바르지 않습니다.");
     }
-
 }
