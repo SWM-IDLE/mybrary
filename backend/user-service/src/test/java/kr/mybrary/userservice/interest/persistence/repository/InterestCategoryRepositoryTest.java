@@ -32,23 +32,16 @@ class InterestCategoryRepositoryTest {
     @Test
     @DisplayName("페치 조인을 사용하여 관심사 카테고리와 관심사를 가져온다.")
     void findAllWithInterestUsingFetchJoin() {
-        InterestCategory interestCategory = InterestCategory.builder()
-                .id(1L)
+       InterestCategory interestCategory = interestCategoryRepository.save(InterestCategory.builder()
                 .name("interestCategory1")
                 .description("interestCategory1Description")
                 .interests(new ArrayList<>())
-                .build();
+                .build());
 
-        interestCategoryRepository.save(interestCategory);
-
-        Interest interest1 = Interest.builder()
-                .id(1L)
+        Interest interest1 = interestRepository.save(Interest.builder()
                 .name("interest1")
-                .category(interestCategory)
-                .build();
+                .build());
         interest1.updateCategory(interestCategory);
-
-        interestRepository.save(interest1);
 
         entityManager.flush();
         entityManager.clear();
