@@ -76,16 +76,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProfileServiceResponse getProfile(String loginId) {
-        User user = getUser(loginId);
-        ProfileServiceResponse serviceResponse = UserMapper.INSTANCE.toProfileServiceResponse(user);
-
-        return serviceResponse;
+    public UserResponse getUserResponse(String loginId) {
+        return UserResponse.builder().user(getUser(loginId)).build();
     }
 
     private User getUser(String loginId) {
         return userRepository.findByLoginId(loginId)
                 .orElseThrow(UserNotFoundException::new);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProfileServiceResponse getProfile(String loginId) {
+        User user = getUser(loginId);
+        ProfileServiceResponse serviceResponse = UserMapper.INSTANCE.toProfileServiceResponse(user);
+
+        return serviceResponse;
     }
 
     @Override

@@ -11,6 +11,8 @@ public interface UserService {
 
     SignUpServiceResponse signUp(SignUpServiceRequest signUpRequest);
 
+    UserResponse getUserResponse(String loginId);
+
     ProfileServiceResponse getProfile(String loginId);
 
     ProfileServiceResponse updateProfile(ProfileUpdateServiceRequest serviceRequest);

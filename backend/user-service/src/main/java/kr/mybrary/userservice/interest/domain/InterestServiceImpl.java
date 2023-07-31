@@ -10,8 +10,7 @@ import kr.mybrary.userservice.interest.domain.dto.response.UserInterestServiceRe
 import kr.mybrary.userservice.interest.persistence.UserInterest;
 import kr.mybrary.userservice.interest.persistence.repository.InterestCategoryRepository;
 import kr.mybrary.userservice.interest.persistence.repository.UserInterestRepository;
-import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
-import kr.mybrary.userservice.user.persistence.repository.UserRepository;
+import kr.mybrary.userservice.user.domain.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +24,7 @@ public class InterestServiceImpl implements InterestService {
 
     private final InterestCategoryRepository interestCategoryRepository;
     private final UserInterestRepository userInterestRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
     @Transactional(readOnly = true)
@@ -54,8 +53,7 @@ public class InterestServiceImpl implements InterestService {
 
     private List<UserInterest> getAllUserInterestsBy(String loginId) {
         return userInterestRepository.findAllByUserWithInterestUsingFetchJoin(
-                userRepository.findByLoginId(loginId).orElseThrow(UserNotFoundException::new)
-        );
+                userService.getUserResponse(loginId).getUser());
     }
 
     @NotNull
