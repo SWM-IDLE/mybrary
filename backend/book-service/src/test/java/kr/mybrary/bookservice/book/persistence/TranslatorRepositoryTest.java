@@ -1,6 +1,7 @@
 package kr.mybrary.bookservice.book.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import kr.mybrary.bookservice.book.persistence.repository.TranslatorRepository;
 import kr.mybrary.bookservice.book.persistence.translator.Translator;
@@ -48,14 +49,35 @@ class TranslatorRepositoryTest {
         entityManager.clear();
 
         // when
-        Translator foundTranslator = translatorRepository.findByName(savedTranslator.getName()).orElseThrow();
+        Translator findTranslator = translatorRepository.findByName(savedTranslator.getName()).orElseThrow();
 
         // then
-        assertThat(foundTranslator.getName()).isEqualTo(savedTranslator.getName());
+        assertThat(findTranslator.getName()).isEqualTo(savedTranslator.getName());
+    }
+
+    @DisplayName("변역자의 식별 ID로 조회한다.")
+    @Test
+    void findTranslatorByTid() {
+
+        // given
+        Translator savedTranslator = translatorRepository.save(createTranslator());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Translator findTranslator = translatorRepository.findByTid(savedTranslator.getTid()).orElseThrow();
+
+        // then
+        assertAll(
+                () -> assertThat(findTranslator.getTid()).isEqualTo(savedTranslator.getTid()),
+                () -> assertThat(findTranslator.getName()).isEqualTo(savedTranslator.getName())
+        );
     }
 
     private Translator createTranslator() {
         return Translator.builder()
+                .tid(3344)
                 .name("translator_name")
                 .build();
     }

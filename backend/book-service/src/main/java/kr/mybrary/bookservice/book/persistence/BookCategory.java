@@ -22,6 +22,6 @@ public class BookCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String cid;
+    private Integer cid;
     private String name;
 }
