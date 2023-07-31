@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/res/colors/color.dart';
 
 class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({super.key});
+  final String nickname;
+  final String profileImageUrl;
+
+  const ProfileHeader({
+    required this.nickname,
+    required this.profileImageUrl,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +38,7 @@ class ProfileHeader extends StatelessWidget {
                 ),
                 image: DecorationImage(
                   image: NetworkImage(
-                    // 프로필 임시 이미지
-                    'https://cdn.mydaily.co.kr/FILES/202107/202107312311265373_1.jpg',
+                    profileImageUrl,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -40,7 +46,7 @@ class ProfileHeader extends StatelessWidget {
             ),
             SizedBox(height: 10.0),
             Text(
-              '박보영',
+              nickname,
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w700,

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mybrary/data/model/profile/profile_response.dart';
+import 'package:mybrary/data/repository/profile_repository.dart';
 import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/style.dart';
+import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/profile/components/profile_header.dart';
 import 'package:mybrary/ui/profile/components/profile_intro.dart';
@@ -14,42 +18,52 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _profileTabController;
+class _ProfileScreenState extends State<ProfileScreen> {
+  late Future<ProfileResponseData> _profileData;
+  final _profileRepository = ProfileRepository();
 
   @override
   void initState() {
     super.initState();
-
-    _profileTabController = TabController(length: 5, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _profileTabController.dispose();
+    _profileData = _profileRepository.getProfileData();
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       appBar: profileAppBar(),
-      child: SafeArea(
-        child: Column(
-          children: [
-            ProfileHeader(),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 20.0,
-                top: 24.0,
-                right: 4.0,
-                bottom: 24.0,
-              ),
-              child: ProfileIntro(),
-            ),
-          ],
-        ),
+      child: SingleChildScrollView(
+        child: FutureBuilder(
+            future: _profileData,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final profileData = snapshot.data!;
+
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Column(
+                    children: [
+                      ProfileHeader(
+                        nickname: profileData.nickname!,
+                        profileImageUrl: profileData.profileImageUrl!,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 20.0,
+                          top: 24.0,
+                          right: 4.0,
+                          bottom: 24.0,
+                        ),
+                        child: ProfileIntro(
+                          introduction: profileData.introduction!,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return const CircularLoading();
+            }),
       ),
     );
   }
@@ -59,24 +73,15 @@ class _ProfileScreenState extends State<ProfileScreen>
       toolbarHeight: 70.0,
       backgroundColor: WHITE_COLOR,
       elevation: 0,
-      title: Text('프로필'),
-      titleTextStyle: TextStyle(
-        color: BLACK_COLOR,
-        fontSize: 21,
-        fontWeight: FontWeight.w700,
-      ),
+      title: const Text('프로필'),
+      titleTextStyle: appBarTitleStyle,
       centerTitle: false,
       foregroundColor: BLACK_COLOR,
       actions: [
         IconButton(
           onPressed: () {
             showModalBottomSheet(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
-              ),
+              shape: bottomSheetStyle,
               backgroundColor: Colors.white,
               context: context,
               builder: (_) {
@@ -92,23 +97,19 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Widget profileMenu() {
     return Container(
-      height: 280,
+      height: 200,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            profileMenuTab('👤 프로필 편집', ProfileEditScreen()),
+            profileMenuTab('👤  프로필 편집', ProfileEditScreen()),
+            SizedBox(height: 36.0),
+            profileMenuTab('🔗️️  설정', Container()),
             SizedBox(height: 28.0),
-            profileMenuTab('📈 독서 리포트', Container()),
-            SizedBox(height: 28.0),
-            profileMenuTab('🏫 소속 인증', Container()),
-            SizedBox(height: 28.0),
-            profileMenuTab('🔗️️ 설정', Container()),
-            SizedBox(height: 20.0),
             Text(
-              '🔖 프로필 공유하기',
+              '🔖  프로필 공유하기',
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w400,
@@ -121,18 +122,15 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget profileMenuTab(String tabText, Widget screen) {
-    final menuTextStyle = TextStyle(
-      height: 1.0,
-      fontSize: 16.0,
-      fontWeight: FontWeight.w400,
-    );
-
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
         RouteAnimation routeAnimation = RouteAnimation(screen);
         Navigator.pop(context);
-        Navigator.push(context, routeAnimation.slideRightToLeft());
+        Navigator.push(context, routeAnimation.slideRightToLeft())
+            .then((value) => setState(() {
+                  _profileData = _profileRepository.getProfileData();
+                }));
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -140,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         children: [
           Text(
             tabText,
-            style: menuTextStyle,
+            style: bottomSheetMenuTextStyle,
           ),
           SvgPicture.asset('assets/svg/icon/profile_menu_arrow.svg'),
         ],

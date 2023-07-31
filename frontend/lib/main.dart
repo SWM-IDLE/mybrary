@@ -55,6 +55,8 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             theme: ThemeData(
               fontFamily: 'NotoSansKR',
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
             ),
             debugShowCheckedModeBanner: false,
             title: 'Mybrary',

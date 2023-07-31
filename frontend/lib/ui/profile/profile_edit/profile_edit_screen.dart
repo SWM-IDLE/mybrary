@@ -1,10 +1,16 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mybrary/data/model/profile/profile_response.dart';
+import 'package:mybrary/data/network/api.dart';
+import 'package:mybrary/data/repository/profile_repository.dart';
 import 'package:mybrary/res/colors/color.dart';
-import 'package:mybrary/ui/profile/profile_edit/components/profile_edit_form.dart';
+import 'package:mybrary/res/constants/style.dart';
+import 'package:mybrary/ui/common/components/circular_loading.dart';
+import 'package:mybrary/utils/logics/validate_utils.dart';
 
 class ProfileEditScreen extends StatefulWidget {
   const ProfileEditScreen({super.key});
@@ -14,10 +20,48 @@ class ProfileEditScreen extends StatefulWidget {
 }
 
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
-  File? _profileImage;
-  final picker = ImagePicker();
+  late String _originProfileImageUrl;
+  late TextEditingController _nicknameController;
+  late TextEditingController _introductionController;
 
-  Future getProfileImage(ImageSource imageSource) async {
+  final _profileRepository = ProfileRepository();
+  late Future<ProfileResponseData> _profileData;
+
+  Future<ProfileResponseData> getProfileData() async {
+    final dio = Dio();
+    final profileResponse = await dio.get(getApi(API.getUserProfile),
+        options: Options(headers: {'User-Id': 'testId'}));
+
+    final ProfileResponse result = commonResponseResult(
+      profileResponse,
+      () => ProfileResponse(
+        status: profileResponse.data['status'],
+        message: profileResponse.data['message'],
+        data: ProfileResponseData.fromJson(
+          profileResponse.data['data'],
+        ),
+      ),
+    );
+
+    _nicknameController = TextEditingController(text: result.data!.nickname!);
+    _introductionController =
+        TextEditingController(text: result.data!.introduction!);
+    _originProfileImageUrl = result.data!.profileImageUrl!;
+
+    return result.data!;
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      _profileData = getProfileData();
+    });
+  }
+
+  File? _profileImage;
+  late FormData profileImageData;
+  final ImagePicker picker = ImagePicker();
+
+  Future pickProfileImage(ImageSource imageSource) async {
     final image = await picker.pickImage(source: imageSource);
 
     if (image == null) return;
@@ -25,82 +69,338 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     setState(() {
       _profileImage = File(image.path);
     });
+    profileImageData = FormData.fromMap(
+      {
+        'profileImage': await MultipartFile.fromFile(_profileImage!.path),
+      },
+    );
+
+    final editProfileImageUrl = await _profileRepository.editProfileImage(
+      newProfileImage: profileImageData,
+    );
+
+    print(_originProfileImageUrl == editProfileImageUrl.profileImageUrl);
+
+    setState(() {
+      _originProfileImageUrl = editProfileImageUrl.profileImageUrl;
+    });
+
+    if (!mounted) return;
+    savedProfileSnackBar(
+      context: context,
+      snackBarText: '프로필 사진이 변경 되었습니다.',
+    );
+
+    _profileImage = null;
+    _refreshData();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _refreshData();
+  }
+
+  @override
+  void dispose() {
+    _nicknameController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    double bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
     return Scaffold(
       appBar: profileEditAppBar(),
       backgroundColor: WHITE_COLOR,
-      resizeToAvoidBottomInset: false,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24.0,
-          vertical: 16.0,
-        ),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: () {
-                showModalBottomSheet(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
+      body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 24.0,
+            vertical: 16.0,
+          ),
+          child: FutureBuilder(
+            future: _profileData,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final profileData = snapshot.data!;
+
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        if (profileData.profileImageUrl!.substring(
+                                profileData.profileImageUrl!.length - 11) !=
+                            'default.jpg') {
+                          showModalBottomSheet(
+                            shape: bottomSheetStyle,
+                            backgroundColor: Colors.white,
+                            context: context,
+                            builder: (_) {
+                              return SizedBox(
+                                height: 160,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 28.0,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
+                                        onTap: () async {
+                                          Navigator.pop(context);
+                                          await pickProfileImage(
+                                              ImageSource.gallery);
+                                        },
+                                        child: profileImageMenuTab(
+                                          tabText: '📷  라이브러리에서 선택',
+                                        ),
+                                      ),
+                                      SizedBox(height: 36.0),
+                                      GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
+                                        onTap: () async {
+                                          Navigator.pop(context);
+                                          final defaultProfileImageUrl =
+                                              await _profileRepository
+                                                  .deleteProfileImage();
+
+                                          setState(() {
+                                            _originProfileImageUrl =
+                                                defaultProfileImageUrl
+                                                    .profileImageUrl;
+                                          });
+
+                                          if (!mounted) return;
+                                          savedProfileSnackBar(
+                                            context: context,
+                                            snackBarText: '기본 이미지로 변경 되었습니다.',
+                                          );
+
+                                          _refreshData();
+                                        },
+                                        child: profileImageMenuTab(
+                                          tabText: '📚  기본 이미지로 변경',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        } else {
+                          pickProfileImage(ImageSource.gallery);
+                        }
+                      },
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 96.0,
+                            height: 96.0,
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  width: 1,
+                                  color: BOOK_BORDER_COLOR,
+                                ),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              image: DecorationImage(
+                                image: NetworkImage(_originProfileImageUrl),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: SvgPicture.asset(
+                              'assets/svg/icon/profile_album.svg',
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  backgroundColor: Colors.white,
-                  context: context,
-                  builder: (_) {
-                    return profileImageMenu();
-                  },
+                    SizedBox(height: 24.0),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Text(
+                              '닉네임',
+                              style: profileEditTitleStyle,
+                            ),
+                            Text(
+                              '*',
+                              style: TextStyle(
+                                color: commonOrangeColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8.0),
+                        TextFormField(
+                          controller: _nicknameController,
+                          maxLength: 20,
+                          scrollPadding: EdgeInsets.only(
+                            bottom: bottomInset,
+                          ),
+                          onEditingComplete: () {
+                            FocusScope.of(context).unfocus();
+                          },
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.all(16.0),
+                            hintText: '이름을 입력해주세요.',
+                            hintStyle: inputHintStyle,
+                            counter: SizedBox.shrink(),
+                            border: introInputBorderStyle,
+                            enabledBorder: introInputBorderStyle,
+                            focusedBorder: introInputBorderStyle,
+                            errorStyle: TextStyle(
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 2.0),
+                          child: Text(
+                            '한글, 영문, 숫자 (2-20자)',
+                            style: TextStyle(
+                              color: GREY_05_COLOR,
+                              fontSize: 13.0,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 18.0),
+                        Text(
+                          '한 줄 소개',
+                          style: profileEditTitleStyle,
+                        ),
+                        SizedBox(height: 8.0),
+                        TextFormField(
+                          maxLines: 3,
+                          maxLength: 100,
+                          controller: _introductionController,
+                          scrollPadding: EdgeInsets.only(
+                            bottom: bottomInset,
+                          ),
+                          onEditingComplete: () {
+                            FocusScope.of(context).unfocus();
+                          },
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.all(16.0),
+                            hintText: '나를 한 줄로 표현해보세요.',
+                            hintStyle: inputHintStyle,
+                            border: introInputBorderStyle,
+                            enabledBorder: introInputBorderStyle,
+                            focusedBorder: introInputBorderStyle,
+                          ),
+                        ),
+                        SizedBox(height: 18.0),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (_nicknameController.text == '' &&
+                                checkAuthValidator(_nicknameController.text,
+                                    LoginRegExp.nicknameRegExp, 2, 20)) {
+                              return showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  elevation: 0,
+                                  content: Text(
+                                    '닉네임을 다시 한 번 확인해주세요.',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  contentTextStyle: TextStyle(
+                                    color: BLACK_COLOR,
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  contentPadding:
+                                      EdgeInsets.only(top: 24.0, bottom: 12.0),
+                                  actions: [
+                                    Center(
+                                      child: SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.6,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            backgroundColor: PRIMARY_COLOR,
+                                            foregroundColor: WHITE_COLOR,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('확인'),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              await _profileRepository.editProfileData(
+                                newNickname: _nicknameController.text,
+                                introduction: _introductionController.text,
+                              );
+
+                              if (!mounted) return;
+                              savedProfileSnackBar(
+                                context: context,
+                                snackBarText: '변경 사항이 저장 되었습니다.',
+                              );
+                              Navigator.pop(context);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(double.infinity, 52.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            textStyle: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 14.0),
+                            backgroundColor: PRIMARY_COLOR,
+                            disabledForegroundColor: WHITE_COLOR,
+                          ),
+                          child: const Text('저장'),
+                        ),
+                      ],
+                    ),
+                  ],
                 );
-              },
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: SvgPicture.asset(
-                  'assets/svg/icon/album.svg',
-                  width: 24.0,
-                ),
-              ),
-            ),
-            Container(
-              width: 96.0,
-              height: 96.0,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1, color: BOOK_BORDER_COLOR),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                image: DecorationImage(
-                  image: _profileImage == null
-                      ? Image.asset('assets/img/icon/profile_default.png').image
-                      : Image.file(File(_profileImage!.path)).image,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            SizedBox(height: 24.0),
-            ProfileEditForm(),
-            SizedBox(height: 24.0),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text('저장'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 52.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                textStyle: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w700,
-                ),
-                padding: EdgeInsets.symmetric(vertical: 14.0),
-                backgroundColor: PRIMARY_COLOR,
-              ),
-            ),
-          ],
+              }
+              return const Center(
+                child: CircularLoading(),
+              );
+            },
+          ),
         ),
+      ),
+    );
+  }
+
+  void savedProfileSnackBar({
+    required BuildContext context,
+    required String snackBarText,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackBarText),
+        duration: Duration(seconds: 1),
       ),
     );
   }
@@ -108,93 +408,20 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   AppBar profileEditAppBar() {
     return AppBar(
       elevation: 0,
-      title: Text('프로필 편집'),
-      titleTextStyle: TextStyle(
-        color: BLACK_COLOR,
-        fontSize: 17.0,
-        fontWeight: FontWeight.w700,
-      ),
+      title: const Text('프로필 편집'),
+      titleTextStyle: appBarTitleStyle,
       centerTitle: true,
       backgroundColor: WHITE_COLOR,
       foregroundColor: BLACK_COLOR,
     );
   }
 
-  Widget profileImageMenu() {
-    return Container(
-      height: 210,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                Navigator.pop(context);
-                getProfileImage(ImageSource.gallery);
-              },
-              child: profileImageMenuTab(
-                Icons.photo_outlined,
-                '라이브러리에서 선택',
-              ),
-            ),
-            SizedBox(height: 24.0),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                Navigator.pop(context);
-                getProfileImage(ImageSource.camera);
-              },
-              child: profileImageMenuTab(
-                Icons.camera_alt_outlined,
-                '사진 찍기',
-              ),
-            ),
-            SizedBox(height: 24.0),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                Navigator.pop(context);
-                setState(() {
-                  _profileImage = null;
-                });
-              },
-              child: profileImageMenuTab(
-                Icons.delete_outline_rounded,
-                '현재 사진 삭제',
-                color: commonRedColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget profileImageMenuTab(IconData icon, String tabText, {Color? color}) {
-    final menuTextStyle = TextStyle(
-      height: 1.0,
-      color: color,
-      fontSize: 16.0,
-      fontWeight: FontWeight.w400,
-    );
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Icon(
-          icon,
-          size: 28.0,
-          color: color,
-        ),
-        SizedBox(width: 12.0),
-        Text(
-          tabText,
-          style: menuTextStyle,
-        ),
-      ],
+  Widget profileImageMenuTab({
+    required String tabText,
+  }) {
+    return Text(
+      tabText,
+      style: bottomSheetMenuTextStyle,
     );
   }
 }

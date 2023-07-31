@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/ui/profile/profile_edit/profile_edit_screen.dart';
+import 'package:mybrary/utils/animation/route_animation.dart';
 
 class ProfileIntro extends StatelessWidget {
-  const ProfileIntro({super.key});
+  final String introduction;
+
+  const ProfileIntro({
+    required this.introduction,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +25,22 @@ class ProfileIntro extends StatelessWidget {
           ),
         ),
         SizedBox(height: 16.0),
-        Text(
-          '마이브러리는 도서의 가치를 발견하고,\n사람을 잇는 서비스입니다.',
-          style: TextStyle(
-            color: GREY_05_COLOR,
-            fontSize: 13.0,
-            fontWeight: FontWeight.w400,
+        GestureDetector(
+          onTap: () {
+            if (introduction == '') {
+              RouteAnimation routeAnimation =
+                  RouteAnimation(ProfileEditScreen());
+              Navigator.push(context, routeAnimation.slideRightToLeft());
+            }
+          },
+          child: Text(
+            introduction == '' ? '한 줄 소개 작성하기' : introduction,
+            style: TextStyle(
+              decoration: introduction == '' ? TextDecoration.underline : null,
+              color: GREY_05_COLOR,
+              fontSize: 13.0,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
         SizedBox(height: 28.0),
@@ -67,7 +84,10 @@ class ProfileIntro extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {},
-              icon: SvgPicture.asset('assets/svg/icon/right_arrow.svg'),
+              icon: SvgPicture.asset('assets/svg/icon/right_arrow.svg',
+                  theme: SvgTheme(
+                    currentColor: PRIMARY_COLOR,
+                  )),
             ),
           ],
         ),
