@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/res/colors/color.dart';
-import 'package:mybrary/ui/profile/profile_edit/profile_edit_screen.dart';
-import 'package:mybrary/utils/animation/route_animation.dart';
 
 class ProfileIntro extends StatelessWidget {
   final String introduction;
+  final VoidCallback onTapWriteIntroduction;
 
   const ProfileIntro({
     required this.introduction,
+    required this.onTapWriteIntroduction,
     super.key,
   });
 
@@ -28,9 +28,7 @@ class ProfileIntro extends StatelessWidget {
         GestureDetector(
           onTap: () {
             if (introduction == '') {
-              RouteAnimation routeAnimation =
-                  RouteAnimation(ProfileEditScreen());
-              Navigator.push(context, routeAnimation.slideRightToLeft());
+              onTapWriteIntroduction();
             }
           },
           child: Text(
