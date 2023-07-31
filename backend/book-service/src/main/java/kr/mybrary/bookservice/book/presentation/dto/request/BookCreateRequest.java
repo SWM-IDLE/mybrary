@@ -11,31 +11,68 @@ import lombok.Getter;
 public class BookCreateRequest {
 
     private String title;
+    private String subTitle;
+    private String thumbnailUrl;
+    private String link;
+    private List<BookCreateServiceRequest.Author> authors;
+    private List<BookCreateServiceRequest.Translator> translators;
+    private Double starRating;
+    private Integer reviewCount;
+    private LocalDateTime publicationDate;
+    private String category;
+    private Integer categoryId;
+    private Integer pages;
+    private String publisher;
     private String description;
-    private String detailsUrl;
+    private String toc;
     private String isbn10;
     private String isbn13;
-    private String publisher;
-    private LocalDateTime publicationDate;
-    private Integer price;
-    private String thumbnailUrl;
+    private Integer weight;
+    private Integer sizeDepth;
+    private Integer sizeHeight;
+    private Integer sizeWidth;
+    private Integer priceSales;
+    private Integer priceStandard;
 
-    private List<String> authors;
-    private List<String> translators;
+    @Getter
+    @Builder
+    public static class Author {
+        private String name;
+        private Integer authorId;
+    }
+
+    @Getter
+    @Builder
+    public static class Translator {
+        private String name;
+        private Integer translatorId;
+    }
 
     public BookCreateServiceRequest toServiceRequest() {
         return BookCreateServiceRequest.builder()
                 .title(title)
-                .description(description)
-                .detailsUrl(detailsUrl)
-                .isbn10(isbn10)
-                .isbn13(isbn13)
-                .publisher(publisher)
-                .publicationDate(publicationDate)
-                .price(price)
+                .subTitle(subTitle)
                 .thumbnailUrl(thumbnailUrl)
+                .link(link)
                 .authors(authors)
                 .translators(translators)
+                .starRating(starRating)
+                .reviewCount(reviewCount)
+                .publicationDate(publicationDate)
+                .category(category)
+                .categoryId(categoryId)
+                .pages(pages)
+                .publisher(publisher)
+                .description(description)
+                .toc(toc)
+                .isbn10(isbn10)
+                .isbn13(isbn13)
+                .weight(weight)
+                .sizeDepth(sizeDepth)
+                .sizeHeight(sizeHeight)
+                .sizeWidth(sizeWidth)
+                .priceSales(priceSales)
+                .priceStandard(priceStandard)
                 .build();
     }
 }

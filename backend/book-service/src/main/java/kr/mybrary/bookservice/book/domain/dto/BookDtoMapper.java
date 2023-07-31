@@ -12,6 +12,15 @@ public interface BookDtoMapper {
 
     BookDtoMapper INSTANCE = Mappers.getMapper(BookDtoMapper.class);
 
-    @Mapping(target = "publishDate", source = "publicationDate")
+    @Mapping(target = "holderCount", constant = "0")
+    @Mapping(target = "readCount", constant = "0")
+    @Mapping(target = "interestCount", constant = "0")
+    @Mapping(target = "starRating", constant = "0")
+    @Mapping(target = "reviewCount", constant = "0")
+    @Mapping(target = "aladinStarRating", source = "starRating")
+    @Mapping(target = "aladinReviewCount", source = "reviewCount")
+    @Mapping(target = "bookAuthors", ignore = true)
+    @Mapping(target = "bookTranslators", ignore = true)
+    @Mapping(target = "bookCategory", ignore = true)
     Book bookCreateRequestToEntity(BookCreateServiceRequest request);
 }

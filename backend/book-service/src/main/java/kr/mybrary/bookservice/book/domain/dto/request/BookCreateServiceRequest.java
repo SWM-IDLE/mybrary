@@ -8,17 +8,43 @@ import lombok.Getter;
 @Getter
 @Builder
 public class BookCreateServiceRequest {
+
     private String title;
+    private String subTitle;
+    private String thumbnailUrl;
+    private String link;
+    private List<Author> authors;
+    private List<Translator> translators;
+    private Double starRating;
+    private Integer reviewCount;
+    private LocalDateTime publicationDate;
+    private String category;
+    private Integer categoryId;
+    private Integer pages;
+    private String publisher;
     private String description;
-    private String detailsUrl;
+    private String toc;
     private String isbn10;
     private String isbn13;
-    private String publisher;
-    private LocalDateTime publicationDate;
-    private Integer price;
-    private String thumbnailUrl;
+    private Integer weight;
+    private Integer sizeDepth;
+    private Integer sizeHeight;
+    private Integer sizeWidth;
+    private Integer priceSales;
+    private Integer priceStandard;
 
-    private List<String> authors;
-    private List<String> translators;
+    @Getter
+    @Builder
+    public static class Author {
+        private String name;
+        private Integer authorId;
+    }
+
+    @Getter
+    @Builder
+    public static class Translator {
+        private String name;
+        private Integer translatorId;
+    }
 
 }

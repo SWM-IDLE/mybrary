@@ -67,12 +67,12 @@ class MyBookControllerTest {
     @DisplayName("내 서재에 책을 추가한다.")
     @Test
     void createMyBook() throws Exception {
+
         // given
         MyBookCreateRequest request = MybookDtoTestData.createMyBookCreateRequest();
 
         String requestJson = objectMapper.writeValueAsString(request);
-
-        given(myBookService.create(request.toServiceRequest(any()))).willReturn(any());
+        given(myBookService.create(any())).willReturn(any());
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/v1/mybooks")
@@ -101,17 +101,7 @@ class MyBookControllerTest {
                                                 headerWithName("USER-ID").description("사용자 ID")
                                         )
                                         .requestFields(
-                                                fieldWithPath("title").type(STRING).description("도서 제목"),
-                                                fieldWithPath("description").type(STRING).description("도서 설명"),
-                                                fieldWithPath("detailsUrl").type(STRING).description("도서 상세 URL"),
-                                                fieldWithPath("isbn10").type(STRING).description("도서 ISBN10"),
-                                                fieldWithPath("isbn13").type(STRING).description("도서 ISBN13"),
-                                                fieldWithPath("price").type(NUMBER).description("도서 가격"),
-                                                fieldWithPath("authors").type(ARRAY).description("도서 저자"),
-                                                fieldWithPath("translators").type(ARRAY).description("도서 번역자"),
-                                                fieldWithPath("publisher").type(STRING).description("출판사"),
-                                                fieldWithPath("publicationDate").type(STRING).description("출판일"),
-                                                fieldWithPath("thumbnailUrl").type(STRING).description("썸네일 URL")
+                                                fieldWithPath("isbn13").type(STRING).description("도서 ISBN13")
                                         )
                                         .responseSchema(Schema.schema("create_mybook_response_body"))
                                         .responseFields(
