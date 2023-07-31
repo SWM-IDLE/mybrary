@@ -18,17 +18,7 @@ public class MybookDtoTestData {
 
     public static MyBookCreateRequest createMyBookCreateRequest() {
         return MyBookCreateRequest.builder()
-                .title("title")
-                .description("description")
-                .detailsUrl("detailsUrl")
-                .isbn10("isbn10")
                 .isbn13("isbn13")
-                .publisher("publisher")
-                .price(10000)
-                .publicationDate(LocalDateTime.now())
-                .translators(List.of("translator1", "translator2"))
-                .authors(List.of("author1", "author2"))
-                .thumbnailUrl("thumbnailUrl")
                 .build();
     }
 
@@ -79,16 +69,7 @@ public class MybookDtoTestData {
     public static MyBookCreateServiceRequest createMyBookCreateServiceRequest() {
         return MyBookCreateServiceRequest.builder()
                 .userId("test1")
-                .title("title")
-                .description("description")
-                .isbn10("isbn10")
                 .isbn13("isbn13")
-                .publisher("publisher")
-                .publicationDate(LocalDateTime.now())
-                .price(10000)
-                .thumbnailUrl("thumbnailUrl")
-                .authors(List.of("author1", "author2"))
-                .translators(List.of("translator1", "translator2"))
                 .build();
     }
 

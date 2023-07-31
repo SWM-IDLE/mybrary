@@ -66,7 +66,7 @@ public class Book extends BaseEntity {
     private Double aladinStarRating;
     private Integer aladinReviewCount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private BookCategory bookCategory;
 
     @Builder.Default
@@ -89,5 +89,9 @@ public class Book extends BaseEntity {
             this.bookTranslators.add(bookTranslator);
             bookTranslator.assignBook(this);
         });
+    }
+
+    public void assignCategory(BookCategory bookCategory) {
+        this.bookCategory = bookCategory;
     }
 }

@@ -34,7 +34,8 @@ public class MyBookService {
 
     public MyBook create(MyBookCreateServiceRequest request) {
 
-        Book book = bookService.getRegisteredBook(request.toBookCreateRequest());
+        // TODO: 여기서 도서가 저장하지 않음 -> 도서 상세 조회 시점에 저장
+        Book book = bookService.getRegisteredBook(null);
         checkBookAlreadyRegisteredAsMyBook(request.getUserId(), book);
 
         MyBook myBook = MyBook.of(book, request.getUserId());

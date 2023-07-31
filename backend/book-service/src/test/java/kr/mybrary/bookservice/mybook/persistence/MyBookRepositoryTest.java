@@ -90,9 +90,9 @@ class MyBookRepositoryTest {
     void findAllMyBooks() {
 
         // given
-        Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
-        Book savedBook_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
-        Book savedBook_3 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+        Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().isbn10("isbn10_1").isbn13("isbn13_1").build());
+        Book savedBook_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().isbn10("isbn10_2").isbn13("isbn13_2").build());
+        Book savedBook_3 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().isbn10("isbn10_3").isbn13("isbn13_3").build());
 
         MyBook myBook_1 = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
                 .id(1L).book(savedBook_1).build();
@@ -120,8 +120,8 @@ class MyBookRepositoryTest {
     void findMyBookById() {
 
         // given
-        Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
-        Book savedBook_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+        Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().isbn10("isbn10_1").isbn13("isbn13_1").build());
+        Book savedBook_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().isbn10("isbn10_2").isbn13("isbn13_2").build());
 
         MyBook myBook_1 = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
                 .id(1L).book(savedBook_1).build();
@@ -153,10 +153,10 @@ class MyBookRepositoryTest {
         MeaningTag meaningTag_2 = meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTagBuilder()
                 .id(2L).quote("meaningTag_2").build());
 
-        Book book_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(1L).build());
-        Book book_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(2L).build());
-        Book book_3 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(3L).build());
-        Book book_4 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(4L).build());
+        Book book_1 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(1L).isbn10("isbn10_1").isbn13("isbn13_1").build());
+        Book book_2 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(2L).isbn10("isbn10_2").isbn13("isbn13_2").build());
+        Book book_3 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(3L).isbn10("isbn10_3").isbn13("isbn13_3").build());
+        Book book_4 = bookRepository.save(BookFixture.COMMON_BOOK.getBookBuilder().id(4L).isbn10("isbn10_4").isbn13("isbn13_4").build());
 
         MyBook myBook_1 = myBookRepository.save(
                 MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(1L).book(book_1).build());
