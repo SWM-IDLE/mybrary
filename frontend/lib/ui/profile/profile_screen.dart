@@ -56,6 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: ProfileIntro(
                         introduction: profileData.introduction!,
+                        onTapWriteIntroduction: onTapWriteIntroduction,
                       ),
                     ),
                   ],
@@ -86,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               backgroundColor: Colors.white,
               context: context,
               builder: (_) {
-                return profileMenu();
+                return SingleChildScrollView(child: profileMenu());
               },
             );
           },
@@ -98,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget profileMenu() {
     return Container(
-      height: 200,
+      height: 220,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28.0),
         child: Column(
@@ -106,16 +107,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             profileMenuTab('👤  프로필 편집', ProfileEditScreen()),
-            SizedBox(height: 36.0),
             profileMenuTab('🔗️️  설정', Container()),
-            SizedBox(height: 28.0),
-            Text(
-              '🔖  프로필 공유하기',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w400,
+            SizedBox(height: 12.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                '🔖  프로필 공유하기',
+                style: bottomSheetMenuTextStyle,
               ),
             ),
+            SizedBox(height: 18.0),
           ],
         ),
       ),
@@ -123,32 +124,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget profileMenuTab(String tabText, Widget screen) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        RouteAnimation routeAnimation = RouteAnimation(screen);
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          routeAnimation.slideRightToLeft(),
-        ).then(
-          (value) => setState(
-            () {
-              _profileData = _profileRepository.getProfileData();
-            },
-          ),
-        );
-      },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            tabText,
-            style: bottomSheetMenuTextStyle,
-          ),
-          SvgPicture.asset('assets/svg/icon/profile_menu_arrow.svg'),
-        ],
+    return Container(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
+        ),
+        onPressed: () {
+          RouteAnimation routeAnimation = RouteAnimation(screen);
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            routeAnimation.slideRightToLeft(),
+          ).then(
+            (value) => setState(
+              () {
+                _profileData = _profileRepository.getProfileData();
+              },
+            ),
+          );
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              tabText,
+              style: bottomSheetMenuTextStyle,
+            ),
+            SvgPicture.asset('assets/svg/icon/profile_menu_arrow.svg'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void onTapWriteIntroduction() {
+    RouteAnimation routeAnimation = RouteAnimation(ProfileEditScreen());
+    Navigator.push(
+      context,
+      routeAnimation.slideRightToLeft(),
+    ).then(
+      (value) => setState(
+        () {
+          _profileData = _profileRepository.getProfileData();
+        },
       ),
     );
   }

@@ -104,21 +104,22 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final profileData = snapshot.data!;
+                bool isDefaultImage =
+                    profileData.profileImageUrl!.contains('default.jpg');
 
                 return Column(
                   children: [
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
-                        if (profileData.profileImageUrl!.substring(
-                                profileData.profileImageUrl!.length - 11) !=
-                            'default.jpg') {
+                        if (!isDefaultImage) {
                           showModalBottomSheet(
                             shape: bottomSheetStyle,
                             backgroundColor: Colors.white,
                             context: context,
                             builder: (_) {
                               return SizedBox(
-                                height: 160,
+                                height: 180,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 28.0,
@@ -128,37 +129,34 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      GestureDetector(
-                                        behavior: HitTestBehavior.opaque,
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          pickProfileImage(ImageSource.gallery);
-                                        },
-                                        child: profileImageMenuTab(
-                                          tabText: '📷  라이브러리에서 선택',
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                          backgroundColor: Colors.transparent,
+                                          foregroundColor: Colors.transparent,
+                                          surfaceTintColor: Colors.transparent,
+                                          splashFactory: NoSplash.splashFactory,
+                                        ),
+                                        onPressed: onTapPhotoAlbum,
+                                        child: Text(
+                                          '📷  라이브러리에서 선택',
+                                          style: bottomSheetMenuTextStyle,
                                         ),
                                       ),
-                                      SizedBox(height: 36.0),
-                                      GestureDetector(
-                                        behavior: HitTestBehavior.opaque,
-                                        onTap: () async {
-                                          await _profileRepository
-                                              .deleteProfileImage();
-
-                                          _refreshData();
-
-                                          if (!mounted) return;
-                                          savedProfileSnackBar(
-                                            context: context,
-                                            snackBarText: '기본 이미지로 변경 되었습니다.',
-                                          );
-
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: profileImageMenuTab(
-                                          tabText: '📚  기본 이미지로 변경',
+                                      SizedBox(height: 12.0),
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                          backgroundColor: Colors.transparent,
+                                          foregroundColor: Colors.transparent,
+                                          surfaceTintColor: Colors.transparent,
+                                          splashFactory: NoSplash.splashFactory,
+                                        ),
+                                        onPressed: onTapDefaultImage,
+                                        child: Text(
+                                          '📚  기본 이미지로 변경',
+                                          style: bottomSheetMenuTextStyle,
                                         ),
                                       ),
+                                      SizedBox(height: 12.0),
                                     ],
                                   ),
                                 ),
@@ -184,7 +182,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                               ),
                               image: DecorationImage(
                                 image: _profileImage == null
-                                    ? NetworkImage(_originProfileImageUrl)
+                                    ? NetworkImage(
+                                        '$_originProfileImageUrl?time=${DateTime.now().millisecondsSinceEpoch}')
                                     : Image.file(File(_profileImage!.path))
                                         .image,
                                 fit: BoxFit.cover,
@@ -281,7 +280,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         SizedBox(height: 18.0),
                         ElevatedButton(
                           onPressed: () async {
-                            if (_nicknameController.text == '' &&
+                            if (_nicknameController.text == '' ||
                                 checkAuthValidator(_nicknameController.text,
                                     LoginRegExp.nicknameRegExp, 2, 20)) {
                               return showDialog(
@@ -342,11 +341,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                                 );
                               }
 
+                              _refreshData();
+
                               if (!mounted) return;
                               savedProfileSnackBar(
                                 context: context,
                                 snackBarText: '변경 사항이 저장 되었습니다.',
                               );
+
                               Navigator.pop(context);
                             }
                           },
@@ -412,30 +414,22 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-//   () async {
-//   Navigator.pop(context);
-//   await pickProfileImage(
-//   ImageSource.gallery);
-// }
-//
-// () async {
-// Navigator.pop(context);
-// final defaultProfileImageUrl =
-// await _profileRepository
-//     .deleteProfileImage();
-//
-// setState(() {
-// _originProfileImageUrl =
-// defaultProfileImageUrl
-//     .profileImageUrl;
-// });
-//
-// if (!mounted) return;
-// savedProfileSnackBar(
-// context: context,
-// snackBarText: '기본 이미지로 변경 되었습니다.',
-// );
-//
-// _refreshData();
-// }
+  void onTapPhotoAlbum() {
+    pickProfileImage(ImageSource.gallery);
+    Navigator.pop(context);
+  }
+
+  void onTapDefaultImage() async {
+    await _profileRepository.deleteProfileImage();
+
+    _refreshData();
+
+    if (!mounted) return;
+    savedProfileSnackBar(
+      context: context,
+      snackBarText: '기본 이미지로 변경 되었습니다.',
+    );
+
+    Navigator.of(context).pop();
+  }
 }

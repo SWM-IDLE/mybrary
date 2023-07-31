@@ -41,6 +41,7 @@ const profileEditTitleStyle = TextStyle(
 );
 
 const bottomSheetMenuTextStyle = TextStyle(
+  color: GREY_06_COLOR,
   height: 1.0,
   fontSize: 16.0,
   fontWeight: FontWeight.w400,
