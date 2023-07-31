@@ -23,6 +23,6 @@ public class Author extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String aid;
+    private Integer aid;
     private String name;
 }

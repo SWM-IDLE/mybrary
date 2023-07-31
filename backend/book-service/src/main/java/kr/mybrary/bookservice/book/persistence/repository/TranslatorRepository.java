@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TranslatorRepository extends JpaRepository<Translator, Long> {
 
     Optional<Translator> findByName(String name);
+
+    Optional<Translator> findByTid(Integer tid);
 }

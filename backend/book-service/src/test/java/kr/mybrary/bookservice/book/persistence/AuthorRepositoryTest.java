@@ -1,6 +1,7 @@
 package kr.mybrary.bookservice.book.persistence;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import kr.mybrary.bookservice.book.persistence.author.Author;
 import kr.mybrary.bookservice.book.persistence.repository.AuthorRepository;
@@ -48,15 +49,36 @@ class AuthorRepositoryTest {
         entityManager.clear();
 
         // when
-        Author foundAuthor = authorRepository.findByName(savedAuthor.getName()).orElseThrow();
+        Author findAuthor = authorRepository.findByName(savedAuthor.getName()).orElseThrow();
 
         // then
-        assertThat(foundAuthor.getName()).isEqualTo(savedAuthor.getName());
+        assertThat(findAuthor.getName()).isEqualTo(savedAuthor.getName());
+    }
+
+    @DisplayName("저자의 식별 ID로 조회한다.")
+    @Test
+    void findAuthorByAid() {
+
+        // given
+        Author savedAuthor = authorRepository.save(createAuthor());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Author findAuthor = authorRepository.findByAid(savedAuthor.getAid()).orElseThrow();
+
+        // then
+        assertAll(
+                () -> assertThat(findAuthor.getAid()).isEqualTo(savedAuthor.getAid()),
+                () -> assertThat(findAuthor.getName()).isEqualTo(savedAuthor.getName())
+        );
     }
 
     private Author createAuthor() {
         return Author.builder()
                 .name("author_name")
+                .aid(1122)
                 .build();
     }
 }
