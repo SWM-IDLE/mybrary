@@ -35,7 +35,7 @@ public class SignUpRequestValidationTest {
         // then
         assertThat(constraintViolations)
                 .extracting(ConstraintViolation::getMessage)
-                .contains("로그인 아이디는 필수입니다.", "널이어서는 안됩니다");
+                .contains("로그인 아이디는 필수입니다.");
     }
 
     @DisplayName("로그인 아이디는 6자 이상의 영문, 숫자 구성이어야 한다 (하이픈과 언더바는 허용)")
@@ -75,7 +75,7 @@ public class SignUpRequestValidationTest {
         // then
         assertThat(constraintViolations)
                 .extracting(ConstraintViolation::getMessage)
-                .containsOnly("비밀번호는 필수입니다.", "널이어서는 안됩니다");
+                .containsOnly("비밀번호는 필수입니다.");
     }
 
     @DisplayName("비밀번호는 8~16자 영문, 숫자, 특수문자 구성이어야 한다.")
