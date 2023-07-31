@@ -21,6 +21,8 @@ class InterestRepositoryTest {
 
     @Autowired
     private InterestRepository interestRepository;
+    @Autowired
+    private InterestCategoryRepository interestCategoryRepository;
 
     @Test
     @DisplayName("관심사명으로 관심사를 가져온다.")
@@ -45,10 +47,10 @@ class InterestRepositoryTest {
     @DisplayName("카테고리에 해당하는 관심사를 가져온다.")
     void findAllByCategory() {
         // given
-        InterestCategory interestCategory = InterestCategory.builder()
+        InterestCategory interestCategory = interestCategoryRepository.save(InterestCategory.builder()
                 .name("테스트 카테고리")
                 .description("테스트 카테고리 설명")
-                .build();
+                .build());
         Interest savedInterest = interestRepository.save(Interest.builder()
                 .name("테스트 관심사")
                 .category(interestCategory)
