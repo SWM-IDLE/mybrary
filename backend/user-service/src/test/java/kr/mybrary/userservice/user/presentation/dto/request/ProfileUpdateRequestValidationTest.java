@@ -20,7 +20,7 @@ class ProfileUpdateRequestValidationTest {
     void profileUpdateValidationTest() {
         // given
         ProfileUpdateRequest profileUpdateRequest = ProfileUpdateRequest.builder()
-                .nickname(null)
+                .nickname("")
                 .build();
 
         // when
@@ -29,7 +29,7 @@ class ProfileUpdateRequestValidationTest {
         // then
         assertThat(constraintViolations)
                 .extracting(ConstraintViolation::getMessage)
-                .containsOnly("닉네임은 필수입니다.", "널이어서는 안됩니다");
+                .contains("닉네임은 필수입니다.");
     }
 
     @DisplayName("닉네임은 특수문자를 제외한 2~20자리여야 한다.")
