@@ -3,13 +3,20 @@ package kr.mybrary.bookservice.book.domain.dto;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import kr.mybrary.bookservice.book.BookDtoTestData;
+import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
+import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse.Author;
+import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse.Translator;
 import kr.mybrary.bookservice.book.persistence.Book;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class BookDtoMapperTest {
 
+    @DisplayName("BookCreateServiceRequest를 Book Entity로 매핑한다.")
     @Test
     void bookCreateRequestToEntity() {
 
@@ -44,6 +51,66 @@ class BookDtoMapperTest {
                 () -> assertThat(book.getInterestCount()).isEqualTo(0),
                 () -> assertThat(book.getStarRating()).isEqualTo(0),
                 () -> assertThat(book.getReviewCount()).isEqualTo(0)
+        );
+    }
+
+    @DisplayName("Book 엔티티의 BookAuthor의 저자를 BookDetailServiceResponse.Author로 매핑한다.")
+    @Test
+    void mappingAuthors() {
+
+        // given
+        Book book = BookFixture.COMMON_BOOK.getBook();
+
+        // when
+        List<Author> authors = BookDtoMapper.mappingAuthors(book.getBookAuthors());
+
+        // then
+        assertAll(
+                () -> assertThat(authors.get(0).getName()).isEqualTo(book.getBookAuthors().get(0).getAuthor().getName()),
+                () -> assertThat(authors.get(0).getAuthorId()).isEqualTo(book.getBookAuthors().get(0).getAuthor().getAid()),
+                () -> assertThat(authors.get(1).getName()).isEqualTo(book.getBookAuthors().get(1).getAuthor().getName()),
+                () -> assertThat(authors.get(1).getAuthorId()).isEqualTo(book.getBookAuthors().get(1).getAuthor().getAid())
+        );
+    }
+
+    @DisplayName("Book 엔티티의 BookTranslator의 번역가를 BookDetailServiceResponse.Translator로 매핑한다.")
+    @Test
+    void mappingTranslators() {
+
+        // given
+        Book book = BookFixture.COMMON_BOOK.getBook();
+
+        // when
+        List<Translator> translators = BookDtoMapper.mappingTranslators(book.getBookTranslators());
+
+        // then
+        assertAll(
+                () -> assertThat(translators.get(0).getName()).isEqualTo(book.getBookTranslators().get(0).getTranslator().getName()),
+                () -> assertThat(translators.get(0).getTranslatorId()).isEqualTo(book.getBookTranslators().get(0).getTranslator().getTid()),
+                () -> assertThat(translators.get(1).getName()).isEqualTo(book.getBookTranslators().get(0).getTranslator().getName()),
+                () -> assertThat(translators.get(1).getTranslatorId()).isEqualTo(book.getBookTranslators().get(0).getTranslator().getTid())
+        );
+    }
+
+    @DisplayName("Book 엔티티를 BookDetailServiceResponse로 매핑한다.")
+    @Test
+    void bookToDetailServiceResponse() {
+
+        // given
+        Book book = BookFixture.COMMON_BOOK.getBook();
+
+        // when
+        BookDetailServiceResponse bookDetailServiceResponse = BookDtoMapper.INSTANCE.bookToDetailServiceResponse(book);
+
+        // then
+        assertAll(
+                () -> assertThat(bookDetailServiceResponse.getTitle()).isEqualTo(book.getTitle()),
+                () -> assertThat(bookDetailServiceResponse.getStarRating()).isEqualTo(book.getAladinStarRating()),
+                () -> assertThat(bookDetailServiceResponse.getReviewCount()).isEqualTo(book.getAladinReviewCount()),
+                () -> assertThat(bookDetailServiceResponse.getAuthors().size()).isEqualTo(book.getBookAuthors().size()),
+                () -> assertThat(bookDetailServiceResponse.getTranslators().size()).isEqualTo(book.getBookTranslators().size()),
+                () -> assertThat(bookDetailServiceResponse.getIsbn10()).isEqualTo(book.getIsbn10()),
+                () -> assertThat(bookDetailServiceResponse.getIsbn13()).isEqualTo(book.getIsbn13())
         );
     }
 }
