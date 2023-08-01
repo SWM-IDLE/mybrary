@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
-class ProfileBody extends StatelessWidget {
+class ProfileEditBody extends StatelessWidget {
   final double bottomInset;
   final TextEditingController nicknameController;
   final TextEditingController introductionController;
   final VoidCallback saveProfileEditButton;
 
-  const ProfileBody({
+  const ProfileEditBody({
     required this.bottomInset,
     required this.nicknameController,
     required this.introductionController,

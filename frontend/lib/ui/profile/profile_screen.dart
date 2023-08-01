@@ -31,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      appBar: profileAppBar(),
+      appBar: _profileAppBar(),
       child: SingleChildScrollView(
         child: FutureBuilder(
           future: _profileResponseData,
@@ -39,28 +39,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (snapshot.hasData) {
               final profileData = snapshot.data!;
 
-              return SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  children: [
-                    ProfileHeader(
-                      nickname: profileData.nickname!,
-                      profileImageUrl: profileData.profileImageUrl!,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 20.0,
-                        top: 24.0,
-                        right: 4.0,
-                        bottom: 24.0,
-                      ),
-                      child: ProfileIntro(
-                        introduction: profileData.introduction!,
-                        onTapWriteIntroduction: onTapWriteIntroduction,
-                      ),
-                    ),
-                  ],
-                ),
+              return Column(
+                children: [
+                  ProfileHeader(
+                    nickname: profileData.nickname!,
+                    profileImageUrl: profileData.profileImageUrl!,
+                  ),
+                  ProfileIntro(
+                    introduction: profileData.introduction!,
+                    onTapWriteIntroduction: onTapWriteIntroduction,
+                  ),
+                ],
               );
             }
             return const CircularLoading();
@@ -70,7 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  AppBar profileAppBar() {
+  AppBar _profileAppBar() {
     return AppBar(
       toolbarHeight: 70.0,
       backgroundColor: WHITE_COLOR,

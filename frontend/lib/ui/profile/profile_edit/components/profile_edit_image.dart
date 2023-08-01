@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/res/colors/color.dart';
 
-class ProfileImage extends StatelessWidget {
+class ProfileEditImage extends StatelessWidget {
   final File? profileImage;
   final String originProfileImageUrl;
-  const ProfileImage({
+  const ProfileEditImage({
     this.profileImage,
     required this.originProfileImageUrl,
     super.key,
