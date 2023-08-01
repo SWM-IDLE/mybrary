@@ -58,15 +58,15 @@ class MyBookMeaningTagRepositoryTest {
         entityManager.clear();
 
         // when
-        Optional<MyBookMeaningTag> findMyBookMeaningTag = myBookMeaningTagRepository.findByMyBook(savedMyBook);
+        Optional<MyBookMeaningTag> foundMyBookMeaningTag = myBookMeaningTagRepository.findByMyBook(savedMyBook);
 
         // when
         assertAll(
                 () -> {
-                    assertThat(findMyBookMeaningTag.isPresent()).isTrue();
-                    assertThat(findMyBookMeaningTag.get().getMyBook().getBook().getIsbn10()).isEqualTo(
+                    assertThat(foundMyBookMeaningTag.isPresent()).isTrue();
+                    assertThat(foundMyBookMeaningTag.get().getMyBook().getBook().getIsbn10()).isEqualTo(
                             savedMyBook.getBook().getIsbn10());
-                    assertThat(findMyBookMeaningTag.get().getMeaningTag().getQuote()).isEqualTo(
+                    assertThat(foundMyBookMeaningTag.get().getMeaningTag().getQuote()).isEqualTo(
                             savedMeaningTag.getQuote());
                 }
         );
@@ -88,12 +88,12 @@ class MyBookMeaningTagRepositoryTest {
         entityManager.clear();
 
         // when
-        MyBook findMyBook = myBookRepository.findById(savedMyBook.getId()).orElseThrow();
+        MyBook foundMyBook = myBookRepository.findById(savedMyBook.getId()).orElseThrow();
 
-        myBookMeaningTagRepository.deleteByMyBook(findMyBook);
+        myBookMeaningTagRepository.deleteByMyBook(foundMyBook);
 
         // then
-        Optional<MyBookMeaningTag> findMyBookMeaningTag = myBookMeaningTagRepository.findByMyBook(findMyBook);
+        Optional<MyBookMeaningTag> findMyBookMeaningTag = myBookMeaningTagRepository.findByMyBook(foundMyBook);
         List<MyBookMeaningTag> myBookMeaningTags = myBookMeaningTagRepository.findAll();
 
         assertAll(

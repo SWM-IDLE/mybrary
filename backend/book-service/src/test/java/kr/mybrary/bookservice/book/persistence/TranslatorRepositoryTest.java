@@ -49,10 +49,10 @@ class TranslatorRepositoryTest {
         entityManager.clear();
 
         // when
-        Translator findTranslator = translatorRepository.findByName(savedTranslator.getName()).orElseThrow();
+        Translator foundTranslator = translatorRepository.findByName(savedTranslator.getName()).orElseThrow();
 
         // then
-        assertThat(findTranslator.getName()).isEqualTo(savedTranslator.getName());
+        assertThat(foundTranslator.getName()).isEqualTo(savedTranslator.getName());
     }
 
     @DisplayName("변역자의 식별 ID로 조회한다.")
@@ -66,12 +66,12 @@ class TranslatorRepositoryTest {
         entityManager.clear();
 
         // when
-        Translator findTranslator = translatorRepository.findByTid(savedTranslator.getTid()).orElseThrow();
+        Translator foundTranslator = translatorRepository.findByTid(savedTranslator.getTid()).orElseThrow();
 
         // then
         assertAll(
-                () -> assertThat(findTranslator.getTid()).isEqualTo(savedTranslator.getTid()),
-                () -> assertThat(findTranslator.getName()).isEqualTo(savedTranslator.getName())
+                () -> assertThat(foundTranslator.getTid()).isEqualTo(savedTranslator.getTid()),
+                () -> assertThat(foundTranslator.getName()).isEqualTo(savedTranslator.getName())
         );
     }
 

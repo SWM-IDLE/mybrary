@@ -36,7 +36,7 @@ class MeaningTagRepositoryTest {
         meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag());
 
         // when
-        Optional<MeaningTag> findTag = meaningTagRepository.findByQuote(quote);
+        Optional<MeaningTag> foundTag = meaningTagRepository.findByQuote(quote);
 
         entityManager.flush();
         entityManager.clear();
@@ -44,8 +44,8 @@ class MeaningTagRepositoryTest {
         // when, then
         assertAll(
                 () -> {
-                    assertThat(findTag.isPresent()).isTrue();
-                    assertThat(findTag.get().getQuote()).isEqualTo(quote);
+                    assertThat(foundTag.isPresent()).isTrue();
+                    assertThat(foundTag.get().getQuote()).isEqualTo(quote);
                 }
         );
     }

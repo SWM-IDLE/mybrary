@@ -34,12 +34,12 @@ class BookCategoryRepositoryTest {
         entityManager.clear();
 
         // when
-        BookCategory findBookCategory = bookCategoryRepository.findByCid(savedBookCategory.getCid()).orElseThrow();
+        BookCategory foundBookCategory = bookCategoryRepository.findByCid(savedBookCategory.getCid()).orElseThrow();
 
         // then
         assertAll(
-                () -> assertThat(findBookCategory.getCid()).isEqualTo(savedBookCategory.getCid()),
-                () -> assertThat(findBookCategory.getName()).isEqualTo(savedBookCategory.getName())
+                () -> assertThat(foundBookCategory.getCid()).isEqualTo(savedBookCategory.getCid()),
+                () -> assertThat(foundBookCategory.getName()).isEqualTo(savedBookCategory.getName())
         );
     }
 
