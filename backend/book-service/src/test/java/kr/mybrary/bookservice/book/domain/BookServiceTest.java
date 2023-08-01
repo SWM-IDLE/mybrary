@@ -1,5 +1,6 @@
 package kr.mybrary.bookservice.book.domain;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -11,13 +12,17 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
 import kr.mybrary.bookservice.book.BookDtoTestData;
+import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.AuthorRepository;
 import kr.mybrary.bookservice.book.persistence.repository.BookCategoryRepository;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
 import kr.mybrary.bookservice.book.persistence.repository.TranslatorRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -94,6 +99,44 @@ class BookServiceTest {
                 () -> verify(authorRepository, never()).findByName(anyString()),
                 () -> verify(translatorRepository, never()).findByName(anyString()),
                 () -> verify(bookRepository, never()).save(any(Book.class))
+        );
+    }
+
+    @Test
+    @DisplayName("ISBN을 통해서 도서 상세 정보를 가져온다.")
+    void getBookByISBN() {
+
+        // given
+        BookDetailServiceRequest request = BookDtoTestData.createBookDetailServiceRequest();
+        given(bookRepository.findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()))
+                .willReturn(Optional.of(BookFixture.COMMON_BOOK.getBook()));
+
+        // when
+        Optional<BookDetailServiceResponse> bookDetailServiceResponse = bookService.getBookDetailByISBN(request);
+
+        // then
+        assertAll(
+                () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
+                () -> assertThat(bookDetailServiceResponse.isPresent()).isTrue()
+        );
+    }
+
+    @Test
+    @DisplayName("ISBN을 통해서 도서 상세 조회 시, 도서가 존재 하지 않으면 Optional.empty()를 반환한다.")
+    void getEmptyOptionalWhenBookNotExist() {
+
+        // given
+        BookDetailServiceRequest request = BookDtoTestData.createBookDetailServiceRequest();
+        given(bookRepository.findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()))
+                .willReturn(Optional.empty());
+
+        // when
+        Optional<BookDetailServiceResponse> bookDetailServiceResponse = bookService.getBookDetailByISBN(request);
+
+        // then
+        assertAll(
+                () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
+                () -> assertThat(bookDetailServiceResponse.isEmpty()).isTrue()
         );
     }
 }

@@ -1,9 +1,11 @@
 package kr.mybrary.bookservice.book.domain;
 
-import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookCategory;
 import kr.mybrary.bookservice.book.persistence.repository.AuthorRepository;
@@ -16,6 +18,7 @@ import kr.mybrary.bookservice.book.persistence.translator.BookTranslator;
 import kr.mybrary.bookservice.book.persistence.translator.Translator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -26,6 +29,13 @@ public class BookService {
     private final AuthorRepository authorRepository;
     private final TranslatorRepository translatorRepository;
     private final BookCategoryRepository bookCategoryRepository;
+
+    @Transactional(readOnly = true)
+    public Optional<BookDetailServiceResponse> getBookDetailByISBN(BookDetailServiceRequest request) {
+
+        return bookRepository.findByISBNWithAuthorAndCategoryUsingFetchJoin(request.getIsbn10(), request.getIsbn13())
+                .map(BookDtoMapper.INSTANCE::bookToDetailServiceResponse);
+    }
 
     public Book getRegisteredBook(BookCreateServiceRequest request) {
         return bookRepository.findByIsbn10OrIsbn13(request.getIsbn10(), request.getIsbn13())
