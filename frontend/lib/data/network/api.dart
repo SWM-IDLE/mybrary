@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
-const baseUrl = "http://3.38.185.10:8003";
+const baseUrl = "http://43.200.200.185:8003";
 const mybraryUrlScheme = "kr.mybrary";
 
 enum API {

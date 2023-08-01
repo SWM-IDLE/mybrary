@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
@@ -9,9 +8,9 @@ import 'package:mybrary/data/repository/profile_repository.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
-import 'package:mybrary/ui/profile/profile_edit/components/profile_body.dart';
-import 'package:mybrary/ui/profile/profile_edit/components/profile_image.dart';
-import 'package:mybrary/ui/profile/profile_screen.dart';
+import 'package:mybrary/ui/common/layout/subpage_layout.dart';
+import 'package:mybrary/ui/profile/profile_edit/components/profile_edit_body.dart';
+import 'package:mybrary/ui/profile/profile_edit/components/profile_edit_image.dart';
 import 'package:mybrary/utils/logics/validate_utils.dart';
 
 class ProfileEditScreen extends StatefulWidget {
@@ -80,10 +79,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   Widget build(BuildContext context) {
     double bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
-    return Scaffold(
-      appBar: _profileEditAppBar(),
+    return SubPageLayout(
+      appBarTitle: '프로필 편집',
       backgroundColor: WHITE_COLOR,
-      body: SingleChildScrollView(
+      child: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -109,13 +108,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                           pickProfileImage(ImageSource.gallery);
                         }
                       },
-                      child: ProfileImage(
+                      child: ProfileEditImage(
                         originProfileImageUrl: _originProfileImageUrl,
                         profileImage: _selectedImageFile,
                       ),
                     ),
                     const SizedBox(height: 24.0),
-                    ProfileBody(
+                    ProfileEditBody(
                       bottomInset: bottomInset,
                       nicknameController: _nicknameController,
                       introductionController: _introductionController,
@@ -145,19 +144,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           seconds: 1,
         ),
       ),
-    );
-  }
-
-  AppBar _profileEditAppBar() {
-    return AppBar(
-      elevation: 0,
-      title: const Text('프로필 편집'),
-      titleTextStyle: appBarTitleStyle.copyWith(
-        fontSize: 18.0,
-      ),
-      centerTitle: true,
-      backgroundColor: WHITE_COLOR,
-      foregroundColor: BLACK_COLOR,
     );
   }
 
