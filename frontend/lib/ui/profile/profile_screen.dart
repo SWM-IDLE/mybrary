@@ -10,7 +10,6 @@ import 'package:mybrary/ui/profile/components/profile_header.dart';
 import 'package:mybrary/ui/profile/components/profile_intro.dart';
 import 'package:mybrary/ui/profile/profile_edit/profile_edit_screen.dart';
 import 'package:mybrary/ui/setting/setting_screen.dart';
-import 'package:mybrary/utils/animation/route_animation.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -154,22 +153,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void onTapWriteIntroduction() {
-    RouteAnimation routeAnimation = RouteAnimation(
-      const ProfileEditScreen(),
-    );
-    _navigateToNextScreen(routeAnimation);
+    _navigateToNextScreen(const ProfileEditScreen());
   }
 
   void onPressedProfileMenu(Widget screen) {
-    RouteAnimation routeAnimation = RouteAnimation(screen);
     Navigator.pop(context);
-    _navigateToNextScreen(routeAnimation);
+    _navigateToNextScreen(screen);
   }
 
-  void _navigateToNextScreen(RouteAnimation routeAnimation) {
+  void _navigateToNextScreen(Widget screen) {
     Navigator.push(
       context,
-      routeAnimation.slideRightToLeft(),
+      MaterialPageRoute(builder: (_) => screen),
     ).then(
       (value) => setState(() {
         _profileResponseData = _profileRepository.getProfileData();
