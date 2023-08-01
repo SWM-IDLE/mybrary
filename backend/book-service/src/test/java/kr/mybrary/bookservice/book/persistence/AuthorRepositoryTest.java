@@ -49,10 +49,10 @@ class AuthorRepositoryTest {
         entityManager.clear();
 
         // when
-        Author findAuthor = authorRepository.findByName(savedAuthor.getName()).orElseThrow();
+        Author foundAuthor = authorRepository.findByName(savedAuthor.getName()).orElseThrow();
 
         // then
-        assertThat(findAuthor.getName()).isEqualTo(savedAuthor.getName());
+        assertThat(foundAuthor.getName()).isEqualTo(savedAuthor.getName());
     }
 
     @DisplayName("저자의 식별 ID로 조회한다.")
@@ -66,12 +66,12 @@ class AuthorRepositoryTest {
         entityManager.clear();
 
         // when
-        Author findAuthor = authorRepository.findByAid(savedAuthor.getAid()).orElseThrow();
+        Author foundAuthor = authorRepository.findByAid(savedAuthor.getAid()).orElseThrow();
 
         // then
         assertAll(
-                () -> assertThat(findAuthor.getAid()).isEqualTo(savedAuthor.getAid()),
-                () -> assertThat(findAuthor.getName()).isEqualTo(savedAuthor.getName())
+                () -> assertThat(foundAuthor.getAid()).isEqualTo(savedAuthor.getAid()),
+                () -> assertThat(foundAuthor.getName()).isEqualTo(savedAuthor.getName())
         );
     }
 
