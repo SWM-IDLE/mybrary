@@ -87,8 +87,8 @@ class BookDtoMapperTest {
         assertAll(
                 () -> assertThat(translators.get(0).getName()).isEqualTo(book.getBookTranslators().get(0).getTranslator().getName()),
                 () -> assertThat(translators.get(0).getTranslatorId()).isEqualTo(book.getBookTranslators().get(0).getTranslator().getTid()),
-                () -> assertThat(translators.get(1).getName()).isEqualTo(book.getBookTranslators().get(0).getTranslator().getName()),
-                () -> assertThat(translators.get(1).getTranslatorId()).isEqualTo(book.getBookTranslators().get(0).getTranslator().getTid())
+                () -> assertThat(translators.get(1).getName()).isEqualTo(book.getBookTranslators().get(1).getTranslator().getName()),
+                () -> assertThat(translators.get(1).getTranslatorId()).isEqualTo(book.getBookTranslators().get(1).getTranslator().getTid())
         );
     }
 
