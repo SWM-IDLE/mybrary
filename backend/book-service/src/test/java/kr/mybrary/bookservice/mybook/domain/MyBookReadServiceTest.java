@@ -16,7 +16,7 @@ import static org.mockito.Mockito.verify;
 import java.util.List;
 import java.util.Optional;
 import kr.mybrary.bookservice.book.BookFixture;
-import kr.mybrary.bookservice.book.domain.BookService;
+import kr.mybrary.bookservice.book.domain.BookReadService;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.MybookDtoTestData;
@@ -45,7 +45,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
-class MyBookServiceTest {
+class MyBookReadServiceTest {
 
     @InjectMocks
     private MyBookService myBookService;
@@ -54,7 +54,7 @@ class MyBookServiceTest {
     private MyBookRepository myBookRepository;
 
     @Mock
-    private BookService bookService;
+    private BookReadService bookReadService;
 
     @Mock
     private MeaningTagService meaningTagService;
@@ -72,7 +72,7 @@ class MyBookServiceTest {
         Book foundBook = BookFixture.COMMON_BOOK.getBook();
         int foundBookHolderCount = foundBook.getHolderCount();
 
-        given(bookService.getRegisteredBookByISBN13(anyString())).willReturn(foundBook);
+        given(bookReadService.getRegisteredBookByISBN13(anyString())).willReturn(foundBook);
         given(myBookRepository.existsByUserIdAndBook(any(), any())).willReturn(false);
         given(myBookRepository.save(any())).willReturn(any());
 
@@ -81,7 +81,7 @@ class MyBookServiceTest {
 
         // then
         assertAll(
-                () -> verify(bookService, times(1)).getRegisteredBookByISBN13(anyString()),
+                () -> verify(bookReadService, times(1)).getRegisteredBookByISBN13(anyString()),
                 () -> verify(myBookRepository, times(1)).existsByUserIdAndBook(any(), any()),
                 () -> verify(myBookRepository, times(1)).save(any()),
                 () -> assertThat(foundBook.getHolderCount()).isEqualTo(foundBookHolderCount + 1)
@@ -95,7 +95,7 @@ class MyBookServiceTest {
         // given
         MyBookCreateServiceRequest request = MybookDtoTestData.createMyBookCreateServiceRequest();
 
-        given(bookService.getRegisteredBookByISBN13(anyString()))
+        given(bookReadService.getRegisteredBookByISBN13(anyString()))
                 .willReturn(Book.builder().id(1L).build());
         given(myBookRepository.existsByUserIdAndBook(any(), any())).willReturn(true);
 
@@ -103,7 +103,7 @@ class MyBookServiceTest {
         assertThrows(MyBookAlreadyExistsException.class, () -> myBookService.create(request));
 
         assertAll(
-                () -> verify(bookService, times(1)).getRegisteredBookByISBN13(anyString()),
+                () -> verify(bookReadService, times(1)).getRegisteredBookByISBN13(anyString()),
                 () -> verify(myBookRepository, times(1)).existsByUserIdAndBook(any(), any()),
                 () -> verify(myBookRepository, never()).save(any())
         );
