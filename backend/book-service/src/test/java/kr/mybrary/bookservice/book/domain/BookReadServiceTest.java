@@ -1,11 +1,10 @@
 package kr.mybrary.bookservice.book.domain;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,6 +37,9 @@ class BookReadServiceTest {
     @Mock
     private PlatformBookSearchApiService platformBookSearchApiService;
 
+    @Mock
+    private BookWriteService bookWriteService;
+
 
     @Test
     @DisplayName("DB애서 ISBN을 통해서 도서 상세 정보를 가져온다.")
@@ -59,7 +61,7 @@ class BookReadServiceTest {
     }
 
     @Test
-    @DisplayName("DB애서 ISBN을 통해서 도서 상세 조회 시, 도서가 존재 하지 않으면 도서 API를 호출한다.")
+    @DisplayName("DB애서 ISBN을 통해서 도서 상세 조회 시, 도서가 존재 하지 않으면 도서 API를 호출하고, 도서를 저장한다.")
     void getEmptyOptionalWhenBookNotExist() {
 
         // given
@@ -68,6 +70,7 @@ class BookReadServiceTest {
                 .willReturn(Optional.empty());
         given(platformBookSearchApiService.searchBookDetailWithISBN(any())).willReturn(
                 BookSearchDtoTestData.createBookSearchDetailResponse());
+        doNothing().when(bookWriteService).create(any());
 
         // when
         bookReadService.getBookDetailByISBN(request);
@@ -75,7 +78,8 @@ class BookReadServiceTest {
         // then
         assertAll(
                 () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
-                () -> verify(platformBookSearchApiService, times(1)).searchBookDetailWithISBN(any())
+                () -> verify(platformBookSearchApiService, times(1)).searchBookDetailWithISBN(any()),
+                () -> verify(bookWriteService, times(1)).create(any())
         );
     }
 }
