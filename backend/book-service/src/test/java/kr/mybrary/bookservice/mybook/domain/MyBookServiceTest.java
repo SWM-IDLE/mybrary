@@ -216,8 +216,9 @@ class MyBookServiceTest {
         MyBookDeleteServiceRequest request = MyBookDeleteServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findById(any())).willReturn(
-                Optional.ofNullable(myBook));
+        int holderCount = myBook.getBook().getHolderCount();
+
+        given(myBookRepository.findById(any())).willReturn(Optional.ofNullable(myBook));
 
         // when
         myBookService.deleteMyBook(request);
@@ -228,7 +229,8 @@ class MyBookServiceTest {
                 () -> {
                     assertThat(myBook).isNotNull();
                     assertThat(myBook.isDeleted()).isTrue();
-                }
+                },
+                () -> assertThat(myBook.getBook().getHolderCount()).isEqualTo(holderCount - 1)
         );
     }
 

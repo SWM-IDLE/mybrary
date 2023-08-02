@@ -85,6 +85,7 @@ public class MyBookService {
             throw new MyBookAccessDeniedException();
         }
 
+        myBook.getBook().decreaseHolderCount();
         myBook.deleteMyBook();
     }
 
