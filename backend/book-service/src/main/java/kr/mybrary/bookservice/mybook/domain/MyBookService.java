@@ -34,10 +34,10 @@ public class MyBookService {
 
     public MyBook create(MyBookCreateServiceRequest request) {
 
-        // TODO: 여기서 도서가 저장하지 않음 -> 도서 상세 조회 시점에 저장
-        Book book = bookService.getRegisteredBook(null);
+        Book book = bookService.getRegisteredBookByISBN13(request.getIsbn13());
         checkBookAlreadyRegisteredAsMyBook(request.getUserId(), book);
 
+        book.increaseHolderCount();
         MyBook myBook = MyBook.of(book, request.getUserId());
         return myBookRepository.save(myBook);
     }

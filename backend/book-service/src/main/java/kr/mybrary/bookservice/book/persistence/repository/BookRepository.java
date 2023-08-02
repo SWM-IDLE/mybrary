@@ -9,6 +9,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     Optional<Book> findByIsbn10OrIsbn13(String isbn10, String isbn13);
 
+    Optional<Book> findByIsbn13(String isbn13);
+
     @Query("select b from Book b "
             + "join fetch b.bookAuthors ba "
             + "join fetch ba.author baa "

@@ -1,11 +1,11 @@
 package kr.mybrary.bookservice.book.domain;
 
 import java.util.List;
-import java.util.Optional;
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
+import kr.mybrary.bookservice.book.domain.exception.BookNotFoundException;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookCategory;
 import kr.mybrary.bookservice.book.persistence.repository.AuthorRepository;
@@ -45,6 +45,11 @@ public class BookService {
                             BookSearchServiceRequest.of(request.getIsbn13()));
                     return BookDtoMapper.INSTANCE.bookSearchDetailToDetailServiceResponse(bookSearchDetailResponse);
                 });
+    }
+
+    @Transactional(readOnly = true)
+    public Book getRegisteredBookByISBN13(String isbn13) {
+        return bookRepository.findByIsbn13(isbn13).orElseThrow(BookNotFoundException::new);
     }
 
     public Book getRegisteredBook(BookCreateServiceRequest request) {
