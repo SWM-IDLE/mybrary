@@ -1,7 +1,7 @@
 package kr.mybrary.bookservice.mybook.domain;
 
 import java.util.List;
-import kr.mybrary.bookservice.book.domain.BookService;
+import kr.mybrary.bookservice.book.domain.BookReadService;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.domain.dto.MyBookDtoMapper;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
@@ -30,11 +30,11 @@ public class MyBookService {
 
     private final MyBookRepository myBookRepository;
     private final MeaningTagService meaningTagService;
-    private final BookService bookService;
+    private final BookReadService bookReadService;
 
     public MyBook create(MyBookCreateServiceRequest request) {
 
-        Book book = bookService.getRegisteredBookByISBN13(request.getIsbn13());
+        Book book = bookReadService.getRegisteredBookByISBN13(request.getIsbn13());
         checkBookAlreadyRegisteredAsMyBook(request.getUserId(), book);
 
         book.increaseHolderCount();

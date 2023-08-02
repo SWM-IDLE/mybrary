@@ -3,23 +3,17 @@ package kr.mybrary.bookservice.book.domain;
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
-import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
-import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
-import kr.mybrary.bookservice.book.domain.e.BookAlreadyExistsException;
-import kr.mybrary.bookservice.book.domain.exception.BookNotFoundException;
+import kr.mybrary.bookservice.book.domain.exception.BookAlreadyExistsException;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookCategory;
+import kr.mybrary.bookservice.book.persistence.author.Author;
+import kr.mybrary.bookservice.book.persistence.author.BookAuthor;
 import kr.mybrary.bookservice.book.persistence.repository.AuthorRepository;
 import kr.mybrary.bookservice.book.persistence.repository.BookCategoryRepository;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
-import kr.mybrary.bookservice.book.persistence.author.Author;
-import kr.mybrary.bookservice.book.persistence.author.BookAuthor;
 import kr.mybrary.bookservice.book.persistence.repository.TranslatorRepository;
 import kr.mybrary.bookservice.book.persistence.translator.BookTranslator;
 import kr.mybrary.bookservice.book.persistence.translator.Translator;
-import kr.mybrary.bookservice.booksearch.domain.PlatformBookSearchApiService;
-import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
-import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,31 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class BookService {
+public class BookWriteService {
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final TranslatorRepository translatorRepository;
     private final BookCategoryRepository bookCategoryRepository;
-
-    private final PlatformBookSearchApiService platformBookSearchApiService;
-
-    @Transactional(readOnly = true)
-    public BookDetailServiceResponse getBookDetailByISBN(BookDetailServiceRequest request) {
-
-        return bookRepository.findByISBNWithAuthorAndCategoryUsingFetchJoin(request.getIsbn10(), request.getIsbn13())
-                .map(BookDtoMapper.INSTANCE::bookToDetailServiceResponse)
-                .orElseGet(() -> {
-                    BookSearchDetailResponse bookSearchDetailResponse = platformBookSearchApiService.searchBookDetailWithISBN(
-                            BookSearchServiceRequest.of(request.getIsbn13()));
-                    return BookDtoMapper.INSTANCE.bookSearchDetailToDetailServiceResponse(bookSearchDetailResponse);
-                });
-    }
-
-    @Transactional(readOnly = true)
-    public Book getRegisteredBookByISBN13(String isbn13) {
-        return bookRepository.findByIsbn13(isbn13).orElseThrow(BookNotFoundException::new);
-    }
 
     public void create(BookCreateServiceRequest request) {
 

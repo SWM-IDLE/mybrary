@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.domain.e;
+package kr.mybrary.bookservice.book.domain.exception;
 
 import kr.mybrary.bookservice.global.exception.ApplicationException;
 

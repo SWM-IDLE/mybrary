@@ -23,12 +23,11 @@ import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.mybrary.bookservice.book.BookDtoTestData;
-import kr.mybrary.bookservice.book.domain.BookService;
+import kr.mybrary.bookservice.book.domain.BookReadService;
+import kr.mybrary.bookservice.book.domain.BookWriteService;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
-import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
-import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse.BookDetailResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,10 @@ class BookControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private BookService bookService;
+    private BookReadService bookReadService;
+
+    @MockBean
+    private BookWriteService bookWriteService;
 
     @DisplayName("새로운 도서를 등록한다.")
     @Test
@@ -64,7 +66,7 @@ class BookControllerTest {
         BookCreateRequest request = BookDtoTestData.createBookCreateRequest();
         String requestJson = objectMapper.writeValueAsString(request);
 
-        doNothing().when(bookService).create(any());
+        doNothing().when(bookWriteService).create(any());
 
 
         // when
@@ -137,7 +139,7 @@ class BookControllerTest {
         // given
         BookDetailServiceResponse response = BookDtoTestData.createBookDetailServiceResponse();
 
-        given(bookService.getBookDetailByISBN(any(BookDetailServiceRequest.class)))
+        given(bookReadService.getBookDetailByISBN(any(BookDetailServiceRequest.class)))
                 .willReturn(response);
 
 
