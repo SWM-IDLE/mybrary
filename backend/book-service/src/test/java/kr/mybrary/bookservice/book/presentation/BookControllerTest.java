@@ -5,6 +5,7 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithNam
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -61,11 +62,10 @@ class BookControllerTest {
 
         // given
         BookCreateRequest request = BookDtoTestData.createBookCreateRequest();
-
         String requestJson = objectMapper.writeValueAsString(request);
 
-        given(bookService.getRegisteredBook(request.toServiceRequest()))
-                .willReturn(any(Book.class));
+        doNothing().when(bookService).create(any());
+
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/v1/books")
