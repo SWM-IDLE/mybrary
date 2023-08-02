@@ -94,4 +94,8 @@ public class Book extends BaseEntity {
     public void assignCategory(BookCategory bookCategory) {
         this.bookCategory = bookCategory;
     }
+
+    public void increaseHolderCount() {
+        this.holderCount++;
+    }
 }

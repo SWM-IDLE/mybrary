@@ -55,7 +55,7 @@ public class MyBook extends BaseEntity {
         return MyBook.builder()
                 .userId(userId)
                 .book(book)
-                .startDateOfPossession(null)
+                .startDateOfPossession(LocalDateTime.now())
                 .readStatus(ReadStatus.TO_READ)
                 .showable(true)
                 .exchangeable(false)

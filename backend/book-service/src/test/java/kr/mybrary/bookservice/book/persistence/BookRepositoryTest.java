@@ -50,6 +50,25 @@ class BookRepositoryTest {
         );
     }
 
+    @DisplayName("isbn13으로 도서를 조회한다.")
+    @Test
+    void findByIsbn13() {
+
+        // given
+        Book book = BookFixture.COMMON_BOOK.getBook();
+
+        // when
+        bookRepository.save(book);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // then
+        assertAll(
+                () -> assertThat(bookRepository.findByIsbn13(book.getIsbn13()).isPresent()).isTrue()
+        );
+    }
+
     @DisplayName("isbn13으로 도서를 조회시, 도서 저자, 도서 번역가, 도서 카테고리를 함께 조회한다.")
     @Test
     void findByISBN13WithAllDetailUsingFetchJoin() {
