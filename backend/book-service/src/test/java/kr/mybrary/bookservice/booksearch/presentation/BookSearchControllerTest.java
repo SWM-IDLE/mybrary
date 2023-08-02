@@ -90,7 +90,10 @@ class BookSearchControllerTest {
                 .andExpect(jsonPath("$.data.sizeHeight").value(response.getSizeHeight()))
                 .andExpect(jsonPath("$.data.sizeWidth").value(response.getSizeWidth()))
                 .andExpect(jsonPath("$.data.priceStandard").value(response.getPriceStandard()))
-                .andExpect(jsonPath("$.data.priceSales").value(response.getPriceSales()));
+                .andExpect(jsonPath("$.data.priceSales").value(response.getPriceSales()))
+                .andExpect(jsonPath("$.data.holderCount").value(response.getHolderCount()))
+                .andExpect(jsonPath("$.data.readCount").value(response.getReadCount()))
+                .andExpect(jsonPath("$.data.interestCount").value(response.getInterestCount()));
 
         // document
         actions
@@ -132,7 +135,10 @@ class BookSearchControllerTest {
                                                 fieldWithPath("data.sizeHeight").type(NUMBER).description("도서 높이"),
                                                 fieldWithPath("data.sizeWidth").type(NUMBER).description("도서 너비"),
                                                 fieldWithPath("data.priceStandard").type(NUMBER).description("도서 정가"),
-                                                fieldWithPath("data.priceSales").type(NUMBER).description("도서 판매가")
+                                                fieldWithPath("data.priceSales").type(NUMBER).description("도서 판매가"),
+                                                fieldWithPath("data.holderCount").type(NUMBER).description("도서 보류 수"),
+                                                fieldWithPath("data.readCount").type(NUMBER).description("도서 완독 수"),
+                                                fieldWithPath("data.interestCount").type(NUMBER).description("도서 관심 수")
                                         ).build())));
     }
 

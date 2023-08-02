@@ -31,6 +31,9 @@ public class BookSearchDetailResponse {
     private Integer sizeWidth;
     private Integer priceSales;
     private Integer priceStandard;
+    private Integer holderCount;
+    private Integer readCount;
+    private Integer interestCount;
 
     @Builder
     @Getter

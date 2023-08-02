@@ -119,6 +119,9 @@ public class BookSearchDtoTestData {
                 .sizeWidth(157)
                 .priceSales(10620)
                 .priceStandard(11800)
+                .interestCount(10)
+                .holderCount(10)
+                .readCount(10)
                 .build();
     }
 

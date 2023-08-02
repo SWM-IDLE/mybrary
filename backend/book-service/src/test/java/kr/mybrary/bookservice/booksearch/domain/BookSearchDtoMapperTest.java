@@ -92,7 +92,10 @@ class BookSearchDtoMapperTest {
                 () -> assertThat(dto.getToc()).isEqualTo(NOT_PROVIDED_PHRASES),
                 () -> assertThat(dto.getCategory()).isEqualTo(NOT_PROVIDED_PHRASES),
                 () -> assertThat(dto.getCategoryId()).isEqualTo(0),
-                () -> assertThat(dto.getStarRating()).isEqualTo(0.0)
+                () -> assertThat(dto.getStarRating()).isEqualTo(0.0),
+                () -> assertThat(dto.getHolderCount()).isEqualTo(0),
+                () -> assertThat(dto.getReadCount()).isEqualTo(0),
+                () -> assertThat(dto.getInterestCount()).isEqualTo(0)
         );
     }
 
@@ -274,7 +277,10 @@ class BookSearchDtoMapperTest {
                 () -> assertThat(dto.getSizeHeight()).isEqualTo(response.getSubInfo().getPacking().getSizeHeight()),
                 () -> assertThat(dto.getSizeWidth()).isEqualTo(response.getSubInfo().getPacking().getSizeWidth()),
                 () -> assertThat(dto.getPriceStandard()).isEqualTo(response.getPriceStandard()),
-                () -> assertThat(dto.getPriceSales()).isEqualTo(response.getPriceSales())
+                () -> assertThat(dto.getPriceSales()).isEqualTo(response.getPriceSales()),
+                () -> assertThat(dto.getHolderCount()).isEqualTo(0),
+                () -> assertThat(dto.getReadCount()).isEqualTo(0),
+                () -> assertThat(dto.getInterestCount()).isEqualTo(0)
         );
     }
 }
