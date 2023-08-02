@@ -15,7 +15,9 @@ import kr.mybrary.bookservice.book.persistence.repository.TranslatorRepository;
 import kr.mybrary.bookservice.book.persistence.translator.BookTranslator;
 import kr.mybrary.bookservice.book.persistence.translator.Translator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -28,6 +30,8 @@ public class BookWriteService {
     private final TranslatorRepository translatorRepository;
     private final BookCategoryRepository bookCategoryRepository;
 
+    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void create(BookCreateServiceRequest request) {
 
         checkBookAlreadyRegistered(request);

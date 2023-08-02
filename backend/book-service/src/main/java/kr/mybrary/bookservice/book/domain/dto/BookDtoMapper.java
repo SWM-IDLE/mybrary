@@ -1,5 +1,8 @@
 package kr.mybrary.bookservice.book.domain.dto;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
@@ -34,16 +37,21 @@ public interface BookDtoMapper {
     @Mapping(target = "translators", source = "bookTranslators", qualifiedByName = "mappingTranslators")
     BookDetailServiceResponse bookToDetailServiceResponse(Book book);
 
-    BookDetailServiceResponse bookSearchDetailToDetailServiceResponse(BookSearchDetailResponse bookSearchDetailResponse);
+    BookDetailServiceResponse bookSearchDetailToDetailServiceResponse(
+            BookSearchDetailResponse bookSearchDetailResponse);
+
+    @Mapping(target = "publicationDate", source = "publicationDate", qualifiedByName = "stringToLocalDateTime")
+    BookCreateServiceRequest bookSearchDetailToBookCreateServiceRequest(
+            BookSearchDetailResponse bookSearchDetailResponse);
 
     @Named("mappingAuthors")
     static List<BookDetailServiceResponse.Author> mappingAuthors(List<BookAuthor> bookAuthors) {
         return bookAuthors.stream()
                 .map(BookAuthor::getAuthor)
                 .map(author -> BookDetailServiceResponse.Author.builder()
-                            .name(author.getName())
-                            .authorId(author.getAid())
-                            .build()
+                        .name(author.getName())
+                        .authorId(author.getAid())
+                        .build()
                 ).toList();
     }
 
@@ -56,5 +64,11 @@ public interface BookDtoMapper {
                         .translatorId(translator.getTid())
                         .build()
                 ).toList();
+    }
+
+    @Named("stringToLocalDateTime")
+    static LocalDateTime stringToLocalDateTime(String publicationDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(publicationDate, formatter).atStartOfDay();
     }
 }

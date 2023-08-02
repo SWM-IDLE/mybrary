@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.book.domain.dto;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.BookFixture;
@@ -146,6 +147,61 @@ class BookDtoMapperTest {
                 () -> assertThat(target.getTranslators().size()).isEqualTo(source.getTranslators().size()),
                 () -> assertThat(target.getPublisher()).isEqualTo(source.getPublisher()),
                 () -> assertThat(target.getPublicationDate()).isEqualTo(source.getPublicationDate()),
+                () -> assertThat(target.getPriceSales()).isEqualTo(source.getPriceSales()),
+                () -> assertThat(target.getPriceStandard()).isEqualTo(source.getPriceStandard()),
+                () -> assertThat(target.getLink()).isEqualTo(source.getLink()),
+                () -> assertThat(target.getToc()).isEqualTo(source.getToc()),
+                () -> assertThat(target.getLink()).isEqualTo(source.getLink()),
+                () -> assertThat(target.getWeight()).isEqualTo(source.getWeight()),
+                () -> assertThat(target.getSizeWidth()).isEqualTo(source.getSizeWidth()),
+                () -> assertThat(target.getSizeHeight()).isEqualTo(source.getSizeHeight()),
+                () -> assertThat(target.getSizeDepth()).isEqualTo(source.getSizeDepth()),
+                () -> assertThat(target.getStarRating()).isEqualTo(source.getStarRating()),
+                () -> assertThat(target.getReviewCount()).isEqualTo(source.getReviewCount()),
+                () -> assertThat(target.getAuthors().size()).isEqualTo(source.getAuthors().size()),
+                () -> assertThat(target.getTranslators().size()).isEqualTo(source.getTranslators().size())
+        );
+    }
+
+    @DisplayName("yyyy-MM-dd 형식의 날짜를 LocalDateTime 형식으로 변환한다.")
+    @Test
+    void stringToLocalDateTime() {
+
+        // given
+        String source = "2021-01-01";
+
+        // when
+        LocalDateTime target = BookDtoMapper.stringToLocalDateTime(source);
+
+        // then
+        assertAll(
+                () -> assertThat(target.getYear()).isEqualTo(2021),
+                () -> assertThat(target.getMonthValue()).isEqualTo(1),
+                () -> assertThat(target.getDayOfMonth()).isEqualTo(1)
+        );
+    }
+
+    @DisplayName("BookSearchDetailResponse를 BookCreateServiceRequest로 매핑한다.")
+    @Test
+    void bookSearchDetailToBookCreateServiceRequest() {
+
+        // given
+        BookSearchDetailResponse source = BookSearchDtoTestData.createBookSearchDetailResponse();
+
+        // when
+        BookCreateServiceRequest target = BookDtoMapper.INSTANCE.bookSearchDetailToBookCreateServiceRequest(source);
+
+        // then
+        assertAll(
+                () -> assertThat(target.getIsbn13()).isEqualTo(source.getIsbn13()),
+                () -> assertThat(target.getIsbn10()).isEqualTo(source.getIsbn10()),
+                () -> assertThat(target.getTitle()).isEqualTo(source.getTitle()),
+                () -> assertThat(target.getSubTitle()).isEqualTo(source.getSubTitle()),
+                () -> assertThat(target.getDescription()).isEqualTo(source.getDescription()),
+                () -> assertThat(target.getAuthors().size()).isEqualTo(source.getAuthors().size()),
+                () -> assertThat(target.getTranslators().size()).isEqualTo(source.getTranslators().size()),
+                () -> assertThat(target.getPublisher()).isEqualTo(source.getPublisher()),
+                () -> assertThat(target.getPublicationDate()).isEqualTo(BookDtoMapper.stringToLocalDateTime(source.getPublicationDate())),
                 () -> assertThat(target.getPriceSales()).isEqualTo(source.getPriceSales()),
                 () -> assertThat(target.getPriceStandard()).isEqualTo(source.getPriceStandard()),
                 () -> assertThat(target.getLink()).isEqualTo(source.getLink()),

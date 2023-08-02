@@ -47,7 +47,10 @@ public class Book extends BaseEntity {
     private Integer pages;
     private String publisher;
     private LocalDateTime publicationDate;
+
+    @Column(length = 4000)
     private String description;
+    @Column(length = 4000)
     private String toc;
 
     private Integer weight;

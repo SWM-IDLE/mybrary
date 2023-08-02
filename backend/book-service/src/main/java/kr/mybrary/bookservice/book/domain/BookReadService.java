@@ -20,6 +20,7 @@ public class BookReadService {
 
     private final BookRepository bookRepository;
     private final PlatformBookSearchApiService platformBookSearchApiService;
+    private final BookWriteService bookWriteService;
 
     public BookDetailServiceResponse getBookDetailByISBN(BookDetailServiceRequest request) {
 
@@ -28,6 +29,8 @@ public class BookReadService {
                 .orElseGet(() -> {
                     BookSearchDetailResponse bookSearchDetailResponse = platformBookSearchApiService.searchBookDetailWithISBN(
                             BookSearchServiceRequest.of(request.getIsbn13()));
+
+                    bookWriteService.create(BookDtoMapper.INSTANCE.bookSearchDetailToBookCreateServiceRequest(bookSearchDetailResponse));
                     return BookDtoMapper.INSTANCE.bookSearchDetailToDetailServiceResponse(bookSearchDetailResponse);
                 });
     }
