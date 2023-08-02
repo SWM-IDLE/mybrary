@@ -82,54 +82,60 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     return SubPageLayout(
       appBarTitle: '프로필 편집',
       backgroundColor: WHITE_COLOR,
-      child: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24.0,
-            vertical: 16.0,
-          ),
-          child: FutureBuilder(
-            future: _profileResponseData,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final profileData = snapshot.data!;
-                bool isDefaultImage =
-                    profileData.profileImageUrl!.contains('default.jpg');
+      child: LayoutBuilder(builder: (context, constraint) {
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraint.maxHeight,
+            ),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              child: FutureBuilder(
+                future: _profileResponseData,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final profileData = snapshot.data!;
+                    bool isDefaultImage =
+                        profileData.profileImageUrl!.contains('default.jpg');
 
-                return Column(
-                  children: [
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        if (!isDefaultImage) {
-                          _profileImageMenuBottomSheet();
-                        } else {
-                          pickProfileImage(ImageSource.gallery);
-                        }
-                      },
-                      child: ProfileEditImage(
-                        originProfileImageUrl: _originProfileImageUrl,
-                        profileImage: _selectedImageFile,
-                      ),
-                    ),
-                    const SizedBox(height: 24.0),
-                    ProfileEditBody(
-                      bottomInset: bottomInset,
-                      nicknameController: _nicknameController,
-                      introductionController: _introductionController,
-                      saveProfileEditButton: _saveUserProfile,
-                    ),
-                  ],
-                );
-              }
-              return const Center(
-                child: CircularLoading(),
-              );
-            },
+                    return Column(
+                      children: [
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            if (!isDefaultImage) {
+                              _profileImageMenuBottomSheet();
+                            } else {
+                              pickProfileImage(ImageSource.gallery);
+                            }
+                          },
+                          child: ProfileEditImage(
+                            originProfileImageUrl: _originProfileImageUrl,
+                            profileImage: _selectedImageFile,
+                          ),
+                        ),
+                        const SizedBox(height: 24.0),
+                        ProfileEditBody(
+                          bottomInset: bottomInset,
+                          nicknameController: _nicknameController,
+                          introductionController: _introductionController,
+                          saveProfileEditButton: _saveUserProfile,
+                        ),
+                      ],
+                    );
+                  }
+                  return const Center(
+                    child: CircularLoading(),
+                  );
+                },
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 

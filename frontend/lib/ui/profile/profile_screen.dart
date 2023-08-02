@@ -33,6 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return DefaultLayout(
       appBar: _profileAppBar(),
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: FutureBuilder(
           future: _profileResponseData,
           builder: (context, snapshot) {

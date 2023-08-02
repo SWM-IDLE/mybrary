@@ -6,10 +6,13 @@ class CircularLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: CircularProgressIndicator(
-        backgroundColor: PRIMARY_COLOR.withOpacity(0.2),
-        valueColor: const AlwaysStoppedAnimation<Color>(PRIMARY_COLOR),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.5,
+      child: Center(
+        child: CircularProgressIndicator(
+          backgroundColor: PRIMARY_COLOR.withOpacity(0.2),
+          valueColor: const AlwaysStoppedAnimation<Color>(PRIMARY_COLOR),
+        ),
       ),
     );
   }
