@@ -98,4 +98,8 @@ public class Book extends BaseEntity {
     public void increaseHolderCount() {
         this.holderCount++;
     }
+
+    public void decreaseHolderCount() {
+        this.holderCount--;
+    }
 }
