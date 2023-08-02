@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mybrary/data/model/profile/my_interests_response.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/profile/my_badge/my_badge_screen.dart';
-import 'package:mybrary/ui/profile/my_interests/my_interests_screen.dart';
 
 class ProfileIntro extends StatelessWidget {
   final String introduction;
+  final List<UserInterests> userInterests;
   final VoidCallback onTapWriteIntroduction;
+  final VoidCallback onTapMyInterests;
 
   const ProfileIntro({
     required this.introduction,
+    required this.userInterests,
     required this.onTapWriteIntroduction,
+    required this.onTapMyInterests,
     super.key,
   });
 
@@ -48,11 +52,7 @@ class ProfileIntro extends StatelessWidget {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const MyInterestsScreen(),
-                ),
-              );
+              onTapMyInterests();
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -72,7 +72,9 @@ class ProfileIntro extends StatelessWidget {
           ),
           const SizedBox(height: 12.0),
           Text(
-            '장르소설, 심리학, 여행',
+            userInterests.isEmpty
+                ? '나의 관심사를 표시해보세요!'
+                : userInterests.map((interest) => interest.name).join(', '),
             style: profileEditContentStyle,
           ),
           const SizedBox(height: 42.0),

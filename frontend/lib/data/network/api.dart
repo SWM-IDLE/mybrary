@@ -12,6 +12,7 @@ enum API {
   googleLogin,
   // user-service
   getInterestCategories,
+  getUserInterests,
   getUserProfile,
   getUserProfileImage,
   editUserProfile,
@@ -30,6 +31,7 @@ Map<API, String> apiMap = {
   API.googleLogin: "/oauth2/authorization/google",
   // user-service
   API.getInterestCategories: "/api/v1/interest-categories",
+  API.getUserInterests: "/api/v1/users", // '/{userId}/interests'
   API.getUserProfile: "/api/v1/users/profile",
   API.getUserProfileImage: "/api/v1/users/profile/image",
   API.editUserProfile: "/api/v1/users/profile",
