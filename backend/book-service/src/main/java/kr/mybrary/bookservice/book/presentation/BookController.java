@@ -23,7 +23,7 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity create(@RequestBody BookCreateRequest request) {
-        bookService.getRegisteredBook(request.toServiceRequest());
+        bookService.create(request.toServiceRequest());
 
         return ResponseEntity.status(201).body(
                 SuccessResponse.of(HttpStatus.CREATED.toString(), "도서 등록에 성공했습니다.", null));

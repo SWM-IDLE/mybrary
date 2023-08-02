@@ -5,6 +5,7 @@ import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
+import kr.mybrary.bookservice.book.domain.e.BookAlreadyExistsException;
 import kr.mybrary.bookservice.book.domain.exception.BookNotFoundException;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookCategory;
@@ -52,13 +53,9 @@ public class BookService {
         return bookRepository.findByIsbn13(isbn13).orElseThrow(BookNotFoundException::new);
     }
 
-    public Book getRegisteredBook(BookCreateServiceRequest request) {
-        return bookRepository.findByIsbn10OrIsbn13(request.getIsbn10(), request.getIsbn13())
-                .orElseGet(() -> create(request));
-    }
+    public void create(BookCreateServiceRequest request) {
 
-    private Book create(BookCreateServiceRequest request) {
-
+        checkBookAlreadyRegistered(request);
         Book book = BookDtoMapper.INSTANCE.bookCreateRequestToEntity(request);
 
         List<BookAuthor> bookAuthors = request.getAuthors().stream()
@@ -75,7 +72,14 @@ public class BookService {
         book.addBookTranslator(bookTranslators);
         book.assignCategory(getBookCategory(request.getCategoryId(), request.getCategory()));
 
-        return bookRepository.save(book);
+        bookRepository.save(book);
+    }
+
+    private void checkBookAlreadyRegistered(BookCreateServiceRequest request) {
+        bookRepository.findByIsbn10OrIsbn13(request.getIsbn10(), request.getIsbn13())
+                .ifPresent(book -> {
+                    throw new BookAlreadyExistsException();
+                });
     }
 
     private Author getAuthor(Integer authorId, String authorName) {

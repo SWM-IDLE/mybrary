@@ -16,6 +16,7 @@ import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
+import kr.mybrary.bookservice.book.domain.e.BookAlreadyExistsException;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.AuthorRepository;
 import kr.mybrary.bookservice.book.persistence.repository.BookCategoryRepository;
@@ -69,7 +70,7 @@ class BookServiceTest {
         given(bookCategoryRepository.findByCid(anyInt())).willReturn(Optional.empty());
 
         // when
-        bookService.getRegisteredBook(request);
+        bookService.create(request);
 
         // then
         assertAll(
@@ -82,7 +83,7 @@ class BookServiceTest {
     }
 
     @Test
-    @DisplayName("도서가 이미 등록되어 있을 경우, 기존 도서를 가져온다.")
+    @DisplayName("도서가 이미 등록되어 있을 경우, 예외를 발생시킨다.")
     void getRegisteredBookWhenBookExist() {
 
         // given
@@ -92,11 +93,9 @@ class BookServiceTest {
         given(bookRepository.findByIsbn10OrIsbn13(request.getIsbn10(), request.getIsbn13()))
                 .willReturn(Optional.of(book));
 
-        // when
-        bookService.getRegisteredBook(request);
-
-        // then
+        // when, then
         assertAll(
+                () -> assertThatThrownBy(() -> bookService.create(request)).isInstanceOf(BookAlreadyExistsException.class),
                 () -> verify(bookRepository).findByIsbn10OrIsbn13(anyString(), anyString()),
                 () -> verify(bookRepository).findByIsbn10OrIsbn13(anyString(), anyString()),
                 () -> verify(authorRepository, never()).findByName(anyString()),
