@@ -6,7 +6,14 @@ import kr.mybrary.userservice.user.persistence.User;
 import lombok.*;
 
 @Entity
-@Table(name = "users_interests")
+@Table(name = "users_interests",
+    uniqueConstraints = {
+        @UniqueConstraint(
+                name = "uk_users_interests_user_id_interest_id",
+                columnNames = {"user_id", "interest_id"}
+        )
+    }
+)
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
