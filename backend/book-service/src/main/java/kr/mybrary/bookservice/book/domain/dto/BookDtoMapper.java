@@ -6,6 +6,7 @@ import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.author.BookAuthor;
 import kr.mybrary.bookservice.book.persistence.translator.BookTranslator;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -32,6 +33,8 @@ public interface BookDtoMapper {
     @Mapping(target = "authors", source = "bookAuthors", qualifiedByName = "mappingAuthors")
     @Mapping(target = "translators", source = "bookTranslators", qualifiedByName = "mappingTranslators")
     BookDetailServiceResponse bookToDetailServiceResponse(Book book);
+
+    BookDetailServiceResponse bookSearchDetailToDetailServiceResponse(BookSearchDetailResponse bookSearchDetailResponse);
 
     @Named("mappingAuthors")
     static List<BookDetailServiceResponse.Author> mappingAuthors(List<BookAuthor> bookAuthors) {

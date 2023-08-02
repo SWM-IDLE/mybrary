@@ -16,6 +16,9 @@ import kr.mybrary.bookservice.book.persistence.author.BookAuthor;
 import kr.mybrary.bookservice.book.persistence.repository.TranslatorRepository;
 import kr.mybrary.bookservice.book.persistence.translator.BookTranslator;
 import kr.mybrary.bookservice.book.persistence.translator.Translator;
+import kr.mybrary.bookservice.booksearch.domain.PlatformBookSearchApiService;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,11 +33,18 @@ public class BookService {
     private final TranslatorRepository translatorRepository;
     private final BookCategoryRepository bookCategoryRepository;
 
+    private final PlatformBookSearchApiService platformBookSearchApiService;
+
     @Transactional(readOnly = true)
-    public Optional<BookDetailServiceResponse> getBookDetailByISBN(BookDetailServiceRequest request) {
+    public BookDetailServiceResponse getBookDetailByISBN(BookDetailServiceRequest request) {
 
         return bookRepository.findByISBNWithAuthorAndCategoryUsingFetchJoin(request.getIsbn10(), request.getIsbn13())
-                .map(BookDtoMapper.INSTANCE::bookToDetailServiceResponse);
+                .map(BookDtoMapper.INSTANCE::bookToDetailServiceResponse)
+                .orElseGet(() -> {
+                    BookSearchDetailResponse bookSearchDetailResponse = platformBookSearchApiService.searchBookDetailWithISBN(
+                            BookSearchServiceRequest.of(request.getIsbn13()));
+                    return BookDtoMapper.INSTANCE.bookSearchDetailToDetailServiceResponse(bookSearchDetailResponse);
+                });
     }
 
     public Book getRegisteredBook(BookCreateServiceRequest request) {
