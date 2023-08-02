@@ -69,4 +69,31 @@ class UserInterestRepositoryTest {
                 () -> assertThat(foundUserInterests.get(1).getInterest()).isNotInstanceOf(HibernateProxy.class)
         );
     }
+
+    @Test
+    @DisplayName("해당 사용자의 관심사를 모두 삭제한다.")
+    void deleteAllByUser() {
+        // given
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
+        Interest savedInterest1 =  interestRepository.save(InterestFixture.DOMESTIC_NOVEL.getInterest());
+        Interest savedInterest2 =  interestRepository.save(InterestFixture.FOREIGN_NOVEL.getInterest());
+
+        userInterestRepository.save(UserInterest.builder()
+                .user(savedUser)
+                .interest(savedInterest1)
+                .build());
+        userInterestRepository.save(UserInterest.builder()
+                .user(savedUser)
+                .interest(savedInterest2)
+                .build());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        userInterestRepository.deleteAllByUser(savedUser);
+
+        // then
+        assertThat(userInterestRepository.findAll().size()).isEqualTo(0);
+    }
 }
