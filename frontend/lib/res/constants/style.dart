@@ -118,3 +118,11 @@ const interestDescriptionStyle = TextStyle(
   fontSize: 16.0,
   fontWeight: FontWeight.w400,
 );
+
+// button style
+final disableAnimationButtonStyle = ButtonStyle(
+  backgroundColor: MaterialStateProperty.all(Colors.transparent),
+  elevation: MaterialStateProperty.all(0.0),
+  splashFactory: NoSplash.splashFactory,
+  overlayColor: MaterialStateProperty.all(Colors.transparent),
+);

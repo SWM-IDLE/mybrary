@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/profile/interest_categories_response.dart';
 import 'package:mybrary/data/repository/interests_repository.dart';
-import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
+import 'package:mybrary/ui/profile/my_interests/components/interest_category.dart';
+import 'package:mybrary/ui/profile/my_interests/components/interest_description.dart';
 import 'package:mybrary/ui/profile/my_interests/components/recommend_phrase.dart';
 
 class MyInterestsScreen extends StatefulWidget {
@@ -20,25 +21,17 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
   void _onSelectedInterest(int index, String name) {
     setState(() {
       if (selectedInterests.any((category) => category.id == index)) {
-        selectedInterests.removeWhere((category) => category.id == index);
-      } else {
-        if (selectedInterests.length < 3) {
-          selectedInterests.add(
-            CategoriesResponses(
-              id: index,
-              name: name,
-            ),
-          );
-        } else {
-          selectedInterests.remove(selectedInterests.first);
-          selectedInterests.add(
-            CategoriesResponses(
-              id: index,
-              name: name,
-            ),
-          );
-        }
+        return selectedInterests
+            .removeWhere((category) => category.id == index);
       }
+
+      if (selectedInterests.length > 2) {
+        selectedInterests.remove(selectedInterests.first);
+      }
+
+      selectedInterests.add(
+        CategoriesResponses(id: index, name: name),
+      );
     });
   }
 
@@ -57,9 +50,10 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
   Widget build(BuildContext context) {
     return SubPageLayout(
       appBarTitle: '마이 관심사',
-      actions: [
-        InkWell(
-          onTap: () {},
+      appBarActions: [
+        TextButton(
+          onPressed: () {},
+          style: disableAnimationButtonStyle,
           child: const Text(
             '저장',
             style: saveTextButtonStyle,
@@ -91,136 +85,8 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
                           final interestCategories =
                               snapshot.data!.interestCategories!;
 
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: interestCategories.map(
-                              (e) {
-                                final String description = e.description!;
-
-                                final int startIndex =
-                                    description.indexOf(e.name!);
-                                final int endIndex =
-                                    startIndex + e.name!.length;
-
-                                final Row result;
-
-                                String descriptionSubstring(
-                                  int startIndex,
-                                  int endIndex,
-                                ) =>
-                                    description.substring(
-                                      startIndex,
-                                      endIndex,
-                                    );
-
-                                if (startIndex > 0) {
-                                  result = Row(
-                                    children: [
-                                      Text(
-                                        descriptionSubstring(
-                                          0,
-                                          startIndex,
-                                        ),
-                                        style: interestDescriptionStyle,
-                                      ),
-                                      Text(
-                                        descriptionSubstring(
-                                          startIndex,
-                                          endIndex,
-                                        ),
-                                        style:
-                                            interestDescriptionStyle.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      Text(
-                                        descriptionSubstring(
-                                          endIndex,
-                                          description.length,
-                                        ),
-                                        style: interestDescriptionStyle,
-                                      ),
-                                    ],
-                                  );
-                                } else {
-                                  result = Row(
-                                    children: [
-                                      Text(
-                                        descriptionSubstring(
-                                          0,
-                                          endIndex,
-                                        ),
-                                        style:
-                                            interestDescriptionStyle.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      Text(
-                                        descriptionSubstring(
-                                          endIndex,
-                                          description.length,
-                                        ),
-                                        style: interestDescriptionStyle,
-                                      ),
-                                    ],
-                                  );
-                                }
-
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    result,
-                                    const SizedBox(height: 12.0),
-                                    Wrap(
-                                      spacing: 10.0,
-                                      runSpacing: 10.0,
-                                      children: e.interestResponses!.map(
-                                        (e) {
-                                          final bool isSelected =
-                                              selectedInterests.any(
-                                            (category) => category.id == e.id,
-                                          );
-
-                                          return InkWell(
-                                            onTap: () => _onSelectedInterest(
-                                              e.id!,
-                                              e.name!,
-                                            ),
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 16.0,
-                                                vertical: 8.0,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: isSelected
-                                                      ? primaryColor
-                                                      : circularBorderColor,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
-                                              ),
-                                              child: Text(
-                                                e.name!,
-                                                style: isSelected
-                                                    ? commonSubRegularStyle
-                                                        .copyWith(
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                      )
-                                                    : commonSubRegularStyle,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ).toList(),
-                                    ),
-                                    const SizedBox(height: 32.0),
-                                  ],
-                                );
-                              },
-                            ).toList(),
+                          return interestCategoriesList(
+                            interestCategories: interestCategories,
                           );
                         }
                         return const CircularLoading();
@@ -233,6 +99,57 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
           );
         },
       ),
+    );
+  }
+
+  Column interestCategoriesList({
+    required List<InterestCategories> interestCategories,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: interestCategories.map(
+        (e) {
+          final int startIndex = e.description!.indexOf(e.name!);
+          final int endIndex = startIndex + e.name!.length;
+
+          Widget description = InterestDescription(
+            description: e.description!,
+            startIndex: startIndex,
+            endIndex: endIndex,
+          );
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              description,
+              const SizedBox(height: 12.0),
+              Wrap(
+                spacing: 10.0,
+                runSpacing: 10.0,
+                children: e.interestResponses!.map(
+                  (e) {
+                    final bool isSelected = selectedInterests.any(
+                      (category) => category.id == e.id,
+                    );
+
+                    return InkWell(
+                      onTap: () => _onSelectedInterest(
+                        e.id!,
+                        e.name!,
+                      ),
+                      child: InterestCategory(
+                        isSelected: isSelected,
+                        name: e.name!,
+                      ),
+                    );
+                  },
+                ).toList(),
+              ),
+              const SizedBox(height: 32.0),
+            ],
+          );
+        },
+      ).toList(),
     );
   }
 }
