@@ -1,5 +1,6 @@
 package kr.mybrary.bookservice.book.domain;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -13,9 +14,12 @@ import java.util.Optional;
 import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
+import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
 import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
 import kr.mybrary.bookservice.booksearch.domain.PlatformBookSearchApiService;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,14 +51,18 @@ class BookReadServiceTest {
 
         // given
         BookDetailServiceRequest request = BookDtoTestData.createBookDetailServiceRequest();
+        Book book = BookFixture.COMMON_BOOK.getBook();
+
         given(bookRepository.findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()))
-                .willReturn(Optional.of(BookFixture.COMMON_BOOK.getBook()));
+                .willReturn(Optional.of(book));
 
         // when
-        bookReadService.getBookDetailByISBN(request);
+        BookDetailServiceResponse bookDetailByISBN = bookReadService.getBookDetailByISBN(request);
 
         // then
         assertAll(
+                () -> assertThat(bookDetailByISBN.getTitle()).isEqualTo(book.getTitle()),
+                () -> assertThat(bookDetailByISBN.getIsbn13()).isEqualTo(book.getIsbn13()),
                 () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
                 () -> verify(platformBookSearchApiService, never()).searchBookDetailWithISBN(any())
         );
@@ -66,17 +74,21 @@ class BookReadServiceTest {
 
         // given
         BookDetailServiceRequest request = BookDtoTestData.createBookDetailServiceRequest();
+        BookSearchDetailResponse bookSearchDetailResponse = BookSearchDtoTestData.createBookSearchDetailResponse();
+
         given(bookRepository.findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()))
                 .willReturn(Optional.empty());
         given(platformBookSearchApiService.searchBookDetailWithISBN(any())).willReturn(
-                BookSearchDtoTestData.createBookSearchDetailResponse());
+                bookSearchDetailResponse);
         doNothing().when(bookWriteService).create(any());
 
         // when
-        bookReadService.getBookDetailByISBN(request);
+        BookDetailServiceResponse bookDetailByISBN = bookReadService.getBookDetailByISBN(request);
 
         // then
         assertAll(
+                () -> assertThat(bookDetailByISBN.getTitle()).isEqualTo(bookSearchDetailResponse.getTitle()),
+                () -> assertThat(bookDetailByISBN.getIsbn13()).isEqualTo(bookSearchDetailResponse.getIsbn13()),
                 () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
                 () -> verify(platformBookSearchApiService, times(1)).searchBookDetailWithISBN(any()),
                 () -> verify(bookWriteService, times(1)).create(any())
