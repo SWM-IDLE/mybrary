@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
 
 public class BookDtoTestData {
@@ -97,6 +98,44 @@ public class BookDtoTestData {
                                 .name("test_author2")
                                 .build()
                 ))
+                .build();
+    }
+
+    public static BookDetailServiceResponse createBookDetailServiceResponse() {
+        return BookDetailServiceResponse.builder()
+                .title("어린 왕자")
+                .subTitle("어린 왕자 부제")
+                .thumbnail("https://image.aladin.co.kr/product/6853/49/coversum/8932917248_2.jpg")
+                .link("http://www.aladin.co.kr/shop/wproduct.aspx?ItemId=68534943&amp;partner=openAPI&amp;start=api")
+                .isbn10("8932917248")
+                .isbn13("9788932917245")
+                .authors(List.of(BookDetailServiceResponse.Author.builder()
+                        .name("앙투안 드 생텍쥐페리")
+                        .authorId(20310)
+                        .build()))
+                .translators(List.of(BookDetailServiceResponse.Translator.builder()
+                        .name("황현산")
+                        .translatorId(139607)
+                        .build()))
+                .starRating(4.5)
+                .reviewCount(100)
+                .publicationDate("2015-10-20")
+                .category("국내도서>소설/시/희곡>프랑스소설")
+                .categoryId(50921)
+                .pages(136)
+                .publisher("열린책들")
+                .description(
+                        "전 세계인들의 사랑을 받은 가장 아름다운 이야기, 생텍쥐페리의 &lt;어린 왕자&gt;가 문학 평론가 황현산의 번역으로 열린책들에서 출간되었다.")
+                .toc("<p>목차 없는 상품입니다.</p>")
+                .weight(490)
+                .sizeDepth(13)
+                .sizeHeight(220)
+                .sizeWidth(157)
+                .priceSales(10620)
+                .priceStandard(11800)
+                .interestCount(10)
+                .holderCount(10)
+                .readCount(10)
                 .build();
     }
 
