@@ -33,6 +33,18 @@ const commonSubThinStyle = TextStyle(
   fontWeight: FontWeight.w300,
 );
 
+const commonSubRegularStyle = TextStyle(
+  color: GREY_06_COLOR,
+  fontSize: 14.0,
+  fontWeight: FontWeight.w400,
+);
+
+const commonSubMediumStyle = TextStyle(
+  color: GREY_06_COLOR,
+  fontSize: 16.0,
+  fontWeight: FontWeight.w500,
+);
+
 const commonButtonTextStyle = TextStyle(
   fontSize: 15.0,
   fontWeight: FontWeight.w700,
@@ -51,6 +63,18 @@ final commonMenuButtonStyle = TextButton.styleFrom(
   splashFactory: NoSplash.splashFactory,
 );
 
+const boxBorderRadiusStyle = RoundedRectangleBorder(
+  borderRadius: BorderRadius.all(
+    Radius.circular(50.0),
+  ),
+);
+
+const saveTextButtonStyle = TextStyle(
+  color: PRIMARY_COLOR,
+  fontSize: 17.0,
+  fontWeight: FontWeight.w400,
+);
+
 // profile page style
 const followTextStyle = TextStyle(
   fontSize: 14.0,
@@ -65,14 +89,14 @@ const inputHintStyle = TextStyle(
 
 const nameInputBorderStyle = UnderlineInputBorder(
   borderSide: BorderSide(
-    color: inputBorderColor,
+    color: circularBorderColor,
     width: 1,
   ),
 );
 
 const introInputBorderStyle = OutlineInputBorder(
   borderSide: BorderSide(
-    color: inputBorderColor,
+    color: circularBorderColor,
     width: 1,
   ),
 );
@@ -86,5 +110,11 @@ const profileEditTitleStyle = TextStyle(
 const profileEditContentStyle = TextStyle(
   color: GREY_05_COLOR,
   fontSize: 14.0,
+  fontWeight: FontWeight.w400,
+);
+
+const interestDescriptionStyle = TextStyle(
+  color: GREY_06_COLOR,
+  fontSize: 16.0,
   fontWeight: FontWeight.w400,
 );

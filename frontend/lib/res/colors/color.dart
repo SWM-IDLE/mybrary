@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Common Color
+const Color primaryColor = Color(0xFF19C568);
 const Color PRIMARY_COLOR = Color(0xFF19C568);
 const Color LESS_BLACK_COLOR = Color(0xFF313333);
 const Color WHITE_COLOR = Color(0xFFFFFFFF);
@@ -23,6 +24,7 @@ const Color GREY_04_COLOR = Color(0xFF999999);
 const Color GREY_05_COLOR = Color(0xFF777777);
 const Color GREY_06_COLOR = Color(0xFF262626);
 
+const Color circularBorderColor = Color(0xFFCECECE);
 const Color inputHintColor = Color(0xFF999999);
 const Color inputBorderColor = Color(0xFFDDDDDD);
 

@@ -11,6 +11,7 @@ enum API {
   kakaoLogin,
   googleLogin,
   // user-service
+  getInterestCategories,
   getUserProfile,
   getUserProfileImage,
   editUserProfile,
@@ -28,6 +29,7 @@ Map<API, String> apiMap = {
   API.kakaoLogin: "/oauth2/authorization/kakao",
   API.googleLogin: "/oauth2/authorization/google",
   // user-service
+  API.getInterestCategories: "/api/v1/interest-categories",
   API.getUserProfile: "/api/v1/users/profile",
   API.getUserProfileImage: "/api/v1/users/profile/image",
   API.editUserProfile: "/api/v1/users/profile",
@@ -61,7 +63,6 @@ commonResponseResult(
         throw Exception('서버의 API 호출에 실패했습니다.');
     }
   } on DioException catch (error) {
-    print(error);
     if (error.response != null) {
       throw Exception('${error.response!.data['errorMessage']}');
     }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/res/colors/color.dart';
-import 'package:mybrary/ui/common/components/subpage_appbar.dart';
+import 'package:mybrary/res/constants/style.dart';
 
 class SubPageLayout extends StatelessWidget {
   final Widget child;
@@ -9,6 +9,7 @@ class SubPageLayout extends StatelessWidget {
   final Color? backgroundColor;
   final AppBar? appBar;
   final Widget? bottomNavigationBar;
+  final List<Widget>? actions;
 
   const SubPageLayout({
     required this.child,
@@ -16,6 +17,7 @@ class SubPageLayout extends StatelessWidget {
     this.backgroundColor,
     this.bottomNavigationBar,
     this.appBar,
+    this.actions,
     super.key,
   });
 
@@ -33,8 +35,16 @@ class SubPageLayout extends StatelessWidget {
     if (appBarTitle == null) {
       return null;
     } else {
-      return subPageAppBar(
-        appBarTitle: appBarTitle!,
+      return AppBar(
+        elevation: 0,
+        title: Text(appBarTitle!),
+        titleTextStyle: appBarTitleStyle.copyWith(
+          fontSize: 16.0,
+        ),
+        centerTitle: true,
+        backgroundColor: WHITE_COLOR,
+        foregroundColor: BLACK_COLOR,
+        actions: actions,
       );
     }
   }
