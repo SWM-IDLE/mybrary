@@ -77,8 +77,7 @@ public class InterestServiceImpl implements InterestService {
         checkDuplicatedUserInterestUpdateRequest(request);
 
         User user = userService.getUserResponse(request.getLoginId()).getUser();
-        userInterestRepository.deleteAllByUser(user);
-        userInterestRepository.flush();
+        deleteOriginalUserInterests(user);
         saveRequestedUserInterests(request.getInterestIds(), user);
         return getUserInterests(request.getLoginId());
     }
@@ -93,6 +92,11 @@ public class InterestServiceImpl implements InterestService {
         if(request.getInterestIds().stream().distinct().count() != request.getInterestIds().size()) {
             throw new DuplicateUserInterestUpdateRequestException();
         }
+    }
+
+    private void deleteOriginalUserInterests(User user) {
+        userInterestRepository.deleteAllByUser(user);
+        userInterestRepository.flush();
     }
 
     private void saveRequestedUserInterests(List<Long> interestIds, User user) {

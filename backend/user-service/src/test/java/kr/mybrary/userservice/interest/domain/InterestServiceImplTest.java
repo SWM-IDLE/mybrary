@@ -3,10 +3,16 @@ package kr.mybrary.userservice.interest.domain;
 import kr.mybrary.userservice.interest.InterestCategoryFixture;
 import kr.mybrary.userservice.interest.InterestFixture;
 import kr.mybrary.userservice.interest.UserInterestFixture;
+import kr.mybrary.userservice.interest.domain.dto.request.UserInterestUpdateServiceRequest;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.UserInterestServiceResponse;
+import kr.mybrary.userservice.interest.domain.exception.DuplicateUserInterestUpdateRequestException;
+import kr.mybrary.userservice.interest.domain.exception.InterestNotFoundException;
+import kr.mybrary.userservice.interest.domain.exception.UserInterestUpdateRequestSizeExceededException;
 import kr.mybrary.userservice.interest.persistence.InterestCategory;
+import kr.mybrary.userservice.interest.persistence.UserInterest;
 import kr.mybrary.userservice.interest.persistence.repository.InterestCategoryRepository;
+import kr.mybrary.userservice.interest.persistence.repository.InterestRepository;
 import kr.mybrary.userservice.interest.persistence.repository.UserInterestRepository;
 import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.domain.UserService;
@@ -21,12 +27,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class InterestServiceImplTest {
@@ -35,6 +44,8 @@ class InterestServiceImplTest {
     private InterestCategoryRepository interestCategoryRepository;
     @Mock
     private UserInterestRepository userInterestRepository;
+    @Mock
+    private InterestRepository interestRepository;
     @Mock
     private UserService userService;
 
@@ -137,6 +148,127 @@ class InterestServiceImplTest {
 
         verify(userService).getUserResponse(LOGIN_ID);
         verify(userInterestRepository).findAllByUserWithInterestUsingFetchJoin(user);
+    }
+
+    @Test
+    @DisplayName("사용자의 관심사를 업데이트한다.")
+    void updateUserInterests() {
+        // given
+        User user = UserFixture.COMMON_USER.getUser();
+        given(userService.getUserResponse(LOGIN_ID)).willReturn(UserResponse.builder().user(user).build());
+        doNothing().when(userInterestRepository).deleteAllByUser(user);
+        doNothing().when(userInterestRepository).flush();
+        given(interestRepository.findById(1L)).willReturn(Optional.of(InterestFixture.DOMESTIC_NOVEL.getInterest()));
+        given(interestRepository.findById(2L)).willReturn(Optional.of(InterestFixture.FOREIGN_NOVEL.getInterest()));
+        given(userInterestRepository.save(any(UserInterest.class))).willReturn(UserInterestFixture.COMMON_USER_INTEREST_1.getUserInterest(),
+                UserInterestFixture.COMMON_USER_INTEREST_2.getUserInterest());
+        given(userInterestRepository.findAllByUserWithInterestUsingFetchJoin(user)).willReturn(
+                List.of(UserInterestFixture.COMMON_USER_INTEREST_1.getUserInterest(),
+                        UserInterestFixture.COMMON_USER_INTEREST_2.getUserInterest()));
+        UserInterestUpdateServiceRequest serviceRequest = UserInterestUpdateServiceRequest.builder()
+                .loginId(LOGIN_ID)
+                .interestIds(List.of(1L, 2L))
+                .build();
+
+        // when
+        UserInterestServiceResponse userInterestServiceResponse = interestService.updateUserInterests(serviceRequest);
+
+        // then
+        assertAll(
+                () -> assertThat(userInterestServiceResponse.getUserInterests()).hasSize(2),
+                () -> assertThat(userInterestServiceResponse.getUserInterests()).extracting("name").containsExactly(
+                        UserInterestFixture.COMMON_USER_INTEREST_1.getUserInterest().getInterest().getName(),
+                        UserInterestFixture.COMMON_USER_INTEREST_2.getUserInterest().getInterest().getName())
+        );
+
+        verify(userService, times(2)).getUserResponse(LOGIN_ID);
+        verify(userInterestRepository).deleteAllByUser(user);
+        verify(userInterestRepository).flush();
+        verify(interestRepository, times(2)).findById(anyLong());
+        verify(userInterestRepository, times(2)).save(any(UserInterest.class));
+        verify(userInterestRepository).findAllByUserWithInterestUsingFetchJoin(user);
+    }
+
+    @Test
+    @DisplayName("사용자의 관심사를 업데이트할 때 사용자가 존재하지 않으면 예외가 발생한다.")
+    void updateUserInterestsWithNotExistUser() {
+        // given
+        UserInterestUpdateServiceRequest serviceRequest = UserInterestUpdateServiceRequest.builder()
+                .loginId(LOGIN_ID)
+                .interestIds(List.of(1L, 2L))
+                .build();
+        given(userService.getUserResponse(LOGIN_ID)).willThrow(new UserNotFoundException());
+
+        // when then
+        assertThatThrownBy(() -> interestService.updateUserInterests(serviceRequest))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
+                .hasFieldOrPropertyWithValue("errorCode", "U-05")
+                .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
+
+        verify(userService).getUserResponse(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("사용자의 관심사를 업데이트할 때 관심사가 존재하지 않으면 예외가 발생한다.")
+    void updateUserInterestsWithNotExistInterest() {
+        // given
+        User user = UserFixture.COMMON_USER.getUser();
+        given(userService.getUserResponse(LOGIN_ID)).willReturn(UserResponse.builder().user(user).build());
+        doNothing().when(userInterestRepository).deleteAllByUser(user);
+        doNothing().when(userInterestRepository).flush();
+        given(interestRepository.findById(1L)).willReturn(Optional.of(InterestFixture.DOMESTIC_NOVEL.getInterest()));
+        given(interestRepository.findById(2L)).willReturn(Optional.empty());
+        UserInterestUpdateServiceRequest serviceRequest = UserInterestUpdateServiceRequest.builder()
+                .loginId(LOGIN_ID)
+                .interestIds(List.of(1L, 2L))
+                .build();
+
+        // when then
+        assertThatThrownBy(() -> interestService.updateUserInterests(serviceRequest))
+                .isInstanceOf(InterestNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
+                .hasFieldOrPropertyWithValue("errorCode", "I-01")
+                .hasFieldOrPropertyWithValue("errorMessage", "관심사를 찾을 수 없습니다.");
+
+        verify(userService).getUserResponse(LOGIN_ID);
+        verify(userInterestRepository).deleteAllByUser(user);
+        verify(userInterestRepository).flush();
+        verify(interestRepository, times(2)).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("사용자의 관심사를 업데이트할 때 관심사가 3개보다 많으면 예외가 발생한다.")
+    void updateUserInterestsWithRequestSizeExceeded() {
+        // given
+        UserInterestUpdateServiceRequest serviceRequest = UserInterestUpdateServiceRequest.builder()
+                .loginId(LOGIN_ID)
+                .interestIds(List.of(1L, 2L, 3L, 4L))
+                .build();
+
+        // when then
+        assertThatThrownBy(() -> interestService.updateUserInterests(serviceRequest))
+                .isInstanceOf(UserInterestUpdateRequestSizeExceededException.class)
+                .hasFieldOrPropertyWithValue("status", 400)
+                .hasFieldOrPropertyWithValue("errorCode", "I-02")
+                .hasFieldOrPropertyWithValue("errorMessage", "관심사는 최대 3개까지 설정할 수 있습니다.");
+    }
+
+    @Test
+    @DisplayName("사용자의 관심사를 업데이트할 때 중복된 관심사가 있으면 예외가 발생한다.")
+    void updateUserInterestsWithDuplicatedInterest() {
+        // given
+        UserInterestUpdateServiceRequest serviceRequest = UserInterestUpdateServiceRequest.builder()
+                .loginId(LOGIN_ID)
+                .interestIds(List.of(1L, 1L, 2L))
+                .build();
+
+        // when then
+        assertThatThrownBy(() -> interestService.updateUserInterests(serviceRequest))
+                .isInstanceOf(DuplicateUserInterestUpdateRequestException.class)
+                .hasFieldOrPropertyWithValue("status", 400)
+                .hasFieldOrPropertyWithValue("errorCode", "I-03")
+                .hasFieldOrPropertyWithValue("errorMessage", "관심사는 중복해서 설정할 수 없습니다.");
     }
 
 }
