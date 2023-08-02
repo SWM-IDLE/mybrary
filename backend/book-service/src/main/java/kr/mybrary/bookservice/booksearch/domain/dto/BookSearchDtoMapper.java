@@ -56,6 +56,9 @@ public interface BookSearchDtoMapper {
     @Mapping(target = "sizeWidth", constant = "0")
     @Mapping(target = "priceSales", source = "sale_price")
     @Mapping(target = "priceStandard", source = "price")
+    @Mapping(target = "holderCount", constant = "0")
+    @Mapping(target = "readCount", constant = "0")
+    @Mapping(target = "interestCount", constant = "0")
     BookSearchDetailResponse kakaoSearchResponseToDetailResponse(
             KakaoBookSearchResponse.Document kakaoBookSearchResponse);
 
@@ -76,6 +79,9 @@ public interface BookSearchDtoMapper {
     @Mapping(target = "sizeDepth", source = "subInfo.packing.sizeDepth")
     @Mapping(target = "sizeHeight", source = "subInfo.packing.sizeHeight")
     @Mapping(target = "sizeWidth", source = "subInfo.packing.sizeWidth")
+    @Mapping(target = "holderCount", constant = "0")
+    @Mapping(target = "readCount", constant = "0")
+    @Mapping(target = "interestCount", constant = "0")
     BookSearchDetailResponse aladinSearchResponseToDetailResponse(AladinBookSearchDetailResponse.Item aladinBookSearchResponse);
 
     @Named("getISBN10")
