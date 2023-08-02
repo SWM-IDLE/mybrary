@@ -54,17 +54,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   void initState() {
     super.initState();
 
-    final result = _profileRepository.getProfileData();
-    result.then((value) {
-      _nicknameController = TextEditingController(
-        text: value.nickname!,
-      );
-      _introductionController = TextEditingController(
-        text: value.introduction!,
-      );
-      _originProfileImageUrl = value.profileImageUrl!;
-    });
-
     _refreshProfileData();
   }
 
@@ -98,6 +87,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final profileData = snapshot.data!;
+
+                    _nicknameController = TextEditingController(
+                      text: profileData.nickname!,
+                    );
+                    _introductionController = TextEditingController(
+                      text: profileData.introduction!,
+                    );
+                    _originProfileImageUrl = profileData.profileImageUrl!;
                     bool isDefaultImage =
                         profileData.profileImageUrl!.contains('default.jpg');
 

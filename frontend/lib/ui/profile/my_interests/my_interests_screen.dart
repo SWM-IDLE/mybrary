@@ -1,22 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/profile/interest_categories_response.dart';
+import 'package:mybrary/data/model/profile/my_interests_response.dart';
 import 'package:mybrary/data/repository/interests_repository.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
+import 'package:mybrary/ui/common/components/custom_snackbar.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/profile/my_interests/components/interest_category.dart';
 import 'package:mybrary/ui/profile/my_interests/components/interest_description.dart';
 import 'package:mybrary/ui/profile/my_interests/components/recommend_phrase.dart';
 
 class MyInterestsScreen extends StatefulWidget {
-  const MyInterestsScreen({super.key});
+  final List<UserInterests> userInterests;
+
+  const MyInterestsScreen({
+    required this.userInterests,
+    super.key,
+  });
 
   @override
   State<MyInterestsScreen> createState() => _MyInterestsScreenState();
 }
 
 class _MyInterestsScreenState extends State<MyInterestsScreen> {
-  List<CategoriesResponses> selectedInterests = [];
+  late List<CategoriesResponses> selectedInterests;
+
+  final InterestsRepository _interestsRepository = InterestsRepository();
+  late Future<InterestCategoriesResponseData> _interestCategoriesResponseData;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _interestCategoriesResponseData =
+        _interestsRepository.getInterestCategories();
+
+    selectedInterests = widget.userInterests
+        .map((e) => CategoriesResponses(id: e.id, name: e.name))
+        .toList();
+  }
 
   void _onSelectedInterest(int index, String name) {
     setState(() {
@@ -35,24 +57,26 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
     });
   }
 
-  final InterestsRepository _interestsRepository = InterestsRepository();
-  late Future<InterestCategoriesResponseData> _interestCategoriesResponseData;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _interestCategoriesResponseData =
-        _interestsRepository.getInterestCategories();
-  }
-
   @override
   Widget build(BuildContext context) {
     return SubPageLayout(
       appBarTitle: '마이 관심사',
       appBarActions: [
         TextButton(
-          onPressed: () {},
+          onPressed: () async {
+            await _interestsRepository.editMyInterests(
+              userId: 'testId',
+              categoriesResponses: selectedInterests,
+            );
+
+            const CustomSnackBar(
+              message: '마이 관심사가 저장되었습니다.',
+              duration: Duration(seconds: 1),
+            );
+
+            if (!mounted) return;
+            Navigator.pop(context);
+          },
           style: disableAnimationButtonStyle,
           child: const Text(
             '저장',

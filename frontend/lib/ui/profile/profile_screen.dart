@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mybrary/data/model/profile/my_interests_response.dart';
+import 'package:mybrary/data/model/profile/profile_common_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
+import 'package:mybrary/data/repository/interests_repository.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
@@ -8,6 +11,7 @@ import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/profile/components/profile_header.dart';
 import 'package:mybrary/ui/profile/components/profile_intro.dart';
+import 'package:mybrary/ui/profile/my_interests/my_interests_screen.dart';
 import 'package:mybrary/ui/profile/profile_edit/profile_edit_screen.dart';
 import 'package:mybrary/ui/setting/setting_screen.dart';
 
@@ -19,13 +23,21 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late Future<ProfileResponseData> _profileResponseData;
   final _profileRepository = ProfileRepository();
+  final _myInterestsRepository = InterestsRepository();
+
+  late Future<ProfileResponseData> _profileResponseData;
+  late Future<MyInterestsResponseData> _myInterestsResponseData;
+
+  late List<UserInterests> userInterests;
 
   @override
   void initState() {
     super.initState();
     _profileResponseData = _profileRepository.getProfileData();
+    _myInterestsResponseData = _myInterestsRepository.getMyInterestsCategories(
+      userId: 'testId',
+    );
   }
 
   @override
@@ -35,10 +47,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: FutureBuilder(
-          future: _profileResponseData,
+          future: Future.wait([_profileResponseData, _myInterestsResponseData])
+              .then((data) => ProfileCommonData(
+                  profileData: data[0] as ProfileResponseData,
+                  myInterestsData: data[1] as MyInterestsResponseData)),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              final profileData = snapshot.data!;
+              ProfileCommonData data = snapshot.data!;
+              final ProfileResponseData profileData = data.profileData;
+              final MyInterestsResponseData myInterestsData =
+                  data.myInterestsData;
 
               return Column(
                 children: [
@@ -48,7 +66,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   ProfileIntro(
                     introduction: profileData.introduction!,
-                    onTapWriteIntroduction: onTapWriteIntroduction,
+                    userInterests: myInterestsData.userInterests!,
+                    onTapWriteIntroduction: _onTapWriteIntroduction,
+                    onTapMyInterests: () =>
+                        _onTapMyInterests(myInterestsData.userInterests!),
                   ),
                 ],
               );
@@ -58,6 +79,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+
+  List<Future<Object>> futureProfileData() {
+    return [
+      _profileResponseData,
+      _myInterestsResponseData,
+    ];
   }
 
   AppBar _profileAppBar() {
@@ -100,8 +128,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            profileMenuTab('👤  프로필 편집', const ProfileEditScreen()),
-            profileMenuTab('🔗️️  설정', const SettingScreen()),
+            _profileMenuTab('👤  프로필 편집', const ProfileEditScreen()),
+            _profileMenuTab('🔗️️  설정', const SettingScreen()),
             const SizedBox(height: 12.0),
             const Padding(
               padding: EdgeInsets.only(left: 8.0),
@@ -117,13 +145,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget profileMenuTab(String tabText, Widget screen) {
+  Widget _profileMenuTab(String tabText, Widget screen) {
     return Container(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: TextButton(
         style: commonMenuButtonStyle,
         onPressed: () {
-          onPressedProfileMenu(screen);
+          _onPressedProfileMenu(screen);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -142,22 +170,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void onTapWriteIntroduction() {
-    _navigateToNextScreen(const ProfileEditScreen());
+  void _onTapWriteIntroduction() {
+    _navigateToProfileEditScreen(const ProfileEditScreen());
   }
 
-  void onPressedProfileMenu(Widget screen) {
+  void _onTapMyInterests(List<UserInterests> userInterests) {
+    _navigateToMyInterestsScreen(
+      MyInterestsScreen(userInterests: userInterests),
+    );
+  }
+
+  void _onPressedProfileMenu(Widget screen) {
     Navigator.pop(context);
-    _navigateToNextScreen(screen);
+    _navigateToProfileEditScreen(screen);
   }
 
-  void _navigateToNextScreen(Widget screen) {
+  void _navigateToProfileEditScreen(Widget screen) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => screen),
     ).then(
       (value) => setState(() {
         _profileResponseData = _profileRepository.getProfileData();
+      }),
+    );
+  }
+
+  void _navigateToMyInterestsScreen(Widget screen) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => screen),
+    ).then(
+      (value) => setState(() {
+        _myInterestsResponseData =
+            _myInterestsRepository.getMyInterestsCategories(
+          userId: 'testId',
+        );
       }),
     );
   }
