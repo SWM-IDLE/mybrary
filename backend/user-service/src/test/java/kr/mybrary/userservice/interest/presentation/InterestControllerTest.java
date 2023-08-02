@@ -4,10 +4,12 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.mybrary.userservice.interest.domain.InterestService;
+import kr.mybrary.userservice.interest.domain.dto.request.UserInterestUpdateServiceRequest;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.UserInterestServiceResponse;
+import kr.mybrary.userservice.interest.presentation.dto.request.UserInterestUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -26,10 +29,12 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -194,6 +199,96 @@ class InterestControllerTest {
                                 .tag("user-interest")
                                 .summary("사용자의 관심사를 모두 조회한다.")
                                 .responseSchema(Schema.schema("get_user_interests_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING).description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.loginId").type(JsonFieldType.STRING).description("사용자 ID"),
+                                        fieldWithPath("data.userInterests[].id").type(JsonFieldType.NUMBER).description("관심사 ID"),
+                                        fieldWithPath("data.userInterests[].name").type(JsonFieldType.STRING).description("관심사 이름")
+                                )
+                                .build()
+                ))
+        );
+    }
+
+    @DisplayName("사용자의 관심사를 수정한다.")
+    @Test
+    void putUserInterests() throws Exception {
+        // given
+        UserInterestUpdateRequest updateRequest = UserInterestUpdateRequest.builder()
+                .interestRequests(
+                        List.of(
+                                UserInterestUpdateRequest.InterestRequest.builder()
+                                        .id(10L)
+                                        .name("IT")
+                                        .build(),
+                                UserInterestUpdateRequest.InterestRequest.builder()
+                                        .id(11L)
+                                        .name("경제경영")
+                                        .build(),
+                                UserInterestUpdateRequest.InterestRequest.builder()
+                                        .id(12L)
+                                        .name("사회과학")
+                                        .build()
+                        )
+                )
+                .build();
+
+        UserInterestServiceResponse interestServiceResponse = UserInterestServiceResponse.builder()
+                .loginId(LOGIN_ID)
+                .userInterests(List.of(
+                        InterestResponse.builder()
+                                .id(10L)
+                                .name("IT")
+                                .build(),
+                        InterestResponse.builder()
+                                .id(11L)
+                                .name("경제경영")
+                                .build(),
+                        InterestResponse.builder()
+                                .id(12L)
+                                .name("사회과학")
+                                .build()
+                ))
+                .build();
+
+        given(interestService.updateUserInterests(any(UserInterestUpdateServiceRequest.class))).willReturn(interestServiceResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.put(String.format(BASE_URL + "/users/%s/interests", LOGIN_ID))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
+                .andExpect(jsonPath("$.message").value("사용자의 관심사를 수정했습니다."))
+                .andExpect(jsonPath("$.data.loginId").value(LOGIN_ID))
+                .andExpect(jsonPath("$.data.userInterests[0].id").value(10L))
+                .andExpect(jsonPath("$.data.userInterests[0].name").value("IT"))
+                .andExpect(jsonPath("$.data.userInterests[1].id").value(11L))
+                .andExpect(jsonPath("$.data.userInterests[1].name").value("경제경영"))
+                .andExpect(jsonPath("$.data.userInterests[2].id").value(12L))
+                .andExpect(jsonPath("$.data.userInterests[2].name").value("사회과학"));
+
+        // docs
+        actions.andDo(document("put-user-interests",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-interest")
+                                .summary("사용자의 관심사를 수정한다.")
+                                .description("관심사는 최대 3개까지 설정할 수 있으며, 중복된 관심사는 설정할 수 없다.")
+                                .requestSchema(Schema.schema("put_user_interests_request_body"))
+                                .requestFields(
+                                        fieldWithPath("interestRequests[].id").type(JsonFieldType.NUMBER).description("관심사 ID"),
+                                        fieldWithPath("interestRequests[].name").type(JsonFieldType.STRING).description("관심사 이름")
+                                )
+                                .responseSchema(Schema.schema("put_user_interests_response_body"))
                                 .responseFields(
                                         fieldWithPath("status").type(JsonFieldType.STRING).description(STATUS_FIELD_DESCRIPTION),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description(MESSAGE_FIELD_DESCRIPTION),
