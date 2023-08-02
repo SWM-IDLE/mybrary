@@ -9,7 +9,7 @@ class SubPageLayout extends StatelessWidget {
   final Color? backgroundColor;
   final AppBar? appBar;
   final Widget? bottomNavigationBar;
-  final List<Widget>? actions;
+  final List<Widget>? appBarActions;
 
   const SubPageLayout({
     required this.child,
@@ -17,7 +17,7 @@ class SubPageLayout extends StatelessWidget {
     this.backgroundColor,
     this.bottomNavigationBar,
     this.appBar,
-    this.actions,
+    this.appBarActions,
     super.key,
   });
 
@@ -44,7 +44,7 @@ class SubPageLayout extends StatelessWidget {
         centerTitle: true,
         backgroundColor: WHITE_COLOR,
         foregroundColor: BLACK_COLOR,
-        actions: actions,
+        actions: appBarActions,
       );
     }
   }
