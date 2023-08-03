@@ -5,11 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Optional;
 import kr.mybrary.bookservice.book.BookFixture;
-import kr.mybrary.bookservice.book.persistence.author.Author;
-import kr.mybrary.bookservice.book.persistence.author.BookAuthor;
+import kr.mybrary.bookservice.book.persistence.bookInfo.Author;
+import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
+import kr.mybrary.bookservice.book.persistence.bookInfo.BookCategory;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
-import kr.mybrary.bookservice.book.persistence.translator.BookTranslator;
-import kr.mybrary.bookservice.book.persistence.translator.Translator;
+import kr.mybrary.bookservice.book.persistence.bookInfo.BookTranslator;
+import kr.mybrary.bookservice.book.persistence.bookInfo.Translator;
 import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

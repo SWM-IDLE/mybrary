@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.Book.BookBuilder;
-import kr.mybrary.bookservice.book.persistence.BookCategory;
-import kr.mybrary.bookservice.book.persistence.author.Author;
-import kr.mybrary.bookservice.book.persistence.author.BookAuthor;
-import kr.mybrary.bookservice.book.persistence.translator.BookTranslator;
-import kr.mybrary.bookservice.book.persistence.translator.Translator;
+import kr.mybrary.bookservice.book.persistence.bookInfo.BookCategory;
+import kr.mybrary.bookservice.book.persistence.bookInfo.Author;
+import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
+import kr.mybrary.bookservice.book.persistence.bookInfo.BookTranslator;
+import kr.mybrary.bookservice.book.persistence.bookInfo.Translator;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

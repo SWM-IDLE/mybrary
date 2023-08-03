@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.persistence.author;
+package kr.mybrary.bookservice.book.persistence.bookInfo;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
