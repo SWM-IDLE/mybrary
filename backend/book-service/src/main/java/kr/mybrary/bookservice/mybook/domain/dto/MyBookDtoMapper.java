@@ -1,8 +1,8 @@
 package kr.mybrary.bookservice.mybook.domain.dto;
 
 import java.util.List;
-import kr.mybrary.bookservice.book.persistence.author.BookAuthor;
-import kr.mybrary.bookservice.book.persistence.translator.BookTranslator;
+import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
+import kr.mybrary.bookservice.book.persistence.bookInfo.BookTranslator;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;

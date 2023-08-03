@@ -1,7 +1,7 @@
 package kr.mybrary.bookservice.book.persistence.repository;
 
 import java.util.Optional;
-import kr.mybrary.bookservice.book.persistence.author.Author;
+import kr.mybrary.bookservice.book.persistence.bookInfo.Author;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AuthorRepository extends JpaRepository<Author, Long> {

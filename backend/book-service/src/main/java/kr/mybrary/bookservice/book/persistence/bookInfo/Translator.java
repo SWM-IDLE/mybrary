@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.persistence.author;
+package kr.mybrary.bookservice.book.persistence.bookInfo;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,17 +12,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "authors")
+@Table(name = "translators")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Author extends BaseEntity {
+public class Translator extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer aid;
+    private Integer tid;
     private String name;
 }
