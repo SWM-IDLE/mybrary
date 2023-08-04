@@ -1,9 +1,13 @@
 package kr.mybrary.bookservice.book.domain;
 
+import java.util.List;
+import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookInterest;
 import kr.mybrary.bookservice.book.persistence.repository.BookInterestRepository;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse.BookInterestHandleResponseBuilder;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +40,15 @@ public class BookInterestService {
                 );
 
         return response.build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookInterestElementResponse> getBookInterestList(BookMyInterestFindServiceRequest request) {
+
+        return bookInterestRepository.findAllByUserIdWithBook(request.getLoginId(), request.getOrderType())
+                .stream()
+                .map(BookDtoMapper.INSTANCE::bookInterestToBookInterestElementResponse)
+                .toList();
     }
 
     private BookInterestHandleResponseBuilder makeBookHandleResponse(String loginId, String isbn13) {

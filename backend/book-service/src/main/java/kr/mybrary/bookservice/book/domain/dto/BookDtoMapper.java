@@ -7,8 +7,10 @@ import java.util.List;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
 import kr.mybrary.bookservice.book.persistence.Book;
+import kr.mybrary.bookservice.book.persistence.BookInterest;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookTranslator;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -30,19 +32,22 @@ public interface BookDtoMapper {
     @Mapping(target = "aladinReviewCount", source = "reviewCount")
     Book bookCreateRequestToEntity(BookCreateServiceRequest request);
 
-
     @Mapping(target = "starRating", source = "aladinStarRating")
     @Mapping(target = "reviewCount", source = "aladinReviewCount")
     @Mapping(target = "authors", source = "bookAuthors", qualifiedByName = "mappingAuthors")
     @Mapping(target = "translators", source = "bookTranslators", qualifiedByName = "mappingTranslators")
     BookDetailServiceResponse bookToDetailServiceResponse(Book book);
 
-    BookDetailServiceResponse bookSearchDetailToDetailServiceResponse(
-            BookSearchDetailResponse bookSearchDetailResponse);
+    BookDetailServiceResponse bookSearchDetailToDetailServiceResponse(BookSearchDetailResponse bookSearchDetailResponse);
 
     @Mapping(target = "publicationDate", source = "publicationDate", qualifiedByName = "stringToLocalDateTime")
-    BookCreateServiceRequest bookSearchDetailToBookCreateServiceRequest(
-            BookSearchDetailResponse bookSearchDetailResponse);
+    BookCreateServiceRequest bookSearchDetailToBookCreateServiceRequest(BookSearchDetailResponse bookSearchDetailResponse);
+
+    @Mapping(target = "id", source = "book.id")
+    @Mapping(target = "title", source = "book.title")
+    @Mapping(target = "isbn13", source = "book.isbn13")
+    @Mapping(target = "thumbnailUrl", source = "book.thumbnailUrl")
+    BookInterestElementResponse bookInterestToBookInterestElementResponse(BookInterest bookInterest);
 
     @Named("mappingAuthors")
     static List<BookDetailServiceResponse.Author> mappingAuthors(List<BookAuthor> bookAuthors) {

@@ -1,19 +1,26 @@
 package kr.mybrary.bookservice.book.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.anyString;
+import static org.mockito.BDDMockito.doNothing;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.verify;
 
+import java.util.List;
 import java.util.Optional;
 import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.BookInterestFixture;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookInterest;
+import kr.mybrary.bookservice.book.persistence.OrderType;
 import kr.mybrary.bookservice.book.persistence.repository.BookInterestRepository;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,7 +85,8 @@ class BookInterestServiceTest {
         int originalBookInterestCount = book.getInterestCount();
 
         given(bookReadService.getRegisteredBookByISBN13(anyString())).willReturn(book);
-        given(bookInterestRepository.findByBookAndUserId(any(Book.class), anyString())).willReturn(Optional.of(bookInterest));
+        given(bookInterestRepository.findByBookAndUserId(any(Book.class), anyString())).willReturn(
+                Optional.of(bookInterest));
         doNothing().when(bookInterestRepository).delete(any(BookInterest.class));
 
         // when
@@ -91,6 +99,26 @@ class BookInterestServiceTest {
                 () -> verify(bookInterestRepository, times(1)).delete(any(BookInterest.class)),
                 () -> assertThat(response.isInterested()).isFalse(),
                 () -> assertThat(book.getInterestCount()).isEqualTo(originalBookInterestCount - 1)
+        );
+    }
+
+    @DisplayName("내 관심 도서 목록을 조회한다.")
+    @Test
+    void getBookInterestList() {
+
+        // given
+        BookMyInterestFindServiceRequest serviceRequest = BookDtoTestData.createBookMyInterestFindServiceRequest();
+        List<BookInterest> bookInterestList = List.of(BookInterestFixture.COMMON_BOOK_INTEREST.getBookInterest());
+
+        given(bookInterestRepository.findAllByUserIdWithBook(any(), any(OrderType.class))).willReturn(bookInterestList);
+
+        // when
+        List<BookInterestElementResponse> responses = bookInterestService.getBookInterestList(serviceRequest);
+
+        // then
+        assertAll(
+                () -> verify(bookInterestRepository, times(1)).findAllByUserIdWithBook(any(), any(OrderType.class)),
+                () -> assertThat(responses.size()).isEqualTo(1)
         );
     }
 }
