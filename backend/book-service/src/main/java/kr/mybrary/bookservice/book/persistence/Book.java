@@ -106,4 +106,12 @@ public class Book extends BaseEntity {
     public void decreaseHolderCount() {
         this.holderCount--;
     }
+
+    public void increaseInterestCount() {
+        this.interestCount++;
+    }
+
+    public void decreaseInterestCount() {
+        this.interestCount--;
+    }
 }
