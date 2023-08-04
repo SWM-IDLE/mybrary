@@ -17,7 +17,11 @@ public enum BookFixture {
 
     COMMON_BOOK(1L, "title", "subTitle", "thumbnailUrl", "link", "isbn10", "isbn13", 100, "publisher",
             LocalDateTime.now(), "description", "toc", 10, 11, 12, 13, 10000, 11000, 1, 1, 1, 4.5, 1, 3.5, 10,
-            createBookCategory(), createBookAuthors(), createBookTranslators());
+            createBookCategory(), createBookAuthors(), createBookTranslators()),
+
+    COMMON_BOOK_WITHOUT_RELATION(null, "title", "subTitle", "thumbnailUrl", "link", "isbn10", "isbn13", 100, "publisher",
+            LocalDateTime.now(), "description", "toc", 10, 11, 12, 13, 10000, 11000, 1, 1, 1, 4.5, 1, 3.5, 10,
+            null, null, null);
 
     private final Long id;
     private final String title;
