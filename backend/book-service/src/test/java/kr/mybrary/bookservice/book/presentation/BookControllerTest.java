@@ -1,8 +1,10 @@
 package kr.mybrary.bookservice.book.presentation;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static com.epages.restdocs.apispec.SimpleType.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -23,11 +25,13 @@ import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.mybrary.bookservice.book.BookDtoTestData;
+import kr.mybrary.bookservice.book.domain.BookInterestService;
 import kr.mybrary.bookservice.book.domain.BookReadService;
 import kr.mybrary.bookservice.book.domain.BookWriteService;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +62,9 @@ class BookControllerTest {
     @MockBean
     private BookWriteService bookWriteService;
 
+    @MockBean
+    private BookInterestService bookInterestService;
+
     @DisplayName("새로운 도서를 등록한다.")
     @Test
     void create() throws Exception {
@@ -67,7 +74,6 @@ class BookControllerTest {
         String requestJson = objectMapper.writeValueAsString(request);
 
         doNothing().when(bookWriteService).create(any());
-
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/v1/books")
@@ -142,7 +148,6 @@ class BookControllerTest {
         given(bookReadService.getBookDetailByISBN(any(BookDetailServiceRequest.class)))
                 .willReturn(response);
 
-
         // when
         ResultActions actions = mockMvc.perform(get("/api/v1/books/detail")
                 .param("isbn10", "9788932917245")
@@ -161,7 +166,8 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.data.authors[0].name").value(response.getAuthors().get(0).getName()))
                 .andExpect(jsonPath("$.data.authors[0].authorId").value(response.getAuthors().get(0).getAuthorId()))
                 .andExpect(jsonPath("$.data.translators[0].name").value(response.getTranslators().get(0).getName()))
-                .andExpect(jsonPath("$.data.translators[0].translatorId").value(response.getTranslators().get(0).getTranslatorId()))
+                .andExpect(jsonPath("$.data.translators[0].translatorId").value(
+                        response.getTranslators().get(0).getTranslatorId()))
                 .andExpect(jsonPath("$.data.starRating").value(response.getStarRating()))
                 .andExpect(jsonPath("$.data.reviewCount").value(response.getReviewCount()))
                 .andExpect(jsonPath("$.data.publicationDate").value(response.getPublicationDate()))
@@ -183,7 +189,6 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.data.readCount").value(response.getReadCount()))
                 .andExpect(jsonPath("$.data.interestCount").value(response.getInterestCount()));
 
-
         // document
         actions
                 .andDo(document("book-detail-with-isbn",
@@ -195,8 +200,10 @@ class BookControllerTest {
                                         .summary("ISBN을 통해 도서 상세를 조회한다.")
                                         .description("쿼리 파라미터의 isbn10은 생략 가능합니다. isbn13만으로 도서 상세정보 조회가 가능합니다.")
                                         .queryParameters(
-                                                parameterWithName("isbn10").type(SimpleType.STRING).description("ISBN10").optional(),
-                                                parameterWithName("isbn13").type(SimpleType.STRING).description("ISBN13")
+                                                parameterWithName("isbn10").type(SimpleType.STRING)
+                                                        .description("ISBN10").optional(),
+                                                parameterWithName("isbn13").type(SimpleType.STRING)
+                                                        .description("ISBN13")
                                         )
                                         .responseSchema(Schema.schema("book_detail_with_isbn_response_body"))
                                         .responseFields(
@@ -206,13 +213,18 @@ class BookControllerTest {
                                                 fieldWithPath("data.subTitle").type(STRING).description("도서 부제목"),
                                                 fieldWithPath("data.thumbnail").type(STRING).description("도서 썸네일"),
                                                 fieldWithPath("data.link").type(STRING).description("도서 링크"),
-                                                fieldWithPath("data.authors[0].name").type(STRING).description("도서 저자 이름"),
-                                                fieldWithPath("data.authors[0].authorId").type(NUMBER).description("도서 저자 ID"),
-                                                fieldWithPath("data.translators[0].name").type(STRING).description("도서 번역자 이름"),
-                                                fieldWithPath("data.translators[0].translatorId").type(NUMBER).description("도서 번역자 ID"),
+                                                fieldWithPath("data.authors[0].name").type(STRING)
+                                                        .description("도서 저자 이름"),
+                                                fieldWithPath("data.authors[0].authorId").type(NUMBER)
+                                                        .description("도서 저자 ID"),
+                                                fieldWithPath("data.translators[0].name").type(STRING)
+                                                        .description("도서 번역자 이름"),
+                                                fieldWithPath("data.translators[0].translatorId").type(NUMBER)
+                                                        .description("도서 번역자 ID"),
                                                 fieldWithPath("data.starRating").type(NUMBER).description("도서 별점"),
                                                 fieldWithPath("data.reviewCount").type(NUMBER).description("도서 리뷰 수"),
-                                                fieldWithPath("data.publicationDate").type(STRING).description("도서 출판일"),
+                                                fieldWithPath("data.publicationDate").type(STRING)
+                                                        .description("도서 출판일"),
                                                 fieldWithPath("data.category").type(STRING).description("도서 카테고리"),
                                                 fieldWithPath("data.categoryId").type(NUMBER).description("도서 카테고리 ID"),
                                                 fieldWithPath("data.pages").type(NUMBER).description("도서 페이지 수"),
@@ -230,6 +242,58 @@ class BookControllerTest {
                                                 fieldWithPath("data.holderCount").type(NUMBER).description("도서 보류 수"),
                                                 fieldWithPath("data.readCount").type(NUMBER).description("도서 완독 수"),
                                                 fieldWithPath("data.interestCount").type(NUMBER).description("도서 관심 수")
+                                        ).build())));
+    }
+
+    @DisplayName("관심 도서 등록/삭제를 한다.")
+    @Test
+    void handleBookInterest() throws Exception {
+
+        // given
+        BookInterestHandleResponse response = BookDtoTestData.createBookInterestHandleResponse();
+        String loginId = response.getUserId();
+        String isbn13 = response.getIsbn13();
+
+        given(bookInterestService.handleBookInterest(any())).willReturn(response);
+
+        // when
+        ResultActions actions = mockMvc.perform(post("/api/v1/books/{isbn13}/interest", isbn13)
+                .header("USER-ID", loginId));
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("관심 도서 처리에 성공했습니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty())
+                .andExpect(jsonPath("$.data.userId").value(response.getUserId()))
+                .andExpect(jsonPath("$.data.isbn13").value(response.getIsbn13()))
+                .andExpect(jsonPath("$.data.interested").value(response.isInterested()));
+
+        // document
+        actions
+                .andDo(document("book-interest-handle",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("interest")
+                                        .summary("관심 도서 등록/삭제를 한다.")
+                                        .description("관심 도서 등록/삭제를 해당 API에서 모두 수행한다. 관심 도서인 경우 삭제를, 관심 도서가 아닌 경우 등록을 한다."
+                                                + " 응답 데이터의 interested 필드를 통해 관심 도서 여부를 확인할 수 있다.")
+                                        .requestHeaders(
+                                                headerWithName("USER-ID").description("사용자 ID")
+                                        )
+                                        .pathParameters(
+                                                parameterWithName("isbn13").type(SimpleType.STRING).description("도서 ISBN13")
+                                        )
+                                        .responseSchema(Schema.schema("book_interest_handle_response_body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data.userId").type(STRING).description("사용자 ID"),
+                                                fieldWithPath("data.isbn13").type(STRING).description("도서 ISBN13"),
+                                                fieldWithPath("data.interested").type(BOOLEAN).description("관심 여부")
                                         ).build())));
     }
 }
