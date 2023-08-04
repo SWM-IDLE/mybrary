@@ -3,22 +3,15 @@ package kr.mybrary.bookservice.book.persistence;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import kr.mybrary.bookservice.TestConfig;
+import kr.mybrary.bookservice.PersistenceTest;
 import kr.mybrary.bookservice.book.persistence.bookInfo.Author;
 import kr.mybrary.bookservice.book.persistence.repository.AuthorRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("test")
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(TestConfig.class)
+@PersistenceTest
 class AuthorRepositoryTest {
 
     @Autowired

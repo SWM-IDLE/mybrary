@@ -1,11 +1,11 @@
-package kr.mybrary.bookservice.tag.persistence.repository;
+package kr.mybrary.bookservice.tag.persistence;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
-import kr.mybrary.bookservice.TestConfig;
+import kr.mybrary.bookservice.PersistenceTest;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
@@ -14,21 +14,14 @@ import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.tag.MeaningTagFixture;
 import kr.mybrary.bookservice.tag.MyBookMeaningTagFixture;
-import kr.mybrary.bookservice.tag.persistence.MeaningTag;
-import kr.mybrary.bookservice.tag.persistence.MyBookMeaningTag;
+import kr.mybrary.bookservice.tag.persistence.repository.MeaningTagRepository;
+import kr.mybrary.bookservice.tag.persistence.repository.MyBookMeaningTagRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("test")
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(TestConfig.class)
+@PersistenceTest
 class MyBookMeaningTagRepositoryTest {
 
     @Autowired
