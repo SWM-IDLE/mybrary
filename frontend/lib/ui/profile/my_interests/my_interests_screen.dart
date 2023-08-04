@@ -4,7 +4,6 @@ import 'package:mybrary/data/model/profile/my_interests_response.dart';
 import 'package:mybrary/data/repository/interests_repository.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
-import 'package:mybrary/ui/common/components/custom_snackbar.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/profile/my_interests/components/interest_category.dart';
 import 'package:mybrary/ui/profile/my_interests/components/interest_description.dart';
@@ -69,12 +68,11 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
               categoriesResponses: selectedInterests,
             );
 
-            const CustomSnackBar(
-              message: '마이 관심사가 저장되었습니다.',
-              duration: Duration(seconds: 1),
-            );
-
             if (!mounted) return;
+            _showMyInterestsSavedMessage(
+              context: context,
+              snackBarText: '마이 관심사가 저장되었습니다.',
+            );
             Navigator.pop(context);
           },
           style: disableAnimationButtonStyle,
@@ -122,6 +120,20 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _showMyInterestsSavedMessage({
+    required BuildContext context,
+    required String snackBarText,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackBarText),
+        duration: const Duration(
+          seconds: 1,
+        ),
       ),
     );
   }
