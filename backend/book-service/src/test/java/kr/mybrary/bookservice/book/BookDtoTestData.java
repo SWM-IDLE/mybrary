@@ -7,6 +7,7 @@ import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse;
 
 public class BookDtoTestData {
 
@@ -151,6 +152,14 @@ public class BookDtoTestData {
         return BookInterestServiceRequest.builder()
                 .loginId("LOGIN_USER_ID")
                 .isbn13("1111111111111")
+                .build();
+    }
+
+    public static BookInterestHandleResponse createBookInterestHandleResponse() {
+        return BookInterestHandleResponse.builder()
+                .userId("LOGIN_USER_ID")
+                .isbn13("1111111111111")
+                .interested(true)
                 .build();
     }
 }
