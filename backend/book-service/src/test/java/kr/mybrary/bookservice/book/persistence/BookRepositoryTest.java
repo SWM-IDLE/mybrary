@@ -36,7 +36,7 @@ class BookRepositoryTest {
     void findByIsbn10OrIsbn13() {
 
         // given
-        Book book = BookFixture.COMMON_BOOK.getBook();
+        Book book = BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBook();
 
         // when
         bookRepository.save(book);
@@ -56,7 +56,7 @@ class BookRepositoryTest {
     void findByIsbn13() {
 
         // given
-        Book book = BookFixture.COMMON_BOOK.getBook();
+        Book book = BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBook();
 
         // when
         bookRepository.save(book);

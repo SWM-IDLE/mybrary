@@ -47,7 +47,7 @@ class MyBookMeaningTagRepositoryTest {
     @Test
     void findByMyBook() {
         // given
-        Book savedBook = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+        Book savedBook = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBook());
         MyBook savedMyBook = myBookRepository.save(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook));
         MeaningTag savedMeaningTag = meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag());
 
@@ -77,7 +77,7 @@ class MyBookMeaningTagRepositoryTest {
     void deleteByMyBook() {
 
         // given
-        Book savedBook = bookRepository.save(BookFixture.COMMON_BOOK.getBook());
+        Book savedBook = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBook());
         MyBook savedMyBook = myBookRepository.save(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook));
         MeaningTag savedMeaningTag = meaningTagRepository.save(MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag());
 
