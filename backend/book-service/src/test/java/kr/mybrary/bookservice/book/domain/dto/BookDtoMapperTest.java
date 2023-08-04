@@ -7,11 +7,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.BookFixture;
+import kr.mybrary.bookservice.book.BookInterestFixture;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse.Author;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse.Translator;
 import kr.mybrary.bookservice.book.persistence.Book;
+import kr.mybrary.bookservice.book.persistence.BookInterest;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
 import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -201,7 +204,8 @@ class BookDtoMapperTest {
                 () -> assertThat(target.getAuthors().size()).isEqualTo(source.getAuthors().size()),
                 () -> assertThat(target.getTranslators().size()).isEqualTo(source.getTranslators().size()),
                 () -> assertThat(target.getPublisher()).isEqualTo(source.getPublisher()),
-                () -> assertThat(target.getPublicationDate()).isEqualTo(BookDtoMapper.stringToLocalDateTime(source.getPublicationDate())),
+                () -> assertThat(target.getPublicationDate()).isEqualTo(
+                        BookDtoMapper.stringToLocalDateTime(source.getPublicationDate())),
                 () -> assertThat(target.getPriceSales()).isEqualTo(source.getPriceSales()),
                 () -> assertThat(target.getPriceStandard()).isEqualTo(source.getPriceStandard()),
                 () -> assertThat(target.getLink()).isEqualTo(source.getLink()),
@@ -215,6 +219,25 @@ class BookDtoMapperTest {
                 () -> assertThat(target.getReviewCount()).isEqualTo(source.getReviewCount()),
                 () -> assertThat(target.getAuthors().size()).isEqualTo(source.getAuthors().size()),
                 () -> assertThat(target.getTranslators().size()).isEqualTo(source.getTranslators().size())
+        );
+    }
+
+    @DisplayName("BookInterest를 BookInterestElementResponse로 매핑한다.")
+    @Test
+    void bookInterestToBookInterestElementResponse() {
+
+        // given
+        BookInterest source = BookInterestFixture.COMMON_BOOK_INTEREST.getBookInterest();
+
+        // when
+        BookInterestElementResponse target = BookDtoMapper.INSTANCE.bookInterestToBookInterestElementResponse(source);
+
+        // then
+        assertAll(
+                () -> assertThat(target.getId()).isEqualTo(source.getBook().getId()),
+                () -> assertThat(target.getTitle()).isEqualTo(source.getBook().getTitle()),
+                () -> assertThat(target.getIsbn13()).isEqualTo(source.getBook().getIsbn13()),
+                () -> assertThat(target.getThumbnailUrl()).isEqualTo(source.getBook().getThumbnailUrl())
         );
     }
 }
