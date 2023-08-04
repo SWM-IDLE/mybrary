@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
 
@@ -142,6 +143,13 @@ public class BookDtoTestData {
     public static BookDetailServiceRequest createBookDetailServiceRequest() {
         return BookDetailServiceRequest.builder()
                 .isbn10("1111111111")
+                .isbn13("1111111111111")
+                .build();
+    }
+
+    public static BookInterestServiceRequest createBookInterestServiceRequest() {
+        return BookInterestServiceRequest.builder()
+                .loginId("LOGIN_USER_ID")
                 .isbn13("1111111111111")
                 .build();
     }
