@@ -7,7 +7,7 @@ import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
-import kr.mybrary.bookservice.book.persistence.OrderType;
+import kr.mybrary.bookservice.book.persistence.BookOrderType;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse;
 
@@ -168,7 +168,7 @@ public class BookDtoTestData {
     public static BookMyInterestFindServiceRequest createBookMyInterestFindServiceRequest() {
         return BookMyInterestFindServiceRequest.builder()
                 .loginId("LOGIN_USER_ID")
-                .orderType(OrderType.INITIAL)
+                .bookOrderType(BookOrderType.INITIAL)
                 .build();
     }
 }

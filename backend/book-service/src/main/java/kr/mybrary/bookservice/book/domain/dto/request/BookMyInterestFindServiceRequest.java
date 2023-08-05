@@ -1,6 +1,6 @@
 package kr.mybrary.bookservice.book.domain.dto.request;
 
-import kr.mybrary.bookservice.book.persistence.OrderType;
+import kr.mybrary.bookservice.book.persistence.BookOrderType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,5 +9,5 @@ import lombok.Getter;
 public class BookMyInterestFindServiceRequest {
 
     private String loginId;
-    private OrderType orderType;
+    private BookOrderType bookOrderType;
 }

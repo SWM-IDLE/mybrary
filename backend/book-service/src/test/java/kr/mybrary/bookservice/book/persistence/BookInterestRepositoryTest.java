@@ -86,10 +86,10 @@ class BookInterestRepositoryTest {
         entityManager.clear();
 
         // when
-        List<BookInterest> sortByInitial = bookInterestRepository.findAllByUserIdWithBook(loginId, OrderType.INITIAL);
-        List<BookInterest> sortByPublication = bookInterestRepository.findAllByUserIdWithBook(loginId, OrderType.PUBLICATION);
-        List<BookInterest> SortByRegistration = bookInterestRepository.findAllByUserIdWithBook(loginId, OrderType.REGISTRATION);
-        List<BookInterest> SortByNone = bookInterestRepository.findAllByUserIdWithBook(loginId, OrderType.NONE);
+        List<BookInterest> sortByInitial = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.INITIAL);
+        List<BookInterest> sortByPublication = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.PUBLICATION);
+        List<BookInterest> SortByRegistration = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.REGISTRATION);
+        List<BookInterest> SortByNone = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.NONE);
 
         // given
         assertAll(
