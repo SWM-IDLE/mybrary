@@ -1,0 +1,4 @@
+enum FollowPageType {
+  follower,
+  following,
+}
