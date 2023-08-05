@@ -18,7 +18,7 @@ import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest
 import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookInterest;
-import kr.mybrary.bookservice.book.persistence.OrderType;
+import kr.mybrary.bookservice.book.persistence.BookOrderType;
 import kr.mybrary.bookservice.book.persistence.repository.BookInterestRepository;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse;
@@ -110,14 +110,14 @@ class BookInterestServiceTest {
         BookMyInterestFindServiceRequest serviceRequest = BookDtoTestData.createBookMyInterestFindServiceRequest();
         List<BookInterest> bookInterestList = List.of(BookInterestFixture.COMMON_BOOK_INTEREST.getBookInterest());
 
-        given(bookInterestRepository.findAllByUserIdWithBook(any(), any(OrderType.class))).willReturn(bookInterestList);
+        given(bookInterestRepository.findAllByUserIdWithBook(any(), any(BookOrderType.class))).willReturn(bookInterestList);
 
         // when
         List<BookInterestElementResponse> responses = bookInterestService.getBookInterestList(serviceRequest);
 
         // then
         assertAll(
-                () -> verify(bookInterestRepository, times(1)).findAllByUserIdWithBook(any(), any(OrderType.class)),
+                () -> verify(bookInterestRepository, times(1)).findAllByUserIdWithBook(any(), any(BookOrderType.class)),
                 () -> assertThat(responses.size()).isEqualTo(1)
         );
     }

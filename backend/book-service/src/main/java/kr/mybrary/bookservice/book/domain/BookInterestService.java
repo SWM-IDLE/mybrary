@@ -45,7 +45,7 @@ public class BookInterestService {
     @Transactional(readOnly = true)
     public List<BookInterestElementResponse> getBookInterestList(BookMyInterestFindServiceRequest request) {
 
-        return bookInterestRepository.findAllByUserIdWithBook(request.getLoginId(), request.getOrderType())
+        return bookInterestRepository.findAllByUserIdWithBook(request.getLoginId(), request.getBookOrderType())
                 .stream()
                 .map(BookDtoMapper.INSTANCE::bookInterestToBookInterestElementResponse)
                 .toList();
