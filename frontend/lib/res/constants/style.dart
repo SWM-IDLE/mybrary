@@ -119,6 +119,18 @@ const interestDescriptionStyle = TextStyle(
   fontWeight: FontWeight.w400,
 );
 
+const followNicknameStyle = TextStyle(
+  color: BLACK_COLOR,
+  fontSize: 15.0,
+  fontWeight: FontWeight.w400,
+);
+
+const followButtonTextStyle = TextStyle(
+  color: BLACK_COLOR,
+  fontSize: 12.0,
+  fontWeight: FontWeight.w400,
+);
+
 // button style
 final disableAnimationButtonStyle = ButtonStyle(
   backgroundColor: MaterialStateProperty.all(Colors.transparent),

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mybrary/data/model/profile/follower_response.dart';
+import 'package:mybrary/data/model/profile/following_response.dart';
 import 'package:mybrary/data/model/profile/my_interests_response.dart';
 import 'package:mybrary/data/model/profile/profile_common_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
+import 'package:mybrary/data/repository/follow_repository.dart';
 import 'package:mybrary/data/repository/interests_repository.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
 import 'package:mybrary/res/colors/color.dart';
@@ -25,9 +28,12 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final _profileRepository = ProfileRepository();
   final _myInterestsRepository = InterestsRepository();
+  final _followRepository = FollowRepository();
 
   late Future<ProfileResponseData> _profileResponseData;
   late Future<MyInterestsResponseData> _myInterestsResponseData;
+  late Future<FollowerResponseData> _followerResponseData;
+  late Future<FollowingResponseData> _followingResponseData;
 
   late List<UserInterests> userInterests;
 
@@ -38,6 +44,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _myInterestsResponseData = _myInterestsRepository.getMyInterestsCategories(
       userId: 'testId',
     );
+    _followerResponseData = _followRepository.getFollower(
+      userId: 'testId',
+    );
+    _followingResponseData = _followRepository.getFollowings(
+      userId: 'testId',
+    );
   }
 
   @override
@@ -46,23 +58,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: _profileAppBar(),
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        child: FutureBuilder(
-          future: Future.wait([_profileResponseData, _myInterestsResponseData])
-              .then((data) => ProfileCommonData(
-                  profileData: data[0] as ProfileResponseData,
-                  myInterestsData: data[1] as MyInterestsResponseData)),
+        child: FutureBuilder<ProfileCommonData>(
+          future: Future.wait([
+            _profileResponseData,
+            _myInterestsResponseData,
+            _followerResponseData,
+            _followingResponseData,
+          ]).then((data) => ProfileCommonData(
+                profileData: data[0] as ProfileResponseData,
+                myInterestsData: data[1] as MyInterestsResponseData,
+                followerData: data[2] as FollowerResponseData,
+                followingData: data[3] as FollowingResponseData,
+              )),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               ProfileCommonData data = snapshot.data!;
               final ProfileResponseData profileData = data.profileData;
               final MyInterestsResponseData myInterestsData =
                   data.myInterestsData;
+              final FollowerResponseData followerData = data.followerData;
+              final FollowingResponseData followingData = data.followingData;
 
               return Column(
                 children: [
                   ProfileHeader(
                     nickname: profileData.nickname!,
                     profileImageUrl: profileData.profileImageUrl!,
+                    followerCount: followerData.followers!.length.toString(),
+                    followingCount: followingData.followings!.length.toString(),
                   ),
                   ProfileIntro(
                     introduction: profileData.introduction!,

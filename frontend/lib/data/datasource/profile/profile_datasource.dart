@@ -57,7 +57,7 @@ class ProfileDataSource {
     final profileImageResponse = await dio.get(getApi(API.getUserProfileImage),
         options: Options(headers: {'User-Id': 'testId'}));
 
-    log('프로필 사진 조회 응답값: $profileImageResponse');
+    log('프로필 이미지 조회 응답값: $profileImageResponse');
     final ProfileImageResponse result = commonResponseResult(
       profileImageResponse,
       () => ProfileResponse(
