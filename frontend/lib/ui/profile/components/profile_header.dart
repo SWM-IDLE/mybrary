@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
-import 'package:mybrary/ui/profile/follow/follower_screen.dart';
 
 class ProfileHeader extends StatelessWidget {
   final String nickname;
   final String profileImageUrl;
   final String followerCount;
   final String followingCount;
+  final VoidCallback navigateToFollowScreen;
+  final VoidCallback navigateToFollowingScreen;
 
   const ProfileHeader({
     required this.nickname,
     required this.profileImageUrl,
     required this.followerCount,
     required this.followingCount,
+    required this.navigateToFollowScreen,
+    required this.navigateToFollowingScreen,
     super.key,
   });
 
@@ -50,50 +53,50 @@ class ProfileHeader extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10.0),
-            Text(nickname,
-                style: commonSubTitleStyle.copyWith(
-                  fontSize: 18.0,
-                )),
+            Text(
+              nickname,
+              style: commonSubTitleStyle.copyWith(
+                fontSize: 18.0,
+              ),
+            ),
             const SizedBox(height: 2.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => FollowerScreen(
-                          nickname: nickname,
-                        ),
-                      ),
-                    );
+                    navigateToFollowScreen();
                   },
                   child: Row(
                     children: [
-                      Text('팔로워', style: followTextStyle),
+                      const Text('팔로워', style: followTextStyle),
                       const SizedBox(width: 6.0),
                       Text(followerCount, style: followTextStyle),
                     ],
                   ),
                 ),
                 const SizedBox(width: 6.0),
-                Text(
+                const Text(
                   '·',
                   style: followTextStyle,
                 ),
                 const SizedBox(width: 6.0),
-                Row(
-                  children: [
-                    Text('팔로잉', style: followTextStyle),
-                    const SizedBox(width: 6.0),
-                    Text(followingCount, style: followTextStyle),
-                  ],
+                InkWell(
+                  onTap: () {
+                    navigateToFollowingScreen();
+                  },
+                  child: Row(
+                    children: [
+                      const Text('팔로잉', style: followTextStyle),
+                      const SizedBox(width: 6.0),
+                      Text(followingCount, style: followTextStyle),
+                    ],
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 8.0),
-            Text(
+            const Text(
               '#초보 리뷰어',
               style: commonSubThinStyle,
             )

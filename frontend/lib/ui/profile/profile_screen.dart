@@ -9,11 +9,13 @@ import 'package:mybrary/data/repository/follow_repository.dart';
 import 'package:mybrary/data/repository/interests_repository.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
 import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/enum.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/profile/components/profile_header.dart';
 import 'package:mybrary/ui/profile/components/profile_intro.dart';
+import 'package:mybrary/ui/profile/follow/follower_screen.dart';
 import 'package:mybrary/ui/profile/my_interests/my_interests_screen.dart';
 import 'package:mybrary/ui/profile/profile_edit/profile_edit_screen.dart';
 import 'package:mybrary/ui/setting/setting_screen.dart';
@@ -59,17 +61,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: FutureBuilder<ProfileCommonData>(
-          future: Future.wait([
-            _profileResponseData,
-            _myInterestsResponseData,
-            _followerResponseData,
-            _followingResponseData,
-          ]).then((data) => ProfileCommonData(
-                profileData: data[0] as ProfileResponseData,
-                myInterestsData: data[1] as MyInterestsResponseData,
-                followerData: data[2] as FollowerResponseData,
-                followingData: data[3] as FollowingResponseData,
-              )),
+          future: Future.wait(_futureProfileData())
+              .then((data) => _buildProfileData(data)),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               ProfileCommonData data = snapshot.data!;
@@ -86,6 +79,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     profileImageUrl: profileData.profileImageUrl!,
                     followerCount: followerData.followers!.length.toString(),
                     followingCount: followingData.followings!.length.toString(),
+                    navigateToFollowScreen: () =>
+                        _navigateToFollowerScreen(profileData.nickname!),
+                    navigateToFollowingScreen: () =>
+                        _navigateToFollowingScreen(profileData.nickname!),
                   ),
                   ProfileIntro(
                     introduction: profileData.introduction!,
@@ -104,10 +101,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  List<Future<Object>> futureProfileData() {
+  ProfileCommonData _buildProfileData(List<Object> data) {
+    return ProfileCommonData(
+      profileData: data[0] as ProfileResponseData,
+      myInterestsData: data[1] as MyInterestsResponseData,
+      followerData: data[2] as FollowerResponseData,
+      followingData: data[3] as FollowingResponseData,
+    );
+  }
+
+  List<Future<Object>> _futureProfileData() {
     return [
       _profileResponseData,
       _myInterestsResponseData,
+      _followerResponseData,
+      _followingResponseData,
     ];
   }
 
@@ -227,6 +235,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
       (value) => setState(() {
         _myInterestsResponseData =
             _myInterestsRepository.getMyInterestsCategories(
+          userId: 'testId',
+        );
+      }),
+    );
+  }
+
+  void _navigateToFollowerScreen(String nickname) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => FollowerScreen(
+          nickname: nickname,
+          pageType: FollowPageType.follower,
+        ),
+      ),
+    ).then(
+      (value) => setState(() {
+        _followerResponseData = _followRepository.getFollower(
+          userId: 'testId',
+        );
+        _followingResponseData = _followRepository.getFollowings(
+          userId: 'testId',
+        );
+      }),
+    );
+  }
+
+  void _navigateToFollowingScreen(String nickname) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => FollowerScreen(
+          nickname: nickname,
+          pageType: FollowPageType.following,
+        ),
+      ),
+    ).then(
+      (value) => setState(() {
+        _followerResponseData = _followRepository.getFollower(
+          userId: 'testId',
+        );
+        _followingResponseData = _followRepository.getFollowings(
           userId: 'testId',
         );
       }),
