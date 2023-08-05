@@ -24,6 +24,29 @@ class _FollowerScreenState extends State<FollowerScreen>
     with TickerProviderStateMixin {
   late List<String> _followTabs = ['팔로워', '팔로잉'];
 
+  Set<String> followerUsers = {};
+
+  bool isFollower(String loginId) {
+    return !followerUsers.contains(loginId);
+  }
+
+  void toggleFollower(String loginId) {
+    setState(() {
+      if (isFollower(loginId)) {
+        followerUsers.add(loginId);
+      } else {
+        followerUsers.remove(loginId);
+      }
+    });
+  }
+
+  void deleteFollower(String loginId) {
+    setState(() {
+      followerUsers.add(loginId);
+      print(followerUsers);
+    });
+  }
+
   late final TabController _tabController = TabController(
     length: _followTabs.length,
     vsync: this,
@@ -66,7 +89,7 @@ class _FollowerScreenState extends State<FollowerScreen>
       bottom: false,
       child: SubPageLayout(
         child: FutureBuilder<FollowCommonData>(
-          future: Future.wait([_followerResponseData, _followingResponseData])
+          future: Future.wait(futureFollowData())
               .then((followData) => FollowCommonData(
                     followerData: followData[0] as FollowerResponseData,
                     followingData: followData[1] as FollowingResponseData,
@@ -81,11 +104,6 @@ class _FollowerScreenState extends State<FollowerScreen>
                 '팔로워 ${followers.length}',
                 '팔로잉 ${followings.length}',
               ];
-
-              isFollowing(String loginId) {
-                return followings
-                    .any((following) => following.loginId == loginId);
-              }
 
               return NestedScrollView(
                 controller: _scrollController,
@@ -106,6 +124,8 @@ class _FollowerScreenState extends State<FollowerScreen>
                       child: ListView.builder(
                         itemCount: followers.length,
                         itemBuilder: (context, index) {
+                          Followers follower = followers[index];
+
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16.0,
@@ -121,50 +141,48 @@ class _FollowerScreenState extends State<FollowerScreen>
                                       radius: 20.0,
                                       backgroundColor: GREY_03_COLOR,
                                       backgroundImage: NetworkImage(
-                                        followers[index].profileImageUrl!,
+                                        follower.profileImageUrl!,
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 16.0,
                                     ),
                                     Text(
-                                      followers[index].nickname!,
+                                      follower.nickname!,
                                       style: followNicknameStyle,
                                     ),
                                   ],
                                 ),
                                 ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      if (isFollowing(
-                                        followers[index].loginId!,
-                                      )) {
-                                        _followRepository.deleteFollower(
-                                          userId: 'testId',
-                                          targetId: followers[index].loginId!,
-                                        );
-                                      } else {
-                                        _followRepository.updateFollowing(
-                                          userId: 'testId',
-                                          targetId: followers[index].loginId!,
-                                        );
-                                      }
+                                  onPressed: () async {
+                                    await _followRepository.deleteFollower(
+                                      userId: 'testId',
+                                      sourceId: follower.loginId!,
+                                    );
+
+                                    if (!mounted) return;
+                                    _showDeletedFollowerMessage(context);
+
+                                    Future.delayed(const Duration(seconds: 1),
+                                        () {
+                                      setState(() {
+                                        followers.removeAt(index);
+                                      });
+                                      Navigator.of(context).pop();
                                     });
                                   },
                                   style: ElevatedButton.styleFrom(
                                     elevation: 0,
                                     backgroundColor: GREY_02_COLOR,
-                                    foregroundColor: BLACK_COLOR,
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                       horizontal: 16.0,
                                       vertical: 8.0,
                                     ),
-                                    minimumSize: Size(60.0, 10.0),
+                                    minimumSize: const Size(60.0, 10.0),
+                                    splashFactory: NoSplash.splashFactory,
                                   ),
-                                  child: Text(
-                                    isFollowing(followers[index].loginId!)
-                                        ? '삭제'
-                                        : '팔로우',
+                                  child: const Text(
+                                    '삭제',
                                     style: followButtonTextStyle,
                                   ),
                                 ),
@@ -240,6 +258,39 @@ class _FollowerScreenState extends State<FollowerScreen>
       ),
     );
   }
+
+  Future<dynamic> _showDeletedFollowerMessage(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierColor: BLACK_COLOR.withOpacity(0.1),
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            width: 76.0,
+            height: 38.0,
+            decoration: BoxDecoration(
+              color: GREY_06_COLOR.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Center(
+              child: Text(
+                '삭제중',
+                style: commonSubRegularStyle.copyWith(
+                  color: WHITE_COLOR,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  List<Future<Object>> futureFollowData() => [
+        _followerResponseData,
+        _followingResponseData,
+      ];
 
   List<Widget> followPageSliverBuilder(
     BuildContext context,

@@ -33,8 +33,8 @@ class FollowRepository {
 
   Future<FollowerResponseData?> deleteFollower({
     required String userId,
-    required String targetId,
+    required String sourceId,
   }) {
-    return _followDataSource.deleteFollower(userId, targetId);
+    return _followDataSource.deleteFollower(userId, sourceId);
   }
 }

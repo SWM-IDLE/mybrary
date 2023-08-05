@@ -82,7 +82,7 @@ class FollowDataSource {
 
   Future<FollowerResponseData?> deleteFollower(
     String userId,
-    String targetId,
+    String sourceId,
   ) async {
     final dio = Dio();
     final deleteFollowerResponse = await dio.delete(
@@ -90,7 +90,7 @@ class FollowDataSource {
       options: Options(
         headers: {'User-Id': userId},
       ),
-      data: {'sourceId': targetId},
+      data: {'sourceId': sourceId},
     );
 
     log('팔로워 삭제 응답값: $deleteFollowerResponse');
