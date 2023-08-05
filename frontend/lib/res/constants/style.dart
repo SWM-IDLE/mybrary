@@ -138,3 +138,7 @@ final disableAnimationButtonStyle = ButtonStyle(
   splashFactory: NoSplash.splashFactory,
   overlayColor: MaterialStateProperty.all(Colors.transparent),
 );
+
+final followButtonRoundStyle = RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(10.0),
+);

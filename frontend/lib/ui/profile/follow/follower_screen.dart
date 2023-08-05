@@ -24,26 +24,27 @@ class _FollowerScreenState extends State<FollowerScreen>
     with TickerProviderStateMixin {
   late List<String> _followTabs = ['팔로워', '팔로잉'];
 
-  Set<String> followerUsers = {};
+  Set<String> notFollowingUsers = {};
 
-  bool isFollower(String loginId) {
-    return !followerUsers.contains(loginId);
+  bool isFollowingUser(String loginId) => !notFollowingUsers.contains(loginId);
+
+  bool isFollowing(String loginId) {
+    return isFollowingUser(loginId);
   }
 
-  void toggleFollower(String loginId) {
+  void onPressedAddFollowingUser(String loginId) {
     setState(() {
-      if (isFollower(loginId)) {
-        followerUsers.add(loginId);
+      if (isFollowing(loginId)) {
+        notFollowingUsers.add(loginId);
       } else {
-        followerUsers.remove(loginId);
+        notFollowingUsers.remove(loginId);
       }
     });
   }
 
-  void deleteFollower(String loginId) {
+  void onPressedDeleteFollowingUser(String loginId) {
     setState(() {
-      followerUsers.add(loginId);
-      print(followerUsers);
+      notFollowingUsers.add(loginId);
     });
   }
 
@@ -102,7 +103,7 @@ class _FollowerScreenState extends State<FollowerScreen>
 
               _followTabs = <String>[
                 '팔로워 ${followers.length}',
-                '팔로잉 ${followings.length}',
+                '팔로잉 ${followings.length - notFollowingUsers.length}',
               ];
 
               return NestedScrollView(
@@ -161,7 +162,10 @@ class _FollowerScreenState extends State<FollowerScreen>
                                     );
 
                                     if (!mounted) return;
-                                    _showDeletedFollowerMessage(context);
+                                    _showFollowButtonMessage(
+                                      context: context,
+                                      message: '삭제중',
+                                    );
 
                                     Future.delayed(const Duration(seconds: 1),
                                         () {
@@ -174,12 +178,13 @@ class _FollowerScreenState extends State<FollowerScreen>
                                   style: ElevatedButton.styleFrom(
                                     elevation: 0,
                                     backgroundColor: GREY_02_COLOR,
+                                    shape: followButtonRoundStyle,
+                                    minimumSize: const Size(60.0, 10.0),
+                                    splashFactory: NoSplash.splashFactory,
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 16.0,
                                       vertical: 8.0,
                                     ),
-                                    minimumSize: const Size(60.0, 10.0),
-                                    splashFactory: NoSplash.splashFactory,
                                   ),
                                   child: const Text(
                                     '삭제',
@@ -197,6 +202,9 @@ class _FollowerScreenState extends State<FollowerScreen>
                       child: ListView.builder(
                         itemCount: followings.length,
                         itemBuilder: (context, index) {
+                          Followings following = followings[index];
+                          String followingUserId = following.loginId!;
+
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16.0,
@@ -212,34 +220,59 @@ class _FollowerScreenState extends State<FollowerScreen>
                                       radius: 20.0,
                                       backgroundColor: GREY_03_COLOR,
                                       backgroundImage: NetworkImage(
-                                        followings[index].profileImageUrl!,
+                                        following.profileImageUrl!,
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 16.0,
                                     ),
                                     Text(
-                                      followings[index].nickname!,
+                                      following.nickname!,
                                       style: followNicknameStyle,
                                     ),
                                   ],
                                 ),
                                 ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    if (isFollowing(followingUserId)) {
+                                      onPressedDeleteFollowingUser(
+                                          followingUserId);
+                                      await _followRepository.deleteFollowing(
+                                        userId: 'testId',
+                                        targetId: followingUserId,
+                                      );
+                                    } else {
+                                      onPressedAddFollowingUser(
+                                          followingUserId);
+                                      await _followRepository.updateFollowing(
+                                        userId: 'testId',
+                                        targetId: followingUserId,
+                                      );
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     elevation: 0,
-                                    backgroundColor: GREY_02_COLOR,
-                                    foregroundColor: BLACK_COLOR,
-                                    padding: EdgeInsets.symmetric(
+                                    backgroundColor:
+                                        isFollowing(followingUserId)
+                                            ? GREY_02_COLOR
+                                            : primaryColor,
+                                    shape: followButtonRoundStyle,
+                                    minimumSize: const Size(60.0, 10.0),
+                                    splashFactory: NoSplash.splashFactory,
+                                    padding: const EdgeInsets.symmetric(
                                       horizontal: 16.0,
                                       vertical: 8.0,
                                     ),
-                                    minimumSize: Size(60.0, 10.0),
-                                    splashFactory: NoSplash.splashFactory,
                                   ),
                                   child: Text(
-                                    '팔로잉',
-                                    style: followButtonTextStyle,
+                                    isFollowing(followingUserId)
+                                        ? '팔로잉'
+                                        : '팔로우',
+                                    style: followButtonTextStyle.copyWith(
+                                      color: isFollowing(followingUserId)
+                                          ? BLACK_COLOR
+                                          : WHITE_COLOR,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -259,7 +292,10 @@ class _FollowerScreenState extends State<FollowerScreen>
     );
   }
 
-  Future<dynamic> _showDeletedFollowerMessage(BuildContext context) {
+  Future<dynamic> _showFollowButtonMessage({
+    required BuildContext context,
+    required String message,
+  }) {
     return showDialog(
       context: context,
       barrierColor: BLACK_COLOR.withOpacity(0.1),
@@ -275,7 +311,7 @@ class _FollowerScreenState extends State<FollowerScreen>
             ),
             child: Center(
               child: Text(
-                '삭제중',
+                message,
                 style: commonSubRegularStyle.copyWith(
                   color: WHITE_COLOR,
                 ),
