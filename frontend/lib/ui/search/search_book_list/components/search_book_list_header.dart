@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/model/search/book_search_data.dart';
+import 'package:mybrary/data/model/search/book_search_response.dart';
 
 class SearchBookListHeader extends StatelessWidget {
-  final List<BookSearchData> bookSearchDataList;
+  final List<BookSearchResult> bookSearchDataList;
   const SearchBookListHeader({
     required this.bookSearchDataList,
     super.key,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/style.dart';
 
 const List<String> popularSearchKeyword = [
   '돈의 속성',
@@ -44,7 +45,7 @@ class SearchPopularKeyword extends StatelessWidget {
             runSpacing: 8.0,
             children: List.generate(
               popularSearchKeyword.length,
-              (index) => GestureDetector(
+              (index) => InkWell(
                 onTap: () {
                   bookSearchKeywordController.text =
                       popularSearchKeyword[index];
@@ -52,20 +53,19 @@ class SearchPopularKeyword extends StatelessWidget {
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
                 child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 18.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18.0,
+                    vertical: 8.0,
+                  ),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: POPULAR_BORDER_COLOR,
+                      color: GREY_02_COLOR,
                     ),
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   child: Text(
                     popularSearchKeyword[index],
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      color: POPULAR_TEXT_COLOR,
-                    ),
+                    style: popularKeywordTextStyle,
                   ),
                 ),
               ),

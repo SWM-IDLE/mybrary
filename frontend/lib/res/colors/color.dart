@@ -24,9 +24,10 @@ const Color GREY_04_COLOR = Color(0xFF999999);
 const Color GREY_05_COLOR = Color(0xFF777777);
 const Color GREY_06_COLOR = Color(0xFF262626);
 
-const Color circularBorderColor = Color(0xFFCECECE);
 const Color inputHintColor = Color(0xFF999999);
 const Color inputBorderColor = Color(0xFFDDDDDD);
+const Color circularTextColor = Color(0xFF3E3E3E);
+const Color circularBorderColor = Color(0xFFCECECE);
 
 // Auth Color
 const Color LOGIN_PRIMARY_COLOR = Color(0xFFCDE7BE);

@@ -142,3 +142,15 @@ final disableAnimationButtonStyle = ButtonStyle(
 final followButtonRoundStyle = RoundedRectangleBorder(
   borderRadius: BorderRadius.circular(10.0),
 );
+
+const popularKeywordTextStyle = TextStyle(
+  color: circularTextColor,
+  fontSize: 14.0,
+  fontWeight: FontWeight.w400,
+);
+
+// border style
+final searchInputBorderStyle = OutlineInputBorder(
+  borderSide: BorderSide.none,
+  borderRadius: BorderRadius.circular(5.0),
+);

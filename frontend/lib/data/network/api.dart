@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 
 const baseUrl = "http://43.200.200.185:8003";
+const bookServiceUrl = "http://43.200.200.185:8004";
 const mybraryUrlScheme = "kr.mybrary";
 
 enum API {
@@ -55,6 +56,12 @@ Map<API, String> apiMap = {
 
 String getApi(API apiType) {
   String api = baseUrl;
+  api += apiMap[apiType]!;
+  return api;
+}
+
+String getBookServiceApi(API apiType) {
+  String api = bookServiceUrl;
   api += apiMap[apiType]!;
   return api;
 }
