@@ -107,4 +107,31 @@ class BookInterestRepositoryTest {
                         .containsExactly(bookInterest_1.getId(), bookInterest_2.getId(), bookInterest_3.getId())
         );
     }
+
+    @DisplayName("도서와 사용자 아이디로 관심 도서가 존재하는지 확인한다.")
+    @Test
+    void existsByBookAndUserId() {
+
+        // given
+        String userId = "LOGIN_USER_ID";
+        Book book = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBook());
+
+        BookInterest bookInterest = BookInterestFixture.BOOK_INTEREST_WITHOUT_RELATION.getBookInterestBuilder()
+                .book(book)
+                .userId(userId)
+                .build();
+
+        entityManager.persist(bookInterest);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        boolean exists = bookInterestRepository.existsByBookAndUserId(book, userId);
+
+        // then
+        assertAll(
+                () -> assertThat(exists).isTrue()
+        );
+    }
 }
