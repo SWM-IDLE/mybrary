@@ -19,4 +19,15 @@ public enum BookOrderType {
     public OrderSpecifier<?> getOrderSpecifier() {
         return orderSpecifier;
     }
+
+    public static BookOrderType of(String orderType) {
+
+        for (BookOrderType value : values()) {
+            if (value.name().equals(orderType.toUpperCase())) {
+                return value;
+            }
+        }
+
+        return NONE;
+    }
 }
