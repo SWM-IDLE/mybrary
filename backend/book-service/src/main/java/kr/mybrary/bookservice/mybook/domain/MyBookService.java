@@ -103,6 +103,11 @@ public class MyBookService {
         return MyBookUpdateResponse.of(myBook, request.getMeaningTag());
     }
 
+    @Transactional(readOnly = true)
+    public MyBook findMyBookByIdWithBook(Long myBookId) {
+        return myBookRepository.findByIdWithBook(myBookId).orElseThrow(MyBookNotFoundException::new);
+    }
+
     private void checkBookAlreadyRegisteredAsMyBook(String userId, Book book) {
         if (myBookRepository.existsByUserIdAndBook(userId, book)) {
             throw new MyBookAlreadyExistsException();

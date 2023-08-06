@@ -26,4 +26,9 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long> {
             + "left join fetch mbt.meaningTag "
             + "where m.id = :mybookId")
     Optional<MyBook> findMyBookDetail(Long mybookId);
+
+    @Query("select m from MyBook m "
+            + "left join fetch m.book "
+            + "where m.id = :mybookId")
+    Optional<MyBook> findByIdWithBook(Long mybookId);
 }

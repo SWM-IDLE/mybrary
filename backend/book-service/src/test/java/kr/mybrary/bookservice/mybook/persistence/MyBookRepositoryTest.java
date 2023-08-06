@@ -258,4 +258,29 @@ class MyBookRepositoryTest {
                 }
         );
     }
+
+    @DisplayName("fetch join을 통해 마이북 조회시, 도서도 함께 조회한다.")
+    @Test
+    void findMyBookWithBook() {
+
+        // given
+        Book book = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBook());
+        MyBook myBook = entityManager.persist(
+                MyBookFixture.MY_BOOK_WITHOUT_RELATION.getMyBookBuilder().book(book).build());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Optional<MyBook> foundMyBook = myBookRepository.findByIdWithBook(myBook.getId());
+
+        // then
+        assertAll(
+                () -> {
+                    assertThat(foundMyBook.isPresent()).isTrue();
+                    assertThat(foundMyBook.get().getBook() instanceof HibernateProxy).isFalse();
+                    assertThat(foundMyBook.get().getBook().getIsbn13()).isEqualTo(book.getIsbn13());
+                }
+        );
+    }
 }
