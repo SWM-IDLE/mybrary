@@ -12,6 +12,7 @@ public class BookCreateRequest {
 
     private String title;
     private String subTitle;
+    private String author;
     private String thumbnailUrl;
     private String link;
     private List<BookCreateServiceRequest.Author> authors;

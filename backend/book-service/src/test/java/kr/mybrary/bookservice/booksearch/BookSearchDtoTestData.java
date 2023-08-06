@@ -91,6 +91,7 @@ public class BookSearchDtoTestData {
         return BookSearchDetailResponse.builder()
                 .title("어린 왕자")
                 .subTitle("어린 왕자 부제")
+                .author("앙투안 드 생텍쥐페리 (지은이)")
                 .thumbnail("https://image.aladin.co.kr/product/6853/49/coversum/8932917248_2.jpg")
                 .link("http://www.aladin.co.kr/shop/wproduct.aspx?ItemId=68534943&amp;partner=openAPI&amp;start=api")
                 .isbn10("8932917248")

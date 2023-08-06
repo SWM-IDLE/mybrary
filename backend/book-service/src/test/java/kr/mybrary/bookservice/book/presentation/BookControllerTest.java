@@ -102,6 +102,7 @@ class BookControllerTest {
                                         .requestFields(
                                                 fieldWithPath("title").type(STRING).description("도서 제목"),
                                                 fieldWithPath("subTitle").type(STRING).description("도서 부제목"),
+                                                fieldWithPath("author").type(STRING).description("도서 저자 목록"),
                                                 fieldWithPath("thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
                                                 fieldWithPath("link").type(STRING).description("도서 링크"),
                                                 fieldWithPath("translators").type(ARRAY).description("도서 번역가"),
@@ -164,6 +165,7 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.data").isNotEmpty())
                 .andExpect(jsonPath("$.data.title").value(response.getTitle()))
                 .andExpect(jsonPath("$.data.subTitle").value(response.getSubTitle()))
+                .andExpect(jsonPath("$.data.author").value(response.getAuthor()))
                 .andExpect(jsonPath("$.data.thumbnail").value(response.getThumbnail()))
                 .andExpect(jsonPath("$.data.link").value(response.getLink()))
                 .andExpect(jsonPath("$.data.authors[0].name").value(response.getAuthors().get(0).getName()))
@@ -218,6 +220,7 @@ class BookControllerTest {
                                                 fieldWithPath("message").type(STRING).description("응답 메시지"),
                                                 fieldWithPath("data.title").type(STRING).description("도서 제목"),
                                                 fieldWithPath("data.subTitle").type(STRING).description("도서 부제목"),
+                                                fieldWithPath("data.author").type(STRING).description("도서 목록"),
                                                 fieldWithPath("data.thumbnail").type(STRING).description("도서 썸네일"),
                                                 fieldWithPath("data.link").type(STRING).description("도서 링크"),
                                                 fieldWithPath("data.authors[0].name").type(STRING)
@@ -354,6 +357,7 @@ class BookControllerTest {
                                                 fieldWithPath("message").type(STRING).description("응답 메시지"),
                                                 fieldWithPath("data[].id").type(NUMBER).description("도서 ID"),
                                                 fieldWithPath("data[].title").type(STRING).description("도서 제목"),
+                                                fieldWithPath("data[].author").type(STRING).description("도서 저자"),
                                                 fieldWithPath("data[].isbn13").type(STRING).description("도서 ISBN13"),
                                                 fieldWithPath("data[].thumbnailUrl").type(STRING).description("도서 썸네일 URL")
                                         ).build())));

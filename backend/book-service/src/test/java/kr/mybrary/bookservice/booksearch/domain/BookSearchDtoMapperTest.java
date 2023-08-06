@@ -80,6 +80,7 @@ class BookSearchDtoMapperTest {
         assertAll(
                 () -> assertThat(dto.getTitle()).isEqualTo(response.getTitle()),
                 () -> assertThat(dto.getSubTitle()).isEqualTo(NOT_PROVIDED_PHRASES),
+                () -> assertThat(dto.getAuthor()).isEqualTo(String.join(",", response.getAuthors())),
                 () -> assertThat(dto.getThumbnail()).isEqualTo(response.getThumbnail()),
                 () -> assertThat(dto.getDescription()).isEqualTo(response.getContents()),
                 () -> assertThat(dto.getIsbn10()).isEqualTo(ISBN_10),
@@ -257,6 +258,7 @@ class BookSearchDtoMapperTest {
         assertAll(
                 () -> assertThat(dto.getTitle()).isEqualTo(response.getTitle()),
                 () -> assertThat(dto.getSubTitle()).isEqualTo(response.getSubInfo().getSubTitle()),
+                () -> assertThat(dto.getAuthor()).isEqualTo(response.getAuthor()),
                 () -> assertThat(dto.getLink()).isEqualTo(response.getLink()),
                 () -> assertThat(dto.getThumbnail()).isEqualTo(response.getCover()),
                 () -> assertThat(dto.getDescription()).isEqualTo(response.getFullDescription()),

@@ -48,6 +48,7 @@ public interface BookDtoMapper {
     @Mapping(target = "title", source = "book.title")
     @Mapping(target = "isbn13", source = "book.isbn13")
     @Mapping(target = "thumbnailUrl", source = "book.thumbnailUrl")
+    @Mapping(target = "author", source = "book.author")
     BookInterestElementResponse bookInterestToBookInterestElementResponse(BookInterest bookInterest);
 
     @Named("mappingAuthors")

@@ -40,6 +40,7 @@ public interface BookSearchDtoMapper {
     @Mapping(target = "link", source = "url")
     @Mapping(target = "isbn10", source = "isbn", qualifiedByName = "getISBN10")
     @Mapping(target = "isbn13", source = "isbn", qualifiedByName = "getISBN13")
+    @Mapping(target = "author", expression = "java(String.join(\",\", kakaoBookSearchResponse.getAuthors()))")
     @Mapping(target = "authors", source = "authors", qualifiedByName = "mappingAuthorNames")
     @Mapping(target = "translators", source = "translators", qualifiedByName = "mappingTranslatorNames")
     @Mapping(target = "starRating", constant = "0.0")

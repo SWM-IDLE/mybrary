@@ -237,7 +237,8 @@ class BookDtoMapperTest {
                 () -> assertThat(target.getId()).isEqualTo(source.getBook().getId()),
                 () -> assertThat(target.getTitle()).isEqualTo(source.getBook().getTitle()),
                 () -> assertThat(target.getIsbn13()).isEqualTo(source.getBook().getIsbn13()),
-                () -> assertThat(target.getThumbnailUrl()).isEqualTo(source.getBook().getThumbnailUrl())
+                () -> assertThat(target.getThumbnailUrl()).isEqualTo(source.getBook().getThumbnailUrl()),
+                () -> assertThat(target.getAuthor()).isEqualTo(source.getBook().getAuthor())
         );
     }
 }

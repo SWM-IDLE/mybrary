@@ -64,6 +64,7 @@ class BookReadServiceTest {
         assertAll(
                 () -> assertThat(response.getTitle()).isEqualTo(book.getTitle()),
                 () -> assertThat(response.getIsbn13()).isEqualTo(book.getIsbn13()),
+                () -> assertThat(response.getAuthor()).isEqualTo(book.getAuthor()),
                 () -> assertThat(response.isInterested()).isEqualTo(true),
                 () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
                 () -> verify(platformBookSearchApiService, never()).searchBookDetailWithISBN(any())
@@ -88,6 +89,7 @@ class BookReadServiceTest {
         assertAll(
                 () -> assertThat(response.getTitle()).isEqualTo(book.getTitle()),
                 () -> assertThat(response.getIsbn13()).isEqualTo(book.getIsbn13()),
+                () -> assertThat(response.getAuthor()).isEqualTo(book.getAuthor()),
                 () -> assertThat(response.isInterested()).isEqualTo(false),
                 () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
                 () -> verify(platformBookSearchApiService, never()).searchBookDetailWithISBN(any())
@@ -117,6 +119,7 @@ class BookReadServiceTest {
         assertAll(
                 () -> assertThat(response.getTitle()).isEqualTo(bookSearchDetailResponse.getTitle()),
                 () -> assertThat(response.getIsbn13()).isEqualTo(bookSearchDetailResponse.getIsbn13()),
+                () -> assertThat(response.getAuthor()).isEqualTo(bookSearchDetailResponse.getAuthor()),
                 () -> assertThat(response.isInterested()).isEqualTo(false),
                 () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
                 () -> verify(platformBookSearchApiService, times(1)).searchBookDetailWithISBN(any()),
