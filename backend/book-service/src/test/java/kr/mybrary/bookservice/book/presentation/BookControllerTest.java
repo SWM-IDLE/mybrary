@@ -24,6 +24,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.domain.BookInterestService;
 import kr.mybrary.bookservice.book.domain.BookReadService;
@@ -31,6 +32,7 @@ import kr.mybrary.bookservice.book.domain.BookWriteService;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -294,6 +296,60 @@ class BookControllerTest {
                                                 fieldWithPath("data.userId").type(STRING).description("사용자 ID"),
                                                 fieldWithPath("data.isbn13").type(STRING).description("도서 ISBN13"),
                                                 fieldWithPath("data.interested").type(BOOLEAN).description("관심 여부")
+                                        ).build())));
+    }
+
+    @DisplayName("관심 도서를 조회한다.")
+    @Test
+    void getInterestBooks() throws Exception {
+
+        // given
+        BookInterestElementResponse response = BookDtoTestData.createBookInterestElementResponse();
+        String loginId = "LOGIN_USER_ID";
+        String userId = "USER_ID";
+
+        given(bookInterestService.getBookInterestList(any())).willReturn(List.of(response));
+
+        // when
+        ResultActions actions = mockMvc.perform(get("/api/v1/books/users/{userId}/interest", userId)
+                .header("USER-ID", loginId)
+                .param("order", "initial"));
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("관심 도서 목록 조회에 성공했습니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // document
+        actions
+                .andDo(document("find-all-interest-books",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("interest")
+                                        .summary("관심 도서를 조회한다.")
+                                        .description("쿼리 파라미터 order를 통해 정렬 순서를 지정할 수 있다. 초성순(initial), 등록순(registration), 발행일순(publication)이 있다."
+                                                + " 정렬이 필요없는 경우 order 파라미터를 생략할 수 있다.")
+                                        .requestHeaders(
+                                                headerWithName("USER-ID").description("사용자 ID")
+                                        )
+                                        .pathParameters(
+                                                parameterWithName("userId").type(SimpleType.STRING).description("사용자 ID")
+                                        )
+                                        .queryParameters(
+                                                parameterWithName("order").type(SimpleType.STRING).description("정렬 순서")
+                                        )
+                                        .responseSchema(Schema.schema("find_all_interest_books_response_body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data[].id").type(NUMBER).description("도서 ID"),
+                                                fieldWithPath("data[].title").type(STRING).description("도서 제목"),
+                                                fieldWithPath("data[].isbn13").type(STRING).description("도서 ISBN13"),
+                                                fieldWithPath("data[].thumbnailUrl").type(STRING).description("도서 썸네일 URL")
                                         ).build())));
     }
 }

@@ -5,6 +5,8 @@ import kr.mybrary.bookservice.book.domain.BookReadService;
 import kr.mybrary.bookservice.book.domain.BookWriteService;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
+import kr.mybrary.bookservice.book.persistence.BookOrderType;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
 import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -56,5 +58,17 @@ public class BookController {
 
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "관심 도서 처리에 성공했습니다.",
                 bookInterestService.handleBookInterest(serviceRequest)));
+    }
+
+    @GetMapping("/users/{userId}/interest")
+    public ResponseEntity getInterestBooks(
+            @PathVariable("userId") String userId,
+            @RequestHeader("USER-ID") String loginId,
+            @RequestParam(value = "order", required = false, defaultValue = "none") String order) {
+
+        BookMyInterestFindServiceRequest serviceRequest = BookMyInterestFindServiceRequest.of(userId, BookOrderType.of(order));
+
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "관심 도서 목록 조회에 성공했습니다.",
+                bookInterestService.getBookInterestList(serviceRequest)));
     }
 }

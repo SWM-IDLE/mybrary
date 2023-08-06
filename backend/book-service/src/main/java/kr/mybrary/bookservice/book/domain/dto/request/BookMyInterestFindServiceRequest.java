@@ -10,4 +10,11 @@ public class BookMyInterestFindServiceRequest {
 
     private String loginId;
     private BookOrderType bookOrderType;
+
+    public static BookMyInterestFindServiceRequest of(String loginId, BookOrderType bookOrderType) {
+        return BookMyInterestFindServiceRequest.builder()
+                .loginId(loginId)
+                .bookOrderType(bookOrderType)
+                .build();
+    }
 }
