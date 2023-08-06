@@ -42,4 +42,12 @@ public class MyBookReview extends BaseEntity {
     private Double starRating;
     private boolean deleted;
 
+    public static MyBookReview of(MyBook myBook, MyBookReviewCreateServiceRequest request) {
+        return MyBookReview.builder()
+                .myBook(myBook)
+                .book(myBook.getBook())
+                .content(request.getContent())
+                .starRating(request.getStarRating())
+                .build();
+    }
 }
