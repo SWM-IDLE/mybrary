@@ -37,6 +37,7 @@ public class Book extends BaseEntity {
 
     private String title;
     private String subTitle;
+    private String author;
     private String thumbnailUrl;
     private String link;
     @Column(unique = true)

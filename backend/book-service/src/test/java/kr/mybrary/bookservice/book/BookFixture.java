@@ -16,17 +16,18 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum BookFixture {
 
-    COMMON_BOOK(1L, "title", "subTitle", "thumbnailUrl", "link", "isbn10", "isbn13", 100, "publisher",
+    COMMON_BOOK(1L, "title", "subTitle", "author","thumbnailUrl", "link", "isbn10", "isbn13", 100, "publisher",
             LocalDateTime.now(), "description", "toc", 10, 11, 12, 13, 10000, 11000, 1, 1, 1, 4.5, 1, 3.5, 10,
             createBookCategory(), createBookAuthors(), createBookTranslators(), createBookInterest()),
 
-    COMMON_BOOK_WITHOUT_RELATION(null, "title", "subTitle", "thumbnailUrl", "link", "isbn10", "isbn13", 100, "publisher",
+    COMMON_BOOK_WITHOUT_RELATION(null, "title", "author","subTitle", "thumbnailUrl", "link", "isbn10", "isbn13", 100, "publisher",
             LocalDateTime.now(), "description", "toc", 10, 11, 12, 13, 10000, 11000, 1, 1, 1, 4.5, 1, 3.5, 10,
             null, null, null, null);
 
     private final Long id;
     private final String title;
     private final String subTitle;
+    private final String author;
     private final String thumbnailUrl;
     private final String link;
     private final String isbn10;
@@ -55,7 +56,7 @@ public enum BookFixture {
     private final List<BookInterest> bookInterests;
 
     public Book getBook() {
-        return Book.builder().id(id).title(title).subTitle(subTitle).thumbnailUrl(thumbnailUrl).link(link)
+        return Book.builder().id(id).title(title).subTitle(subTitle).author(author).thumbnailUrl(thumbnailUrl).link(link)
                 .isbn10(isbn10).isbn13(isbn13).pages(pages).publisher(publisher).publicationDate(publicationDate)
                 .description(description).toc(toc).weight(weight).sizeDepth(sizeDepth).sizeHeight(sizeHeight)
                 .sizeWidth(sizeWidth).priceSales(priceSales).priceStandard(priceStandard).holderCount(holderCount)
@@ -65,7 +66,7 @@ public enum BookFixture {
     }
 
     public BookBuilder getBookBuilder() {
-        return Book.builder().id(id).title(title).subTitle(subTitle).thumbnailUrl(thumbnailUrl).link(link)
+        return Book.builder().id(id).title(title).subTitle(subTitle).author(author).thumbnailUrl(thumbnailUrl).link(link)
                 .isbn10(isbn10).isbn13(isbn13).pages(pages).publisher(publisher).publicationDate(publicationDate)
                 .description(description).toc(toc).weight(weight).sizeDepth(sizeDepth).sizeHeight(sizeHeight)
                 .sizeWidth(sizeWidth).priceSales(priceSales).priceStandard(priceStandard).holderCount(holderCount)

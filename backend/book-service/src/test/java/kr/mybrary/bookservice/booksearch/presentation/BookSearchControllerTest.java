@@ -68,6 +68,7 @@ class BookSearchControllerTest {
                 .andExpect(jsonPath("$.data").isNotEmpty())
                 .andExpect(jsonPath("$.data.title").value(response.getTitle()))
                 .andExpect(jsonPath("$.data.subTitle").value(response.getSubTitle()))
+                .andExpect(jsonPath("$.data.author").value(response.getAuthor()))
                 .andExpect(jsonPath("$.data.thumbnail").value(response.getThumbnail()))
                 .andExpect(jsonPath("$.data.link").value(response.getLink()))
                 .andExpect(jsonPath("$.data.authors[0].name").value(response.getAuthors().get(0).getName()))
@@ -113,6 +114,7 @@ class BookSearchControllerTest {
                                                 fieldWithPath("message").type(STRING).description("응답 메시지"),
                                                 fieldWithPath("data.title").type(STRING).description("도서 제목"),
                                                 fieldWithPath("data.subTitle").type(STRING).description("도서 부제목"),
+                                                fieldWithPath("data.author").type(STRING).description("도서 저자 목록"),
                                                 fieldWithPath("data.thumbnail").type(STRING).description("도서 썸네일"),
                                                 fieldWithPath("data.link").type(STRING).description("도서 링크"),
                                                 fieldWithPath("data.authors[0].name").type(STRING).description("도서 저자 이름"),

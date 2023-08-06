@@ -12,6 +12,7 @@ public class BookSearchDetailResponse {
     private String subTitle;
     private String thumbnail;
     private String link;
+    private String author;
     private List<Author> authors;
     private List<Translator> translators;
     private Double starRating;

@@ -11,4 +11,5 @@ public class BookInterestElementResponse {
     private String title;
     private String isbn13;
     private String thumbnailUrl;
+    private String author;
 }

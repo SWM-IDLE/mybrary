@@ -13,6 +13,7 @@ public class BookCreateServiceRequest {
     private String subTitle;
     private String thumbnailUrl;
     private String link;
+    private String author;
     private List<Author> authors;
     private List<Translator> translators;
     private Double starRating;
