@@ -5,7 +5,6 @@ import java.util.List;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
-import kr.mybrary.bookservice.book.domain.dto.request.BookIsInterestedServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
 import kr.mybrary.bookservice.book.persistence.BookOrderType;
@@ -181,13 +180,6 @@ public class BookDtoTestData {
                 .title("test_title")
                 .isbn13("9731111111111")
                 .thumbnailUrl("test_thumbnailUrl")
-                .build();
-    }
-
-    public static BookIsInterestedServiceRequest createBookIsInterestedServiceRequest() {
-        return BookIsInterestedServiceRequest.builder()
-                .userId("test_user_id")
-                .isbn13("9731111111111")
                 .build();
     }
 }
