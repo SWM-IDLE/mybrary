@@ -55,9 +55,49 @@ class BookInterestRepositoryTest {
         );
     }
 
-    @DisplayName("사용자 ID를 통해 관심 도서를 조회한다. (기본/초성순/발행일순/등록순)")
+    @DisplayName("사용자 ID를 통해 관심 도서를 조회한다. - 정렬 조건 없음")
     @Test
-    void findInterestBookByUserId() {
+    void findInterestBookByUserIdAndOrderByNone() {
+
+        // given
+        String loginId = "LOGIN_USER_ID";
+        Book book_1 = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().title("title1")
+                .isbn10("isbn10_1").isbn13("isbn13_1")
+                .publicationDate(LocalDateTime.of(2023, 1, 1, 0, 0)).build());
+
+        Book book_2 = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().title("title2")
+                .isbn10("isbn10_2").isbn13("isbn13_2")
+                .publicationDate(LocalDateTime.of(2023, 3, 1, 0, 0)).build());
+
+        Book book_3 = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().title("title3")
+                .isbn10("isbn10_3").isbn13("isbn13_3")
+                .publicationDate(LocalDateTime.of(2023, 2, 1, 0, 0)).build());
+
+        BookInterest bookInterest_1 = entityManager.persist(BookInterestFixture.BOOK_INTEREST_WITHOUT_RELATION
+                .getBookInterestBuilder().book(book_1).userId(loginId).build());
+
+        BookInterest bookInterest_2 = entityManager.persist(BookInterestFixture.BOOK_INTEREST_WITHOUT_RELATION
+                .getBookInterestBuilder().book(book_2).userId(loginId).build());
+
+        BookInterest bookInterest_3 = entityManager.persist(BookInterestFixture.BOOK_INTEREST_WITHOUT_RELATION
+                .getBookInterestBuilder().book(book_3).userId(loginId).build());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        List<BookInterest> SortByNone = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.NONE);
+
+        // given
+        assertAll(
+                () -> assertThat(SortByNone.size()).isEqualTo(3),
+                () -> assertThat(SortByNone).extracting("id")
+                        .containsExactly(bookInterest_1.getId(), bookInterest_2.getId(), bookInterest_3.getId())
+        );
+    }
+    @DisplayName("사용자 ID를 통해 관심 도서를 조회한다. - 초성순 정렬")
+    @Test
+    void findInterestBookByUserIdAndOrderByInitial() {
 
         // given
         String loginId = "LOGIN_USER_ID";
@@ -87,24 +127,92 @@ class BookInterestRepositoryTest {
 
         // when
         List<BookInterest> sortByInitial = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.INITIAL);
-        List<BookInterest> sortByPublication = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.PUBLICATION);
-        List<BookInterest> SortByRegistration = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.REGISTRATION);
-        List<BookInterest> SortByNone = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.NONE);
 
         // given
         assertAll(
                 () -> assertThat(sortByInitial.size()).isEqualTo(3),
-                () -> assertThat(sortByPublication.size()).isEqualTo(3),
-                () -> assertThat(SortByRegistration.size()).isEqualTo(3),
-                () -> assertThat(SortByNone.size()).isEqualTo(3),
                 () -> assertThat(sortByInitial).extracting("id")
-                        .containsExactly(bookInterest_1.getId(), bookInterest_2.getId(), bookInterest_3.getId()),
-                () -> assertThat(sortByPublication).extracting("id")
-                        .containsExactly(bookInterest_2.getId(), bookInterest_3.getId(), bookInterest_1.getId()),
-                () -> assertThat(SortByRegistration).extracting("id")
-                        .containsExactly(bookInterest_3.getId(), bookInterest_2.getId(), bookInterest_1.getId()),
-                () -> assertThat(SortByNone).extracting("id")
                         .containsExactly(bookInterest_1.getId(), bookInterest_2.getId(), bookInterest_3.getId())
+        );
+    }
+    @DisplayName("사용자 ID를 통해 관심 도서를 조회한다. - 발행일순 정렬")
+    @Test
+    void findInterestBookByUserIdAndOrderByPublication() {
+
+        // given
+        String loginId = "LOGIN_USER_ID";
+        Book book_1 = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().title("title1")
+                .isbn10("isbn10_1").isbn13("isbn13_1")
+                .publicationDate(LocalDateTime.of(2023, 1, 1, 0, 0)).build());
+
+        Book book_2 = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().title("title2")
+                .isbn10("isbn10_2").isbn13("isbn13_2")
+                .publicationDate(LocalDateTime.of(2023, 3, 1, 0, 0)).build());
+
+        Book book_3 = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().title("title3")
+                .isbn10("isbn10_3").isbn13("isbn13_3")
+                .publicationDate(LocalDateTime.of(2023, 2, 1, 0, 0)).build());
+
+        BookInterest bookInterest_1 = entityManager.persist(BookInterestFixture.BOOK_INTEREST_WITHOUT_RELATION
+                .getBookInterestBuilder().book(book_1).userId(loginId).build());
+
+        BookInterest bookInterest_2 = entityManager.persist(BookInterestFixture.BOOK_INTEREST_WITHOUT_RELATION
+                .getBookInterestBuilder().book(book_2).userId(loginId).build());
+
+        BookInterest bookInterest_3 = entityManager.persist(BookInterestFixture.BOOK_INTEREST_WITHOUT_RELATION
+                .getBookInterestBuilder().book(book_3).userId(loginId).build());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        List<BookInterest> sortByPublication = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.PUBLICATION);
+
+        // given
+        assertAll(
+                () -> assertThat(sortByPublication.size()).isEqualTo(3),
+                () -> assertThat(sortByPublication).extracting("id")
+                        .containsExactly(bookInterest_2.getId(), bookInterest_3.getId(), bookInterest_1.getId())
+        );
+    }
+    @DisplayName("사용자 ID를 통해 관심 도서를 조회한다. - 등록순 정렬")
+    @Test
+    void findInterestBookByUserIdAndOrderByRegistration() {
+
+        // given
+        String loginId = "LOGIN_USER_ID";
+        Book book_1 = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().title("title1")
+                .isbn10("isbn10_1").isbn13("isbn13_1")
+                .publicationDate(LocalDateTime.of(2023, 1, 1, 0, 0)).build());
+
+        Book book_2 = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().title("title2")
+                .isbn10("isbn10_2").isbn13("isbn13_2")
+                .publicationDate(LocalDateTime.of(2023, 3, 1, 0, 0)).build());
+
+        Book book_3 = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().title("title3")
+                .isbn10("isbn10_3").isbn13("isbn13_3")
+                .publicationDate(LocalDateTime.of(2023, 2, 1, 0, 0)).build());
+
+        BookInterest bookInterest_1 = entityManager.persist(BookInterestFixture.BOOK_INTEREST_WITHOUT_RELATION
+                .getBookInterestBuilder().book(book_1).userId(loginId).build());
+
+        BookInterest bookInterest_2 = entityManager.persist(BookInterestFixture.BOOK_INTEREST_WITHOUT_RELATION
+                .getBookInterestBuilder().book(book_2).userId(loginId).build());
+
+        BookInterest bookInterest_3 = entityManager.persist(BookInterestFixture.BOOK_INTEREST_WITHOUT_RELATION
+                .getBookInterestBuilder().book(book_3).userId(loginId).build());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        List<BookInterest> SortByRegistration = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.REGISTRATION);
+
+        // given
+        assertAll(
+                () -> assertThat(SortByRegistration.size()).isEqualTo(3),
+                () -> assertThat(SortByRegistration).extracting("id")
+                        .containsExactly(bookInterest_3.getId(), bookInterest_2.getId(), bookInterest_1.getId())
         );
     }
 
