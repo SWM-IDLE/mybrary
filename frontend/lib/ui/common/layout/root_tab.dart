@@ -65,8 +65,53 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: GREY_01_COLOR,
+              width: 1.0,
+            ),
+          ),
+        ),
+        child: BottomNavigationBar(
+          elevation: 0,
+          backgroundColor: WHITE_COLOR,
+          selectedItemColor: BLACK_COLOR,
+          unselectedItemColor: GREY_03_COLOR,
+          selectedFontSize: 12,
+          selectedLabelStyle: TextStyle(fontWeight: FontWeight.w700),
+          unselectedFontSize: 12,
+          type: BottomNavigationBarType.fixed,
+          onTap: (int index) {
+            tabController.animateTo(index);
+          },
+          currentIndex: index,
+          items: bottomNavigationBarItemList
+              .map((e) => BottomNavigationBarItem(
+                    label: e['label'],
+                    icon: Column(
+                      children: [
+                        SvgPicture.asset(
+                          e['iconPath']!,
+                          colorFilter:
+                              ColorFilter.mode(GREY_03_COLOR, BlendMode.srcIn),
+                        ),
+                        SizedBox(height: 4.0),
+                      ],
+                    ),
+                    activeIcon: Column(
+                      children: [
+                        SvgPicture.asset(e['iconPath']!),
+                        SizedBox(height: 4.0),
+                      ],
+                    ),
+                  ))
+              .toList(),
+        ),
+      ),
       child: TabBarView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         controller: tabController,
         children: [
           HomeScreen(),
@@ -76,39 +121,6 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
           ),
           ProfileScreen(),
         ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: BLACK_COLOR,
-        unselectedItemColor: GREY_03_COLOR,
-        selectedFontSize: 12,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.w700),
-        unselectedFontSize: 12,
-        type: BottomNavigationBarType.fixed,
-        onTap: (int index) {
-          tabController.animateTo(index);
-        },
-        currentIndex: index,
-        items: bottomNavigationBarItemList
-            .map((e) => BottomNavigationBarItem(
-                  label: e['label'],
-                  icon: Column(
-                    children: [
-                      SvgPicture.asset(
-                        e['iconPath']!,
-                        colorFilter:
-                            ColorFilter.mode(GREY_03_COLOR, BlendMode.srcIn),
-                      ),
-                      SizedBox(height: 4.0),
-                    ],
-                  ),
-                  activeIcon: Column(
-                    children: [
-                      SvgPicture.asset(e['iconPath']!),
-                      SizedBox(height: 4.0),
-                    ],
-                  ),
-                ))
-            .toList(),
       ),
     );
   }

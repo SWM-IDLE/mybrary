@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mybrary/data/datasource/search/search_datasource.dart';
-import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/res/colors/color.dart';
-import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_appbar.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_box.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_description.dart';
@@ -20,7 +18,8 @@ class SearchIsbnScanScreen extends StatefulWidget {
 }
 
 class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
-  BookSearchData _bookSearchIsbnData = BookSearchData.fromJson({});
+  final SearchDataSource _searchDataSource = SearchDataSource();
+  BookSearchResult _bookSearchIsbnData = BookSearchResult.fromJson({});
   MobileScannerController isbnCameraController = MobileScannerController(
     detectionSpeed: DetectionSpeed.normal,
     facing: CameraFacing.back,
@@ -80,14 +79,14 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
                     if (barcode.rawValue != null) {
                       _fetchBookSearchIsbnResponse(barcode.rawValue!)
                           .then((value) {
-                        _bookSearchIsbnData = value;
+                        // _bookSearchIsbnData = value;
                       }).catchError((error) {
                         return;
                       });
                     }
 
                     if (_bookSearchIsbnData.title != null) {
-                      onNavigateToSearchDetailScreen();
+                      // onNavigateToSearchDetailScreen();
                       isbnCameraController.dispose();
                     }
                   }
@@ -112,23 +111,23 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
     );
   }
 
-  void onNavigateToSearchDetailScreen() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SearchDetailScreen(
-          bookSearchData: _bookSearchIsbnData,
-        ),
-      ),
-    );
-  }
+  // void onNavigateToSearchDetailScreen() {
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (_) => SearchDetailScreen(
+  //         bookSearchData: _bookSearchIsbnData,
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Future<BookSearchData> _fetchBookSearchIsbnResponse(String isbn) async {
-    BookSearchResponse bookSearchResponse =
-        await SearchDataSource.getBookSearchResponse(
-            '${getApi(API.getBookSearchIsbn)}?isbn=$isbn');
+  Future<List<BookSearchResult>> _fetchBookSearchIsbnResponse(
+      String isbn) async {
+    BookSearchResponseData bookSearchResponse = await _searchDataSource
+        .getBookSearchResponse('${getApi(API.getBookSearchIsbn)}?isbn=$isbn');
 
-    final bookSearchData = bookSearchResponse.data!.bookSearchResult![0];
+    final bookSearchData = bookSearchResponse.bookSearchResult!;
 
     return bookSearchData;
   }

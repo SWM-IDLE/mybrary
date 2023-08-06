@@ -1,48 +1,46 @@
-import 'package:mybrary/data/model/search/book_search_data.dart';
-
 class BookSearchResponse {
   String status;
   String message;
-  BookSearchResponseData? data;
+  BookSearchResponseData data;
 
-  BookSearchResponse({
-    required this.status,
-    required this.message,
-    required this.data,
-  });
+  BookSearchResponse(
+      {required this.status, required this.message, required this.data});
 
   factory BookSearchResponse.fromJson(Map<String, dynamic> json) {
     return BookSearchResponse(
-        status: json['status'],
-        message: json['message'],
-        data: json['data'] != null
-            ? BookSearchResponseData.fromJson(json['data'])
-            : null);
+      status: json['status'],
+      message: json['message'],
+      data: BookSearchResponseData.fromJson(json['data']),
+    );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['status'] = status;
     data['message'] = message;
-    data['data'] = this.data!.toJson();
+    data['data'] = this.data.toJson();
     return data;
   }
 }
 
 class BookSearchResponseData {
-  List<BookSearchData>? bookSearchResult;
+  List<BookSearchResult>? bookSearchResult;
   String? nextRequestUrl;
 
-  BookSearchResponseData({this.bookSearchResult, this.nextRequestUrl});
+  BookSearchResponseData({
+    this.bookSearchResult,
+    this.nextRequestUrl,
+  });
 
-  BookSearchResponseData.fromJson(Map<String, dynamic> json) {
-    if (json['bookSearchResult'] != null) {
-      bookSearchResult = <BookSearchData>[];
-      json['bookSearchResult'].forEach((v) {
-        bookSearchResult!.add(BookSearchData.fromJson(v));
-      });
-    }
-    nextRequestUrl = json['nextRequestUrl'];
+  factory BookSearchResponseData.fromJson(Map<String, dynamic> json) {
+    return BookSearchResponseData(
+      bookSearchResult: json['bookSearchResult'] != null
+          ? (json['bookSearchResult'] as List)
+              .map((i) => BookSearchResult.fromJson(i))
+              .toList()
+          : null,
+      nextRequestUrl: json['nextRequestUrl'],
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +50,50 @@ class BookSearchResponseData {
           bookSearchResult!.map((v) => v.toJson()).toList();
     }
     data['nextRequestUrl'] = nextRequestUrl;
+    return data;
+  }
+}
+
+class BookSearchResult {
+  String? title;
+  String? description;
+  String? author;
+  String? isbn13;
+  String? thumbnailUrl;
+  String? publicationDate;
+  double? starRating;
+
+  BookSearchResult({
+    this.title,
+    this.description,
+    this.author,
+    this.isbn13,
+    this.thumbnailUrl,
+    this.publicationDate,
+    this.starRating,
+  });
+
+  factory BookSearchResult.fromJson(Map<String, dynamic> json) {
+    return BookSearchResult(
+      title: json['title'],
+      description: json['description'],
+      author: json['author'],
+      isbn13: json['isbn13'],
+      thumbnailUrl: json['thumbnailUrl'],
+      publicationDate: json['publicationDate'],
+      starRating: json['starRating'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['title'] = title;
+    data['description'] = description;
+    data['author'] = author;
+    data['isbn13'] = isbn13;
+    data['thumbnailUrl'] = thumbnailUrl;
+    data['publicationDate'] = publicationDate;
+    data['starRating'] = starRating;
     return data;
   }
 }

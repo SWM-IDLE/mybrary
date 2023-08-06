@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/model/search/book_search_data.dart';
+import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/res/colors/color.dart';
-import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
 
 class SearchBookListInfo extends StatelessWidget {
-  final List<BookSearchData> bookSearchDataList;
+  final List<BookSearchResult> bookSearchDataList;
   final ScrollController scrollController;
 
   const SearchBookListInfo({
@@ -19,7 +18,7 @@ class SearchBookListInfo extends StatelessWidget {
     return Expanded(
       child: Scrollbar(
         controller: scrollController,
-        child: ListView.builder(
+        child: ListView.separated(
           controller: scrollController,
           itemCount: bookSearchDataList.length,
           itemBuilder: (context, index) {
@@ -29,14 +28,14 @@ class SearchBookListInfo extends StatelessWidget {
 
             return GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => SearchDetailScreen(
-                      bookSearchData: searchBookData,
-                    ),
-                  ),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (_) => SearchDetailScreen(
+                //       bookSearchData: searchBookData,
+                //     ),
+                //   ),
+                // );
               },
               behavior: HitTestBehavior.opaque,
               child: Column(
@@ -57,7 +56,8 @@ class SearchBookListInfo extends StatelessWidget {
                             height: 140,
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: BOOK_BORDER_COLOR,
+                                color: GREY_01_COLOR,
+                                width: 1,
                               ),
                               borderRadius: BorderRadius.circular(8.0),
                               image: DecorationImage(
@@ -84,9 +84,7 @@ class SearchBookListInfo extends StatelessWidget {
                                   height: 4.0,
                                 ),
                                 bookInfo(
-                                  infoText: bookAuthorsOrTranslators(
-                                    searchBookData.authors!,
-                                  ),
+                                  infoText: searchBookData.author!,
                                   fontSize: 14.0,
                                   fontColor: BOOK_DESCRIPTION_COLOR,
                                 ),
@@ -99,27 +97,6 @@ class SearchBookListInfo extends StatelessWidget {
                                   fontSize: 13.0,
                                   fontColor: BOOK_DESCRIPTION_COLOR,
                                 ),
-                                SizedBox(
-                                  height: 8.0,
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      'assets/img/icon/star.png',
-                                      color: BOOK_STAR_COLOR,
-                                      width: 20.0,
-                                    ),
-                                    SizedBox(
-                                      width: 6.0,
-                                    ),
-                                    bookInfo(
-                                      infoText: '${searchBookData.starRating!}',
-                                      fontSize: 18.0,
-                                      fontColor: BOOK_STAR_RATING_COLOR,
-                                    ),
-                                  ],
-                                ),
                               ],
                             ),
                           ),
@@ -127,13 +104,15 @@ class SearchBookListInfo extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Divider(
-                    thickness: 1,
-                    height: 1,
-                    color: DIVIDER_COLOR,
-                  ),
                 ],
               ),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return const Divider(
+              thickness: 1,
+              height: 1,
+              color: GREY_01_COLOR,
             );
           },
         ),

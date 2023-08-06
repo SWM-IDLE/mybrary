@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/datasource/search/search_datasource.dart';
-import 'package:mybrary/data/model/search/book_search_data.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/res/colors/color.dart';
-import 'package:mybrary/ui/search/components/search_header.dart';
-import 'package:mybrary/ui/search/components/search_loading.dart';
-import 'package:mybrary/ui/search/components/search_not_found.dart';
+import 'package:mybrary/res/constants/style.dart';
+import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/search/components/search_popular_keyword.dart';
 import 'package:mybrary/ui/search/search_book_list/search_book_list.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,6 +19,8 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  final SearchDataSource _searchDataSource = SearchDataSource();
+
   @override
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(
@@ -34,8 +35,8 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
   }
 
-  late Future<BookSearchResponse> _bookSearchResponse;
-  late final List<BookSearchData> _bookSearchData = [];
+  late Future<BookSearchResponseData> _bookSearchResponse;
+  late final List<BookSearchResult> _bookSearchData = [];
   late String _bookSearchNextUrl;
 
   bool _isSearching = false;
@@ -65,70 +66,82 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void dispose() {
+    _bookSearchKeywordController.clear();
     _bookSearchKeywordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
+    return DefaultLayout(
+      appBar: AppBar(
+        toolbarHeight: 50.0,
+        backgroundColor: WHITE_COLOR,
+        elevation: 0,
+        title: const Text('검색'),
+        titleTextStyle: commonSubTitleStyle.copyWith(
+          color: BLACK_COLOR,
+        ),
+        centerTitle: true,
+        foregroundColor: BLACK_COLOR,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: SvgPicture.asset('assets/svg/icon/barcode_scan.svg'),
+          ),
+        ],
+      ),
+      child: SafeArea(
         bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SearchHeader(
-              isSearching: _isSearching,
-              bookSearchController: _bookSearchKeywordController,
-              onSubmittedSearchKeyword: _onSubmittedSearchKeyword,
-              onPressedIsbnScan: onIsbnScan,
-              onPressedTextClear: _onPressedTextClear,
-              onPressedSearchCancel: _onPressedSearchCancel,
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 14.0,
+                horizontal: 18.0,
+              ),
+              child: TextField(
+                textInputAction: TextInputAction.search,
+                controller: _bookSearchKeywordController,
+                cursorColor: primaryColor,
+                onSubmitted: (value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SearchBookList(
+                        bookSearchKeyword: value,
+                      ),
+                    ),
+                  ).then(
+                    (value) => _bookSearchKeywordController.clear(),
+                  );
+                },
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 6.0,
+                  ),
+                  hintText: '책, 저자, 회원을 검색해보세요.',
+                  hintStyle: commonSubRegularStyle,
+                  filled: true,
+                  fillColor: GREY_COLOR_OPACITY_TWO,
+                  focusedBorder: searchInputBorderStyle,
+                  enabledBorder: searchInputBorderStyle,
+                  focusColor: GREY_COLOR,
+                  prefixIcon: SvgPicture.asset(
+                    'assets/svg/icon/search_small.svg',
+                    fit: BoxFit.scaleDown,
+                  ),
+                ),
+              ),
             ),
             const SizedBox(
               height: 8.0,
             ),
-            if (!_isSearching)
-              SearchPopularKeyword(
-                bookSearchKeywordController: _bookSearchKeywordController,
-                onBookSearchBinding: getBookSearchPopularKeywordResponse,
-              )
-            else
-              FutureBuilder<BookSearchResponse>(
-                future: _bookSearchResponse,
-                builder: (context, snapshot) {
-                  // 서버 요청에 문제가 있을 경우
-                  if (snapshot.hasError) {
-                    return const SearchNotFound();
-                  }
-
-                  // 서버 요청을 기다리는 경우
-                  if (!snapshot.hasData) {
-                    return const SearchLoading();
-                  }
-
-                  // 서버 요청이 완료된 경우
-                  if (snapshot.hasData) {
-                    BookSearchResponse bookSearchResponse = snapshot.data!;
-                    String bookSearchNextRequestUrl =
-                        bookSearchResponse.data!.nextRequestUrl!;
-
-                    // 초기 검색 후 데이터 저장
-                    if (_bookSearchData.isEmpty) {
-                      _bookSearchData
-                          .addAll(bookSearchResponse.data!.bookSearchResult!);
-                      _bookSearchNextUrl = bookSearchNextRequestUrl;
-                    }
-
-                    return SearchBookList(
-                      bookSearchDataList: _bookSearchData,
-                      scrollController: _searchScrollController,
-                    );
-                  }
-
-                  return const SearchNotFound();
-                },
-              ),
+            SearchPopularKeyword(
+              bookSearchKeywordController: _bookSearchKeywordController,
+              onBookSearchBinding: getBookSearchPopularKeywordResponse,
+            ),
           ],
         ),
       ),
@@ -140,52 +153,61 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       if (popularKeyword != "") {
         isBinding = true;
-        _bookSearchResponse = SearchDataSource.getBookSearchResponse(
-            '${getApi(API.getBookSearchKeyword)}?keyword=$popularKeyword');
+        _bookSearchResponse = _searchDataSource.getBookSearchResponse(
+            '${getBookServiceApi(API.getBookSearchKeyword)}?keyword=$popularKeyword');
         _isSearching = true;
       }
     });
   }
 
-  void _onSubmittedSearchKeyword(value) {
-    setState(() {
-      _bookSearchKeywordController.text = value;
-      _bookSearchResponse = _fetchBookSearchKeywordResponse();
-      _isSearching = true;
-    });
-  }
+  // void _onSubmittedSearchKeyword(value) {
+  //   setState(() {
+  //     _bookSearchKeywordController.text = value;
+  //     _bookSearchResponse = _fetchBookSearchKeywordResponse();
+  //     _isSearching = true;
+  //   });
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (_) => SearchBookList(
+  //         bookSearchKeyword: _bookSearchKeywordController.text,
+  //         bookSearchController: _bookSearchKeywordController,
+  //         onSubmittedSearchKeyword: _onSubmittedSearchKeyword,
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  void _onPressedTextClear() {
-    setState(() {
-      _bookSearchKeywordController.clear();
-    });
-  }
+  // void _onPressedTextClear() {
+  //   setState(() {
+  //     _bookSearchKeywordController.clear();
+  //   });
+  // }
+  //
+  // void _onPressedSearchCancel() {
+  //   setState(() {
+  //     _bookSearchKeywordController.clear();
+  //     _bookSearchData.clear();
+  //     _isSearching = false;
+  //   });
+  // }
 
-  void _onPressedSearchCancel() {
-    setState(() {
-      _bookSearchKeywordController.clear();
-      _bookSearchData.clear();
-      _isSearching = false;
-    });
-  }
-
-  Future<BookSearchResponse> _fetchBookSearchKeywordResponse() async {
-    BookSearchResponse bookSearchResponse =
-        await SearchDataSource.getBookSearchResponse(
-            '${getApi(API.getBookSearchKeyword)}?keyword=${_bookSearchKeywordController.text}');
+  Future<BookSearchResponseData> _fetchBookSearchKeywordResponse() async {
+    BookSearchResponseData bookSearchResponse =
+        await _searchDataSource.getBookSearchResponse(
+            '${getBookServiceApi(API.getBookSearchKeyword)}?keyword=${_bookSearchKeywordController.text}');
 
     return bookSearchResponse;
   }
 
   Future<void> _fetchBookSearchNextUrlResponse() async {
-    BookSearchResponse additionalBookSearchResponse =
-        await SearchDataSource.getBookSearchResponse(
-            '${getApi(API.getBookService)}$_bookSearchNextUrl');
+    BookSearchResponseData additionalBookSearchResponse =
+        await _searchDataSource.getBookSearchResponse(
+            '${getBookServiceApi(API.getBookService)}$_bookSearchNextUrl');
 
     setState(() {
-      _bookSearchData
-          .addAll(additionalBookSearchResponse.data!.bookSearchResult!);
-      _bookSearchNextUrl = additionalBookSearchResponse.data!.nextRequestUrl!;
+      _bookSearchData.addAll(additionalBookSearchResponse.bookSearchResult!);
+      _bookSearchNextUrl = additionalBookSearchResponse.nextRequestUrl!;
     });
   }
 
