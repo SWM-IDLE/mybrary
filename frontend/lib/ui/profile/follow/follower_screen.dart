@@ -31,10 +31,8 @@ class _FollowerScreenState extends State<FollowerScreen>
 
   Set<String> notFollowingUsers = {};
 
-  bool isFollowingUser(String loginId) => !notFollowingUsers.contains(loginId);
-
   bool isFollowing(String loginId) {
-    return isFollowingUser(loginId);
+    return !notFollowingUsers.contains(loginId);
   }
 
   void onPressedAddFollowingUser(String loginId) {
