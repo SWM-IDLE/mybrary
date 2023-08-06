@@ -10,6 +10,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.List;
 import java.util.Optional;
 import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.BookFixture;
@@ -46,7 +47,7 @@ class BookReadServiceTest {
 
 
     @Test
-    @DisplayName("DB애서 ISBN을 통해서 도서 상세 정보를 가져온다.")
+    @DisplayName("DB애서 ISBN을 통해서 도서 상세 정보를 가져온다. + 로그인 유저가 해당 도서를 관심도서로 등록한 경우")
     void getBookByISBN() {
 
         // given
@@ -57,16 +58,43 @@ class BookReadServiceTest {
                 .willReturn(Optional.of(book));
 
         // when
-        BookDetailServiceResponse bookDetailByISBN = bookReadService.getBookDetailByISBN(request);
+        BookDetailServiceResponse response = bookReadService.getBookDetailByISBN(request);
 
         // then
         assertAll(
-                () -> assertThat(bookDetailByISBN.getTitle()).isEqualTo(book.getTitle()),
-                () -> assertThat(bookDetailByISBN.getIsbn13()).isEqualTo(book.getIsbn13()),
+                () -> assertThat(response.getTitle()).isEqualTo(book.getTitle()),
+                () -> assertThat(response.getIsbn13()).isEqualTo(book.getIsbn13()),
+                () -> assertThat(response.isInterested()).isEqualTo(true),
                 () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
                 () -> verify(platformBookSearchApiService, never()).searchBookDetailWithISBN(any())
         );
     }
+
+    @Test
+    @DisplayName("DB애서 ISBN을 통해서 도서 상세 정보를 가져온다. + 로그인 유저가 해당 도서를 관심도서로 하지 않은 경우")
+    void getBookByISBN2() {
+
+        // given
+        BookDetailServiceRequest request = BookDtoTestData.createBookDetailServiceRequest();
+        Book book = BookFixture.COMMON_BOOK.getBookBuilder().bookInterests(List.of()).build();
+
+        given(bookRepository.findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()))
+                .willReturn(Optional.of(book));
+
+        // when
+        BookDetailServiceResponse response = bookReadService.getBookDetailByISBN(request);
+
+        // then
+        assertAll(
+                () -> assertThat(response.getTitle()).isEqualTo(book.getTitle()),
+                () -> assertThat(response.getIsbn13()).isEqualTo(book.getIsbn13()),
+                () -> assertThat(response.isInterested()).isEqualTo(false),
+                () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
+                () -> verify(platformBookSearchApiService, never()).searchBookDetailWithISBN(any())
+        );
+    }
+
+
 
     @Test
     @DisplayName("DB애서 ISBN을 통해서 도서 상세 조회 시, 도서가 존재 하지 않으면 도서 API를 호출하고, 도서를 저장한다.")
@@ -83,12 +111,13 @@ class BookReadServiceTest {
         doNothing().when(bookWriteService).create(any());
 
         // when
-        BookDetailServiceResponse bookDetailByISBN = bookReadService.getBookDetailByISBN(request);
+        BookDetailServiceResponse response = bookReadService.getBookDetailByISBN(request);
 
         // then
         assertAll(
-                () -> assertThat(bookDetailByISBN.getTitle()).isEqualTo(bookSearchDetailResponse.getTitle()),
-                () -> assertThat(bookDetailByISBN.getIsbn13()).isEqualTo(bookSearchDetailResponse.getIsbn13()),
+                () -> assertThat(response.getTitle()).isEqualTo(bookSearchDetailResponse.getTitle()),
+                () -> assertThat(response.getIsbn13()).isEqualTo(bookSearchDetailResponse.getIsbn13()),
+                () -> assertThat(response.isInterested()).isEqualTo(false),
                 () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
                 () -> verify(platformBookSearchApiService, times(1)).searchBookDetailWithISBN(any()),
                 () -> verify(bookWriteService, times(1)).create(any())

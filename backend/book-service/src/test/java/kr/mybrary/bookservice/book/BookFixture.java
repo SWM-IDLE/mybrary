@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.Book.BookBuilder;
+import kr.mybrary.bookservice.book.persistence.BookInterest;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookCategory;
 import kr.mybrary.bookservice.book.persistence.bookInfo.Author;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
@@ -17,11 +18,11 @@ public enum BookFixture {
 
     COMMON_BOOK(1L, "title", "subTitle", "thumbnailUrl", "link", "isbn10", "isbn13", 100, "publisher",
             LocalDateTime.now(), "description", "toc", 10, 11, 12, 13, 10000, 11000, 1, 1, 1, 4.5, 1, 3.5, 10,
-            createBookCategory(), createBookAuthors(), createBookTranslators()),
+            createBookCategory(), createBookAuthors(), createBookTranslators(), createBookInterest()),
 
     COMMON_BOOK_WITHOUT_RELATION(null, "title", "subTitle", "thumbnailUrl", "link", "isbn10", "isbn13", 100, "publisher",
             LocalDateTime.now(), "description", "toc", 10, 11, 12, 13, 10000, 11000, 1, 1, 1, 4.5, 1, 3.5, 10,
-            null, null, null);
+            null, null, null, null);
 
     private final Long id;
     private final String title;
@@ -51,6 +52,7 @@ public enum BookFixture {
     private final BookCategory bookCategory;
     private final List<BookAuthor> bookAuthors;
     private final List<BookTranslator> bookTranslators;
+    private final List<BookInterest> bookInterests;
 
     public Book getBook() {
         return Book.builder().id(id).title(title).subTitle(subTitle).thumbnailUrl(thumbnailUrl).link(link)
@@ -59,7 +61,7 @@ public enum BookFixture {
                 .sizeWidth(sizeWidth).priceSales(priceSales).priceStandard(priceStandard).holderCount(holderCount)
                 .readCount(readCount).interestCount(interestCount).starRating(starRating).reviewCount(reviewCount)
                 .bookAuthors(bookAuthors).aladinStarRating(aladinStarRating).aladinReviewCount(aladinReviewCount)
-                .bookCategory(bookCategory).bookTranslators(bookTranslators).build();
+                .bookCategory(bookCategory).bookTranslators(bookTranslators).bookInterests(bookInterests).build();
     }
 
     public BookBuilder getBookBuilder() {
@@ -69,7 +71,7 @@ public enum BookFixture {
                 .sizeWidth(sizeWidth).priceSales(priceSales).priceStandard(priceStandard).holderCount(holderCount)
                 .readCount(readCount).interestCount(interestCount).starRating(starRating).reviewCount(reviewCount)
                 .bookAuthors(bookAuthors).aladinStarRating(aladinStarRating).aladinReviewCount(aladinReviewCount)
-                .bookCategory(bookCategory).bookTranslators(bookTranslators);
+                .bookCategory(bookCategory).bookTranslators(bookTranslators).bookInterests(bookInterests);
     }
 
 
@@ -101,5 +103,17 @@ public enum BookFixture {
         return BookCategory
                 .builder().cid(14).name("test_category")
                 .build();
+    }
+
+    private static List<BookInterest> createBookInterest() {
+        BookInterest bookInterest_1 = BookInterest
+                .builder().book(Book.builder().build()).userId("LOGIN_USER_ID")
+                .build();
+
+        BookInterest bookInterest_2 = BookInterest
+                .builder().book(Book.builder().build()).userId("OTHER_USER_ID")
+                .build();
+
+        return new ArrayList<>(List.of(bookInterest_1, bookInterest_2));
     }
 }

@@ -3,7 +3,6 @@ package kr.mybrary.bookservice.book.domain;
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
-import kr.mybrary.bookservice.book.domain.dto.request.BookIsInterestedServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookInterest;
@@ -50,13 +49,6 @@ public class BookInterestService {
                 .stream()
                 .map(BookDtoMapper.INSTANCE::bookInterestToBookInterestElementResponse)
                 .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public boolean isBookInterested(BookIsInterestedServiceRequest request) {
-        Book book = bookReadService.getRegisteredBookByISBN13(request.getIsbn13());
-
-        return bookInterestRepository.existsByBookAndUserId(book, request.getUserId());
     }
 
     private BookInterestHandleResponseBuilder makeBookHandleResponse(String loginId, String isbn13) {

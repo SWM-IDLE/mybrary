@@ -147,6 +147,7 @@ public class BookDtoTestData {
 
     public static BookDetailServiceRequest createBookDetailServiceRequest() {
         return BookDetailServiceRequest.builder()
+                .loginId("LOGIN_USER_ID")
                 .isbn10("1111111111")
                 .isbn13("1111111111111")
                 .build();

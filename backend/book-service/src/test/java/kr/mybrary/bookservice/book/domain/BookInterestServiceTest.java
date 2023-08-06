@@ -123,21 +123,4 @@ class BookInterestServiceTest {
         );
     }
 
-    @DisplayName("사용자가 해당 도서를 관심 도서로 설정했는지 확인한다.")
-    @Test
-    void isBookInterested() {
-
-        // given
-        BookIsInterestedServiceRequest serviceRequest = BookDtoTestData.createBookIsInterestedServiceRequest();
-        given(bookInterestRepository.existsByBookAndUserId(any(), anyString())).willReturn(true);
-
-        // when
-        boolean isInterested = bookInterestService.isBookInterested(serviceRequest);
-
-        // then
-        assertAll(
-                () -> verify(bookInterestRepository, times(1)).existsByBookAndUserId(any(), anyString()),
-                () -> assertThat(isInterested).isTrue()
-        );
-    }
 }

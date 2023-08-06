@@ -81,6 +81,10 @@ public class Book extends BaseEntity {
     @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST)
     private List<BookTranslator> bookTranslators = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "book")
+    private List<BookInterest> bookInterests = new ArrayList<>();
+
     public void addBookAuthor(List<BookAuthor> bookAuthorList) {
         bookAuthorList.forEach(bookAuthor -> {
             this.bookAuthors.add(bookAuthor);
@@ -113,5 +117,10 @@ public class Book extends BaseEntity {
 
     public void decreaseInterestCount() {
         this.interestCount--;
+    }
+
+    public boolean isInterestedByLoginUser(String loginId) {
+        return this.bookInterests.stream()
+                .anyMatch(bookInterest -> bookInterest.getUserId().equals(loginId));
     }
 }

@@ -41,9 +41,10 @@ public class BookController {
     @GetMapping("/detail")
     public ResponseEntity getBookDetail(
             @RequestParam(value = "isbn10", required = false, defaultValue = "") String isbn10,
-            @RequestParam("isbn13") String isbn13) {
+            @RequestParam("isbn13") String isbn13,
+            @RequestHeader("USER-ID") String loginId) {
 
-        BookDetailServiceRequest serviceRequest = BookDetailServiceRequest.of(isbn10, isbn13);
+        BookDetailServiceRequest serviceRequest = BookDetailServiceRequest.of(loginId, isbn10, isbn13);
 
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "도서 상세정보 조회에 성공했습니다.",
                 bookReadService.getBookDetailByISBN(serviceRequest)));
