@@ -64,7 +64,6 @@ public class BookController {
     @GetMapping("/users/{userId}/interest")
     public ResponseEntity getInterestBooks(
             @PathVariable("userId") String userId,
-            @RequestHeader("USER-ID") String loginId,
             @RequestParam(value = "order", required = false, defaultValue = "none") String order) {
 
         BookMyInterestFindServiceRequest serviceRequest = BookMyInterestFindServiceRequest.of(userId, BookOrderType.of(order));
