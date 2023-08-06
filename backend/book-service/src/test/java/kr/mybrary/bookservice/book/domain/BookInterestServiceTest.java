@@ -15,6 +15,7 @@ import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.BookInterestFixture;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.request.BookIsInterestedServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookInterest;
@@ -119,6 +120,24 @@ class BookInterestServiceTest {
         assertAll(
                 () -> verify(bookInterestRepository, times(1)).findAllByUserIdWithBook(any(), any(BookOrderType.class)),
                 () -> assertThat(responses.size()).isEqualTo(1)
+        );
+    }
+
+    @DisplayName("사용자가 해당 도서를 관심 도서로 설정했는지 확인한다.")
+    @Test
+    void isBookInterested() {
+
+        // given
+        BookIsInterestedServiceRequest serviceRequest = BookDtoTestData.createBookIsInterestedServiceRequest();
+        given(bookInterestRepository.existsByBookAndUserId(any(), anyString())).willReturn(true);
+
+        // when
+        boolean isInterested = bookInterestService.isBookInterested(serviceRequest);
+
+        // then
+        assertAll(
+                () -> verify(bookInterestRepository, times(1)).existsByBookAndUserId(any(), anyString()),
+                () -> assertThat(isInterested).isTrue()
         );
     }
 }
