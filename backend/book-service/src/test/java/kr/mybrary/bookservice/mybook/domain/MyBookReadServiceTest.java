@@ -337,7 +337,8 @@ class MyBookReadServiceTest {
     void findMyBookByMeaningTagQuoteAndNotShowable() {
 
         // given
-        MyBookFindByMeaningTagQuoteServiceRequest request = MyBookFindByMeaningTagQuoteServiceRequest.of(LOGIN_ID, "quote");
+        MyBookFindByMeaningTagQuoteServiceRequest request = MyBookFindByMeaningTagQuoteServiceRequest.of(LOGIN_ID,
+                "quote");
 
         given(myBookRepository.findByMeaningTagQuote(request.getQuote())).willReturn(
                 List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(),
@@ -352,6 +353,26 @@ class MyBookReadServiceTest {
         assertAll(
                 () -> verify(myBookRepository, times(1)).findByMeaningTagQuote(request.getQuote()),
                 () -> assertThat(result.size()).isEqualTo(2)
+        );
+    }
+
+    @DisplayName("마이북 Id를 통해 마이북과 마이북의 도서를 조회한다.")
+    @Test
+    void findMyBookByIdWithBook() {
+
+        // given
+        Long myBookId = 1L;
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
+
+        given(myBookRepository.findByIdWithBook(myBookId)).willReturn(Optional.ofNullable(myBook));
+
+        // when
+        MyBook foundMyBook = myBookService.findMyBookByIdWithBook(myBookId);
+
+        // then
+        assertAll(
+                () -> verify(myBookRepository, times(1)).findByIdWithBook(myBookId),
+                () -> assertThat(foundMyBook).isNotNull()
         );
     }
 }
