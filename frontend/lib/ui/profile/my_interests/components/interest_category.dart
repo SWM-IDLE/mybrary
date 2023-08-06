@@ -20,6 +20,7 @@ class InterestCategory extends StatelessWidget {
         vertical: 8.0,
       ),
       decoration: BoxDecoration(
+        color: isSelected ? primaryColor : WHITE_COLOR,
         border: Border.all(
           color: isSelected ? primaryColor : circularBorderColor,
         ),
@@ -29,6 +30,7 @@ class InterestCategory extends StatelessWidget {
         name,
         style: isSelected
             ? commonSubRegularStyle.copyWith(
+                color: WHITE_COLOR,
                 fontWeight: FontWeight.w700,
               )
             : commonSubRegularStyle,

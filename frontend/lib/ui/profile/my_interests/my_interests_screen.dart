@@ -144,12 +144,12 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: interestCategories.map(
-        (e) {
-          final int startIndex = e.description!.indexOf(e.name!);
-          final int endIndex = startIndex + e.name!.length;
+        (interest) {
+          final int startIndex = interest.description!.indexOf(interest.name!);
+          final int endIndex = startIndex + interest.name!.length;
 
           Widget description = InterestDescription(
-            description: e.description!,
+            description: interest.description!,
             startIndex: startIndex,
             endIndex: endIndex,
           );
@@ -162,20 +162,20 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
               Wrap(
                 spacing: 10.0,
                 runSpacing: 10.0,
-                children: e.interestResponses!.map(
-                  (e) {
+                children: interest.interestResponses!.map(
+                  (interestCategory) {
                     final bool isSelected = selectedInterests.any(
-                      (category) => category.id == e.id,
+                      (category) => category.id == interestCategory.id,
                     );
 
                     return InkWell(
                       onTap: () => _onSelectedInterest(
-                        e.id!,
-                        e.name!,
+                        interestCategory.id!,
+                        interestCategory.name!,
                       ),
                       child: InterestCategory(
                         isSelected: isSelected,
-                        name: e.name!,
+                        name: interestCategory.name!,
                       ),
                     );
                   },

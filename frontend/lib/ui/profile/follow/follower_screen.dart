@@ -59,10 +59,8 @@ class _FollowerScreenState extends State<FollowerScreen>
   );
 
   final ScrollController _scrollController = ScrollController();
-  final double _paddingTopHeight = Size.fromHeight(
-        const SliverAppBar().toolbarHeight,
-      ).height *
-      1.9;
+  final double _paddingTopHeight =
+      Size.fromHeight(const SliverAppBar().toolbarHeight).height * 1.9;
 
   final _followRepository = FollowRepository();
 
