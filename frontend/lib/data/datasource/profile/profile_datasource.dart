@@ -4,10 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:mybrary/data/model/profile/profile_image_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/network/api.dart';
+import 'package:mybrary/utils/dios/dio_service.dart';
 
 class ProfileDataSource {
   Future<ProfileResponseData> getProfileData() async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final profileResponse = await dio.get(getApi(API.getUserProfile),
         options: Options(headers: {'User-Id': 'testId'}));
 
@@ -30,7 +31,7 @@ class ProfileDataSource {
     String newNickname,
     String introduction,
   ) async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final profileEditResponse = await dio.put(
       getApi(API.editUserProfile),
       options: Options(headers: {'User-Id': 'testId'}),
@@ -53,7 +54,7 @@ class ProfileDataSource {
   }
 
   Future<ProfileImageResponseData> getProfileImage() async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final profileImageResponse = await dio.get(getApi(API.getUserProfileImage),
         options: Options(headers: {'User-Id': 'testId'}));
 
@@ -74,8 +75,7 @@ class ProfileDataSource {
 
   Future<ProfileImageResponseData> editProfileImage(
       FormData newProfileImage) async {
-    final dio = Dio();
-
+    Dio dio = DioService().to();
     final profileImageEditResponse = await dio.put(
       getApi(API.editUserProfileImage),
       options: Options(
@@ -101,8 +101,7 @@ class ProfileDataSource {
   }
 
   Future<ProfileImageResponseData> deleteProfileImage() async {
-    final dio = Dio();
-
+    Dio dio = DioService().to();
     final profileImageDeleteResponse = await dio.delete(
       getApi(API.editUserProfileImage),
       options: Options(

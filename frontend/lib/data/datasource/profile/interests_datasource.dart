@@ -4,10 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:mybrary/data/model/profile/interest_categories_response.dart';
 import 'package:mybrary/data/model/profile/my_interests_response.dart';
 import 'package:mybrary/data/network/api.dart';
+import 'package:mybrary/utils/dios/dio_service.dart';
 
 class InterestsDataSource {
   Future<InterestCategoriesResponseData> getInterestCategories() async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final interestCategoriesResponse = await dio.get(
       getApi(API.getInterestCategories),
     );
@@ -30,7 +31,7 @@ class InterestsDataSource {
   Future<MyInterestsResponseData> getMyInterestsCategories(
     String userId,
   ) async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final myInterestsResponse = await dio.get(
       '${getApi(API.getUserInterests)}/$userId/interests',
     );
@@ -54,7 +55,7 @@ class InterestsDataSource {
     String userId,
     List<CategoriesResponses> categoriesResponses,
   ) async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final myInterestsEditResponse = await dio.put(
       '${getApi(API.getUserInterests)}/$userId/interests',
       options: Options(headers: {'User-Id': 'testId'}),

@@ -2,11 +2,12 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
+import 'package:mybrary/utils/dios/dio_service.dart';
 
 class SearchDataSource {
   static Future<BookSearchResponse> getBookSearchResponse(
       String requestUrl) async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final bookSearchResponse = await dio.get(requestUrl);
 
     try {

@@ -4,10 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:mybrary/data/model/profile/follower_response.dart';
 import 'package:mybrary/data/model/profile/following_response.dart';
 import 'package:mybrary/data/network/api.dart';
+import 'package:mybrary/utils/dios/dio_service.dart';
 
 class FollowDataSource {
   Future<FollowerResponseData> getFollower(String userId) async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final userFollowerResponse = await dio.get(
       getApi(API.getUserFollowers),
       options: Options(
@@ -31,7 +32,7 @@ class FollowDataSource {
   }
 
   Future<FollowingResponseData> getFollowings(String userId) async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final userFollowingResponse = await dio.get(
       getApi(API.getUserFollowings),
       options: Options(
@@ -58,7 +59,7 @@ class FollowDataSource {
     String userId,
     String targetId,
   ) async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final updateFollowingResponse = await dio.post(
       getApi(API.updateUserFollowing),
       options: Options(
@@ -84,7 +85,7 @@ class FollowDataSource {
     String userId,
     String sourceId,
   ) async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final deleteFollowerResponse = await dio.delete(
       getApi(API.deleteUserFollower),
       options: Options(
@@ -110,7 +111,7 @@ class FollowDataSource {
     String userId,
     String targetId,
   ) async {
-    final dio = Dio();
+    Dio dio = DioService().to();
     final deleteFollowingResponse = await dio.delete(
       getApi(API.deleteUserFollowing),
       options: Options(
