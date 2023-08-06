@@ -36,6 +36,7 @@ public interface BookDtoMapper {
     @Mapping(target = "reviewCount", source = "aladinReviewCount")
     @Mapping(target = "authors", source = "bookAuthors", qualifiedByName = "mappingAuthors")
     @Mapping(target = "translators", source = "bookTranslators", qualifiedByName = "mappingTranslators")
+    @Mapping(target = "interested", constant = "false")
     BookDetailServiceResponse bookToDetailServiceResponse(Book book);
 
     BookDetailServiceResponse bookSearchDetailToDetailServiceResponse(BookSearchDetailResponse bookSearchDetailResponse);

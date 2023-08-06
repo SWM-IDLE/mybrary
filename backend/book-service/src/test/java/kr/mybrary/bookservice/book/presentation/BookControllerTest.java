@@ -152,6 +152,7 @@ class BookControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/v1/books/detail")
+                .header("USER-ID", "LOGIN_USER_ID")
                 .param("isbn10", "9788932917245")
                 .param("isbn13", "9788932917245111"));
 
@@ -189,7 +190,8 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.data.priceSales").value(response.getPriceSales()))
                 .andExpect(jsonPath("$.data.holderCount").value(response.getHolderCount()))
                 .andExpect(jsonPath("$.data.readCount").value(response.getReadCount()))
-                .andExpect(jsonPath("$.data.interestCount").value(response.getInterestCount()));
+                .andExpect(jsonPath("$.data.interestCount").value(response.getInterestCount()))
+                .andExpect(jsonPath("$.data.interested").value(response.isInterested()));
 
         // document
         actions
@@ -201,6 +203,9 @@ class BookControllerTest {
                                         .tag("book")
                                         .summary("ISBN을 통해 도서 상세를 조회한다.")
                                         .description("쿼리 파라미터의 isbn10은 생략 가능합니다. isbn13만으로 도서 상세정보 조회가 가능합니다.")
+                                        .requestHeaders(
+                                                headerWithName("USER-ID").description("사용자 ID")
+                                        )
                                         .queryParameters(
                                                 parameterWithName("isbn10").type(SimpleType.STRING)
                                                         .description("ISBN10").optional(),
@@ -243,7 +248,8 @@ class BookControllerTest {
                                                 fieldWithPath("data.priceSales").type(NUMBER).description("도서 판매가"),
                                                 fieldWithPath("data.holderCount").type(NUMBER).description("도서 보류 수"),
                                                 fieldWithPath("data.readCount").type(NUMBER).description("도서 완독 수"),
-                                                fieldWithPath("data.interestCount").type(NUMBER).description("도서 관심 수")
+                                                fieldWithPath("data.interestCount").type(NUMBER).description("도서 관심 수"),
+                                                fieldWithPath("data.interested").type(BOOLEAN).description("로그인 유저 관심 도서 설정 여부")
                                         ).build())));
     }
 

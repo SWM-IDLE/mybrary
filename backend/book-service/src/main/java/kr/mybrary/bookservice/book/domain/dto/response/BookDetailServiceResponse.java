@@ -34,6 +34,7 @@ public class BookDetailServiceResponse {
     private Integer sizeWidth;
     private Integer priceSales;
     private Integer priceStandard;
+    private boolean interested;
 
     @Builder
     @Getter
@@ -50,4 +51,7 @@ public class BookDetailServiceResponse {
         private Integer translatorId;
     }
 
+    public void isInterestedBookByLoginUser(boolean isInterested) {
+        this.interested = isInterested;
+    }
 }

@@ -75,10 +75,7 @@ class BookRepositoryTest {
         Translator translator = entityManager.persist(Translator.builder().tid(12).name("테스트 번역가").build());
         BookCategory bookCategory = entityManager.persist(BookCategory.builder().cid(13).name("테스트 카테고리").build());
 
-        Book book = entityManager.persist(BookFixture.COMMON_BOOK.getBookBuilder()
-                .id(null)
-                .bookTranslators(null)
-                .bookAuthors(null)
+        Book book = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder()
                 .bookCategory(bookCategory)
                 .build());
 

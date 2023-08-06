@@ -9,5 +9,4 @@ public interface BookInterestRepository extends JpaRepository<BookInterest, Long
 
     Optional<BookInterest> findByBookAndUserId(Book book, String userId);
 
-    boolean existsByBookAndUserId(Book book, String userId);
 }
