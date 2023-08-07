@@ -1,87 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/model/search/book_search_data.dart';
+import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
 
 class BookSummary extends StatelessWidget {
-  final BookSearchData bookSearchData;
+  final String title;
+  final List<Authors> authors;
   const BookSummary({
-    required this.bookSearchData,
+    required this.title,
+    required this.authors,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    final DateTime publishDate =
-        getPublishDate(bookSearchData.publicationDate!);
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              bookSearchData.title!,
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            Row(
-              children: [
-                bookDescription(
-                  bookAuthorsOrTranslators(bookSearchData.authors!),
-                ),
-                SizedBox(
-                  width: 4.0,
-                ),
-                bookDescription(' | '),
-                SizedBox(
-                  width: 4.0,
-                ),
-                bookDescription(bookSearchData.publisher!),
-                SizedBox(
-                  width: 10.0,
-                ),
-                bookDescription('${publishDate.year}.${publishDate.month}'),
-              ],
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            Row(
-              children: [
-                Row(
-                  children: List.generate(5, (index) => index)
-                      .map((e) => Image.asset(
-                            'assets/img/icon/star.png',
-                            // 별점의 소수점을 버림 처리하여 별점을 표시
-                            // 예를 들어, 3.3은 3점이며 4.8은 4점으로 표시
-                            color: e < bookSearchData.starRating!.floor()
-                                ? BOOK_STAR_COLOR
-                                : BOOK_STAR_DISABLED_COLOR,
-                          ))
-                      .toList(),
-                ),
-                SizedBox(
-                  width: 10.0,
-                ),
-                Text(
-                  bookSearchData.starRating.toString(),
-                  style: TextStyle(
-                    color: BOOK_STAR_RATING_COLOR,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 2.0),
+          Text(
+            title,
+            style: bookDetailTitleStyle,
+          ),
+          const SizedBox(height: 6.0),
+          bookDescription(bookAuthorsOrTranslators(authors)),
+          // Row(
+          //   children: [
+          //     Row(
+          //       children: List.generate(5, (index) => index)
+          //           .map((e) => Image.asset(
+          //                 'assets/img/icon/star.png',
+          //                 // 별점의 소수점을 버림 처리하여 별점을 표시
+          //                 // 예를 들어, 3.3은 3점이며 4.8은 4점으로 표시
+          //                 color: e <
+          //                         bookSearchDetailResponseData.starRating!
+          //                             .floor()
+          //                     ? BOOK_STAR_COLOR
+          //                     : BOOK_STAR_DISABLED_COLOR,
+          //               ))
+          //           .toList(),
+          //     ),
+          //     SizedBox(
+          //       width: 10.0,
+          //     ),
+          //     Text(
+          //       bookSearchDetailResponseData.starRating.toString(),
+          //       style: TextStyle(
+          //         color: BOOK_STAR_RATING_COLOR,
+          //         fontSize: 20.0,
+          //         fontWeight: FontWeight.w700,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+        ],
       ),
     );
   }
@@ -89,10 +64,8 @@ class BookSummary extends StatelessWidget {
   Widget bookDescription(String description) {
     return Text(
       description,
-      style: TextStyle(
+      style: commonSubRegularStyle.copyWith(
         color: BOOK_DESCRIPTION_COLOR,
-        fontSize: 14.0,
-        fontWeight: FontWeight.w400,
       ),
     );
   }

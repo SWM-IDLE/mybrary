@@ -1,11 +1,12 @@
-String bookAuthorsOrTranslators(List<String> authorsOrTranslators) {
+import 'package:mybrary/data/model/search/book_search_detail_response.dart';
+
+String bookAuthorsOrTranslators(List<Authors> authorsOrTranslators) {
   String result = "";
   if (authorsOrTranslators.isEmpty) {
     return result;
   }
 
-  result = authorsOrTranslators.map((people) => people).join(', ');
-  return '$result 저';
+  return authorsOrTranslators.map((people) => people.name).join(', ');
 }
 
 DateTime getPublishDate(String publishDate) {

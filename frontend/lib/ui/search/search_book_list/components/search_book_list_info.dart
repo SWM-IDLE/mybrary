@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/style.dart';
+import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
 
 class SearchBookListInfo extends StatelessWidget {
@@ -19,6 +21,8 @@ class SearchBookListInfo extends StatelessWidget {
       child: Scrollbar(
         controller: scrollController,
         child: ListView.separated(
+          physics: const BouncingScrollPhysics(),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           controller: scrollController,
           itemCount: bookSearchDataList.length,
           itemBuilder: (context, index) {
@@ -28,32 +32,27 @@ class SearchBookListInfo extends StatelessWidget {
 
             return GestureDetector(
               onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (_) => SearchDetailScreen(
-                //       bookSearchData: searchBookData,
-                //     ),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SearchDetailScreen(
+                      isbn13: searchBookData.isbn13!,
+                    ),
+                  ),
+                );
               },
               behavior: HitTestBehavior.opaque,
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(
-                      left: 20.0,
-                      right: 20.0,
-                      top: index == 0 ? 5.0 : 20.0,
-                      bottom: 20.0,
-                    ),
-                    child: Container(
-                      height: 140,
+                    padding: const EdgeInsets.all(16.0),
+                    child: SizedBox(
+                      height: 126,
                       child: Row(
                         children: [
                           Container(
-                            width: 100,
-                            height: 140,
+                            width: 86,
+                            height: 126,
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: GREY_01_COLOR,
@@ -68,34 +67,46 @@ class SearchBookListInfo extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: 12.0,
-                          ),
+                          const SizedBox(width: 12.0),
                           Expanded(
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                bookInfo(
-                                  infoText: searchBookData.title!,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w700,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      searchBookData.title!,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      textWidthBasis: TextWidthBasis.parent,
+                                      style: searchBookTitleStyle,
+                                    ),
+                                    const SizedBox(height: 4.0),
+                                    bookInfo(
+                                      infoText: searchBookData.description!,
+                                      fontSize: 13.0,
+                                      fontColor: BOOK_DESCRIPTION_COLOR,
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(
-                                  height: 4.0,
-                                ),
-                                bookInfo(
-                                  infoText: searchBookData.author!,
-                                  fontSize: 14.0,
-                                  fontColor: BOOK_DESCRIPTION_COLOR,
-                                ),
-                                SizedBox(
-                                  height: 4.0,
-                                ),
-                                bookInfo(
-                                  infoText:
-                                      '${publishDate.year}.${publishDate.month}',
-                                  fontSize: 13.0,
-                                  fontColor: BOOK_DESCRIPTION_COLOR,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    bookInfo(
+                                      infoText: searchBookData.author!,
+                                      fontSize: 13.0,
+                                      fontColor: BOOK_DESCRIPTION_COLOR,
+                                    ),
+                                    const SizedBox(height: 1.0),
+                                    bookInfo(
+                                      infoText:
+                                          '${publishDate.year}.${publishDate.month}',
+                                      fontSize: 13.0,
+                                      fontColor: BOOK_DESCRIPTION_COLOR,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -128,7 +139,7 @@ class SearchBookListInfo extends StatelessWidget {
   }) {
     return Text(
       infoText,
-      maxLines: 2,
+      maxLines: 1,
       overflow: TextOverflow.ellipsis,
       textWidthBasis: TextWidthBasis.parent,
       style: TextStyle(
