@@ -1,0 +1,82 @@
+name: 'user-service upload ecr & ecs'
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'backend/user-service/**'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'backend/user-service/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Application Test Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/user-service/src/main/resources/application-test.yml
+
+      - name: Setup Application Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/user-service/src/main/resources/application.yml
+        env:
+          spring.data.redis.host: ${{ secrets.DOCS_SERVER_US_REDIS_HOST }}
+          spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
+          spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          spring.security.oauth2.client.registration.naver.client-id: ${{ secrets.NAVER_CLIENT_ID }}
+          spring.security.oauth2.client.registration.naver.client-secret: ${{ secrets.NAVER_CLIENT_SECRET }}
+          spring.security.oauth2.client.registration.kakao.client-id: ${{ secrets.KAKAO_CLIENT_ID }}
+          spring.security.oauth2.client.registration.kakao.client-secret: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          spring.cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY }}
+          spring.cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_KEY }}
+          jwt.secretKey: ${{ secrets.JWT_SECRET_KEY }}
+
+      - name: Setup Bootstrap Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/user-service/src/main/resources/bootstrap.yml
+        env:
+          spring.profiles.active: test
+
+      - name: Build with Gradle
+        working-directory: backend/user-service
+        run: |
+          ./gradlew clean build
+          
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ECR_ECS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ECR_ECS_SECRET_KEY }}
+          aws-region: ${{ secrets.ECR_REGION }}
+          
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_USER_SERVICE_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+        working-directory: backend/user-service
+        run: |
+          docker build --platform arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
