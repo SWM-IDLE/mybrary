@@ -74,25 +74,10 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-tasks.withType(GenerateSwaggerUI) {
-	dependsOn 'openapi3'
-
-	delete file('src/main/resources/static/docs/')
-	copy {
-		from "build/resources/main/static/docs"
-		into "src/main/resources/static/docs/"
-
-	}
-}
-
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 	}
-}
-
-bootJar{
-	dependsOn(':openapi3')
 }
 
 openapi3 {
