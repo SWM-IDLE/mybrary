@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BookDetailProvider extends StatelessWidget {
   final String link;
@@ -37,7 +38,11 @@ class BookDetailProvider extends StatelessWidget {
                   height: 22.0,
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () async {
+                    await launchUrl(
+                      Uri.parse(link),
+                    );
+                  },
                   child: const Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
