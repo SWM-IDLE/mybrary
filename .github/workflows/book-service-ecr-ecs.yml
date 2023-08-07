@@ -1,15 +1,17 @@
-name: ‘book-service upload ecr & ecs’
+name: 'book-service upload ecr & ecs'
+
 on:
   push:
     branches:
       - master
     paths:
-      - ‘backend/book-service/**’
+      - 'backend/book-service/**'
   pull_request:
     branches:
       - master
     paths:
-      - ‘backend/book-service/**’
+      - 'backend/book-service/**'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,8 +22,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          distribution: ‘zulu’
-          java-version: ‘17’
+          distribution: 'zulu'
+          java-version: '17'
           
       - name: Build with Gradle
         working-directory: backend/book-service
@@ -49,4 +51,4 @@ jobs:
         run: |
           docker build --platform arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo “::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG”
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
