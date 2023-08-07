@@ -25,14 +25,11 @@ jobs:
           distribution: 'zulu' 
           java-version: '17'
       
-      - name: Setup Applcaiton Test Yaml
+      - name: Setup Application Test Yaml
         uses: microsoft/variable-substitution@v1
         with:
           files: backend/book-service/src/main/resources/application-test.yml
         env:
-          spring.datasource.url: ${{ secrets.DOCS_SERVER_BS_DATABASE_URL }} 
-          spring.datasource.username: ${{ secrets.DOCS_SERVER_DATABASE_USER }} 
-          spring.datasource.password: ${{ secrets.DOCS_SERVER_DATABASE_PASSWORD }}
           aladin.api.key : ${{ secrets.ALADIN_API_KEY }}
           kakao.api.key : ${{ secrets.KAKAO_API_KEY }}
           
