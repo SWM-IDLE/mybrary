@@ -1,46 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/model/search/book_search_data.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/style.dart';
 
 class BookDescription extends StatelessWidget {
-  final BookSearchData bookSearchData;
+  final String subTitle;
+  final String description;
   const BookDescription({
-    required this.bookSearchData,
+    required this.subTitle,
+    required this.description,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '책소개',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(
-              height: 16.0,
-            ),
-            Text(
-              bookSearchData.description! == ''
-                  ? '책 소개가 없습니다.'
-                  : bookSearchData.description!,
-              style: TextStyle(
-                height: 1.4,
-                color: BOOK_DETAIL_COLOR,
-                fontSize: 14.0,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '부제',
+            style: commonSubBoldStyle,
+          ),
+          const SizedBox(height: 10.0),
+          Text(
+            subTitle == '' ? '부제가 없습니다.' : subTitle,
+            style: bookDetailDescriptionStyle,
+          ),
+          const SizedBox(height: 24.0),
+          const Text(
+            '책 소개',
+            style: commonSubBoldStyle,
+          ),
+          const SizedBox(height: 10.0),
+          Text(
+            description == '' ? '책 소개가 없습니다.' : description,
+            style: bookDetailDescriptionStyle,
+          ),
+          const SizedBox(height: 10.0),
+        ],
       ),
     );
   }

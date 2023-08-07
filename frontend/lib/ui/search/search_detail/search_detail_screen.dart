@@ -1,120 +1,151 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/model/search/book_search_data.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mybrary/data/model/search/book_search_detail_response.dart';
+import 'package:mybrary/data/repository/search_repository.dart';
 import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/ui/common/components/circular_loading.dart';
+import 'package:mybrary/ui/common/layout/root_tab.dart';
+import 'package:mybrary/ui/common/layout/subpage_layout.dart';
+import 'package:mybrary/ui/search/search_detail/components/book_contents.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_description.dart';
-import 'package:mybrary/ui/search/search_detail/components/book_detail_appbar.dart';
-import 'package:mybrary/ui/search/search_detail/components/book_status_button.dart';
+import 'package:mybrary/ui/search/search_detail/components/book_detail_provider.dart';
+import 'package:mybrary/ui/search/search_detail/components/book_details.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_summary.dart';
 
 class SearchDetailScreen extends StatefulWidget {
-  final BookSearchData bookSearchData;
-  const SearchDetailScreen({required this.bookSearchData, super.key});
+  final String isbn13;
+  const SearchDetailScreen({
+    required this.isbn13,
+    super.key,
+  });
 
   @override
   State<SearchDetailScreen> createState() => _SearchDetailScreenState();
 }
 
 class _SearchDetailScreenState extends State<SearchDetailScreen> {
-  int? _selectedMyBookStatus;
+  final _searchRepository = SearchRepository();
+
+  late Future<BookSearchDetailResponseData> _bookSearchDetailResponse;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _bookSearchDetailResponse = _searchRepository.getBookSearchDetailResponse(
+      isbn13: widget.isbn13,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final displaySize = MediaQuery.of(context).size;
-    final bookDetail = widget.bookSearchData;
 
-    return Scaffold(
-      appBar: BookDetailAppBar(
-        appBar: AppBar(),
-      ),
-      body: SafeArea(
-        bottom: false,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                width: displaySize.width,
-                height: displaySize.height * 0.35,
-                decoration: BoxDecoration(
-                  color: BOOK_BACKGROUND_COLOR,
-                ),
-                child: Image.network(
-                  bookDetail.thumbnailUrl!,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              BookSummary(
-                bookSearchData: bookDetail,
-              ),
-              SizedBox(
-                height: 25.0,
-              ),
-              BookStatusButton(
-                children: [
-                  _myBookStatusButton(0,
-                      assetUrl: 'assets/img/icon/interest_book.png',
-                      status: '읽고싶어요'),
-                  _myBookStatusButton(1,
-                      assetUrl: 'assets/img/icon/reading_book.png',
-                      status: '읽는중'),
-                  _myBookStatusButton(2,
-                      assetUrl: 'assets/img/icon/readed_book.png',
-                      status: '읽었어요'),
-                  _myBookStatusButton(3,
-                      assetUrl: 'assets/img/icon/shelf_book.png',
-                      status: '내책장'),
-                ],
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              BookDescription(
-                bookSearchData: bookDetail,
-              ),
-              SizedBox(
-                height: 30.0,
-              ),
-            ],
+    return SubPageLayout(
+      appBarTitle: '',
+      appBarActions: [
+        IconButton(
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+              builder: (context) {
+                return const RootTab();
+              },
+            ), (route) => false);
+          },
+          icon: SvgPicture.asset(
+            'assets/svg/icon/home.svg',
           ),
+        ),
+      ],
+      child: SafeArea(
+        bottom: false,
+        child: FutureBuilder<BookSearchDetailResponseData>(
+          future: _bookSearchDetailResponse,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final bookSearchDetail = snapshot.data!;
+
+              return SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: displaySize.width,
+                      height: displaySize.height * 0.47,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 176,
+                            height: 254,
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: BLACK_COLOR.withOpacity(0.3),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 4),
+                                  spreadRadius: 0,
+                                )
+                              ],
+                              image: DecorationImage(
+                                image:
+                                    NetworkImage(bookSearchDetail.thumbnail!),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20.0),
+                          BookSummary(
+                            title: bookSearchDetail.title!,
+                            authors: bookSearchDetail.authors!,
+                          ),
+                        ],
+                      ),
+                    ),
+                    bookDetailDivider(),
+                    BookDescription(
+                      subTitle: bookSearchDetail.subTitle!,
+                      description: bookSearchDetail.description!,
+                    ),
+                    bookDetailDivider(),
+                    BookContents(toc: bookSearchDetail.toc!),
+                    bookDetailDivider(),
+                    BookDetails(
+                      isbn10: bookSearchDetail.isbn10!,
+                      isbn13: bookSearchDetail.isbn13!,
+                      weight: bookSearchDetail.weight!,
+                      sizeDepth: bookSearchDetail.sizeDepth!,
+                      sizeHeight: bookSearchDetail.sizeHeight!,
+                      sizeWidth: bookSearchDetail.sizeWidth!,
+                    ),
+                    bookDetailDivider(),
+                    BookDetailProvider(
+                      link: bookSearchDetail.link!,
+                    ),
+                    const SizedBox(height: 50.0),
+                  ],
+                ),
+              );
+            }
+            return const CircularLoading();
+          },
         ),
       ),
     );
   }
 
-  Widget _myBookStatusButton(int index,
-      {required String assetUrl, required String status}) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedMyBookStatus = index;
-        });
-      },
-      child: Column(
-        children: [
-          Image.asset(
-            assetUrl,
-            width: 32.0,
-            height: 32.0,
-            color: _selectedMyBookStatus == index
-                ? PRIMARY_COLOR
-                : BOOK_DISABLED_COLOR,
-          ),
-          SizedBox(
-            height: 8.0,
-          ),
-          Text(
-            status,
-            style: TextStyle(
-              color: _selectedMyBookStatus == index
-                  ? PRIMARY_COLOR
-                  : BOOK_DISABLED_COLOR,
-              fontSize: 14.0,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
+  Widget bookDetailDivider() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 24.0),
+      child: Divider(
+        height: 1,
+        thickness: 6,
+        color: GREY_01_COLOR,
       ),
     );
   }

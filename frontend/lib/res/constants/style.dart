@@ -45,6 +45,12 @@ const commonSubMediumStyle = TextStyle(
   fontWeight: FontWeight.w500,
 );
 
+const commonSubBoldStyle = TextStyle(
+  color: GREY_06_COLOR,
+  fontSize: 18.0,
+  fontWeight: FontWeight.w700,
+);
+
 const commonButtonTextStyle = TextStyle(
   fontSize: 15.0,
   fontWeight: FontWeight.w700,
@@ -61,6 +67,11 @@ final commonMenuButtonStyle = TextButton.styleFrom(
   foregroundColor: Colors.transparent,
   surfaceTintColor: Colors.transparent,
   splashFactory: NoSplash.splashFactory,
+);
+
+const commonSnackBarMessageStyle = TextStyle(
+  color: WHITE_COLOR,
+  fontSize: 13.0,
 );
 
 const boxBorderRadiusStyle = RoundedRectangleBorder(
@@ -153,4 +164,31 @@ const popularKeywordTextStyle = TextStyle(
 final searchInputBorderStyle = OutlineInputBorder(
   borderSide: BorderSide.none,
   borderRadius: BorderRadius.circular(5.0),
+);
+
+// book search page style
+const searchBookTitleStyle = TextStyle(
+  color: GREY_06_COLOR,
+  fontSize: 15.0,
+  fontWeight: FontWeight.w700,
+);
+
+const bookDetailTitleStyle = TextStyle(
+  color: BLACK_COLOR,
+  fontSize: 19.0,
+  fontWeight: FontWeight.w700,
+);
+
+const bookDetailDescriptionStyle = TextStyle(
+  height: 1.5,
+  color: GREY_05_COLOR,
+  fontSize: 15.0,
+  fontWeight: FontWeight.w400,
+);
+
+const aladinTextStyle = TextStyle(
+  height: 1.2,
+  color: GREY_05_COLOR,
+  fontSize: 11.0,
+  fontWeight: FontWeight.w400,
 );

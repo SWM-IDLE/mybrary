@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/datasource/search/search_datasource.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
-import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
@@ -35,34 +34,11 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
   }
 
-  late Future<BookSearchResponseData> _bookSearchResponse;
   late final List<BookSearchResult> _bookSearchData = [];
   late String _bookSearchNextUrl;
 
-  bool _isSearching = false;
-
-  final ScrollController _searchScrollController = ScrollController();
   final TextEditingController _bookSearchKeywordController =
       TextEditingController();
-
-  @override
-  void setState(VoidCallback fn) {
-    super.setState(fn);
-
-    // 스크롤 맨 하단에 닿기 바로 이전에 실행 (max x 0.85)
-    _searchScrollController.addListener(() async {
-      ScrollPosition scrollPosition = _searchScrollController.position;
-      if (_searchScrollController.offset >
-              scrollPosition.maxScrollExtent * 0.85 &&
-          !scrollPosition.outOfRange) {
-        if (_bookSearchNextUrl != "") {
-          // nextUrl 이 있을 때 추가 데이터 호출
-          _fetchBookSearchNextUrlResponse();
-          _bookSearchNextUrl = "";
-        }
-      }
-    });
-  }
 
   @override
   void dispose() {
@@ -93,56 +69,67 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       child: SafeArea(
         bottom: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 14.0,
-                horizontal: 18.0,
-              ),
-              child: TextField(
-                textInputAction: TextInputAction.search,
-                controller: _bookSearchKeywordController,
-                cursorColor: primaryColor,
-                onSubmitted: (value) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => SearchBookList(
-                        bookSearchKeyword: value,
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.97 -
+                kToolbarHeight -
+                kBottomNavigationBarHeight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 6.0,
+                    left: 18.0,
+                    bottom: 12.0,
+                    right: 18.0,
+                  ),
+                  child: TextField(
+                    textInputAction: TextInputAction.search,
+                    controller: _bookSearchKeywordController,
+                    cursorColor: primaryColor,
+                    onSubmitted: (value) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SearchBookList(
+                            bookSearchKeyword: value,
+                          ),
+                        ),
+                      ).then(
+                        (value) => _bookSearchKeywordController.clear(),
+                      );
+                    },
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 6.0,
+                      ),
+                      hintText: '책, 저자, 회원을 검색해보세요.',
+                      hintStyle: commonSubRegularStyle,
+                      filled: true,
+                      fillColor: GREY_COLOR_OPACITY_TWO,
+                      focusedBorder: searchInputBorderStyle,
+                      enabledBorder: searchInputBorderStyle,
+                      focusColor: GREY_COLOR,
+                      prefixIcon: SvgPicture.asset(
+                        'assets/svg/icon/search_small.svg',
+                        fit: BoxFit.scaleDown,
                       ),
                     ),
-                  ).then(
-                    (value) => _bookSearchKeywordController.clear(),
-                  );
-                },
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 6.0,
-                  ),
-                  hintText: '책, 저자, 회원을 검색해보세요.',
-                  hintStyle: commonSubRegularStyle,
-                  filled: true,
-                  fillColor: GREY_COLOR_OPACITY_TWO,
-                  focusedBorder: searchInputBorderStyle,
-                  enabledBorder: searchInputBorderStyle,
-                  focusColor: GREY_COLOR,
-                  prefixIcon: SvgPicture.asset(
-                    'assets/svg/icon/search_small.svg',
-                    fit: BoxFit.scaleDown,
                   ),
                 ),
-              ),
+                const SizedBox(
+                  height: 8.0,
+                ),
+                SearchPopularKeyword(
+                  bookSearchKeywordController: _bookSearchKeywordController,
+                  onBookSearchBinding: getBookSearchPopularKeywordResponse,
+                ),
+              ],
             ),
-            const SizedBox(
-              height: 8.0,
-            ),
-            SearchPopularKeyword(
-              bookSearchKeywordController: _bookSearchKeywordController,
-              onBookSearchBinding: getBookSearchPopularKeywordResponse,
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -153,65 +140,14 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       if (popularKeyword != "") {
         isBinding = true;
-        _bookSearchResponse = _searchDataSource.getBookSearchResponse(
-            '${getBookServiceApi(API.getBookSearchKeyword)}?keyword=$popularKeyword');
-        _isSearching = true;
+        // _bookSearchResponse = _searchDataSource.getBookSearchResponse(
+        //     '${getBookServiceApi(API.getBookSearchKeyword)}?keyword=$popularKeyword');
+        // _isSearching = true;
       }
     });
   }
 
-  // void _onSubmittedSearchKeyword(value) {
-  //   setState(() {
-  //     _bookSearchKeywordController.text = value;
-  //     _bookSearchResponse = _fetchBookSearchKeywordResponse();
-  //     _isSearching = true;
-  //   });
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (_) => SearchBookList(
-  //         bookSearchKeyword: _bookSearchKeywordController.text,
-  //         bookSearchController: _bookSearchKeywordController,
-  //         onSubmittedSearchKeyword: _onSubmittedSearchKeyword,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // void _onPressedTextClear() {
-  //   setState(() {
-  //     _bookSearchKeywordController.clear();
-  //   });
-  // }
-  //
-  // void _onPressedSearchCancel() {
-  //   setState(() {
-  //     _bookSearchKeywordController.clear();
-  //     _bookSearchData.clear();
-  //     _isSearching = false;
-  //   });
-  // }
-
-  Future<BookSearchResponseData> _fetchBookSearchKeywordResponse() async {
-    BookSearchResponseData bookSearchResponse =
-        await _searchDataSource.getBookSearchResponse(
-            '${getBookServiceApi(API.getBookSearchKeyword)}?keyword=${_bookSearchKeywordController.text}');
-
-    return bookSearchResponse;
-  }
-
-  Future<void> _fetchBookSearchNextUrlResponse() async {
-    BookSearchResponseData additionalBookSearchResponse =
-        await _searchDataSource.getBookSearchResponse(
-            '${getBookServiceApi(API.getBookService)}$_bookSearchNextUrl');
-
-    setState(() {
-      _bookSearchData.addAll(additionalBookSearchResponse.bookSearchResult!);
-      _bookSearchNextUrl = additionalBookSearchResponse.nextRequestUrl!;
-    });
-  }
-
-  Future onIsbnScan() async {
+  Future<dynamic> onIsbnScan() async {
     await Permission.camera.request();
 
     final permissionCameraStatus = await Permission.camera.status;
@@ -233,12 +169,9 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             content: const Text(
               '카메라 권한이 없습니다.\n설정에서 권한을 허용해주세요.',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-              ),
+              style: commonSnackBarMessageStyle,
             ),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
       default:

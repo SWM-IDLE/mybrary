@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
+import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/style.dart';
 
 class SearchBookListHeader extends StatelessWidget {
+  final String keyword;
   final List<BookSearchResult> bookSearchDataList;
+
   const SearchBookListHeader({
+    required this.keyword,
     required this.bookSearchDataList,
     super.key,
   });
@@ -11,16 +16,17 @@ class SearchBookListHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 14.0,
+        vertical: 14.0,
+      ),
       width: double.infinity,
-      height: 40.0,
-      child: Text(
-        // Todo : 전체 검색 데이터 수로 변경 예정
-        '검색 도서 ${bookSearchDataList.length}',
-        style: TextStyle(
-          fontSize: 15.0,
-          fontWeight: FontWeight.w700,
-        ),
+      decoration: const BoxDecoration(
+        color: GREY_01_COLOR,
+      ),
+      child: const Text(
+        '검색 결과',
+        style: commonButtonTextStyle,
       ),
     );
   }
