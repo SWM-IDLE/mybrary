@@ -15,12 +15,11 @@ spring:
 
 kakao:
   api:
-    key: 96be967727351c4abdc4289684293625
+    key: ${KAKAO_API_KEY}
 
 aladin:
   api:
-    key: ttbkdsvip21434001
-
+    key: ${ALADIN_API_KEY}
 
 eureka:
   client:
