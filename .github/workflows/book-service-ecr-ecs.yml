@@ -53,7 +53,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          ECR_REPOSITORY: ${{ secrets.ECR_BOOK_SERVICE_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
         working-directory: backend/book-service
         run: |
