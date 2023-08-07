@@ -8,9 +8,9 @@ import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_contents.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_description.dart';
+import 'package:mybrary/ui/search/search_detail/components/book_detail_header.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_detail_provider.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_details.dart';
-import 'package:mybrary/ui/search/search_detail/components/book_summary.dart';
 
 class SearchDetailScreen extends StatefulWidget {
   final String isbn13;
@@ -26,7 +26,10 @@ class SearchDetailScreen extends StatefulWidget {
 class _SearchDetailScreenState extends State<SearchDetailScreen> {
   final _searchRepository = SearchRepository();
 
+  late String _bookTitle = '';
   late Future<BookSearchDetailResponseData> _bookSearchDetailResponse;
+
+  final ScrollController _bookDetailScrollController = ScrollController();
 
   @override
   void initState() {
@@ -42,7 +45,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
     final displaySize = MediaQuery.of(context).size;
 
     return SubPageLayout(
-      appBarTitle: '',
+      appBarTitle: _bookTitle,
       appBarActions: [
         IconButton(
           onPressed: () {
@@ -64,8 +67,10 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final bookSearchDetail = snapshot.data!;
+              _bookTitle = bookSearchDetail.title!;
 
               return SingleChildScrollView(
+                controller: _bookDetailScrollController,
                 physics: const BouncingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,38 +78,10 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                     SizedBox(
                       width: displaySize.width,
                       height: displaySize.height * 0.47,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 176,
-                            height: 254,
-                            decoration: ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              shadows: [
-                                BoxShadow(
-                                  color: BLACK_COLOR.withOpacity(0.3),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 4),
-                                  spreadRadius: 0,
-                                )
-                              ],
-                              image: DecorationImage(
-                                image:
-                                    NetworkImage(bookSearchDetail.thumbnail!),
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20.0),
-                          BookSummary(
-                            title: bookSearchDetail.title!,
-                            authors: bookSearchDetail.authors!,
-                          ),
-                        ],
+                      child: BookDetailHeader(
+                        thumbnail: bookSearchDetail.thumbnail!,
+                        title: bookSearchDetail.title!,
+                        authors: bookSearchDetail.authors!,
                       ),
                     ),
                     bookDetailDivider(),

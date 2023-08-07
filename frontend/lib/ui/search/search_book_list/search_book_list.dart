@@ -31,7 +31,8 @@ class _SearchBookListState extends State<SearchBookList> {
   final String _bookSearchKeywordRequestUrl =
       getBookServiceApi(API.getBookSearchKeyword);
   late Future<BookSearchResponseData> _bookSearchResponse;
-  late final List<BookSearchResult> _bookSearchResultData = [];
+  late List<BookSearchResult> _bookSearchResultData = [];
+  late bool _isScrollLoading = false;
 
   final TextEditingController _bookSearchKeywordController =
       TextEditingController();
@@ -47,30 +48,11 @@ class _SearchBookListState extends State<SearchBookList> {
       requestUrl:
           '$_bookSearchKeywordRequestUrl?keyword=${widget.bookSearchKeyword}',
     );
+  }
 
-    _searchScrollController.addListener(() async {
-      ScrollPosition scrollPosition = _searchScrollController.position;
-      if (_searchScrollController.offset >
-              scrollPosition.maxScrollExtent * 0.85 &&
-          !scrollPosition.outOfRange) {
-        if (_bookSearchNextUrl != "") {
-          BookSearchResponseData additionalBookSearchResponse =
-              await _searchRepository.getBookSearchResponse(
-            requestUrl:
-                '${getBookServiceApi(API.getBookService)}$_bookSearchNextUrl',
-          );
-
-          setState(() {
-            _saveBookSearchResultDataAndNextRequestUrl(
-              bookSearchResult: additionalBookSearchResponse.bookSearchResult!,
-              nextRequestUrl: additionalBookSearchResponse.nextRequestUrl!,
-            );
-          });
-
-          _bookSearchNextUrl = "";
-        }
-      }
-    });
+  @override
+  void setState(VoidCallback fn) async {
+    super.setState(fn);
   }
 
   @override
@@ -83,49 +65,78 @@ class _SearchBookListState extends State<SearchBookList> {
   Widget build(BuildContext context) {
     return SubPageLayout(
       appBarTitle: '검색',
-      child: FutureBuilder<BookSearchResponseData>(
-        future: _bookSearchResponse,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Column(
-              children: [
-                searchInputBox(),
-                const SearchNotFound(),
-              ],
-            );
+      child: NotificationListener<ScrollUpdateNotification>(
+        onNotification: (ScrollUpdateNotification notification) {
+          if (notification.metrics.maxScrollExtent * 0.95 <
+              notification.metrics.pixels) {
+            setState(() {
+              _isScrollLoading = true;
+            });
+          } else {
+            setState(() {
+              _isScrollLoading = false;
+            });
           }
-
-          if (!snapshot.hasData) {
-            return const SearchLoading();
-          }
-
-          if (snapshot.hasData) {
-            BookSearchResponseData bookSearchResponse = snapshot.data!;
-
-            if (_bookSearchResultData.isEmpty) {
-              _saveBookSearchResultDataAndNextRequestUrl(
-                bookSearchResult: bookSearchResponse.bookSearchResult!,
-                nextRequestUrl: bookSearchResponse.nextRequestUrl!,
+          return false;
+        },
+        child: FutureBuilder<BookSearchResponseData>(
+          future: _bookSearchResponse,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Column(
+                children: [
+                  searchInputBox(),
+                  const SearchNotFound(),
+                ],
               );
             }
 
-            return Column(
-              children: [
-                searchInputBox(),
-                SearchBookListHeader(
-                  keyword: _bookSearchKeywordController.text,
-                  bookSearchDataList: _bookSearchResultData,
-                ),
-                SearchBookListInfo(
-                  bookSearchDataList: _bookSearchResultData,
-                  scrollController: _searchScrollController,
-                ),
-              ],
-            );
-          }
+            if (!snapshot.hasData) {
+              return const SearchLoading();
+            }
 
-          return const SearchNotFound();
-        },
+            if (snapshot.hasData) {
+              BookSearchResponseData bookSearchResponse = snapshot.data!;
+
+              if (_bookSearchResultData.isEmpty) {
+                _bookSearchResultData
+                    .addAll(bookSearchResponse.bookSearchResult!);
+                _bookSearchNextUrl = bookSearchResponse.nextRequestUrl!;
+              }
+
+              if (_bookSearchNextUrl != "" && _isScrollLoading) {
+                _searchRepository
+                    .getBookSearchResponse(
+                      requestUrl:
+                          '${getBookServiceApi(API.getBookService)}$_bookSearchNextUrl',
+                    )
+                    .then((value) => setState(() {
+                          _bookSearchResultData.addAll(value.bookSearchResult!);
+                          _bookSearchNextUrl = value.nextRequestUrl!;
+                        }));
+
+                _bookSearchNextUrl = "";
+                _isScrollLoading = false;
+              }
+
+              return Column(
+                children: [
+                  searchInputBox(),
+                  SearchBookListHeader(
+                    keyword: _bookSearchKeywordController.text,
+                    bookSearchDataList: _bookSearchResultData,
+                  ),
+                  SearchBookListInfo(
+                    bookSearchDataList: _bookSearchResultData,
+                    scrollController: _searchScrollController,
+                  ),
+                ],
+              );
+            }
+
+            return const SearchNotFound();
+          },
+        ),
       ),
     );
   }
@@ -147,7 +158,26 @@ class _SearchBookListState extends State<SearchBookList> {
             _isClearButtonVisible = value.isNotEmpty;
           });
         },
-        onSubmitted: _onSubmittedSearchKeyword,
+        onSubmitted: (value) {
+          _bookSearchKeywordController.text = value;
+
+          _searchRepository
+              .getBookSearchResponse(
+                requestUrl:
+                    '$_bookSearchKeywordRequestUrl?keyword=${_bookSearchKeywordController.text}',
+              )
+              .then(
+                (value) => setState(() {
+                  _bookSearchResultData = value.bookSearchResult!;
+                  _bookSearchNextUrl = value.nextRequestUrl!;
+                  _searchScrollController.animateTo(
+                    0,
+                    duration: const Duration(microseconds: 500),
+                    curve: Curves.easeInOut,
+                  );
+                }),
+              );
+        },
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
             vertical: 6.0,
@@ -181,23 +211,5 @@ class _SearchBookListState extends State<SearchBookList> {
         ),
       ),
     );
-  }
-
-  void _saveBookSearchResultDataAndNextRequestUrl({
-    required List<BookSearchResult> bookSearchResult,
-    required String nextRequestUrl,
-  }) {
-    _bookSearchResultData.addAll(bookSearchResult);
-    _bookSearchNextUrl = nextRequestUrl;
-  }
-
-  void _onSubmittedSearchKeyword(value) {
-    setState(() {
-      _bookSearchKeywordController.text = value;
-      _bookSearchResponse = _searchRepository.getBookSearchResponse(
-        requestUrl:
-            '$_bookSearchKeywordRequestUrl?keyword=${_bookSearchKeywordController.text}',
-      );
-    });
   }
 }
