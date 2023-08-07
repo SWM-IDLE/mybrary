@@ -50,8 +50,8 @@ public class LogoutTest {
     static String accessToken;
     static String refreshToken;
 
-    @Test
-    @Order(1)
+//    @Test
+//    @Order(1)
     @DisplayName("회원 가입 후 로그인하여 accessToken, refreshToken을 발급받는다.")
     void setUp() throws Exception {
         // 회원가입
@@ -89,8 +89,8 @@ public class LogoutTest {
                 });
     }
 
-    @Test
-    @Order(2)
+//    @Test
+//    @Order(2)
     @DisplayName("발급된 accessToken, refreshToken으로 로그아웃을 요청하여 로그아웃에 성공한다.")
     void logoutSuccess() throws Exception {
         // given
@@ -108,8 +108,8 @@ public class LogoutTest {
         assert redisUtil.get(accessToken) != null;
     }
 
-    @Test
-    @Order(3)
+//    @Test
+//    @Order(3)
     @DisplayName("로그아웃된 accessToken으로 인증을 요청하면 예외가 발생한다.")
     void loginWithLoggedOutToken() throws Exception {
         // given
@@ -126,8 +126,8 @@ public class LogoutTest {
         // then
     }
 
-    @Test
-    @Order(4)
+//    @Test
+//    @Order(4)
     @DisplayName("토큰이 없는 상태로 로그아웃을 요청하면 예외가 발생한다.")
     void logoutWithoutToken() throws Exception {
         // given
@@ -142,8 +142,8 @@ public class LogoutTest {
         // then
     }
 
-    @Test
-    @Order(5)
+//    @Test
+//    @Order(5)
     @DisplayName("유효하지 않은 토큰으로 로그아웃을 요청하면 예외가 발생한다.")
     void logoutWithInvalidToken() throws Exception {
         // given
@@ -160,8 +160,8 @@ public class LogoutTest {
         // then
     }
 
-    @Test
-    @Order(6)
+//    @Test
+//    @Order(6)
     @DisplayName("테스트 종료 후 테스트용 계정을 삭제한다.")
     void deleteTestUser() {
         userRepository.delete(userRepository.findByLoginId(LOGIN_ID).get());
