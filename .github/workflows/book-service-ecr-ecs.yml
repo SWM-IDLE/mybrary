@@ -24,6 +24,14 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+
+      - name: Setup Application Test Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/book-service/src/main/resources/application-test.yml
+        env:
+          aladin.api.key: ${{ secrets.ALADIN_API_KEY }}
+          kakao.api.key: ${{ secrets.KAKAO_API_KEY }}
           
       - name: Build with Gradle
         working-directory: backend/book-service
