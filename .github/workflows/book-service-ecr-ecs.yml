@@ -11,7 +11,7 @@ on:
     paths:
       - ‘backend/book-service/**’
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
