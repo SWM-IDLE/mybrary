@@ -35,6 +35,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
     private static final String REQUEST_VERSION = "20131101";
     private static final String REQUEST_MAX_RESULTS = "20";
     private static final String REQUEST_COVER_SIZE = "Big";
+    private static final String REQUEST_COVER_MID_BIG_SIZE = "MidBig";
 
     private final RestTemplate restTemplate;
 
@@ -56,6 +57,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
                 .queryParam("Query", request.getKeyword())
                 .queryParam("Start", String.valueOf(request.getPage()))
                 .queryParam("MaxResults", REQUEST_MAX_RESULTS)
+                .queryParam("Cover", REQUEST_COVER_MID_BIG_SIZE)
                 .queryParam("Sort", request.getSort());
 
         ResponseEntity<AladinBookSearchResponse> response = restTemplate.exchange(

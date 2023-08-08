@@ -2,9 +2,8 @@ server:
   port: 0
 
 spring:
-  spring:
-    application:
-      name: book-service
+  application:
+    name: book-service
 
   jpa:
     hibernate:
