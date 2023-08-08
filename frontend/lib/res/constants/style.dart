@@ -186,6 +186,20 @@ const bookDetailDescriptionStyle = TextStyle(
   fontWeight: FontWeight.w400,
 );
 
+const bookDetailSubStyle = TextStyle(
+  height: 1.5,
+  color: GREY_05_COLOR,
+  fontSize: 16.0,
+  fontWeight: FontWeight.w400,
+);
+
+const bookDetailInfoStyle = TextStyle(
+  height: 1.5,
+  color: GREY_05_COLOR,
+  fontSize: 16.0,
+  fontWeight: FontWeight.w300,
+);
+
 const aladinTextStyle = TextStyle(
   height: 1.2,
   color: GREY_05_COLOR,

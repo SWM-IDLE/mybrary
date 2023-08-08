@@ -16,4 +16,16 @@ class SearchRepository {
   }) {
     return _searchDataSource.getBookSearchDetailResponse(isbn13);
   }
+
+  Future<BookSearchDetailResponseData> getBookSearchDetailAndSaveBookResponse({
+    required String userId,
+    required String isbn13,
+    String? isbn10,
+  }) {
+    return _searchDataSource.getBookSearchDetailAndSaveBookResponse(
+      userId,
+      isbn13,
+      isbn10,
+    );
+  }
 }

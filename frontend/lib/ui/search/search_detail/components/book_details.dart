@@ -26,69 +26,38 @@ class BookDetails extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 10.0),
           const Text(
             '세부 정보',
             style: commonSubBoldStyle,
           ),
           const SizedBox(height: 10.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'ISBN 10',
-                style: bookDetailDescriptionStyle,
-              ),
-              Text(
-                isbn10,
-                style: bookDetailDescriptionStyle,
-              ),
-            ],
-          ),
+          detailItem('ISBN 10', isbn10),
           const SizedBox(height: 8.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'ISBN 13',
-                style: bookDetailDescriptionStyle,
-              ),
-              Text(
-                isbn13,
-                style: bookDetailDescriptionStyle,
-              ),
-            ],
-          ),
+          detailItem('ISBN 13', isbn13),
           const SizedBox(height: 8.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                '무게',
-                style: bookDetailDescriptionStyle,
-              ),
-              Text(
-                '${weight}g',
-                style: bookDetailDescriptionStyle,
-              ),
-            ],
-          ),
+          detailItem('무게', '${weight}g'),
           const SizedBox(height: 8.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                '크기',
-                style: bookDetailDescriptionStyle,
-              ),
-              Text(
-                '${sizeWidth}x${sizeHeight}x${sizeDepth}mm',
-                style: bookDetailDescriptionStyle,
-              ),
-            ],
-          ),
-          const SizedBox(height: 10.0),
+          detailItem('크기', '${sizeWidth}x${sizeHeight}x${sizeDepth}mm'),
+          const SizedBox(height: 20.0),
         ],
       ),
+    );
+  }
+
+  Row detailItem(String itemTitle, String itemDescription) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          itemTitle,
+          style: bookDetailDescriptionStyle,
+        ),
+        Text(
+          itemDescription,
+          style: bookDetailDescriptionStyle,
+        ),
+      ],
     );
   }
 }

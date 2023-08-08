@@ -10,23 +10,15 @@ class BookContents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '목차',
-            style: commonSubBoldStyle,
-          ),
-          const SizedBox(height: 10.0),
-          Text(
-            toc == '' ? '목차가 없습니다.' : toc,
-            style: bookDetailDescriptionStyle,
-          ),
-          const SizedBox(height: 10.0),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          toc == '' ? '목차가 없습니다.' : toc,
+          style: bookDetailDescriptionStyle,
+        ),
+        const SizedBox(height: 10.0),
+      ],
     );
   }
 }

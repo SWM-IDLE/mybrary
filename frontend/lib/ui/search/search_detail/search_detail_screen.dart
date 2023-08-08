@@ -3,12 +3,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/data/repository/search_repository.dart';
 import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_contents.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_description.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_detail_header.dart';
+import 'package:mybrary/ui/search/search_detail/components/book_detail_info.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_detail_provider.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_details.dart';
 
@@ -35,7 +37,9 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
   void initState() {
     super.initState();
 
-    _bookSearchDetailResponse = _searchRepository.getBookSearchDetailResponse(
+    _bookSearchDetailResponse =
+        _searchRepository.getBookSearchDetailAndSaveBookResponse(
+      userId: 'testId',
       isbn13: widget.isbn13,
     );
   }
@@ -85,12 +89,29 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                       ),
                     ),
                     bookDetailDivider(),
-                    BookDescription(
-                      subTitle: bookSearchDetail.subTitle!,
-                      description: bookSearchDetail.description!,
+                    BookDetailInfo(
+                      publicationDate: bookSearchDetail.publicationDate!,
+                      category: bookSearchDetail.category!,
+                      pages: bookSearchDetail.pages!,
+                      publisher: bookSearchDetail.publisher!,
+                      starRating: bookSearchDetail.starRating!,
+                      link: bookSearchDetail.link!,
                     ),
                     bookDetailDivider(),
-                    BookContents(toc: bookSearchDetail.toc!),
+                    bookDetailExpansion(
+                      expansionTitle: '책 소개',
+                      children: BookDescription(
+                        subTitle: bookSearchDetail.subTitle!,
+                        description: bookSearchDetail.description!,
+                      ),
+                    ),
+                    bookDetailDivider(),
+                    bookDetailExpansion(
+                      expansionTitle: '목차',
+                      children: BookContents(
+                        toc: bookSearchDetail.toc!,
+                      ),
+                    ),
                     bookDetailDivider(),
                     BookDetails(
                       isbn10: bookSearchDetail.isbn10!,
@@ -118,12 +139,35 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
 
   Widget bookDetailDivider() {
     return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 24.0),
+      padding: EdgeInsets.symmetric(vertical: 12.0),
       child: Divider(
         height: 1,
         thickness: 6,
         color: GREY_01_COLOR,
       ),
+    );
+  }
+
+  ExpansionTile bookDetailExpansion({
+    required String expansionTitle,
+    required Widget children,
+  }) {
+    return ExpansionTile(
+      title: Text(
+        expansionTitle,
+        style: commonSubBoldStyle,
+      ),
+      tilePadding: const EdgeInsets.symmetric(horizontal: 20.0),
+      childrenPadding: const EdgeInsets.symmetric(
+        horizontal: 20.0,
+        vertical: 6.0,
+      ),
+      shape: const Border(),
+      iconColor: GREY_05_COLOR,
+      collapsedIconColor: GREY_05_COLOR,
+      children: [
+        children,
+      ],
     );
   }
 }

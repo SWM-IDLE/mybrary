@@ -12,33 +12,30 @@ class BookDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '부제',
-            style: commonSubBoldStyle,
-          ),
-          const SizedBox(height: 10.0),
-          Text(
-            subTitle == '' ? '부제가 없습니다.' : subTitle,
-            style: bookDetailDescriptionStyle,
-          ),
-          const SizedBox(height: 24.0),
-          const Text(
-            '책 소개',
-            style: commonSubBoldStyle,
-          ),
-          const SizedBox(height: 10.0),
-          Text(
-            description == '' ? '책 소개가 없습니다.' : description,
-            style: bookDetailDescriptionStyle,
-          ),
-          const SizedBox(height: 10.0),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '부제',
+          style: commonSubMediumStyle,
+        ),
+        const SizedBox(height: 10.0),
+        Text(
+          subTitle == '' ? '생략' : subTitle,
+          style: bookDetailDescriptionStyle,
+        ),
+        const SizedBox(height: 24.0),
+        const Text(
+          '책 설명',
+          style: commonSubMediumStyle,
+        ),
+        const SizedBox(height: 10.0),
+        Text(
+          description == '' ? '책 설명이 없습니다.' : description,
+          style: bookDetailDescriptionStyle,
+        ),
+        const SizedBox(height: 10.0),
+      ],
     );
   }
 }
