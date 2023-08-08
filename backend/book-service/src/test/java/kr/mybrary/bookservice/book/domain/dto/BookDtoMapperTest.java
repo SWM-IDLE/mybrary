@@ -222,7 +222,8 @@ class BookDtoMapperTest {
                 () -> assertThat(target.getStarRating()).isEqualTo(source.getStarRating()),
                 () -> assertThat(target.getReviewCount()).isEqualTo(source.getReviewCount()),
                 () -> assertThat(target.getAuthors().size()).isEqualTo(source.getAuthors().size()),
-                () -> assertThat(target.getTranslators().size()).isEqualTo(source.getTranslators().size())
+                () -> assertThat(target.getTranslators().size()).isEqualTo(source.getTranslators().size()),
+                () -> assertThat(target.getThumbnailUrl()).isEqualTo(source.getThumbnail())
         );
     }
 

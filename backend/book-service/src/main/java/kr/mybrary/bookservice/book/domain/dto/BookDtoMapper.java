@@ -45,6 +45,7 @@ public interface BookDtoMapper {
     BookDetailServiceResponse bookSearchDetailToDetailServiceResponse(BookSearchDetailResponse bookSearchDetailResponse);
 
     @Mapping(target = "publicationDate", source = "publicationDate", qualifiedByName = "stringToLocalDateTime")
+    @Mapping(target = "thumbnailUrl", source = "thumbnail")
     BookCreateServiceRequest bookSearchDetailToBookCreateServiceRequest(BookSearchDetailResponse bookSearchDetailResponse);
 
     @Mapping(target = "id", source = "book.id")
