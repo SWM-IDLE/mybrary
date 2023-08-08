@@ -36,6 +36,9 @@ public interface BookDtoMapper {
     @Mapping(target = "translators", source = "bookTranslators", qualifiedByName = "mappingTranslators")
     @Mapping(target = "interested", constant = "false")
     @Mapping(target = "thumbnail", source = "thumbnailUrl")
+    @Mapping(target = "category", source = "bookCategory.name")
+    @Mapping(target = "categoryId", source = "bookCategory.cid")
+    @Mapping(target = "publicationDate", source = "publicationDate", qualifiedByName = "localDateTimeToString")
     BookDetailServiceResponse bookToDetailServiceResponse(Book book);
 
     @Mapping(target = "aladinStarRating", source = "starRating")
@@ -81,5 +84,11 @@ public interface BookDtoMapper {
     static LocalDateTime stringToLocalDateTime(String publicationDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return LocalDate.parse(publicationDate, formatter).atStartOfDay();
+    }
+
+    @Named("localDateTimeToString")
+    static String localDateTimeToString(LocalDateTime publicationDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return publicationDate.format(formatter);
     }
 }
