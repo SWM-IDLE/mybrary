@@ -127,6 +127,8 @@ public class BookDtoTestData {
                         .build()))
                 .starRating(4.5)
                 .reviewCount(100)
+                .aladinReviewCount(100)
+                .aladinStarRating(3.5)
                 .publicationDate("2015-10-20")
                 .category("국내도서>소설/시/희곡>프랑스소설")
                 .categoryId(50921)

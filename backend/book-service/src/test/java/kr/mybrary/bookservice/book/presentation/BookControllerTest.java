@@ -174,6 +174,8 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.data.translators[0].translatorId").value(
                         response.getTranslators().get(0).getTranslatorId()))
                 .andExpect(jsonPath("$.data.starRating").value(response.getStarRating()))
+                .andExpect(jsonPath("$.data.aladinStarRating").value(response.getAladinStarRating()))
+                .andExpect(jsonPath("$.data.aladinReviewCount").value(response.getAladinReviewCount()))
                 .andExpect(jsonPath("$.data.reviewCount").value(response.getReviewCount()))
                 .andExpect(jsonPath("$.data.publicationDate").value(response.getPublicationDate()))
                 .andExpect(jsonPath("$.data.category").value(response.getCategory()))
@@ -233,6 +235,8 @@ class BookControllerTest {
                                                         .description("도서 번역자 ID"),
                                                 fieldWithPath("data.starRating").type(NUMBER).description("도서 별점"),
                                                 fieldWithPath("data.reviewCount").type(NUMBER).description("도서 리뷰 수"),
+                                                fieldWithPath("data.aladinStarRating").type(NUMBER).description("알라딘 도서 별점 수"),
+                                                fieldWithPath("data.aladinReviewCount").type(NUMBER).description("알라딘 도서 리뷰 수"),
                                                 fieldWithPath("data.publicationDate").type(STRING)
                                                         .description("도서 출판일"),
                                                 fieldWithPath("data.category").type(STRING).description("도서 카테고리"),

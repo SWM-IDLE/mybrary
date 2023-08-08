@@ -119,11 +119,13 @@ class BookDtoMapperTest {
         // then
         assertAll(
                 () -> assertThat(bookDetailServiceResponse.getTitle()).isEqualTo(book.getTitle()),
-                () -> assertThat(bookDetailServiceResponse.getStarRating()).isEqualTo(book.getAladinStarRating()),
-                () -> assertThat(bookDetailServiceResponse.getReviewCount()).isEqualTo(book.getAladinReviewCount()),
+                () -> assertThat(bookDetailServiceResponse.getThumbnail()).isEqualTo(book.getThumbnailUrl()),
+                () -> assertThat(bookDetailServiceResponse.getStarRating()).isEqualTo(book.getStarRating()),
+                () -> assertThat(bookDetailServiceResponse.getReviewCount()).isEqualTo(book.getReviewCount()),
+                () -> assertThat(bookDetailServiceResponse.getAladinStarRating()).isEqualTo(book.getAladinStarRating()),
+                () -> assertThat(bookDetailServiceResponse.getAladinReviewCount()).isEqualTo(book.getAladinReviewCount()),
                 () -> assertThat(bookDetailServiceResponse.getAuthors().size()).isEqualTo(book.getBookAuthors().size()),
-                () -> assertThat(bookDetailServiceResponse.getTranslators().size()).isEqualTo(
-                        book.getBookTranslators().size()),
+                () -> assertThat(bookDetailServiceResponse.getTranslators().size()).isEqualTo(book.getBookTranslators().size()),
                 () -> assertThat(bookDetailServiceResponse.getIsbn10()).isEqualTo(book.getIsbn10()),
                 () -> assertThat(bookDetailServiceResponse.getIsbn13()).isEqualTo(book.getIsbn13())
         );
@@ -159,8 +161,10 @@ class BookDtoMapperTest {
                 () -> assertThat(target.getSizeWidth()).isEqualTo(source.getSizeWidth()),
                 () -> assertThat(target.getSizeHeight()).isEqualTo(source.getSizeHeight()),
                 () -> assertThat(target.getSizeDepth()).isEqualTo(source.getSizeDepth()),
-                () -> assertThat(target.getStarRating()).isEqualTo(source.getStarRating()),
-                () -> assertThat(target.getReviewCount()).isEqualTo(source.getReviewCount()),
+                () -> assertThat(target.getAladinStarRating()).isEqualTo(source.getStarRating()),
+                () -> assertThat(target.getAladinReviewCount()).isEqualTo(source.getReviewCount()),
+                () -> assertThat(target.getStarRating()).isEqualTo(0),
+                () -> assertThat(target.getReviewCount()).isEqualTo(0),
                 () -> assertThat(target.getAuthors().size()).isEqualTo(source.getAuthors().size()),
                 () -> assertThat(target.getTranslators().size()).isEqualTo(source.getTranslators().size())
         );
