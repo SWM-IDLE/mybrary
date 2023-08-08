@@ -51,11 +51,6 @@ class _SearchBookListState extends State<SearchBookList> {
   }
 
   @override
-  void setState(VoidCallback fn) async {
-    super.setState(fn);
-  }
-
-  @override
   void dispose() {
     _bookSearchKeywordController.dispose();
     super.dispose();
