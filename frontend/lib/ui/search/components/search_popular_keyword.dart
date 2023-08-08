@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
+import 'package:mybrary/ui/search/search_book_list/search_book_list.dart';
 
 const List<String> popularSearchKeyword = [
   '돈의 속성',
@@ -30,16 +31,14 @@ class SearchPopularKeyword extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             '인기 검색어',
             style: TextStyle(
               fontSize: 15.0,
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(
-            height: 16.0,
-          ),
+          const SizedBox(height: 16.0),
           Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
@@ -47,10 +46,16 @@ class SearchPopularKeyword extends StatelessWidget {
               popularSearchKeyword.length,
               (index) => InkWell(
                 onTap: () {
-                  bookSearchKeywordController.text =
-                      popularSearchKeyword[index];
-                  onBookSearchBinding(true);
-                  FocusManager.instance.primaryFocus?.unfocus();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SearchBookList(
+                        bookSearchKeyword: popularSearchKeyword[index],
+                      ),
+                    ),
+                  ).then(
+                    (value) => bookSearchKeywordController.clear(),
+                  );
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
