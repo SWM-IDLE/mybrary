@@ -65,62 +65,65 @@ class _SearchScreenState extends State<SearchScreen> {
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.97 -
-                kToolbarHeight -
-                kBottomNavigationBarHeight,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 6.0,
-                    left: 18.0,
-                    bottom: 12.0,
-                    right: 18.0,
-                  ),
-                  child: TextField(
-                    textInputAction: TextInputAction.search,
-                    controller: _bookSearchKeywordController,
-                    cursorColor: primaryColor,
-                    onSubmitted: (value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => SearchBookList(
-                            bookSearchKeyword: value,
+          child: InkWell(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.97 -
+                  kToolbarHeight -
+                  kBottomNavigationBarHeight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 6.0,
+                      left: 18.0,
+                      bottom: 12.0,
+                      right: 18.0,
+                    ),
+                    child: TextField(
+                      textInputAction: TextInputAction.search,
+                      controller: _bookSearchKeywordController,
+                      cursorColor: primaryColor,
+                      onSubmitted: (value) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => SearchBookList(
+                              bookSearchKeyword: value,
+                            ),
                           ),
+                        ).then(
+                          (value) => _bookSearchKeywordController.clear(),
+                        );
+                      },
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 6.0,
                         ),
-                      ).then(
-                        (value) => _bookSearchKeywordController.clear(),
-                      );
-                    },
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 6.0,
-                      ),
-                      hintText: '책, 저자, 회원을 검색해보세요.',
-                      hintStyle: commonSubRegularStyle,
-                      filled: true,
-                      fillColor: GREY_COLOR_OPACITY_TWO,
-                      focusedBorder: searchInputBorderStyle,
-                      enabledBorder: searchInputBorderStyle,
-                      focusColor: GREY_COLOR,
-                      prefixIcon: SvgPicture.asset(
-                        'assets/svg/icon/search_small.svg',
-                        fit: BoxFit.scaleDown,
+                        hintText: '책, 저자, 회원을 검색해보세요.',
+                        hintStyle: commonSubRegularStyle,
+                        filled: true,
+                        fillColor: GREY_COLOR_OPACITY_TWO,
+                        focusedBorder: searchInputBorderStyle,
+                        enabledBorder: searchInputBorderStyle,
+                        focusColor: GREY_COLOR,
+                        prefixIcon: SvgPicture.asset(
+                          'assets/svg/icon/search_small.svg',
+                          fit: BoxFit.scaleDown,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 8.0,
-                ),
-                SearchPopularKeyword(
-                  bookSearchKeywordController: _bookSearchKeywordController,
-                  onBookSearchBinding: getBookSearchPopularKeywordResponse,
-                ),
-              ],
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  SearchPopularKeyword(
+                    bookSearchKeywordController: _bookSearchKeywordController,
+                    onBookSearchBinding: getBookSearchPopularKeywordResponse,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

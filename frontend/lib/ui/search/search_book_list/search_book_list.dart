@@ -67,7 +67,7 @@ class _SearchBookListState extends State<SearchBookList> {
       appBarTitle: '검색',
       child: NotificationListener<ScrollUpdateNotification>(
         onNotification: (ScrollUpdateNotification notification) {
-          if (notification.metrics.maxScrollExtent * 0.95 <
+          if (notification.metrics.maxScrollExtent * 0.85 <
               notification.metrics.pixels) {
             setState(() {
               _isScrollLoading = true;
