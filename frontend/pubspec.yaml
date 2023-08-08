@@ -74,6 +74,7 @@ flutter:
     - assets/img/logo/
     - assets/img/test/
     - assets/svg/icon/
+    - assets/svg/icon/small/
     - assets/svg/badge/
 
   # To add assets to your application, add an assets section, like this:

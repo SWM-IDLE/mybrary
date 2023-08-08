@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
+import 'package:mybrary/data/repository/book_repository.dart';
 import 'package:mybrary/data/repository/search_repository.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
@@ -27,11 +28,19 @@ class SearchDetailScreen extends StatefulWidget {
 
 class _SearchDetailScreenState extends State<SearchDetailScreen> {
   final _searchRepository = SearchRepository();
+  final _bookRepository = BookRepository();
+  final GlobalKey _bookDetailHeaderKey = GlobalKey();
 
   late String _bookTitle = '';
   late Future<BookSearchDetailResponseData> _bookSearchDetailResponse;
 
+  bool _isOverflowBookDetailHeader = false;
+  late bool _isOnTapHeart = false;
+  late int _newInterestCount = 0;
+
   final ScrollController _bookDetailScrollController = ScrollController();
+
+  late dynamic position;
 
   @override
   void initState() {
@@ -42,14 +51,44 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       userId: 'testId',
       isbn13: widget.isbn13,
     );
+
+    _searchRepository
+        .getBookSearchDetailAndSaveBookResponse(
+      userId: 'testId',
+      isbn13: widget.isbn13,
+    )
+        .then(
+      (response) {
+        setState(() {
+          _isOnTapHeart = response.interested!;
+          _newInterestCount = response.interestCount!;
+        });
+      },
+    );
+
+    _bookDetailScrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    double? position;
+    if (_bookDetailHeaderKey.currentContext != null) {
+      position = _bookDetailHeaderKey.currentContext!.size!.height;
+    }
+    if (_bookDetailScrollController.position.pixels > position!) {
+      setState(() {
+        _isOverflowBookDetailHeader = true;
+      });
+    } else {
+      setState(() {
+        _isOverflowBookDetailHeader = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final displaySize = MediaQuery.of(context).size;
-
     return SubPageLayout(
-      appBarTitle: _bookTitle,
+      appBarTitle: _isOverflowBookDetailHeader ? _bookTitle : '',
       appBarActions: [
         IconButton(
           onPressed: () {
@@ -71,6 +110,9 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final bookSearchDetail = snapshot.data!;
+              bool interested = bookSearchDetail.interested!;
+              int interestCount = bookSearchDetail.interestCount!;
+
               _bookTitle = bookSearchDetail.title!;
 
               return SingleChildScrollView(
@@ -79,14 +121,36 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      width: displaySize.width,
-                      height: displaySize.height * 0.47,
-                      child: BookDetailHeader(
-                        thumbnail: bookSearchDetail.thumbnail!,
-                        title: bookSearchDetail.title!,
-                        authors: bookSearchDetail.authors!,
-                      ),
+                    BookDetailHeader(
+                      key: _bookDetailHeaderKey,
+                      onTapInterestBook: () async {
+                        final result =
+                            await _bookRepository.registerInterestBook(
+                          userId: 'testId',
+                          isbn13: bookSearchDetail.isbn13!,
+                        );
+
+                        setState(() {
+                          _isOnTapHeart = result.interested!;
+
+                          if (!interested && _isOnTapHeart) {
+                            _newInterestCount = interestCount + 1;
+                          } else if (interested && _isOnTapHeart == false) {
+                            _newInterestCount = interestCount - 1;
+                          } else {
+                            _newInterestCount = interestCount;
+                          }
+                        });
+                      },
+                      interested: interested,
+                      isOnTapHeart: _isOnTapHeart,
+                      thumbnail: bookSearchDetail.thumbnail!,
+                      title: bookSearchDetail.title!,
+                      authors: bookSearchDetail.authors!,
+                      interestCount: interestCount,
+                      newInterestCount: _newInterestCount,
+                      readCount: bookSearchDetail.readCount!,
+                      holderCount: bookSearchDetail.holderCount!,
                     ),
                     bookDetailDivider(),
                     BookDetailInfo(
@@ -96,6 +160,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                       publisher: bookSearchDetail.publisher!,
                       starRating: bookSearchDetail.starRating!,
                       link: bookSearchDetail.link!,
+                      aladinStarRating: bookSearchDetail.aladinStarRating!,
                     ),
                     bookDetailDivider(),
                     bookDetailExpansion(

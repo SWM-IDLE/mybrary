@@ -30,6 +30,7 @@ enum API {
   getBookSearchIsbn,
   getBookSearchDetail,
   getBookSearchDetailAndSaveBook,
+  registerInterestBook,
 }
 
 Map<API, String> apiMap = {
@@ -56,6 +57,7 @@ Map<API, String> apiMap = {
   API.getBookSearchIsbn: "/api/v1/books/search/isbn",
   API.getBookSearchDetail: "/api/v1/books/search/detail",
   API.getBookSearchDetailAndSaveBook: "/api/v1/books/detail",
+  API.registerInterestBook: "/api/v1/books", // '/{isbn13}/interest'
 };
 
 String getApi(API apiType) {

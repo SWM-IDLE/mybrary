@@ -200,6 +200,18 @@ const bookDetailInfoStyle = TextStyle(
   fontWeight: FontWeight.w300,
 );
 
+const bookStatusStyle = TextStyle(
+  color: GREY_05_COLOR,
+  fontSize: 12.0,
+  fontWeight: FontWeight.w400,
+);
+
+const bookStatusCountStyle = TextStyle(
+  color: GREY_06_COLOR,
+  fontSize: 14.0,
+  fontWeight: FontWeight.w700,
+);
+
 const aladinTextStyle = TextStyle(
   height: 1.2,
   color: GREY_05_COLOR,

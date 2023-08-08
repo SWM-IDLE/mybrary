@@ -34,6 +34,7 @@ class BookSearchDetailResponseData {
   String? author;
   List<Authors>? authors;
   List<Translators>? translators;
+  bool? interested;
   double? starRating;
   int? reviewCount;
   String? publicationDate;
@@ -54,6 +55,8 @@ class BookSearchDetailResponseData {
   int? holderCount;
   int? readCount;
   int? interestCount;
+  double? aladinStarRating;
+  int? aladinReviewCount;
 
   BookSearchDetailResponseData({
     this.title,
@@ -63,6 +66,7 @@ class BookSearchDetailResponseData {
     this.author,
     this.authors,
     this.translators,
+    this.interested,
     this.starRating,
     this.reviewCount,
     this.publicationDate,
@@ -83,14 +87,16 @@ class BookSearchDetailResponseData {
     this.holderCount,
     this.readCount,
     this.interestCount,
+    this.aladinStarRating,
+    this.aladinReviewCount,
   });
 
   BookSearchDetailResponseData.fromJson(Map<String, dynamic> json) {
-    title = json['title'];
-    subTitle = json['subTitle'];
+    title = json['title'] ?? '';
+    subTitle = json['subTitle'] ?? '';
     thumbnail = json['thumbnail'] ?? '';
-    link = json['link'];
-    author = json['author'];
+    link = json['link'] ?? '';
+    author = json['author'] ?? '';
     if (json['authors'] != null) {
       authors = <Authors>[];
       json['authors'].forEach((v) {
@@ -103,26 +109,29 @@ class BookSearchDetailResponseData {
         translators!.add(Translators.fromJson(v));
       });
     }
-    starRating = json['starRating'];
-    reviewCount = json['reviewCount'];
-    publicationDate = json['publicationDate'];
-    category = json['category'];
-    categoryId = json['categoryId'];
-    pages = json['pages'];
-    publisher = json['publisher'];
-    description = json['description'];
-    toc = json['toc'];
-    isbn10 = json['isbn10'];
-    isbn13 = json['isbn13'];
-    weight = json['weight'];
-    sizeDepth = json['sizeDepth'];
-    sizeHeight = json['sizeHeight'];
-    sizeWidth = json['sizeWidth'];
-    priceSales = json['priceSales'];
-    priceStandard = json['priceStandard'];
-    holderCount = json['holderCount'];
-    readCount = json['readCount'];
-    interestCount = json['interestCount'];
+    interested = json['interested'] ?? false;
+    starRating = json['starRating'] ?? 0.0;
+    reviewCount = json['reviewCount'] ?? 0.0;
+    publicationDate = json['publicationDate'] ?? '';
+    category = json['category'] ?? '';
+    categoryId = json['categoryId'] ?? 0;
+    pages = json['pages'] ?? 0;
+    publisher = json['publisher'] ?? '';
+    description = json['description'] ?? '';
+    toc = json['toc'] ?? '';
+    isbn10 = json['isbn10'] ?? '';
+    isbn13 = json['isbn13'] ?? '';
+    weight = json['weight'] ?? 0;
+    sizeDepth = json['sizeDepth'] ?? 0;
+    sizeHeight = json['sizeHeight'] ?? 0;
+    sizeWidth = json['sizeWidth'] ?? 0;
+    priceSales = json['priceSales'] ?? 0;
+    priceStandard = json['priceStandard'] ?? 0;
+    holderCount = json['holderCount'] ?? 0;
+    readCount = json['readCount'] ?? 0;
+    interestCount = json['interestCount'] ?? 0;
+    aladinStarRating = json['aladinStarRating'] ?? 0.0;
+    aladinReviewCount = json['aladinReviewCount'] ?? 0;
   }
 
   Map<String, dynamic> toJson() {
@@ -138,6 +147,7 @@ class BookSearchDetailResponseData {
     if (translators != null) {
       data['translators'] = translators!.map((v) => v.toJson()).toList();
     }
+    data['interested'] = interested;
     data['starRating'] = starRating;
     data['reviewCount'] = reviewCount;
     data['publicationDate'] = publicationDate;
@@ -158,6 +168,8 @@ class BookSearchDetailResponseData {
     data['holderCount'] = holderCount;
     data['readCount'] = readCount;
     data['interestCount'] = interestCount;
+    data['aladinStarRating'] = aladinStarRating;
+    data['aladinReviewCount'] = aladinReviewCount;
     return data;
   }
 }

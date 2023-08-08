@@ -10,6 +10,7 @@ class BookDetailInfo extends StatelessWidget {
   final String publisher;
   final double starRating;
   final String link;
+  final double aladinStarRating;
 
   const BookDetailInfo({
     required this.publicationDate,
@@ -18,6 +19,7 @@ class BookDetailInfo extends StatelessWidget {
     required this.publisher,
     required this.starRating,
     required this.link,
+    required this.aladinStarRating,
     super.key,
   });
 
@@ -65,7 +67,9 @@ class BookDetailInfo extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  substringCategory(category),
+                  category == ''
+                      ? '제공되는 카테고리가 없습니다.'
+                      : substringCategory(category),
                   style: bookDetailInfoStyle,
                 ),
                 const SizedBox(width: 4.0),
@@ -78,6 +82,7 @@ class BookDetailInfo extends StatelessWidget {
                   triggerMode: TooltipTriggerMode.tap,
                   decoration: const BoxDecoration(
                     color: GREY_01_COLOR,
+                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
                   ),
                   verticalOffset: 16.0,
                   showDuration: const Duration(seconds: 3),
@@ -96,29 +101,17 @@ class BookDetailInfo extends StatelessWidget {
           infoItem('출판사', publisher),
           const SizedBox(height: 15.0),
           infoMultipleItem(
-            '알라딘 리뷰',
+            '알라딘 평점',
             Row(
               children: [
                 SvgPicture.asset(
-                  'assets/svg/icon/star_small.svg',
+                  'assets/svg/icon/small/star.svg',
                   height: 18.0,
                 ),
                 const SizedBox(width: 4.0),
                 Text(
-                  '$starRating /',
+                  '$aladinStarRating (최고 5점)',
                   style: bookDetailInfoStyle,
-                ),
-                const SizedBox(width: 4.0),
-                InkWell(
-                  onTap: () {
-                    // TODO: 리뷰보기 링크 연결 예정
-                  },
-                  child: Text(
-                    '리뷰보기',
-                    style: bookDetailInfoStyle.copyWith(
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
                 ),
               ],
             ),
