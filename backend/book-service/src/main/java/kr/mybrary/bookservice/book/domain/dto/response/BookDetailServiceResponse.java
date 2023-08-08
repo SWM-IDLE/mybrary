@@ -15,8 +15,6 @@ public class BookDetailServiceResponse {
     private String author;
     private List<Author> authors;
     private List<Translator> translators;
-    private Double starRating;
-    private Integer reviewCount;
     private Integer holderCount;
     private Integer readCount;
     private Integer interestCount;
@@ -36,6 +34,11 @@ public class BookDetailServiceResponse {
     private Integer priceSales;
     private Integer priceStandard;
     private boolean interested;
+
+    private Double starRating;
+    private Integer reviewCount;
+    private Double aladinStarRating;
+    private Integer aladinReviewCount;
 
     @Builder
     @Getter

@@ -32,13 +32,16 @@ public interface BookDtoMapper {
     @Mapping(target = "aladinReviewCount", source = "reviewCount")
     Book bookCreateRequestToEntity(BookCreateServiceRequest request);
 
-    @Mapping(target = "starRating", source = "aladinStarRating")
-    @Mapping(target = "reviewCount", source = "aladinReviewCount")
     @Mapping(target = "authors", source = "bookAuthors", qualifiedByName = "mappingAuthors")
     @Mapping(target = "translators", source = "bookTranslators", qualifiedByName = "mappingTranslators")
     @Mapping(target = "interested", constant = "false")
+    @Mapping(target = "thumbnail", source = "thumbnailUrl")
     BookDetailServiceResponse bookToDetailServiceResponse(Book book);
 
+    @Mapping(target = "aladinStarRating", source = "starRating")
+    @Mapping(target = "aladinReviewCount", source = "reviewCount")
+    @Mapping(target = "starRating", constant = "0")
+    @Mapping(target = "reviewCount", constant = "0")
     BookDetailServiceResponse bookSearchDetailToDetailServiceResponse(BookSearchDetailResponse bookSearchDetailResponse);
 
     @Mapping(target = "publicationDate", source = "publicationDate", qualifiedByName = "stringToLocalDateTime")
