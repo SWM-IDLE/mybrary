@@ -133,13 +133,11 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                         setState(() {
                           _isOnTapHeart = result.interested!;
 
-                          if (!interested && _isOnTapHeart) {
-                            _newInterestCount = interestCount + 1;
-                          } else if (interested && _isOnTapHeart == false) {
-                            _newInterestCount = interestCount - 1;
-                          } else {
-                            _newInterestCount = interestCount;
-                          }
+                          _isInterestBook(
+                            interested,
+                            interestCount,
+                            context,
+                          );
                         });
                       },
                       interested: interested,
@@ -202,6 +200,38 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
     );
   }
 
+  void _isInterestBook(
+    bool interested,
+    int interestCount,
+    BuildContext context,
+  ) {
+    if (!interested && _isOnTapHeart) {
+      _newInterestCount = interestCount + 1;
+      _showInterestBookMessage(
+        context: context,
+        snackBarText: '관심 도서에 담겼습니다.',
+      );
+    } else if (interested && _isOnTapHeart == false) {
+      _newInterestCount = interestCount - 1;
+      _showInterestBookMessage(
+        context: context,
+        snackBarText: '관심 도서가 삭제되었습니다.',
+      );
+    } else if (interested && _isOnTapHeart) {
+      _newInterestCount = interestCount;
+      _showInterestBookMessage(
+        context: context,
+        snackBarText: '관심 도서에 담겼습니다.',
+      );
+    } else {
+      _newInterestCount = interestCount;
+      _showInterestBookMessage(
+        context: context,
+        snackBarText: '관심 도서가 삭제되었습니다.',
+      );
+    }
+  }
+
   Widget bookDetailDivider() {
     return const Padding(
       padding: EdgeInsets.symmetric(vertical: 12.0),
@@ -233,6 +263,20 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       children: [
         children,
       ],
+    );
+  }
+
+  void _showInterestBookMessage({
+    required BuildContext context,
+    required String snackBarText,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackBarText),
+        duration: const Duration(
+          seconds: 1,
+        ),
+      ),
     );
   }
 }
