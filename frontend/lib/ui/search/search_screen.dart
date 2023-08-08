@@ -16,6 +16,10 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  late bool _isClearButtonVisible = false;
+  final TextEditingController _bookSearchKeywordController =
+      TextEditingController();
+
   @override
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(
@@ -29,9 +33,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
     super.initState();
   }
-
-  final TextEditingController _bookSearchKeywordController =
-      TextEditingController();
 
   @override
   void dispose() {
@@ -83,6 +84,11 @@ class _SearchScreenState extends State<SearchScreen> {
                     textInputAction: TextInputAction.search,
                     controller: _bookSearchKeywordController,
                     cursorColor: primaryColor,
+                    onChanged: (value) {
+                      setState(() {
+                        _isClearButtonVisible = value.isNotEmpty;
+                      });
+                    },
                     onSubmitted: (value) {
                       Navigator.push(
                         context,
@@ -110,6 +116,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         'assets/svg/icon/search_small.svg',
                         fit: BoxFit.scaleDown,
                       ),
+                      suffixIcon: _searchInputClearIcon(),
                     ),
                   ),
                 ),
@@ -126,6 +133,24 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       ),
     );
+  }
+
+  IconButton? _searchInputClearIcon() {
+    return _isClearButtonVisible
+        ? IconButton(
+            onPressed: () {
+              setState(() {
+                _bookSearchKeywordController.text = '';
+                _isClearButtonVisible = false;
+              });
+            },
+            icon: const Icon(
+              Icons.cancel_rounded,
+              color: GREY_05_COLOR,
+              size: 18.0,
+            ),
+          )
+        : null;
   }
 
   void getBookSearchPopularKeywordResponse(bool isBinding) {
