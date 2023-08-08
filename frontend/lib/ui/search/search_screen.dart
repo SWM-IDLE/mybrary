@@ -22,6 +22,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void initState() {
+    super.initState();
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -31,7 +32,16 @@ class _SearchScreenState extends State<SearchScreen> {
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
-    super.initState();
+
+    _bookSearchKeywordController.addListener(_isClearText);
+  }
+
+  void _isClearText() {
+    if (_bookSearchKeywordController.text.isEmpty) {
+      setState(() {
+        _isClearButtonVisible = false;
+      });
+    }
   }
 
   @override
