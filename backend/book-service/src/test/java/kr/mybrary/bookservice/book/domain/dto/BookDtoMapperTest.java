@@ -127,7 +127,10 @@ class BookDtoMapperTest {
                 () -> assertThat(bookDetailServiceResponse.getAuthors().size()).isEqualTo(book.getBookAuthors().size()),
                 () -> assertThat(bookDetailServiceResponse.getTranslators().size()).isEqualTo(book.getBookTranslators().size()),
                 () -> assertThat(bookDetailServiceResponse.getIsbn10()).isEqualTo(book.getIsbn10()),
-                () -> assertThat(bookDetailServiceResponse.getIsbn13()).isEqualTo(book.getIsbn13())
+                () -> assertThat(bookDetailServiceResponse.getIsbn13()).isEqualTo(book.getIsbn13()),
+                () -> assertThat(bookDetailServiceResponse.getCategory()).isEqualTo(book.getBookCategory().getName()),
+                () -> assertThat(bookDetailServiceResponse.getCategoryId()).isEqualTo(book.getBookCategory().getCid()),
+                () -> assertThat(bookDetailServiceResponse.getPublicationDate()).isEqualTo(BookDtoMapper.localDateTimeToString(book.getPublicationDate()))
         );
     }
 
@@ -185,6 +188,22 @@ class BookDtoMapperTest {
                 () -> assertThat(target.getYear()).isEqualTo(2021),
                 () -> assertThat(target.getMonthValue()).isEqualTo(1),
                 () -> assertThat(target.getDayOfMonth()).isEqualTo(1)
+        );
+    }
+
+    @DisplayName("LocalDateTime 형식을 yyyy-MM-dd 형식의 String으로 변환한다.")
+    @Test
+    void localDateTimeToString() {
+
+        // given
+        LocalDateTime localDateTime = LocalDateTime.of(2021, 1, 1, 0, 0, 0);
+
+        // when
+        String target = BookDtoMapper.localDateTimeToString(localDateTime);
+
+        // then
+        assertAll(
+                () -> assertThat(target).isEqualTo("2021-01-01")
         );
     }
 
