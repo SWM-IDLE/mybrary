@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
@@ -8,16 +9,32 @@ class BookDetailHeader extends StatelessWidget {
   final String thumbnail;
   final String title;
   final List<Authors> authors;
+  final int interestCount;
+  final int newInterestCount;
+  final int readCount;
+  final int holderCount;
+  final bool interested;
+  final bool isOnTapHeart;
+  final GestureTapCallback? onTapInterestBook;
 
   const BookDetailHeader({
     required this.thumbnail,
     required this.title,
     required this.authors,
+    required this.interestCount,
+    required this.newInterestCount,
+    required this.readCount,
+    required this.holderCount,
+    required this.interested,
+    required this.isOnTapHeart,
+    required this.onTapInterestBook,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    String heartUrl = isOnTapHeart ? 'heart_green.svg' : 'heart.svg';
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -64,7 +81,78 @@ class BookDetailHeader extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(height: 24.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            bookStatusColumn(
+              padding: 32.0,
+              children: [
+                InkWell(
+                  onTap: () => onTapInterestBook!(),
+                  child: SvgPicture.asset(
+                    'assets/svg/icon/small/$heartUrl',
+                  ),
+                ),
+                const SizedBox(height: 4.0),
+                const Text('읽고싶어요', style: bookStatusStyle),
+                const SizedBox(height: 8.0),
+                Text(
+                  '${newInterestCount} 명',
+                  style: bookStatusCountStyle,
+                ),
+              ],
+            ),
+            bookStatusColumn(
+              padding: 36.0,
+              children: [
+                SvgPicture.asset('assets/svg/icon/small/read.svg'),
+                const SizedBox(height: 4.0),
+                const Text('완독했어요', style: bookStatusStyle),
+                const SizedBox(height: 8.0),
+                Text('$readCount 명', style: bookStatusCountStyle),
+              ],
+            ),
+            bookStatusColumn(
+              padding: 24.0,
+              lastBox: true,
+              children: [
+                SvgPicture.asset('assets/svg/icon/small/holder.svg'),
+                const SizedBox(height: 4.0),
+                const Text('소장하고있어요', style: bookStatusStyle),
+                const SizedBox(height: 8.0),
+                Text('$holderCount 명', style: bookStatusCountStyle),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 20.0),
       ],
+    );
+  }
+
+  Widget bookStatusColumn({
+    required double padding,
+    bool lastBox = false,
+    required List<Widget> children,
+  }) {
+    return Container(
+      decoration: lastBox
+          ? null
+          : const BoxDecoration(
+              border: Border(
+                right: BorderSide(
+                  color: GREY_02_COLOR,
+                  width: 1,
+                ),
+              ),
+            ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: padding),
+        child: Column(
+          children: children,
+        ),
+      ),
     );
   }
 }

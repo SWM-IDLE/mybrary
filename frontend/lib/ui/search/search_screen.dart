@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mybrary/data/datasource/search/search_datasource.dart';
-import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
@@ -18,8 +16,6 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final SearchDataSource _searchDataSource = SearchDataSource();
-
   @override
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(
@@ -33,9 +29,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
     super.initState();
   }
-
-  late final List<BookSearchResult> _bookSearchData = [];
-  late String _bookSearchNextUrl;
 
   final TextEditingController _bookSearchKeywordController =
       TextEditingController();
