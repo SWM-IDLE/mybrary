@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/res/colors/color.dart';
-import 'package:mybrary/ui/search/search_detail/components/book_summary.dart';
+import 'package:mybrary/res/constants/style.dart';
+import 'package:mybrary/utils/logics/book_utils.dart';
 
 class BookDetailHeader extends StatelessWidget {
   final String thumbnail;
@@ -43,9 +44,25 @@ class BookDetailHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20.0),
-        BookSummary(
-          title: title,
-          authors: authors,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 2.0),
+              Text(
+                title,
+                style: bookDetailTitleStyle,
+              ),
+              const SizedBox(height: 6.0),
+              Text(
+                bookAuthorsOrTranslators(authors),
+                style: commonSubRegularStyle.copyWith(
+                  color: BOOK_DESCRIPTION_COLOR,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );

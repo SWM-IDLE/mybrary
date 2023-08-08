@@ -58,7 +58,7 @@ class InterestsDataSource {
     Dio dio = DioService().to();
     final myInterestsEditResponse = await dio.put(
       '${getApi(API.getUserInterests)}/$userId/interests',
-      options: Options(headers: {'User-Id': 'testId'}),
+      options: Options(headers: {'User-Id': userId}),
       data: {'interestRequests': categoriesResponses},
     );
 

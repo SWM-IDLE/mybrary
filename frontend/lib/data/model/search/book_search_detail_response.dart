@@ -88,7 +88,7 @@ class BookSearchDetailResponseData {
   BookSearchDetailResponseData.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     subTitle = json['subTitle'];
-    thumbnail = json['thumbnail'];
+    thumbnail = json['thumbnail'] ?? '';
     link = json['link'];
     author = json['author'];
     if (json['authors'] != null) {
