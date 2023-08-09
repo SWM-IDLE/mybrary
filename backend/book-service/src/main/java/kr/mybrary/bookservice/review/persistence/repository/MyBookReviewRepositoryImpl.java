@@ -22,6 +22,7 @@ public class MyBookReviewRepositoryImpl implements MyBookReviewRepositoryCustom 
                 .select(Projections.fields(MyBookReviewElementDto.class,
                         myBookReview.myBook.userId.as("userId"),
                         myBookReview.content.as("content"),
+                        myBookReview.starRating.as("starRating"),
                         myBookReview.createdAt.as("createdAt")))
                 .from(myBookReview)
                 .fetch();

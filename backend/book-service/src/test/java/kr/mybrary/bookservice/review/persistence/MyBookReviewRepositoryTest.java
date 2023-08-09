@@ -76,6 +76,7 @@ class MyBookReviewRepositoryTest {
                     assertThat(reviewsByBook.get(0).getUserId()).isEqualTo(myBook.getUserId());
                     assertThat(reviewsByBook.get(0).getContent()).isEqualTo(myBookReview.getContent());
                     assertThat(reviewsByBook.get(0).getCreatedAt()).isEqualTo(myBookReview.getCreatedAt());
+                    assertThat(reviewsByBook.get(0).getStarRating()).isEqualTo(myBookReview.getStarRating());
                 }
         );
     }

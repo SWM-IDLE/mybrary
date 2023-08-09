@@ -14,5 +14,6 @@ public class MyBookReviewElementDto {
 
     private String userId;
     private String content;
+    private Double starRating;
     private LocalDateTime createdAt;
 }
