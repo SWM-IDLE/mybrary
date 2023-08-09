@@ -8,10 +8,7 @@ import kr.mybrary.userservice.user.domain.UserService;
 import kr.mybrary.userservice.user.domain.dto.request.*;
 import kr.mybrary.userservice.user.domain.dto.response.*;
 import kr.mybrary.userservice.user.persistence.Role;
-import kr.mybrary.userservice.user.presentation.dto.request.FollowRequest;
-import kr.mybrary.userservice.user.presentation.dto.request.FollowerRequest;
-import kr.mybrary.userservice.user.presentation.dto.request.ProfileUpdateRequest;
-import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
+import kr.mybrary.userservice.user.presentation.dto.request.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -916,6 +913,78 @@ class UserControllerTest {
                                                 .description(MESSAGE_FIELD_DESCRIPTION),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT)
                                                 .description("응답 데이터").optional()
+                                )
+                                .build()
+                ))
+        );
+    }
+
+    @DisplayName("사용자 정보를 조회한다.")
+    @Test
+    void getUserInfo() throws Exception {
+        // given
+        UserInfoRequest userInfoRequest = UserInfoRequest.builder()
+                .userIds(List.of("loginId1", "loginId2"))
+                .build();
+
+        UserInfoServiceResponse userInfoServiceResponse = UserInfoServiceResponse.builder()
+                .userInfoElements(List.of(
+                        UserInfoServiceResponse.UserInfoElement.builder()
+                                .userId("loginId1")
+                                .nickname("nickname1")
+                                .profileImageUrl("profileImageUrl1")
+                                .build(),
+                        UserInfoServiceResponse.UserInfoElement.builder()
+                                .userId("loginId2")
+                                .nickname("nickname2")
+                                .profileImageUrl("profileImageUrl2")
+                                .build()
+                )).build();
+
+        given(userService.getUserInfo(any(UserInfoServiceRequest.class))).willReturn(userInfoServiceResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.get(BASE_URL + "/info")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userInfoRequest)));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
+                .andExpect(jsonPath("$.message").value("사용자 정보를 모두 조회했습니다."))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data.userInfoElements[0].userId").value(userInfoServiceResponse.getUserInfoElements().get(0).getUserId()))
+                .andExpect(jsonPath("$.data.userInfoElements[0].nickname").value(userInfoServiceResponse.getUserInfoElements().get(0).getNickname()))
+                .andExpect(jsonPath("$.data.userInfoElements[0].profileImageUrl").value(userInfoServiceResponse.getUserInfoElements().get(0).getProfileImageUrl()))
+                .andExpect(jsonPath("$.data.userInfoElements[1].userId").value(userInfoServiceResponse.getUserInfoElements().get(1).getUserId()))
+                .andExpect(jsonPath("$.data.userInfoElements[1].nickname").value(userInfoServiceResponse.getUserInfoElements().get(1).getNickname()))
+                .andExpect(jsonPath("$.data.userInfoElements[1].profileImageUrl").value(userInfoServiceResponse.getUserInfoElements().get(1).getProfileImageUrl()));
+
+        verify(userService).getUserInfo(any(UserInfoServiceRequest.class));
+
+        // docs
+        actions.andDo(document("get-user-info",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-info")
+                                .summary("사용자 정보를 조회한다.")
+                                .requestFields(
+                                        fieldWithPath("userIds").type(JsonFieldType.ARRAY).description("조회할 사용자 아이디 목록")
+                                )
+                                .responseSchema(Schema.schema("get_user_info_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.userInfoElements").type(JsonFieldType.ARRAY).description("조회된 사용자 정보 목록"),
+                                        fieldWithPath("data.userInfoElements[].userId").type(JsonFieldType.STRING).description("조회된 사용자의 아이디"),
+                                        fieldWithPath("data.userInfoElements[].nickname").type(JsonFieldType.STRING).description("조회된 사용자의 닉네임"),
+                                        fieldWithPath("data.userInfoElements[].profileImageUrl").type(JsonFieldType.STRING).description("조회된 사용자의 프로필 이미지 URL")
                                 )
                                 .build()
                 ))
