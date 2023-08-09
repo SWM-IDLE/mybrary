@@ -24,11 +24,11 @@ import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
-import kr.mybrary.bookservice.review.domain.MyBookReviewReadService;
-import kr.mybrary.bookservice.review.domain.MyBookReviewWriteService;
-import kr.mybrary.bookservice.review.presentation.dto.request.MyBookReviewCreateRequest;
-import kr.mybrary.bookservice.review.presentation.dto.response.ReviewOfMyBookGetResponse;
-import kr.mybrary.bookservice.review.presentation.dto.response.ReviewsOfBookGetResponse;
+import kr.mybrary.bookservice.review.domain.MyReviewReadService;
+import kr.mybrary.bookservice.review.domain.MyReviewWriteService;
+import kr.mybrary.bookservice.review.presentation.dto.request.MyReviewCreateRequest;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewOfMyBookGetResponse;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewsOfBookGetResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +42,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @ActiveProfiles("test")
-@WebMvcTest(MyBookReviewController.class)
+@WebMvcTest(MyReviewController.class)
 @MockBean(JpaMetamodelMappingContext.class)
 @AutoConfigureRestDocs
-class MyBookReviewControllerTest {
+class MyReviewControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -54,10 +54,10 @@ class MyBookReviewControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private MyBookReviewWriteService myBookReviewWriteService;
+    private MyReviewWriteService myReviewWriteService;
 
     @MockBean
-    private MyBookReviewReadService myBookReviewReadService;
+    private MyReviewReadService myReviewReadService;
 
     private static final String LOGIN_ID = "LOGIN_USER_ID";
     private static final Long MYBOOK_ID = 1L;
@@ -67,10 +67,10 @@ class MyBookReviewControllerTest {
     void create() throws Exception {
 
         // given
-        MyBookReviewCreateRequest request = MyBookReviewDtoTestData.createMyBookReviewCreateRequest();
+        MyReviewCreateRequest request = MyBookReviewDtoTestData.createMyBookReviewCreateRequest();
 
         String requestJson = objectMapper.writeValueAsString(request);
-        doNothing().when(myBookReviewWriteService).create(any());
+        doNothing().when(myReviewWriteService).create(any());
 
         // when
         ResultActions actions = mockMvc.perform(post("/api/v1/mybooks/{myBookId}/reviews", MYBOOK_ID)
@@ -118,9 +118,9 @@ class MyBookReviewControllerTest {
     void getReviewsFromBook() throws Exception {
 
         // given
-        ReviewsOfBookGetResponse response = MyBookReviewDtoTestData.createReviewsOfBookGetResponse();
+        MyReviewsOfBookGetResponse response = MyBookReviewDtoTestData.createReviewsOfBookGetResponse();
 
-        given(myBookReviewReadService.getReviewsFromBook(any())).willReturn(response);
+        given(myReviewReadService.getReviewsFromBook(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/v1/books/{isbn13}/reviews", "9788956609959"));
@@ -168,9 +168,9 @@ class MyBookReviewControllerTest {
     void getReviewFormMyBook() throws Exception {
 
         // given
-        ReviewOfMyBookGetResponse response = MyBookReviewDtoTestData.createReviewOfMyBookGetResponse();
+        MyReviewOfMyBookGetResponse response = MyBookReviewDtoTestData.createReviewOfMyBookGetResponse();
 
-        given(myBookReviewReadService.getReviewFromMyBook(any())).willReturn(response);
+        given(myReviewReadService.getReviewFromMyBook(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/v1/mybooks/{myBookId}/review", 1L));

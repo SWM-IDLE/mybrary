@@ -2,8 +2,8 @@ package kr.mybrary.bookservice.review;
 
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
-import kr.mybrary.bookservice.review.persistence.MyBookReview;
-import kr.mybrary.bookservice.review.persistence.MyBookReview.MyBookReviewBuilder;
+import kr.mybrary.bookservice.review.persistence.MyReview;
+import kr.mybrary.bookservice.review.persistence.MyReview.MyReviewBuilder;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -19,8 +19,8 @@ public enum MyBookReviewFixture {
     private final Double starRating;
     private final boolean deleted;
 
-    public MyBookReview getMyBookReview() {
-        return MyBookReview.builder()
+    public MyReview getMyBookReview() {
+        return MyReview.builder()
                 .id(id)
                 .myBook(myBook)
                 .book(book)
@@ -30,8 +30,8 @@ public enum MyBookReviewFixture {
                 .build();
     }
 
-    public MyBookReviewBuilder getMyBookReviewBuilder() {
-        return MyBookReview.builder()
+    public MyReviewBuilder getMyBookReviewBuilder() {
+        return MyReview.builder()
                 .id(id)
                 .myBook(myBook)
                 .book(book)

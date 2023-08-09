@@ -5,21 +5,21 @@ import java.util.List;
 import java.util.stream.IntStream;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse.UserInfoElement;
-import kr.mybrary.bookservice.review.domain.dto.request.MyBookReviewCreateServiceRequest;
-import kr.mybrary.bookservice.review.domain.dto.request.ReviewOfMyBookGetServiceRequest;
-import kr.mybrary.bookservice.review.domain.dto.request.ReviewsOfBookGetServiceRequest;
-import kr.mybrary.bookservice.review.domain.dto.request.ReviewsOfBookGetServiceRequest.ReviewsOfBookGetServiceRequestBuilder;
-import kr.mybrary.bookservice.review.persistence.model.MyBookReviewElementDto;
-import kr.mybrary.bookservice.review.persistence.model.ReviewFromMyBookModel;
-import kr.mybrary.bookservice.review.presentation.dto.request.MyBookReviewCreateRequest;
-import kr.mybrary.bookservice.review.presentation.dto.response.ReviewOfMyBookGetResponse;
-import kr.mybrary.bookservice.review.presentation.dto.response.ReviewsOfBookGetResponse;
-import kr.mybrary.bookservice.review.presentation.dto.response.ReviewsOfBookGetResponse.ReviewElement;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewOfMyBookGetServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewsOfBookGetServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewsOfBookGetServiceRequest.MyReviewsOfBookGetServiceRequestBuilder;
+import kr.mybrary.bookservice.review.persistence.model.MyReviewElementModel;
+import kr.mybrary.bookservice.review.persistence.model.MyReviewFromMyBookModel;
+import kr.mybrary.bookservice.review.presentation.dto.request.MyReviewCreateRequest;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewOfMyBookGetResponse;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewsOfBookGetResponse;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewsOfBookGetResponse.ReviewElement;
 
 public class MyBookReviewDtoTestData {
 
-    public static MyBookReviewCreateServiceRequest createMyBookReviewCreateServiceRequest() {
-        return MyBookReviewCreateServiceRequest.builder()
+    public static MyReviewCreateServiceRequest createMyBookReviewCreateServiceRequest() {
+        return MyReviewCreateServiceRequest.builder()
                 .myBookId(1L)
                 .loginId("LOGIN_USER_ID")
                 .content("리뷰 내용입니다.")
@@ -27,22 +27,22 @@ public class MyBookReviewDtoTestData {
                 .build();
     }
 
-    public static MyBookReviewCreateRequest createMyBookReviewCreateRequest() {
-        return MyBookReviewCreateRequest.builder()
+    public static MyReviewCreateRequest createMyBookReviewCreateRequest() {
+        return MyReviewCreateRequest.builder()
                 .content("리뷰 내용입니다.")
                 .starRating(4.5)
                 .build();
     }
 
-    public static ReviewsOfBookGetServiceRequestBuilder createReviewOfBookGetServiceRequest() {
-        return ReviewsOfBookGetServiceRequest.builder()
+    public static MyReviewsOfBookGetServiceRequestBuilder createReviewOfBookGetServiceRequest() {
+        return MyReviewsOfBookGetServiceRequest.builder()
                 .isbn13("ISBN13");
     }
 
-    public static List<MyBookReviewElementDto> createMyBookReviewElementDtoList() {
+    public static List<MyReviewElementModel> createMyBookReviewElementDtoList() {
 
         return IntStream.range(1, 6)
-                .mapToObj(i -> MyBookReviewElementDto.builder()
+                .mapToObj(i -> MyReviewElementModel.builder()
                         .id((long) i)
                         .userId("USER_ID_" + i)
                         .content("리뷰_내용_" + i)
@@ -67,9 +67,9 @@ public class MyBookReviewDtoTestData {
                 .build();
     }
 
-    public static ReviewsOfBookGetResponse createReviewsOfBookGetResponse() {
+    public static MyReviewsOfBookGetResponse createReviewsOfBookGetResponse() {
 
-        return ReviewsOfBookGetResponse.builder()
+        return MyReviewsOfBookGetResponse.builder()
                 .title("Test Book Title")
                 .reviewCount(10)
                 .starRatingAverage(4.5)
@@ -97,14 +97,14 @@ public class MyBookReviewDtoTestData {
                 .build();
     }
 
-    public static ReviewOfMyBookGetServiceRequest createReviewOfMyBookGetServiceRequest() {
-        return ReviewOfMyBookGetServiceRequest.builder()
+    public static MyReviewOfMyBookGetServiceRequest createReviewOfMyBookGetServiceRequest() {
+        return MyReviewOfMyBookGetServiceRequest.builder()
                 .myBookId(1L)
                 .build();
     }
 
-    public static ReviewFromMyBookModel createReviewFromMyBookModel() {
-        return ReviewFromMyBookModel.builder()
+    public static MyReviewFromMyBookModel createReviewFromMyBookModel() {
+        return MyReviewFromMyBookModel.builder()
                 .id(1L)
                 .content("리뷰 내용입니다.")
                 .starRating(4.5)
@@ -113,8 +113,8 @@ public class MyBookReviewDtoTestData {
                 .build();
     }
 
-    public static ReviewOfMyBookGetResponse createReviewOfMyBookGetResponse() {
-        return ReviewOfMyBookGetResponse.builder()
+    public static MyReviewOfMyBookGetResponse createReviewOfMyBookGetResponse() {
+        return MyReviewOfMyBookGetResponse.builder()
                 .id(1L)
                 .content("리뷰 내용입니다.")
                 .starRating(4.5)

@@ -3,13 +3,13 @@ package kr.mybrary.bookservice.review.presentation.dto.request;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import kr.mybrary.bookservice.review.domain.dto.request.MyBookReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class MyBookReviewCreateRequest {
+public class MyReviewCreateRequest {
 
     @Max(value = 50, message = "리뷰 내용은 50자 이하로 작성해주세요.")
     @NotBlank(message = "리뷰 내용은 필수입니다.")
@@ -20,8 +20,8 @@ public class MyBookReviewCreateRequest {
     @NotBlank(message = "별점은 필수입니다.")
     private Double starRating;
 
-    public MyBookReviewCreateServiceRequest toServiceRequest(String userId, Long myBookId) {
-        return MyBookReviewCreateServiceRequest.builder()
+    public MyReviewCreateServiceRequest toServiceRequest(String userId, Long myBookId) {
+        return MyReviewCreateServiceRequest.builder()
                 .loginId(userId)
                 .myBookId(myBookId)
                 .content(content)

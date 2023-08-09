@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ReviewOfMyBookGetResponse {
+public class MyReviewOfMyBookGetResponse {
 
     private Long id;
     private String content;

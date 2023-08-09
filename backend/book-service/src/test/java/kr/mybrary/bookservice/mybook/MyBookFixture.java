@@ -7,7 +7,7 @@ import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.MyBook.MyBookBuilder;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import kr.mybrary.bookservice.review.MyBookReviewFixture;
-import kr.mybrary.bookservice.review.persistence.MyBookReview;
+import kr.mybrary.bookservice.review.persistence.MyReview;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -31,7 +31,7 @@ public enum MyBookFixture {
     private final Long id;
     private final String userId;
     private final Book book;
-    private final MyBookReview myBookReview;
+    private final MyReview myReview;
     private final ReadStatus readStatus;
     private final LocalDateTime startDateOfPossession;
     private final boolean showable;
@@ -58,7 +58,7 @@ public enum MyBookFixture {
                 .id(id)
                 .userId(userId)
                 .book(book)
-                .myBookReview(myBookReview)
+                .myReview(myReview)
                 .readStatus(readStatus)
                 .startDateOfPossession(startDateOfPossession)
                 .showable(showable)
@@ -72,7 +72,7 @@ public enum MyBookFixture {
                 .id(id)
                 .userId(userId)
                 .book(book)
-                .myBookReview(myBookReview)
+                .myReview(myReview)
                 .readStatus(readStatus)
                 .startDateOfPossession(startDateOfPossession)
                 .showable(showable)

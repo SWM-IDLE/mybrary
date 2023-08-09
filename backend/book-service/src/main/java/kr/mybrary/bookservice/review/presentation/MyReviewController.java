@@ -1,11 +1,11 @@
 package kr.mybrary.bookservice.review.presentation;
 
 import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
-import kr.mybrary.bookservice.review.domain.MyBookReviewReadService;
-import kr.mybrary.bookservice.review.domain.MyBookReviewWriteService;
-import kr.mybrary.bookservice.review.domain.dto.request.ReviewOfMyBookGetServiceRequest;
-import kr.mybrary.bookservice.review.domain.dto.request.ReviewsOfBookGetServiceRequest;
-import kr.mybrary.bookservice.review.presentation.dto.request.MyBookReviewCreateRequest;
+import kr.mybrary.bookservice.review.domain.MyReviewReadService;
+import kr.mybrary.bookservice.review.domain.MyReviewWriteService;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewOfMyBookGetServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewsOfBookGetServiceRequest;
+import kr.mybrary.bookservice.review.presentation.dto.request.MyReviewCreateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-public class MyBookReviewController {
+public class MyReviewController {
 
-    private final MyBookReviewWriteService myBookReviewWriteService;
-    private final MyBookReviewReadService myBookReviewReadService;
+    private final MyReviewWriteService myReviewWriteService;
+    private final MyReviewReadService myReviewReadService;
 
     @PostMapping("/mybooks/{myBookId}/reviews")
     public ResponseEntity create(@RequestHeader("USER-ID") String loginId,
             @PathVariable Long myBookId,
-            @RequestBody MyBookReviewCreateRequest request) {
+            @RequestBody MyReviewCreateRequest request) {
 
-        myBookReviewWriteService.create(request.toServiceRequest(loginId, myBookId));
+        myReviewWriteService.create(request.toServiceRequest(loginId, myBookId));
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(HttpStatus.CREATED.toString(), "마이 리뷰를 작성했습니다.", null));
@@ -39,20 +39,20 @@ public class MyBookReviewController {
     @GetMapping("/books/{isbn13}/reviews")
     public ResponseEntity getReviewsFromBook(@PathVariable String isbn13) {
 
-        ReviewsOfBookGetServiceRequest request = ReviewsOfBookGetServiceRequest.of(isbn13);
+        MyReviewsOfBookGetServiceRequest request = MyReviewsOfBookGetServiceRequest.of(isbn13);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(HttpStatus.OK.toString(), "도서의 리뷰 목록입니다.",
-                        myBookReviewReadService.getReviewsFromBook(request)));
+                        myReviewReadService.getReviewsFromBook(request)));
     }
 
     @GetMapping("/mybooks/{myBookId}/review")
     public ResponseEntity getReviewFromMyBook(@PathVariable Long myBookId) {
 
-        ReviewOfMyBookGetServiceRequest request = ReviewOfMyBookGetServiceRequest.of(myBookId);
+        MyReviewOfMyBookGetServiceRequest request = MyReviewOfMyBookGetServiceRequest.of(myBookId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(HttpStatus.OK.toString(), "마이북에 대한 리뷰입니다.",
-                        myBookReviewReadService.getReviewFromMyBook(request)));
+                        myReviewReadService.getReviewFromMyBook(request)));
     }
 }
