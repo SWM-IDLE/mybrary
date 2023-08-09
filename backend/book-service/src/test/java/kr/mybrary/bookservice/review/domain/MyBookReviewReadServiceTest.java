@@ -56,7 +56,7 @@ class MyBookReviewReadServiceTest {
         given(userServiceClient.getUsersInfo(any())).willReturn(userInfoServiceResponse);
 
         // when
-        ReviewsOfBookGetResponse response = myBookReviewReadService.findAllBookReviewsFromBook(serviceRequest);
+        ReviewsOfBookGetResponse response = myBookReviewReadService.getReviewsFromBook(serviceRequest);
 
         // then
         assertAll(

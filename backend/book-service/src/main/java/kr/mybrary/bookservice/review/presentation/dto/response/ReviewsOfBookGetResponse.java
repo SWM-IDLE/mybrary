@@ -1,6 +1,5 @@
 package kr.mybrary.bookservice.review.presentation.dto.response;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +24,6 @@ public class ReviewsOfBookGetResponse {
         private String userPictureUrl;
         private String content;
         private Double starRating;
-        private LocalDateTime createdAt;
+        private String createdAt;
     }
 }
