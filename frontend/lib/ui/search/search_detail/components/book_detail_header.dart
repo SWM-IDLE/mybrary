@@ -90,12 +90,16 @@ class BookDetailHeader extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () => onTapInterestBook!(),
-                  child: SvgPicture.asset(
-                    'assets/svg/icon/small/$heartUrl',
+                  child: Column(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/svg/icon/small/$heartUrl',
+                      ),
+                      const SizedBox(height: 4.0),
+                      const Text('읽고싶어요', style: bookStatusStyle),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 4.0),
-                const Text('읽고싶어요', style: bookStatusStyle),
                 const SizedBox(height: 8.0),
                 Text(
                   '${newInterestCount} 명',
