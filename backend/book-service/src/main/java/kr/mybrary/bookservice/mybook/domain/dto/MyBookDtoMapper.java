@@ -1,10 +1,8 @@
 package kr.mybrary.bookservice.mybook.domain.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookTranslator;
-import kr.mybrary.bookservice.global.util.DateUtils;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
