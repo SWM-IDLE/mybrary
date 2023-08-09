@@ -9,6 +9,7 @@ import kr.mybrary.bookservice.client.user.api.UserServiceClient;
 import kr.mybrary.bookservice.client.user.dto.request.UserInfoRequest;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse.UserInfoElement;
+import kr.mybrary.bookservice.global.util.DateUtils;
 import kr.mybrary.bookservice.review.domain.dto.request.ReviewsOfBookGetServiceRequest;
 import kr.mybrary.bookservice.review.persistence.dto.MyBookReviewElementDto;
 import kr.mybrary.bookservice.review.persistence.repository.MyBookReviewRepository;
@@ -28,7 +29,7 @@ public class MyBookReviewReadService {
     private final BookReadService bookReadService;
     private final UserServiceClient userServiceClient;
 
-    public ReviewsOfBookGetResponse findAllBookReviewsFromBook(ReviewsOfBookGetServiceRequest request) {
+    public ReviewsOfBookGetResponse getReviewsFromBook(ReviewsOfBookGetServiceRequest request) {
 
         Book book = bookReadService.getRegisteredBookByISBN13(request.getIsbn13());
         List<MyBookReviewElementDto> reviewElements = myBookReviewRepository.findReviewsByBook(book);
@@ -60,7 +61,7 @@ public class MyBookReviewReadService {
                 .map(reviewElement -> ReviewElement.builder()
                         .id(reviewElement.getId())
                         .starRating(reviewElement.getStarRating())
-                        .createdAt(reviewElement.getCreatedAt())
+                        .createdAt(DateUtils.toFormatYYYMMddHHmm(reviewElement.getCreatedAt()))
                         .content(reviewElement.getContent())
                         .userId(reviewElement.getUserId())
                         .userNickname(userInfoMap.get(reviewElement.getUserId()).getNickname())
