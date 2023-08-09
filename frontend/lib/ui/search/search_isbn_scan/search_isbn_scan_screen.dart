@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:mybrary/data/datasource/search/search_datasource.dart';
-import 'package:mybrary/data/model/search/book_search_response.dart';
-import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_appbar.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_box.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_description.dart';
@@ -18,8 +16,6 @@ class SearchIsbnScanScreen extends StatefulWidget {
 }
 
 class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
-  final SearchDataSource _searchDataSource = SearchDataSource();
-  BookSearchResult _bookSearchIsbnData = BookSearchResult.fromJson({});
   MobileScannerController isbnCameraController = MobileScannerController(
     detectionSpeed: DetectionSpeed.normal,
     facing: CameraFacing.back,
@@ -29,7 +25,7 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
   @override
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
+      const SystemUiOverlayStyle(
         statusBarColor: MYBOOK_SCAN_BACKGROUND_COLOR,
         statusBarBrightness: Brightness.dark,
         statusBarIconBrightness: Brightness.light,
@@ -77,18 +73,16 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
                   final List<Barcode> barcodes = capture.barcodes;
                   for (final barcode in barcodes) {
                     if (barcode.rawValue != null) {
-                      _fetchBookSearchIsbnResponse(barcode.rawValue!)
-                          .then((value) {
-                        // _bookSearchIsbnData = value;
-                      }).catchError((error) {
-                        return;
-                      });
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SearchDetailScreen(
+                            isbn13: barcode.rawValue!,
+                          ),
+                        ),
+                      );
                     }
-
-                    if (_bookSearchIsbnData.title != null) {
-                      // onNavigateToSearchDetailScreen();
-                      isbnCameraController.dispose();
-                    }
+                    isbnCameraController.dispose();
                   }
                 },
               ),
@@ -109,26 +103,5 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
         ),
       ),
     );
-  }
-
-  // void onNavigateToSearchDetailScreen() {
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (_) => SearchDetailScreen(
-  //         bookSearchData: _bookSearchIsbnData,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  Future<List<BookSearchResult>> _fetchBookSearchIsbnResponse(
-      String isbn) async {
-    BookSearchResponseData bookSearchResponse = await _searchDataSource
-        .getBookSearchResponse('${getApi(API.getBookSearchIsbn)}?isbn=$isbn');
-
-    final bookSearchData = bookSearchResponse.bookSearchResult!;
-
-    return bookSearchData;
   }
 }

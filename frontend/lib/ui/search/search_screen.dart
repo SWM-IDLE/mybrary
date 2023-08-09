@@ -70,7 +70,7 @@ class _SearchScreenState extends State<SearchScreen> {
             foregroundColor: BLACK_COLOR,
             actions: [
               IconButton(
-                onPressed: () {},
+                onPressed: onIsbnScan,
                 icon: SvgPicture.asset('assets/svg/icon/barcode_scan.svg'),
               ),
             ],
@@ -140,7 +140,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 SearchPopularKeyword(
                   bookSearchKeywordController: _bookSearchKeywordController,
-                  onBookSearchBinding: getBookSearchPopularKeywordResponse,
                 ),
               ],
             ),
@@ -166,18 +165,6 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           )
         : null;
-  }
-
-  void getBookSearchPopularKeywordResponse(bool isBinding) {
-    final popularKeyword = _bookSearchKeywordController.text;
-    setState(() {
-      if (popularKeyword != "") {
-        isBinding = true;
-        // _bookSearchResponse = _searchDataSource.getBookSearchResponse(
-        //     '${getBookServiceApi(API.getBookSearchKeyword)}?keyword=$popularKeyword');
-        // _isSearching = true;
-      }
-    });
   }
 
   Future<dynamic> onIsbnScan() async {

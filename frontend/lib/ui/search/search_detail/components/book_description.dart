@@ -21,7 +21,7 @@ class BookDescription extends StatelessWidget {
         ),
         const SizedBox(height: 10.0),
         Text(
-          subTitle == '' ? '생략' : subTitle,
+          subTitle == '' ? '부제가 없습니다.' : subTitle,
           style: bookDetailDescriptionStyle,
         ),
         const SizedBox(height: 24.0),

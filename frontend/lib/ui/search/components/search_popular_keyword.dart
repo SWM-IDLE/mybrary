@@ -16,11 +16,9 @@ const List<String> popularSearchKeyword = [
 
 class SearchPopularKeyword extends StatelessWidget {
   final TextEditingController bookSearchKeywordController;
-  final Function(bool) onBookSearchBinding;
 
   const SearchPopularKeyword({
     required this.bookSearchKeywordController,
-    required this.onBookSearchBinding,
     super.key,
   });
 
