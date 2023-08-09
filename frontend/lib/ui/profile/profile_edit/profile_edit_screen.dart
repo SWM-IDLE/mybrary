@@ -22,8 +22,10 @@ class ProfileEditScreen extends StatefulWidget {
 
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late String _originProfileImageUrl;
-  late TextEditingController _nicknameController;
-  late TextEditingController _introductionController;
+  late String _newNickname;
+  late String _newIntroduction;
+  late TextEditingController _nicknameController = TextEditingController();
+  late TextEditingController _introductionController = TextEditingController();
 
   final _profileRepository = ProfileRepository();
   late Future<ProfileResponseData> _profileResponseData;
@@ -55,6 +57,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     super.initState();
 
     _refreshProfileData();
+    _profileRepository.getProfileData().then((data) {
+      _nicknameController = TextEditingController(
+        text: data.nickname!,
+      );
+      _introductionController = TextEditingController(
+        text: data.introduction!,
+      );
+    });
   }
 
   @override
@@ -88,12 +98,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   if (snapshot.hasData) {
                     final profileData = snapshot.data!;
 
-                    _nicknameController = TextEditingController(
-                      text: profileData.nickname!,
-                    );
-                    _introductionController = TextEditingController(
-                      text: profileData.introduction!,
-                    );
                     _originProfileImageUrl = profileData.profileImageUrl!;
                     bool isDefaultImage =
                         profileData.profileImageUrl!.contains('default.jpg');
