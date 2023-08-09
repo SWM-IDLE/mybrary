@@ -1,12 +1,9 @@
 package kr.mybrary.userservice.user.domain;
 
+import jakarta.validation.constraints.NotNull;
 import kr.mybrary.userservice.global.util.MultipartFileUtil;
 import kr.mybrary.userservice.user.domain.dto.UserMapper;
-import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.*;
 import kr.mybrary.userservice.user.domain.dto.response.*;
 import kr.mybrary.userservice.user.domain.exception.follow.DuplicateFollowException;
 import kr.mybrary.userservice.user.domain.exception.follow.SameSourceTargetUserException;
@@ -294,5 +291,19 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public UserInfoServiceResponse getUserInfo(UserInfoServiceRequest serviceRequest) {
+        return UserInfoServiceResponse.builder()
+                .userInfoElements(getUserInfoElements(serviceRequest))
+                .build();
+    }
+
+    @NotNull
+    private List<UserInfoServiceResponse.UserInfoElement> getUserInfoElements(UserInfoServiceRequest serviceRequest) {
+        return userRepository.findAllUserInfoByLoginIds(serviceRequest.getUserIds()).stream()
+                .map(userInfoModel -> UserInfoServiceResponse.UserInfoElement.of(userInfoModel))
+                .collect(Collectors.toList());
+    }
 
 }
