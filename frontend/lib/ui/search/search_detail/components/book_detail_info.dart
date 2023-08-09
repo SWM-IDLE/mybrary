@@ -110,7 +110,7 @@ class BookDetailInfo extends StatelessWidget {
                 ),
                 const SizedBox(width: 4.0),
                 Text(
-                  '$aladinStarRating / 5',
+                  '$aladinStarRating / 5.0',
                   style: bookDetailInfoStyle,
                 ),
               ],
