@@ -15,6 +15,7 @@ import kr.mybrary.userservice.user.domain.exception.user.UserNotSearchedExceptio
 import kr.mybrary.userservice.user.domain.storage.StorageService;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
+import kr.mybrary.userservice.user.persistence.model.UserInfoModel;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -522,5 +523,45 @@ class UserServiceImplTest {
         verify(userRepository).delete(user);
     }
 
+    @Test
+    @DisplayName("로그인 아이디로 사용자 계정을 삭제할 때 사용자가 없으면 예외를 던진다")
+    void deleteAccountWithNotExistUser() {
+        // Given
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.empty());
+
+        // When
+        assertThatThrownBy(() -> userService.deleteAccount(LOGIN_ID))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
+                .hasFieldOrPropertyWithValue("errorCode", "U-05")
+                .hasFieldOrPropertyWithValue("errorMessage", "존재하지 않는 사용자입니다.");
+
+        // Then
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디 목록으로 사용자 정보를 조회한다")
+    void getUserInfo() {
+        // Given
+        given(userRepository.findAllUserInfoByLoginIds(Arrays.asList("userId1", "userId2", "userId3"))).willReturn(
+                Arrays.asList(UserInfoModel.builder().loginId("userId1").nickname("nickname1").profileImageUrl("profileImageUrl1").build(),
+                        UserInfoModel.builder().loginId("userId2").nickname("nickname2").profileImageUrl("profileImageUrl2").build(),
+                        UserInfoModel.builder().loginId("userId3").nickname("nickname3").profileImageUrl("profileImageUrl3").build()));
+
+        // When
+        UserInfoServiceResponse userInfoServiceResponse = userService.getUserInfo(
+                UserInfoServiceRequest.builder().userIds(Arrays.asList("userId1", "userId2", "userId3")).build());
+
+        // Then
+        assertAll(
+                () -> assertThat(userInfoServiceResponse.getUserInfoElements()).hasSize(3),
+                () -> assertThat(userInfoServiceResponse.getUserInfoElements()).extracting("userId").containsExactly("userId1", "userId2", "userId3"),
+                () -> assertThat(userInfoServiceResponse.getUserInfoElements()).extracting("nickname").containsExactly("nickname1", "nickname2", "nickname3"),
+                () -> assertThat(userInfoServiceResponse.getUserInfoElements()).extracting("profileImageUrl").containsExactly("profileImageUrl1", "profileImageUrl2", "profileImageUrl3")
+        );
+
+        verify(userRepository).findAllUserInfoByLoginIds(Arrays.asList("userId1", "userId2", "userId3"));
+    }
 
 }
