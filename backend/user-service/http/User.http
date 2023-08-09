@@ -9,22 +9,26 @@ Content-Type: application/json
   "email": "email@email.com"
 }
 
+### 회원 탈퇴
+DELETE http://localhost:8080/api/v1/users/account
+USER-ID: loginId
+
 ### 2. 로그인
-POST http://localhost:8080/api/v1/auth/login
+POST http://43.200.200.185:8003/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "loginId": "loginId",
+  "loginId": "testId",
   "password": "password123!"
 }
 
 ### 3. 로그아웃
 POST http://localhost:8080/api/v1/auth/logout
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImxvZ2luSWQiOiJsb2dpbklkIiwiZXhwIjoxNjg5OTUwNjI5fQ.xVTWvIsUbaES_rYcfel-TuGy944Gtlf5XuNhkZO_MioWX2xhKFiMJjmYPcF6f9IogbDebjbiSVxMNJ9PwoIx8w
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImxvZ2luSWQiOiI3ZWFlM2QwZC0wYzU5LTQxMzctYWU5My1hYjhjOTZmNWZiMGUiLCJleHAiOjE2OTEyMTUyODh9.DkPQdLlegkCVONgElh9UoAr_YpmsX5Ci11TGzsYtVYtK9fHJ7ypjPXpVvMM_fEy1gnDtyjWz0Q9a0TcapedAmA
 
 ### 4. 인가 테스트
 GET http://localhost:8080/auth/v1/test
-# Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImxvZ2luSWQiOiJsb2dpbklkIiwiZXhwIjoxNjg5OTUwNjI5fQ.xVTWvIsUbaES_rYcfel-TuGy944Gtlf5XuNhkZO_MioWX2xhKFiMJjmYPcF6f9IogbDebjbiSVxMNJ9PwoIx8w
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImxvZ2luSWQiOiI3ZWFlM2QwZC0wYzU5LTQxMzctYWU5My1hYjhjOTZmNWZiMGUiLCJleHAiOjE2OTEyMTUyODh9.DkPQdLlegkCVONgElh9UoAr_YpmsX5Ci11TGzsYtVYtK9fHJ7ypjPXpVvMM_fEy1gnDtyjWz0Q9a0TcapedAmA
 
 ### 3. 구글 소셜 로그인
 GET http://localhost:8080/oauth2/authorization/google
@@ -70,10 +74,27 @@ DELETE http://localhost:8080/api/v1/users/profile/image
 USER-ID: loginId
 
 ### 13. 사용자 검색
-GET http://localhost:8080/api/v1/users/search?nickname=
+GET http://localhost:8080/api/v1/users/search?nickname=nick
 
 ### 14. 카테고리별 관심사 모두 조회
-GET http://localhost:8080/api/v1/interest-categories
+GET http://43.200.200.185:8003/api/v1/interest-categories // mybrary.kr
 
 ### 15. 사용자 관심사 조회
-GET http://localhost:8080/api/v1/users/loginId/interests
+GET http://43.200.200.185:8003/api/v1/users/testId/interests
+
+### 16. 사용자 관심사 업데이트
+PUT http://43.200.200.185:8003/api/v1/users/testId/interests
+Content-Type: application/json
+
+{
+    "interestRequests": [
+      {
+        "id": 1,
+        "name": "국내소설"
+      },
+      {
+        "id": 2,
+        "name": "외국소설"
+      }
+    ]
+}
