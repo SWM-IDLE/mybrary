@@ -3,6 +3,7 @@ package kr.mybrary.userservice.user.persistence.repository;
 import kr.mybrary.userservice.PersistenceTest;
 import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.persistence.User;
+import kr.mybrary.userservice.user.persistence.model.UserInfoModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,4 +148,24 @@ class UserRepositoryTest {
             () -> assertThat(foundUser.get(1).getNickname()).contains(savedUser.getNickname())
         );
     }
+
+    @Test
+    @DisplayName("로그인 아이디 목록으로 사용자 정보를 가져온다.")
+    void findAllUserInfoByLoginIds() {
+        // given
+        User savedUser = userRepository.save(UserFixture.COMMON_USER.getUser());
+        User savedUser2 = userRepository.save(UserFixture.USER_WITH_SIMILAR_NICKNAME.getUser());
+
+        // when
+        List<UserInfoModel> userInfos = userRepository.findAllUserInfoByLoginIds(List.of(savedUser.getLoginId(), savedUser2.getLoginId()));
+
+        // then
+        assertAll(
+            () -> assertThat(userInfos).hasSize(2),
+            () -> assertThat(userInfos).extracting("loginId").containsExactly(savedUser.getLoginId(), savedUser2.getLoginId()),
+            () -> assertThat(userInfos).extracting("nickname").containsExactly(savedUser.getNickname(), savedUser2.getNickname()),
+            () -> assertThat(userInfos).extracting("profileImageUrl").containsExactly(savedUser.getProfileImageUrl(), savedUser2.getProfileImageUrl())
+        );
+    }
+
 }
