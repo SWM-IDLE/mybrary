@@ -876,4 +876,50 @@ class UserControllerTest {
         );
     }
 
+    @DisplayName("사용자를 탈퇴 처리한다.")
+    @Test
+    void deleteAccount() throws Exception {
+        // given
+        doNothing().when(userService).deleteAccount(any());
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.delete(BASE_URL + "/account")
+                        .with(csrf())
+                        .header("USER-ID", LOGIN_ID));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
+                .andExpect(jsonPath("$.message").value("회원 탈퇴에 성공했습니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+        verify(userService).deleteAccount(any());
+
+        // docs
+        actions.andDo(document("delete-user",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user")
+                                .summary("사용자를 탈퇴 처리한다.")
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .responseSchema(Schema.schema("delete_user_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                                .description("응답 데이터").optional()
+                                )
+                                .build()
+                ))
+        );
+    }
+
 }

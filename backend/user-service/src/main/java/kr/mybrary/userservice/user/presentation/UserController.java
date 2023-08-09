@@ -169,4 +169,13 @@ public class UserController {
         );
     }
 
+    @DeleteMapping("/account")
+    public ResponseEntity<SuccessResponse> withdrawal(@RequestHeader("USER-ID") String loginId) {
+        userService.deleteAccount(loginId);
+
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(HttpStatus.OK.toString(), "회원 탈퇴에 성공했습니다.", null)
+        );
+    }
+
 }
