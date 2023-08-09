@@ -3,16 +3,9 @@ package kr.mybrary.userservice.user.presentation;
 import jakarta.validation.Valid;
 import kr.mybrary.userservice.global.dto.response.SuccessResponse;
 import kr.mybrary.userservice.user.domain.UserService;
-import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.*;
 import kr.mybrary.userservice.user.domain.dto.response.*;
-import kr.mybrary.userservice.user.presentation.dto.request.FollowRequest;
-import kr.mybrary.userservice.user.presentation.dto.request.FollowerRequest;
-import kr.mybrary.userservice.user.presentation.dto.request.ProfileUpdateRequest;
-import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
+import kr.mybrary.userservice.user.presentation.dto.request.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -175,6 +168,14 @@ public class UserController {
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "회원 탈퇴에 성공했습니다.", null)
+        );
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<SuccessResponse> getUserInfo(@RequestBody UserInfoRequest userInfoRequest) {
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(HttpStatus.OK.toString(), "사용자 정보를 모두 조회했습니다.",
+                        userService.getUserInfo(UserInfoServiceRequest.of(userInfoRequest)))
         );
     }
 
