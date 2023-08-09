@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.review.presentation;
 import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import kr.mybrary.bookservice.review.domain.MyBookReviewReadService;
 import kr.mybrary.bookservice.review.domain.MyBookReviewWriteService;
+import kr.mybrary.bookservice.review.domain.dto.request.ReviewOfMyBookGetServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.ReviewsOfBookGetServiceRequest;
 import kr.mybrary.bookservice.review.presentation.dto.request.MyBookReviewCreateRequest;
 import lombok.RequiredArgsConstructor;
@@ -43,5 +44,15 @@ public class MyBookReviewController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(HttpStatus.OK.toString(), "도서의 리뷰 목록입니다.",
                         myBookReviewReadService.getReviewsFromBook(request)));
+    }
+
+    @GetMapping("/mybooks/{myBookId}/review")
+    public ResponseEntity getReviewFromMyBook(@PathVariable Long myBookId) {
+
+        ReviewOfMyBookGetServiceRequest request = ReviewOfMyBookGetServiceRequest.of(myBookId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(HttpStatus.OK.toString(), "마이북에 대한 리뷰입니다.",
+                        myBookReviewReadService.getReviewFromMyBook(request)));
     }
 }
