@@ -63,6 +63,10 @@ class SearchBookListInfo extends StatelessWidget {
                                 image: NetworkImage(
                                   searchBookData.thumbnailUrl!,
                                 ),
+                                onError: (exception, stackTrace) => Image.asset(
+                                  'assets/img/logo/mybrary.png',
+                                  fit: BoxFit.fill,
+                                ),
                                 fit: BoxFit.fill,
                               ),
                             ),

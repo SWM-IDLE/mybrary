@@ -96,7 +96,7 @@ class BookDetailInfo extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 15.0),
-          infoItem('쪽수', '${pages}g'),
+          infoItem('쪽수', '${pages}쪽'),
           const SizedBox(height: 15.0),
           infoItem('출판사', publisher),
           const SizedBox(height: 15.0),
@@ -110,7 +110,7 @@ class BookDetailInfo extends StatelessWidget {
                 ),
                 const SizedBox(width: 4.0),
                 Text(
-                  '$aladinStarRating (최고 5점)',
+                  '$aladinStarRating / 5',
                   style: bookDetailInfoStyle,
                 ),
               ],

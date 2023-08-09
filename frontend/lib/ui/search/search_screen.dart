@@ -17,6 +17,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   late bool _isClearButtonVisible = false;
+
   final TextEditingController _bookSearchKeywordController =
       TextEditingController();
 
@@ -38,9 +39,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _isClearText() {
     if (_bookSearchKeywordController.text.isEmpty) {
-      setState(() {
-        _isClearButtonVisible = false;
-      });
+      _isClearButtonVisible = false;
     }
   }
 
@@ -53,39 +52,38 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultLayout(
-      appBar: AppBar(
-        toolbarHeight: 50.0,
-        backgroundColor: WHITE_COLOR,
-        elevation: 0,
-        title: const Text('검색'),
-        titleTextStyle: commonSubTitleStyle.copyWith(
-          color: BLACK_COLOR,
-        ),
-        centerTitle: true,
-        foregroundColor: BLACK_COLOR,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: SvgPicture.asset('assets/svg/icon/barcode_scan.svg'),
+    return SafeArea(
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: DefaultLayout(
+          appBar: AppBar(
+            toolbarHeight: 60.0,
+            backgroundColor: WHITE_COLOR,
+            elevation: 0,
+            title: const Text('검색'),
+            titleTextStyle: commonSubTitleStyle.copyWith(
+              color: BLACK_COLOR,
+            ),
+            centerTitle: true,
+            foregroundColor: BLACK_COLOR,
+            actions: [
+              IconButton(
+                onPressed: () {},
+                icon: SvgPicture.asset('assets/svg/icon/barcode_scan.svg'),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.97 -
-                kToolbarHeight -
-                kBottomNavigationBarHeight,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
-                    top: 6.0,
+                    top: 0.0,
                     left: 18.0,
                     bottom: 12.0,
                     right: 18.0,
@@ -100,16 +98,23 @@ class _SearchScreenState extends State<SearchScreen> {
                       });
                     },
                     onSubmitted: (value) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => SearchBookList(
-                            bookSearchKeyword: value,
+                      if (value.isNotEmpty) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => SearchBookList(
+                              bookSearchKeyword: value,
+                            ),
                           ),
-                        ),
-                      ).then(
-                        (value) => _bookSearchKeywordController.clear(),
-                      );
+                        ).then(
+                          (value) => {
+                            setState(() {
+                              _bookSearchKeywordController.clear();
+                              _isClearButtonVisible = false;
+                            })
+                          },
+                        );
+                      }
                     },
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
