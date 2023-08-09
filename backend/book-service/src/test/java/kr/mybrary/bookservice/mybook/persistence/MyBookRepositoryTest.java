@@ -11,6 +11,7 @@ import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
+import kr.mybrary.bookservice.review.MyBookReviewFixture;
 import kr.mybrary.bookservice.tag.MeaningTagFixture;
 import kr.mybrary.bookservice.tag.MyBookMeaningTagFixture;
 import kr.mybrary.bookservice.tag.persistence.MeaningTag;
@@ -200,13 +201,16 @@ class MyBookRepositoryTest {
 
         Book book = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBook());
 
-        MyBook myBook = myBookRepository.saveAndFlush(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+        MyBook myBook = myBookRepository.save(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
                 .id(1L).book(book).build());
 
-        MyBookMeaningTag myBookMeaningTag = MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTagBuilder()
+        MyBookMeaningTag myBookMeaningTag = MyBookMeaningTagFixture.MY_BOOK_MEANING_TAG_WITHOUT_RELATION.getMyBookMeaningTagBuilder()
                 .id(1L)
                 .meaningTag(meaningTag)
                 .myBook(myBook).build();
+
+        entityManager.persist(MyBookReviewFixture.MY_BOOK_REVIEW_WITHOUT_RELATION.getMyBookReviewBuilder()
+                        .book(book).myBook(myBook).build());
 
         myBookMeaningTagRepository.save(myBookMeaningTag);
 
@@ -214,7 +218,7 @@ class MyBookRepositoryTest {
         entityManager.clear();
 
         // then
-        Optional<MyBook> myBookDetail = myBookRepository.findMyBookDetail(myBook.getId());
+        Optional<MyBook> myBookDetail = myBookRepository.findMyBookDetailUsingFetchJoin(myBook.getId());
 
         // when
         assertAll(
@@ -223,6 +227,7 @@ class MyBookRepositoryTest {
                     assertThat(myBookDetail.get().getBook() instanceof HibernateProxy).isFalse();
                     assertThat(myBookDetail.get().getMyBookMeaningTag() instanceof HibernateProxy).isFalse();
                     assertThat(myBookDetail.get().getMyBookMeaningTag().getMeaningTag() instanceof HibernateProxy).isFalse();
+                    assertThat(myBookDetail.get().getMyBookReview() instanceof HibernateProxy).isFalse();
                     assertThat(myBookDetail.get().getBook().getTitle()).isEqualTo(book.getTitle());
                     assertThat(myBookDetail.get().getBook().getIsbn13()).isEqualTo(book.getIsbn13());
                     assertThat(myBookDetail.get().getMyBookMeaningTag().getMeaningTagColor()).isEqualTo(myBookMeaningTag.getMeaningTagColor());
@@ -245,7 +250,7 @@ class MyBookRepositoryTest {
         entityManager.clear();
 
         // then
-        Optional<MyBook> myBookDetail = myBookRepository.findMyBookDetail(myBook.getId());
+        Optional<MyBook> myBookDetail = myBookRepository.findMyBookDetailUsingFetchJoin(myBook.getId());
 
         // when
         assertAll(
