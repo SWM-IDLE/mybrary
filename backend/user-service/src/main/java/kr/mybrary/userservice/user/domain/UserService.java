@@ -35,4 +35,6 @@ public interface UserService {
 
     SearchServiceResponse searchByNickname(String nickname);
 
+    void deleteAccount(String loginId);
+
 }
