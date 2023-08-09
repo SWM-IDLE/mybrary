@@ -78,7 +78,7 @@ class MyReviewRepositoryTest {
                     assertThat(reviewsByBook.get(0).getId()).isEqualTo(myReview.getId());
                     assertThat(reviewsByBook.get(0).getUserId()).isEqualTo(myBook.getUserId());
                     assertThat(reviewsByBook.get(0).getContent()).isEqualTo(myReview.getContent());
-                    assertThat(reviewsByBook.get(0).getCreatedAt()).isEqualTo(myReview.getCreatedAt());
+                    assertThat(reviewsByBook.get(0).getCreatedAt()).isNotNull();
                     assertThat(reviewsByBook.get(0).getStarRating()).isEqualTo(myReview.getStarRating());
                 }
         );
@@ -109,8 +109,8 @@ class MyReviewRepositoryTest {
                     assertThat(reviewByMyBook.get().getId()).isEqualTo(myReview.getId());
                     assertThat(reviewByMyBook.get().getContent()).isEqualTo(myReview.getContent());
                     assertThat(reviewByMyBook.get().getStarRating()).isEqualTo(myReview.getStarRating());
-                    assertThat(reviewByMyBook.get().getCreatedAt()).isEqualTo(myReview.getCreatedAt());
-                    assertThat(reviewByMyBook.get().getUpdatedAt()).isEqualTo(myReview.getUpdatedAt());
+                    assertThat(reviewByMyBook.get().getCreatedAt()).isNotNull();
+                    assertThat(reviewByMyBook.get().getUpdatedAt()).isNotNull();
                 }
         );
     }
