@@ -218,7 +218,11 @@ class MyBookControllerTest {
                                                 fieldWithPath("data.book.stars").type(NUMBER).description("도서 별점"),
                                                 fieldWithPath("data.book.publisher").type(STRING).description("출판사"),
                                                 fieldWithPath("data.meaningTag.quote").type(STRING).description("의미 태그 문구"),
-                                                fieldWithPath("data.meaningTag.colorCode").type(STRING).description("의미 태그 색상")
+                                                fieldWithPath("data.meaningTag.colorCode").type(STRING).description("의미 태그 색상"),
+                                                fieldWithPath("data.review.id").type(NUMBER).description("리뷰 ID"),
+                                                fieldWithPath("data.review.content").type(STRING).description("리뷰 내용"),
+                                                fieldWithPath("data.review.starRating").type(NUMBER).description("리뷰 별점"),
+                                                fieldWithPath("data.review.createdAt").type(STRING).description("리뷰 생성일")
                                         ).build())));
     }
 
