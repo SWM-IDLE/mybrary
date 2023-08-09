@@ -24,3 +24,6 @@ spring:
 logging:
   level:
     root: info
+
+jwt:
+  secretKey: testSecretKey
