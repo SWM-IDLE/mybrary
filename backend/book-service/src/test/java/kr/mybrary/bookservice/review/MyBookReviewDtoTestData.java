@@ -6,10 +6,13 @@ import java.util.stream.IntStream;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse.UserInfoElement;
 import kr.mybrary.bookservice.review.domain.dto.request.MyBookReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.ReviewOfMyBookGetServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.ReviewsOfBookGetServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.ReviewsOfBookGetServiceRequest.ReviewsOfBookGetServiceRequestBuilder;
-import kr.mybrary.bookservice.review.persistence.dto.MyBookReviewElementDto;
+import kr.mybrary.bookservice.review.persistence.model.MyBookReviewElementDto;
+import kr.mybrary.bookservice.review.persistence.model.ReviewFromMyBookModel;
 import kr.mybrary.bookservice.review.presentation.dto.request.MyBookReviewCreateRequest;
+import kr.mybrary.bookservice.review.presentation.dto.response.ReviewOfMyBookGetResponse;
 import kr.mybrary.bookservice.review.presentation.dto.response.ReviewsOfBookGetResponse;
 import kr.mybrary.bookservice.review.presentation.dto.response.ReviewsOfBookGetResponse.ReviewElement;
 
@@ -91,6 +94,32 @@ public class MyBookReviewDtoTestData {
                                 .createdAt("2023-01-02")
                                 .build()
                 ))
+                .build();
+    }
+
+    public static ReviewOfMyBookGetServiceRequest createReviewOfMyBookGetServiceRequest() {
+        return ReviewOfMyBookGetServiceRequest.builder()
+                .myBookId(1L)
+                .build();
+    }
+
+    public static ReviewFromMyBookModel createReviewFromMyBookModel() {
+        return ReviewFromMyBookModel.builder()
+                .id(1L)
+                .content("리뷰 내용입니다.")
+                .starRating(4.5)
+                .createdAt(LocalDateTime.of(2023, 1, 1, 0, 0, 0))
+                .updatedAt(LocalDateTime.of(2023, 1, 1, 0, 0, 0))
+                .build();
+    }
+
+    public static ReviewOfMyBookGetResponse createReviewOfMyBookGetResponse() {
+        return ReviewOfMyBookGetResponse.builder()
+                .id(1L)
+                .content("리뷰 내용입니다.")
+                .starRating(4.5)
+                .createdAt("2023.01.01")
+                .updatedAt("2023.01.01")
                 .build();
     }
 }

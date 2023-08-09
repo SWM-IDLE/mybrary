@@ -118,7 +118,7 @@ public class MyBookService {
         return !ownerId.equals(requesterId);
     }
 
-    private MyBook findMyBookById(Long myBookId) {
+    public MyBook findMyBookById(Long myBookId) {
         return myBookRepository.findById(myBookId).orElseThrow(MyBookNotFoundException::new);
     }
 }

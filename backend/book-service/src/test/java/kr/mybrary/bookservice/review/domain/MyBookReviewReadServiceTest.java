@@ -5,15 +5,22 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.List;
+import java.util.Optional;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.domain.BookReadService;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.client.user.api.UserServiceClient;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse;
+import kr.mybrary.bookservice.mybook.MyBookFixture;
+import kr.mybrary.bookservice.mybook.domain.MyBookService;
+import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
+import kr.mybrary.bookservice.review.domain.dto.request.ReviewOfMyBookGetServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.ReviewsOfBookGetServiceRequest;
-import kr.mybrary.bookservice.review.persistence.dto.MyBookReviewElementDto;
+import kr.mybrary.bookservice.review.persistence.model.MyBookReviewElementDto;
+import kr.mybrary.bookservice.review.persistence.model.ReviewFromMyBookModel;
 import kr.mybrary.bookservice.review.persistence.repository.MyBookReviewRepository;
+import kr.mybrary.bookservice.review.presentation.dto.response.ReviewOfMyBookGetResponse;
 import kr.mybrary.bookservice.review.presentation.dto.response.ReviewsOfBookGetResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,6 +45,9 @@ class MyBookReviewReadServiceTest {
 
     @Mock
     private UserServiceClient userServiceClient;
+
+    @Mock
+    private MyBookService myBookService;
 
     @DisplayName("하나의 책에 대한 모든 리뷰를 조회한다.")
     @Test
@@ -71,6 +81,57 @@ class MyBookReviewReadServiceTest {
                                 tuple("USER_ID_3", "USER_NICKNAME_3", "USER_PICTURE_URL_3", "리뷰_내용_3", 3.0),
                                 tuple("USER_ID_4", "USER_NICKNAME_4", "USER_PICTURE_URL_4", "리뷰_내용_4", 4.0),
                                 tuple("USER_ID_5", "USER_NICKNAME_5", "USER_PICTURE_URL_5", "리뷰_내용_5", 5.0))
+        );
+    }
+
+    @DisplayName("마이북에 대한 리뷰를 조회한다.")
+    @Test
+    void findReviewFromMyBook() {
+
+        // given
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
+        ReviewFromMyBookModel model = MyBookReviewDtoTestData.createReviewFromMyBookModel();
+        ReviewOfMyBookGetServiceRequest request = MyBookReviewDtoTestData.createReviewOfMyBookGetServiceRequest();
+
+        given(myBookService.findMyBookById(any())).willReturn(myBook);
+        given(myBookReviewRepository.findReviewByMyBook(any())).willReturn(Optional.ofNullable(model));
+
+        // when
+        ReviewOfMyBookGetResponse response = myBookReviewReadService.getReviewFromMyBook(request);
+
+        // then
+        assertAll(
+                () -> {
+                    assertThat(response).isNotNull();
+                    assertThat(model).isNotNull();
+                    assertThat(response.getId()).isEqualTo(model.getId());
+                    assertThat(response.getContent()).isEqualTo(model.getContent());
+                    assertThat(response.getStarRating()).isEqualTo(model.getStarRating());
+                },
+                () -> verify(myBookReviewRepository, times(1)).findReviewByMyBook(any()),
+                () -> verify(myBookService, times(1)).findMyBookById(any())
+        );
+    }
+
+    @DisplayName("마이북에 대한 리뷰가 없을 경우, 빈 응답을 반환한다.")
+    @Test
+    void findReviewFromMyBook_Empty() {
+
+        // given
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
+        ReviewOfMyBookGetServiceRequest request = MyBookReviewDtoTestData.createReviewOfMyBookGetServiceRequest();
+
+        given(myBookService.findMyBookById(any())).willReturn(myBook);
+        given(myBookReviewRepository.findReviewByMyBook(any())).willReturn(Optional.empty());
+
+        // when
+        ReviewOfMyBookGetResponse response = myBookReviewReadService.getReviewFromMyBook(request);
+
+        // then
+        assertAll(
+                () -> assertThat(response).isNull(),
+                () -> verify(myBookReviewRepository, times(1)).findReviewByMyBook(any()),
+                () -> verify(myBookService, times(1)).findMyBookById(any())
         );
     }
 }

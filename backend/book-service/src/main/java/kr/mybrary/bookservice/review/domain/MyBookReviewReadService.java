@@ -10,9 +10,14 @@ import kr.mybrary.bookservice.client.user.dto.request.UserInfoRequest;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse.UserInfoElement;
 import kr.mybrary.bookservice.global.util.DateUtils;
+import kr.mybrary.bookservice.mybook.domain.MyBookService;
+import kr.mybrary.bookservice.mybook.persistence.MyBook;
+import kr.mybrary.bookservice.review.domain.dto.MyBookReviewDtoMapper;
+import kr.mybrary.bookservice.review.domain.dto.request.ReviewOfMyBookGetServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.ReviewsOfBookGetServiceRequest;
-import kr.mybrary.bookservice.review.persistence.dto.MyBookReviewElementDto;
+import kr.mybrary.bookservice.review.persistence.model.MyBookReviewElementDto;
 import kr.mybrary.bookservice.review.persistence.repository.MyBookReviewRepository;
+import kr.mybrary.bookservice.review.presentation.dto.response.ReviewOfMyBookGetResponse;
 import kr.mybrary.bookservice.review.presentation.dto.response.ReviewsOfBookGetResponse;
 import kr.mybrary.bookservice.review.presentation.dto.response.ReviewsOfBookGetResponse.ReviewElement;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +32,7 @@ public class MyBookReviewReadService {
 
     private final MyBookReviewRepository myBookReviewRepository;
     private final BookReadService bookReadService;
+    private final MyBookService myBookService;
     private final UserServiceClient userServiceClient;
 
     public ReviewsOfBookGetResponse getReviewsFromBook(ReviewsOfBookGetServiceRequest request) {
@@ -50,6 +56,15 @@ public class MyBookReviewReadService {
                 .starRatingAverage(starRatingAverage)
                 .myBookReviewList(myBookReviewElements)
                 .build();
+    }
+
+    public ReviewOfMyBookGetResponse getReviewFromMyBook(ReviewOfMyBookGetServiceRequest request) {
+
+        MyBook myBook = myBookService.findMyBookById(request.getMyBookId());
+
+        return myBookReviewRepository.findReviewByMyBook(myBook)
+                .map(MyBookReviewDtoMapper.INSTANCE::reviewOfMyBookModelToResponse)
+                .orElseGet(() -> null);
     }
 
     @NotNull
