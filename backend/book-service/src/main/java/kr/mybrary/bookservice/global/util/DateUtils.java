@@ -12,4 +12,12 @@ public class DateUtils {
 
         return localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
+
+    public static String toFormatMyBookReviewUI(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return "0000.00.00";
+        }
+
+        return localDateTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+    }
 }

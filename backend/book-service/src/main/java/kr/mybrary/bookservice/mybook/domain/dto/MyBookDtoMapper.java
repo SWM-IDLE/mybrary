@@ -42,9 +42,4 @@ public interface MyBookDtoMapper {
                 .map(bookTranslator -> bookTranslator.getTranslator().getName())
                 .toList();
     }
-
-    @Named("toFormatYYYMMddHHmm")
-    static String toFormatYYYMMddHHmm(LocalDateTime dateTime) {
-        return DateUtils.toFormatYYYMMddHHmm(dateTime);
-    }
 }
