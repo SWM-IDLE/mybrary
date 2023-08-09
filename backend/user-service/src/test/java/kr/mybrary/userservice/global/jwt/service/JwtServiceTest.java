@@ -77,15 +77,15 @@ class JwtServiceTest {
         LocalDateTime date = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
 
         // when
-        String createdAccessToken = jwtService.createRefreshToken(date);
+        String createdRefreshToken = jwtService.createRefreshToken(date);
 
         // then
-        assertAll( // TODO: 수정 필요~~
-                () -> assertThat(createdAccessToken).isNotNull(),
-                () -> assertThat(JWT.decode(createdAccessToken).getSubject()).isEqualTo(REFRESH_TOKEN_SUBJECT),
-                () -> assertThat(JWT.decode(createdAccessToken).getExpiresAt()).isEqualTo(new Date(
+        assertAll(
+                () -> assertThat(createdRefreshToken).isNotNull(),
+                () -> assertThat(JWT.decode(createdRefreshToken).getSubject()).isEqualTo(REFRESH_TOKEN_SUBJECT),
+                () -> assertThat(JWT.decode(createdRefreshToken).getExpiresAt()).isEqualTo(new Date(
                         Date.from(date.atZone(ZoneId.systemDefault()).toInstant()).getTime() + refreshTokenExpirationPeriod)),
-                () -> assertThat(JWT.decode(createdAccessToken).getSignature()).isNotNull()
+                () -> assertThat(JWT.decode(createdRefreshToken).getSignature()).isNotNull()
         );
     }
 
