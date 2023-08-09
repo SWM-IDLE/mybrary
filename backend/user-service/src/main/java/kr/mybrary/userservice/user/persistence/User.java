@@ -6,16 +6,32 @@ import kr.mybrary.userservice.global.BaseEntity;
 import kr.mybrary.userservice.interest.persistence.Interest;
 import kr.mybrary.userservice.interest.persistence.UserInterest;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Builder
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_users_login_id_deleted",
+                        columnNames = {"loginId", "deleted"}
+                ),
+                @UniqueConstraint(
+                        name = "uk_users_nickname_deleted",
+                        columnNames = {"nickname", "deleted"}
+                ),
+                @UniqueConstraint(
+                        name = "uk_users_login_id_nickname_deleted",
+                        columnNames = {"loginId", "nickname", "deleted"}
+                ),
+        }
+)
 @AllArgsConstructor
-// TODO: soft delete 적용 시 unique 제약 조건 이슈
-// @SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_id = ?")
-// @Where(clause = "deleted = false")
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_id = ?")
+@Where(clause = "deleted = false")
 public class User extends BaseEntity {
 
     @Id
@@ -23,10 +39,10 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(unique = true)
+    @Column(nullable = false)
     private String loginId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nickname;
 
     @Column(nullable = false)

@@ -507,5 +507,20 @@ class UserServiceImplTest {
         verify(userRepository).findByNicknameContaining("nickname");
     }
 
+    @Test
+    @DisplayName("로그인 아이디로 사용자 계정을 삭제한다")
+    void deleteAccount() {
+        // Given
+        User user = UserFixture.COMMON_USER.getUser();
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(user));
+
+        // When
+        userService.deleteAccount(LOGIN_ID);
+
+        // Then
+        verify(userRepository).findByLoginId(LOGIN_ID);
+        verify(userRepository).delete(user);
+    }
+
 
 }

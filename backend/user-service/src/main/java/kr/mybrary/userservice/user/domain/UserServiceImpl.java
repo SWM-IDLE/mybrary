@@ -288,5 +288,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void deleteAccount(String loginId) {
+        User user = getUser(loginId);
+        userRepository.delete(user);
+    }
+
 
 }
