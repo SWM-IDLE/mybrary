@@ -5,7 +5,7 @@ import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.review.persistence.MyBookReview;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MyBookReviewRepository extends JpaRepository<MyBookReview, Long> {
+public interface MyBookReviewRepository extends JpaRepository<MyBookReview, Long>, MyBookReviewRepositoryCustom {
 
     boolean existsByMyBookAndBook(MyBook myBook, Book book);
 }
