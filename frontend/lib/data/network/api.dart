@@ -2,9 +2,10 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
-const baseUrl = "http://43.200.200.185:8003";
-const bookServiceUrl = "http://43.200.200.185:8004";
+const mybraryUrl = "http://mybrary.kr";
 const mybraryUrlScheme = "kr.mybrary";
+const baseUrl = "$mybraryUrl:8003";
+const bookServiceUrl = "$mybraryUrl:8004";
 
 enum API {
   // oauth
@@ -27,7 +28,6 @@ enum API {
   // book-service
   getBookService,
   getBookSearchKeyword,
-  getBookSearchIsbn,
   getBookSearchDetail,
   getBookSearchDetailAndSaveBook,
   registerInterestBook,
@@ -54,7 +54,6 @@ Map<API, String> apiMap = {
   // book-service
   API.getBookService: "/api/v1",
   API.getBookSearchKeyword: "/api/v1/books/search",
-  API.getBookSearchIsbn: "/api/v1/books/search/isbn",
   API.getBookSearchDetail: "/api/v1/books/search/detail",
   API.getBookSearchDetailAndSaveBook: "/api/v1/books/detail",
   API.registerInterestBook: "/api/v1/books", // '/{isbn13}/interest'

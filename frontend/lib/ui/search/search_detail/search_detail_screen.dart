@@ -257,6 +257,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
         horizontal: 20.0,
         vertical: 6.0,
       ),
+      expandedAlignment: Alignment.centerLeft,
       shape: const Border(),
       iconColor: GREY_05_COLOR,
       collapsedIconColor: GREY_05_COLOR,
