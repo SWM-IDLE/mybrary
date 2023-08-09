@@ -1,10 +1,6 @@
 package kr.mybrary.userservice.user.domain;
 
-import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
-import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.*;
 import kr.mybrary.userservice.user.domain.dto.response.*;
 
 public interface UserService {
@@ -36,5 +32,7 @@ public interface UserService {
     SearchServiceResponse searchByNickname(String nickname);
 
     void deleteAccount(String loginId);
+
+    UserInfoServiceResponse getUserInfo(UserInfoServiceRequest serviceRequest);
 
 }
