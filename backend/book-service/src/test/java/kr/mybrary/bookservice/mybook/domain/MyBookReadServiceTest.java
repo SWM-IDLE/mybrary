@@ -155,7 +155,7 @@ class MyBookReadServiceTest {
         MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findMyBookDetail(any())).willReturn(
+        given(myBookRepository.findMyBookDetailUsingFetchJoin(any())).willReturn(
                 Optional.ofNullable(myBook));
 
         // when
@@ -168,7 +168,7 @@ class MyBookReadServiceTest {
                     assertNotNull(myBook);
                     assertThat(myBookDetail.getId()).isEqualTo(myBook.getId());
                 },
-                () -> verify(myBookRepository).findMyBookDetail(request.getMybookId())
+                () -> verify(myBookRepository).findMyBookDetailUsingFetchJoin(request.getMybookId())
         );
     }
 
@@ -179,13 +179,13 @@ class MyBookReadServiceTest {
         //given
         MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
 
-        given(myBookRepository.findMyBookDetail(any())).willReturn(Optional.empty());
+        given(myBookRepository.findMyBookDetailUsingFetchJoin(any())).willReturn(Optional.empty());
 
         // when, then
         assertAll(
                 () -> assertThatThrownBy(() -> myBookService.findMyBookDetail(request))
                         .isInstanceOf(MyBookNotFoundException.class),
-                () -> verify(myBookRepository).findMyBookDetail(request.getMybookId())
+                () -> verify(myBookRepository).findMyBookDetailUsingFetchJoin(request.getMybookId())
         );
     }
 
@@ -197,14 +197,14 @@ class MyBookReadServiceTest {
         MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MyBookFixture.NOT_SHOWABLE_OTHER_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findMyBookDetail(any())).willReturn(
+        given(myBookRepository.findMyBookDetailUsingFetchJoin(any())).willReturn(
                 Optional.ofNullable(myBook));
 
         // when, then
         assertAll(
                 () -> assertThatThrownBy(() -> myBookService.findMyBookDetail(request))
                         .isInstanceOf(MyBookAccessDeniedException.class),
-                () -> verify(myBookRepository).findMyBookDetail(request.getMybookId())
+                () -> verify(myBookRepository).findMyBookDetailUsingFetchJoin(request.getMybookId())
         );
     }
 

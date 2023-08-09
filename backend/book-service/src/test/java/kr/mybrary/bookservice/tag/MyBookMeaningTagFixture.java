@@ -10,7 +10,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum MyBookMeaningTagFixture {
 
-    COMMON_MY_BOOK_MEANING_TAG(1L, MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(), MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag(), "#FFFFFF");
+    COMMON_MY_BOOK_MEANING_TAG(1L, MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(), MeaningTagFixture.COMMON_MEANING_TAG.getMeaningTag(), "#FFFFFF"),
+    MY_BOOK_MEANING_TAG_WITHOUT_RELATION(1L, null, null, "#FFFFFF");
 
     private final Long id;
 

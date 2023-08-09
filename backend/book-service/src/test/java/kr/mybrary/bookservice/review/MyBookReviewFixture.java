@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum MyBookReviewFixture {
 
+    COMMON_MY_BOOK_REVIEW(1L, null, null, "마이 리뷰 내용입니다.", 4.5, false),
     MY_BOOK_REVIEW_WITHOUT_RELATION(null, null, null, "마이 리뷰 내용입니다.", 4.5, false);
 
     private final Long id;
