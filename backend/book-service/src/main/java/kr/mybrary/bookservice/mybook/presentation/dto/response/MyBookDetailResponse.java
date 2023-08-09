@@ -18,7 +18,6 @@ public class MyBookDetailResponse {
 
     private MeaningTag meaningTag;
     private BookDetailResponse book;
-    private ReviewResponse review;
 
     @Getter
     @Builder
@@ -38,14 +37,5 @@ public class MyBookDetailResponse {
     public static class MeaningTag {
         private String quote;
         private String colorCode;
-    }
-
-    @Getter
-    @Builder
-    public static class ReviewResponse {
-        private Long id;
-        private String content;
-        private Double starRating;
-        private String createdAt;
     }
 }
