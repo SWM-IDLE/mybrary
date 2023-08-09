@@ -73,6 +73,7 @@ class MyBookReviewRepositoryTest {
                 () -> assertThat(reviewsByBook).hasSize(1),
                 () -> {
                     assert reviewsByBook != null;
+                    assertThat(reviewsByBook.get(0).getId()).isEqualTo(myBookReview.getId());
                     assertThat(reviewsByBook.get(0).getUserId()).isEqualTo(myBook.getUserId());
                     assertThat(reviewsByBook.get(0).getContent()).isEqualTo(myBookReview.getContent());
                     assertThat(reviewsByBook.get(0).getCreatedAt()).isEqualTo(myBookReview.getCreatedAt());

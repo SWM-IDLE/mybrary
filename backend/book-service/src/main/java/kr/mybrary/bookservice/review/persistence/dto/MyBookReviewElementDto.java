@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MyBookReviewElementDto {
 
+    private Long id;
     private String userId;
     private String content;
     private Double starRating;

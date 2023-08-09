@@ -20,6 +20,7 @@ public class MyBookReviewRepositoryImpl implements MyBookReviewRepositoryCustom 
     public List<MyBookReviewElementDto> findReviewsByBook(Book book) {
         return queryFactory
                 .select(Projections.fields(MyBookReviewElementDto.class,
+                        myBookReview.id.as("id"),
                         myBookReview.myBook.userId.as("userId"),
                         myBookReview.content.as("content"),
                         myBookReview.starRating.as("starRating"),
