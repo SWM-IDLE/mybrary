@@ -47,13 +47,12 @@ class MyBookDtoMapperTest {
         // given
         MyBookMeaningTag myBookMeaningTag = MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTag();
 
-        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+        MyBook myBook = MyBookFixture.MYBOOK_WITH_REVIEW.getMyBookBuilder()
                 .myBookMeaningTag(myBookMeaningTag)
                 .build();
 
         // when
-        MyBookDetailResponse myBookDetailResponse = MyBookDtoMapper.INSTANCE.entityToMyBookDetailResponse(
-                myBook);
+        MyBookDetailResponse myBookDetailResponse = MyBookDtoMapper.INSTANCE.entityToMyBookDetailResponse(myBook);
 
         // then
         assertAll(
@@ -75,7 +74,10 @@ class MyBookDtoMapperTest {
                         .map(bookTranslator -> bookTranslator.getTranslator().getName())
                         .toList()),
                 () -> assertThat(myBookDetailResponse.getMeaningTag().getQuote()).isEqualTo(myBookMeaningTag.getMeaningTag().getQuote()),
-                () -> assertThat(myBookDetailResponse.getMeaningTag().getColorCode()).isEqualTo(myBookMeaningTag.getMeaningTagColor())
+                () -> assertThat(myBookDetailResponse.getMeaningTag().getColorCode()).isEqualTo(myBookMeaningTag.getMeaningTagColor()),
+                () -> assertThat(myBookDetailResponse.getReview().getId()).isEqualTo(myBook.getMyBookReview().getId()),
+                () -> assertThat(myBookDetailResponse.getReview().getContent()).isEqualTo(myBook.getMyBookReview().getContent()),
+                () -> assertThat(myBookDetailResponse.getReview().getStarRating()).isEqualTo(myBook.getMyBookReview().getStarRating())
         );
     }
 

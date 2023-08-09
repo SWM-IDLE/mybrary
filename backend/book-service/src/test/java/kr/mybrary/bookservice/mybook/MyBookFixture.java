@@ -6,27 +6,32 @@ import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.MyBook.MyBookBuilder;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
+import kr.mybrary.bookservice.review.MyBookReviewFixture;
+import kr.mybrary.bookservice.review.persistence.MyBookReview;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum MyBookFixture {
 
-    COMMON_LOGIN_USER_MYBOOK(1L, "LOGIN_USER_ID", BookFixture.COMMON_BOOK.getBook(), ReadStatus.TO_READ,
+    COMMON_LOGIN_USER_MYBOOK(1L, "LOGIN_USER_ID", BookFixture.COMMON_BOOK.getBook(), null, ReadStatus.TO_READ,
             LocalDateTime.now(), true, false, false, false),
-    DELETED_LOGIN_USER_MYBOOK(2L, "LOGIN_USER_ID", BookFixture.COMMON_BOOK.getBook(), ReadStatus.TO_READ,
+    DELETED_LOGIN_USER_MYBOOK(2L, "LOGIN_USER_ID", BookFixture.COMMON_BOOK.getBook(), null, ReadStatus.TO_READ,
             LocalDateTime.now(), true, false, false, true),
-    NOT_SHOWABLE_LOGIN_USER_MYBOOK(3L, "LOGIN_USER_ID", BookFixture.COMMON_BOOK.getBook(), ReadStatus.TO_READ,
+    NOT_SHOWABLE_LOGIN_USER_MYBOOK(3L, "LOGIN_USER_ID", BookFixture.COMMON_BOOK.getBook(), null, ReadStatus.TO_READ,
             LocalDateTime.now(), false, false, false, false),
-    NOT_SHOWABLE_OTHER_USER_MYBOOK(4L, "OTHER_USER_ID", BookFixture.COMMON_BOOK.getBook(), ReadStatus.TO_READ,
+    NOT_SHOWABLE_OTHER_USER_MYBOOK(4L, "OTHER_USER_ID", BookFixture.COMMON_BOOK.getBook(), null, ReadStatus.TO_READ,
             LocalDateTime.now(), false, false, false, false),
-    COMMON_OTHER_USER_MYBOOK(5L, "OTHER_USER_ID", BookFixture.COMMON_BOOK.getBook(), ReadStatus.TO_READ,
+    COMMON_OTHER_USER_MYBOOK(5L, "OTHER_USER_ID", BookFixture.COMMON_BOOK.getBook(), null, ReadStatus.TO_READ,
             LocalDateTime.now(), true, false, false, false),
-    MY_BOOK_WITHOUT_RELATION(null, "LOGIN_USER_ID", null, ReadStatus.TO_READ, LocalDateTime.now(),
+    MYBOOK_WITH_REVIEW(6L, "LOGIN_USER_ID", BookFixture.COMMON_BOOK.getBook(), MyBookReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReview(), ReadStatus.TO_READ,
+            LocalDateTime.now(), true, false, false, false),
+    MY_BOOK_WITHOUT_RELATION(null, "LOGIN_USER_ID", null, null, ReadStatus.TO_READ, LocalDateTime.now(),
             true, false, false, false);
 
     private final Long id;
     private final String userId;
     private final Book book;
+    private final MyBookReview myBookReview;
     private final ReadStatus readStatus;
     private final LocalDateTime startDateOfPossession;
     private final boolean showable;
@@ -53,6 +58,7 @@ public enum MyBookFixture {
                 .id(id)
                 .userId(userId)
                 .book(book)
+                .myBookReview(myBookReview)
                 .readStatus(readStatus)
                 .startDateOfPossession(startDateOfPossession)
                 .showable(showable)
@@ -66,6 +72,7 @@ public enum MyBookFixture {
                 .id(id)
                 .userId(userId)
                 .book(book)
+                .myBookReview(myBookReview)
                 .readStatus(readStatus)
                 .startDateOfPossession(startDateOfPossession)
                 .showable(showable)

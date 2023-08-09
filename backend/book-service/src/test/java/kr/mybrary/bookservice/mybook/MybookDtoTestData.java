@@ -63,6 +63,13 @@ public class MybookDtoTestData {
                         .colorCode("#FFFFFF")
                         .build()
                 )
+                .review(MyBookDetailResponse.ReviewResponse.builder()
+                        .id(1L)
+                        .content("좋은 책이다.")
+                        .starRating(4.0)
+                        .createdAt("2020-01-01")
+                        .build()
+                )
                 .build();
     }
 

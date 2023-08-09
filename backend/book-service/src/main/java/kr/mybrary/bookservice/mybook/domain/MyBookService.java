@@ -56,7 +56,7 @@ public class MyBookService {
     @Transactional(readOnly = true)
     public MyBookDetailResponse findMyBookDetail(MyBookDetailServiceRequest request) {
 
-        MyBook myBook = myBookRepository.findMyBookDetail(request.getMybookId())
+        MyBook myBook = myBookRepository.findMyBookDetailUsingFetchJoin(request.getMybookId())
                 .orElseThrow(MyBookNotFoundException::new);
 
         if (myBook.isPrivate() && isOwnerSameAsRequester(myBook.getUserId(), request.getLoginId())) {
