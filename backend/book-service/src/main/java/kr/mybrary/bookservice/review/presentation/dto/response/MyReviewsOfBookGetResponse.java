@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ReviewsOfBookGetResponse {
+public class MyReviewsOfBookGetResponse {
 
     private String title;
     private String isbn13;

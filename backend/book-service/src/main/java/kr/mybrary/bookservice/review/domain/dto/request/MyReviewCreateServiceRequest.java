@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MyBookReviewCreateServiceRequest {
+public class MyReviewCreateServiceRequest {
 
     private Long myBookId;
     private String loginId;

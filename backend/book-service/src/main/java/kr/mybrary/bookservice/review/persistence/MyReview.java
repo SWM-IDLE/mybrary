@@ -11,7 +11,7 @@ import jakarta.persistence.OneToOne;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.global.BaseEntity;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
-import kr.mybrary.bookservice.review.domain.dto.request.MyBookReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +24,7 @@ import org.hibernate.annotations.Where;
 @AllArgsConstructor
 @NoArgsConstructor
 @Where(clause = "deleted = false")
-public class MyBookReview extends BaseEntity {
+public class MyReview extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,8 +42,8 @@ public class MyBookReview extends BaseEntity {
     private Double starRating;
     private boolean deleted;
 
-    public static MyBookReview of(MyBook myBook, MyBookReviewCreateServiceRequest request) {
-        return MyBookReview.builder()
+    public static MyReview of(MyBook myBook, MyReviewCreateServiceRequest request) {
+        return MyReview.builder()
                 .myBook(myBook)
                 .book(myBook.getBook())
                 .content(request.getContent())

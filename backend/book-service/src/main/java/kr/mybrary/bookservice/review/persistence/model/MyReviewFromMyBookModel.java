@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.review.persistence.dto;
+package kr.mybrary.bookservice.review.persistence.model;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyBookReviewElementDto {
+public class MyReviewFromMyBookModel {
 
     private Long id;
-    private String userId;
     private String content;
     private Double starRating;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

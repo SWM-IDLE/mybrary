@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewFromMyBookModel {
+public class MyReviewElementModel {
 
     private Long id;
+    private String userId;
     private String content;
     private Double starRating;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

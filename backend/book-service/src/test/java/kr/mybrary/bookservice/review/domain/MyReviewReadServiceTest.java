@@ -15,13 +15,13 @@ import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
-import kr.mybrary.bookservice.review.domain.dto.request.ReviewOfMyBookGetServiceRequest;
-import kr.mybrary.bookservice.review.domain.dto.request.ReviewsOfBookGetServiceRequest;
-import kr.mybrary.bookservice.review.persistence.model.MyBookReviewElementDto;
-import kr.mybrary.bookservice.review.persistence.model.ReviewFromMyBookModel;
-import kr.mybrary.bookservice.review.persistence.repository.MyBookReviewRepository;
-import kr.mybrary.bookservice.review.presentation.dto.response.ReviewOfMyBookGetResponse;
-import kr.mybrary.bookservice.review.presentation.dto.response.ReviewsOfBookGetResponse;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewOfMyBookGetServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewsOfBookGetServiceRequest;
+import kr.mybrary.bookservice.review.persistence.model.MyReviewFromMyBookModel;
+import kr.mybrary.bookservice.review.persistence.model.MyReviewElementModel;
+import kr.mybrary.bookservice.review.persistence.repository.MyReviewRepository;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewOfMyBookGetResponse;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewsOfBookGetResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,13 +32,13 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
-class MyBookReviewReadServiceTest {
+class MyReviewReadServiceTest {
 
     @InjectMocks
-    private MyBookReviewReadService myBookReviewReadService;
+    private MyReviewReadService myReviewReadService;
 
     @Mock
-    private MyBookReviewRepository myBookReviewRepository;
+    private MyReviewRepository myBookReviewRepository;
 
     @Mock
     private BookReadService bookReadService;
@@ -55,18 +55,18 @@ class MyBookReviewReadServiceTest {
 
         // given
         Book book = BookFixture.COMMON_BOOK.getBook();
-        List<MyBookReviewElementDto> myBookReviewElementDtoList = MyBookReviewDtoTestData.createMyBookReviewElementDtoList();
+        List<MyReviewElementModel> myReviewElementModelList = MyBookReviewDtoTestData.createMyBookReviewElementDtoList();
         UserInfoServiceResponse userInfoServiceResponse = MyBookReviewDtoTestData.createUserInfoResponseList();
 
-        ReviewsOfBookGetServiceRequest serviceRequest = MyBookReviewDtoTestData.createReviewOfBookGetServiceRequest()
+        MyReviewsOfBookGetServiceRequest serviceRequest = MyBookReviewDtoTestData.createReviewOfBookGetServiceRequest()
                 .isbn13(book.getIsbn13()).build();
 
         given(bookReadService.getRegisteredBookByISBN13(any())).willReturn(book);
-        given(myBookReviewRepository.findReviewsByBook(any())).willReturn(myBookReviewElementDtoList);
+        given(myBookReviewRepository.findReviewsByBook(any())).willReturn(myReviewElementModelList);
         given(userServiceClient.getUsersInfo(any())).willReturn(userInfoServiceResponse);
 
         // when
-        ReviewsOfBookGetResponse response = myBookReviewReadService.getReviewsFromBook(serviceRequest);
+        MyReviewsOfBookGetResponse response = myReviewReadService.getReviewsFromBook(serviceRequest);
 
         // then
         assertAll(
@@ -90,14 +90,14 @@ class MyBookReviewReadServiceTest {
 
         // given
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
-        ReviewFromMyBookModel model = MyBookReviewDtoTestData.createReviewFromMyBookModel();
-        ReviewOfMyBookGetServiceRequest request = MyBookReviewDtoTestData.createReviewOfMyBookGetServiceRequest();
+        MyReviewFromMyBookModel model = MyBookReviewDtoTestData.createReviewFromMyBookModel();
+        MyReviewOfMyBookGetServiceRequest request = MyBookReviewDtoTestData.createReviewOfMyBookGetServiceRequest();
 
         given(myBookService.findMyBookById(any())).willReturn(myBook);
         given(myBookReviewRepository.findReviewByMyBook(any())).willReturn(Optional.ofNullable(model));
 
         // when
-        ReviewOfMyBookGetResponse response = myBookReviewReadService.getReviewFromMyBook(request);
+        MyReviewOfMyBookGetResponse response = myReviewReadService.getReviewFromMyBook(request);
 
         // then
         assertAll(
@@ -119,13 +119,13 @@ class MyBookReviewReadServiceTest {
 
         // given
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
-        ReviewOfMyBookGetServiceRequest request = MyBookReviewDtoTestData.createReviewOfMyBookGetServiceRequest();
+        MyReviewOfMyBookGetServiceRequest request = MyBookReviewDtoTestData.createReviewOfMyBookGetServiceRequest();
 
         given(myBookService.findMyBookById(any())).willReturn(myBook);
         given(myBookReviewRepository.findReviewByMyBook(any())).willReturn(Optional.empty());
 
         // when
-        ReviewOfMyBookGetResponse response = myBookReviewReadService.getReviewFromMyBook(request);
+        MyReviewOfMyBookGetResponse response = myReviewReadService.getReviewFromMyBook(request);
 
         // then
         assertAll(

@@ -12,14 +12,14 @@ import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse.U
 import kr.mybrary.bookservice.global.util.DateUtils;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
-import kr.mybrary.bookservice.review.domain.dto.MyBookReviewDtoMapper;
-import kr.mybrary.bookservice.review.domain.dto.request.ReviewOfMyBookGetServiceRequest;
-import kr.mybrary.bookservice.review.domain.dto.request.ReviewsOfBookGetServiceRequest;
-import kr.mybrary.bookservice.review.persistence.model.MyBookReviewElementDto;
-import kr.mybrary.bookservice.review.persistence.repository.MyBookReviewRepository;
-import kr.mybrary.bookservice.review.presentation.dto.response.ReviewOfMyBookGetResponse;
-import kr.mybrary.bookservice.review.presentation.dto.response.ReviewsOfBookGetResponse;
-import kr.mybrary.bookservice.review.presentation.dto.response.ReviewsOfBookGetResponse.ReviewElement;
+import kr.mybrary.bookservice.review.domain.dto.MyReviewDtoMapper;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewOfMyBookGetServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewsOfBookGetServiceRequest;
+import kr.mybrary.bookservice.review.persistence.model.MyReviewElementModel;
+import kr.mybrary.bookservice.review.persistence.repository.MyReviewRepository;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewOfMyBookGetResponse;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewsOfBookGetResponse;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewsOfBookGetResponse.ReviewElement;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -28,17 +28,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class MyBookReviewReadService {
+public class MyReviewReadService {
 
-    private final MyBookReviewRepository myBookReviewRepository;
+    private final MyReviewRepository myBookReviewRepository;
     private final BookReadService bookReadService;
     private final MyBookService myBookService;
     private final UserServiceClient userServiceClient;
 
-    public ReviewsOfBookGetResponse getReviewsFromBook(ReviewsOfBookGetServiceRequest request) {
+    public MyReviewsOfBookGetResponse getReviewsFromBook(MyReviewsOfBookGetServiceRequest request) {
 
         Book book = bookReadService.getRegisteredBookByISBN13(request.getIsbn13());
-        List<MyBookReviewElementDto> reviewElements = myBookReviewRepository.findReviewsByBook(book);
+        List<MyReviewElementModel> reviewElements = myBookReviewRepository.findReviewsByBook(book);
 
         UserInfoServiceResponse usersInfo = userServiceClient.getUsersInfo(
                 UserInfoRequest.of(getUserIdFromMyBookReview(reviewElements)));
@@ -49,7 +49,7 @@ public class MyBookReviewReadService {
         List<ReviewElement> myBookReviewElements = createMyBookReviewElements(reviewElements, userInfoMap);
         double starRatingAverage = getReviewStarRatingAverage(reviewElements);
 
-        return ReviewsOfBookGetResponse.builder()
+        return MyReviewsOfBookGetResponse.builder()
                 .title(book.getTitle())
                 .isbn13(book.getIsbn13())
                 .reviewCount(book.getReviewCount())
@@ -58,18 +58,18 @@ public class MyBookReviewReadService {
                 .build();
     }
 
-    public ReviewOfMyBookGetResponse getReviewFromMyBook(ReviewOfMyBookGetServiceRequest request) {
+    public MyReviewOfMyBookGetResponse getReviewFromMyBook(MyReviewOfMyBookGetServiceRequest request) {
 
         MyBook myBook = myBookService.findMyBookById(request.getMyBookId());
 
         return myBookReviewRepository.findReviewByMyBook(myBook)
-                .map(MyBookReviewDtoMapper.INSTANCE::reviewOfMyBookModelToResponse)
+                .map(MyReviewDtoMapper.INSTANCE::reviewOfMyBookModelToResponse)
                 .orElseGet(() -> null);
     }
 
     @NotNull
     private static List<ReviewElement> createMyBookReviewElements(
-            List<MyBookReviewElementDto> reviewElements,
+            List<MyReviewElementModel> reviewElements,
             Map<String, UserInfoElement> userInfoMap) {
 
         return reviewElements.stream()
@@ -96,16 +96,16 @@ public class MyBookReviewReadService {
                 );
     }
 
-    private double getReviewStarRatingAverage(List<MyBookReviewElementDto> reviewsByBook) {
+    private double getReviewStarRatingAverage(List<MyReviewElementModel> reviewsByBook) {
         return reviewsByBook.stream()
-                .mapToDouble(MyBookReviewElementDto::getStarRating)
+                .mapToDouble(MyReviewElementModel::getStarRating)
                 .average().orElseGet(() -> 0.0);
     }
 
     @NotNull
-    private List<String> getUserIdFromMyBookReview(List<MyBookReviewElementDto> reviewsByBook) {
+    private List<String> getUserIdFromMyBookReview(List<MyReviewElementModel> reviewsByBook) {
         return reviewsByBook.stream()
-                .map(MyBookReviewElementDto::getUserId)
+                .map(MyReviewElementModel::getUserId)
                 .toList();
     }
 }

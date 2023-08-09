@@ -5,12 +5,12 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ReviewOfMyBookGetServiceRequest {
+public class MyReviewOfMyBookGetServiceRequest {
 
     private Long myBookId;
 
-    public static ReviewOfMyBookGetServiceRequest of(Long myBookId) {
-        return ReviewOfMyBookGetServiceRequest.builder()
+    public static MyReviewOfMyBookGetServiceRequest of(Long myBookId) {
+        return MyReviewOfMyBookGetServiceRequest.builder()
                 .myBookId(myBookId)
                 .build();
     }

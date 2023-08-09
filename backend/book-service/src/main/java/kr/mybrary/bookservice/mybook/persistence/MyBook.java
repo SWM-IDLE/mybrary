@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.global.BaseEntity;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
-import kr.mybrary.bookservice.review.persistence.MyBookReview;
+import kr.mybrary.bookservice.review.persistence.MyReview;
 import kr.mybrary.bookservice.tag.persistence.MyBookMeaningTag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,7 +45,7 @@ public class MyBook extends BaseEntity {
     private MyBookMeaningTag myBookMeaningTag;
 
     @OneToOne(mappedBy = "myBook", fetch = FetchType.LAZY)
-    private MyBookReview myBookReview;
+    private MyReview myReview;
 
     private LocalDateTime startDateOfPossession;
 

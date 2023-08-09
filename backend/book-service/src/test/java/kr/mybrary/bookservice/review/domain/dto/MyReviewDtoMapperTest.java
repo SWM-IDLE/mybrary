@@ -5,30 +5,30 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
-import kr.mybrary.bookservice.review.persistence.model.ReviewFromMyBookModel;
-import kr.mybrary.bookservice.review.presentation.dto.response.ReviewOfMyBookGetResponse;
+import kr.mybrary.bookservice.review.persistence.model.MyReviewFromMyBookModel;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewOfMyBookGetResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class MyBookReviewDtoMapperTest {
+class MyReviewDtoMapperTest {
 
     @DisplayName("마이북 리뷰 모델을 응답 DTO로 변환한다.")
     @Test
     void ReviewOfMyBookModelToResponse() {
 
         // given
-        ReviewFromMyBookModel source = MyBookReviewDtoTestData.createReviewFromMyBookModel();
+        MyReviewFromMyBookModel source = MyBookReviewDtoTestData.createReviewFromMyBookModel();
 
         // when
-        ReviewOfMyBookGetResponse target = MyBookReviewDtoMapper.INSTANCE.reviewOfMyBookModelToResponse(source);
+        MyReviewOfMyBookGetResponse target = MyReviewDtoMapper.INSTANCE.reviewOfMyBookModelToResponse(source);
 
         // then
         assertAll(
                 () -> assertThat(target.getId()).isEqualTo(source.getId()),
                 () -> assertThat(target.getContent()).isEqualTo(source.getContent()),
                 () -> assertThat(target.getStarRating()).isEqualTo(source.getStarRating()),
-                () -> assertThat(target.getCreatedAt()).isEqualTo(MyBookReviewDtoMapper.toFormatMyBookReviewUI(source.getCreatedAt())),
-                () -> assertThat(target.getUpdatedAt()).isEqualTo(MyBookReviewDtoMapper.toFormatMyBookReviewUI(source.getUpdatedAt()))
+                () -> assertThat(target.getCreatedAt()).isEqualTo(MyReviewDtoMapper.toFormatMyBookReviewUI(source.getCreatedAt())),
+                () -> assertThat(target.getUpdatedAt()).isEqualTo(MyReviewDtoMapper.toFormatMyBookReviewUI(source.getUpdatedAt()))
         );
     }
 
@@ -41,7 +41,7 @@ class MyBookReviewDtoMapperTest {
 
         // when
         LocalDateTime source = LocalDateTime.of(2021, 1, 1, 0, 0, 0);
-        String target = MyBookReviewDtoMapper.toFormatMyBookReviewUI(source);
+        String target = MyReviewDtoMapper.toFormatMyBookReviewUI(source);
 
         // then
         assertThat(target).isEqualTo(expected);

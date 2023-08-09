@@ -12,9 +12,9 @@ import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
-import kr.mybrary.bookservice.review.domain.dto.request.MyBookReviewCreateServiceRequest;
-import kr.mybrary.bookservice.review.domain.exception.MyBookReviewAlreadyExistsException;
-import kr.mybrary.bookservice.review.persistence.repository.MyBookReviewRepository;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.exception.MyReviewAlreadyExistsException;
+import kr.mybrary.bookservice.review.persistence.repository.MyReviewRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,13 +25,13 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
-class MyBookReviewWriteServiceTest {
+class MyReviewWriteServiceTest {
 
     @InjectMocks
-    private MyBookReviewWriteService myBookReviewWriteService;
+    private MyReviewWriteService myReviewWriteService;
 
     @Mock
-    private MyBookReviewRepository myBookReviewRepository;
+    private MyReviewRepository myBookReviewRepository;
 
     @Mock
     private MyBookService myBookService;
@@ -41,7 +41,7 @@ class MyBookReviewWriteServiceTest {
     void create() {
 
         // given
-        MyBookReviewCreateServiceRequest request = MyBookReviewDtoTestData.createMyBookReviewCreateServiceRequest();
+        MyReviewCreateServiceRequest request = MyBookReviewDtoTestData.createMyBookReviewCreateServiceRequest();
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
         given(myBookService.findMyBookByIdWithBook(request.getMyBookId())).willReturn(myBook);
@@ -49,7 +49,7 @@ class MyBookReviewWriteServiceTest {
         given(myBookReviewRepository.save(any())).willReturn(any());
 
         // when
-        myBookReviewWriteService.create(request);
+        myReviewWriteService.create(request);
 
         // then
         assertAll(
@@ -64,7 +64,7 @@ class MyBookReviewWriteServiceTest {
     void occurExceptionWhenExistMyBookReview() {
 
         // given
-        MyBookReviewCreateServiceRequest request = MyBookReviewDtoTestData.createMyBookReviewCreateServiceRequest();
+        MyReviewCreateServiceRequest request = MyBookReviewDtoTestData.createMyBookReviewCreateServiceRequest();
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
         given(myBookService.findMyBookByIdWithBook(request.getMyBookId())).willReturn(myBook);
@@ -72,8 +72,8 @@ class MyBookReviewWriteServiceTest {
 
         // when, then
         assertAll(
-                () -> assertThatThrownBy(() -> myBookReviewWriteService.create(request))
-                        .isInstanceOf(MyBookReviewAlreadyExistsException.class),
+                () -> assertThatThrownBy(() -> myReviewWriteService.create(request))
+                        .isInstanceOf(MyReviewAlreadyExistsException.class),
                 () -> verify(myBookService, times(1)).findMyBookByIdWithBook(request.getMyBookId()),
                 () -> verify(myBookReviewRepository, times(1)).existsByMyBookAndBook(myBook, myBook.getBook()),
                 () -> verify(myBookReviewRepository, never()).save(any())
