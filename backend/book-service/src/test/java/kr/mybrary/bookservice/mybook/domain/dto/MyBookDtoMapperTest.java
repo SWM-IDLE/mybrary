@@ -74,10 +74,7 @@ class MyBookDtoMapperTest {
                         .map(bookTranslator -> bookTranslator.getTranslator().getName())
                         .toList()),
                 () -> assertThat(myBookDetailResponse.getMeaningTag().getQuote()).isEqualTo(myBookMeaningTag.getMeaningTag().getQuote()),
-                () -> assertThat(myBookDetailResponse.getMeaningTag().getColorCode()).isEqualTo(myBookMeaningTag.getMeaningTagColor()),
-                () -> assertThat(myBookDetailResponse.getReview().getId()).isEqualTo(myBook.getMyBookReview().getId()),
-                () -> assertThat(myBookDetailResponse.getReview().getContent()).isEqualTo(myBook.getMyBookReview().getContent()),
-                () -> assertThat(myBookDetailResponse.getReview().getStarRating()).isEqualTo(myBook.getMyBookReview().getStarRating())
+                () -> assertThat(myBookDetailResponse.getMeaningTag().getColorCode()).isEqualTo(myBookMeaningTag.getMeaningTagColor())
         );
     }
 

@@ -209,9 +209,6 @@ class MyBookRepositoryTest {
                 .meaningTag(meaningTag)
                 .myBook(myBook).build();
 
-        entityManager.persist(MyBookReviewFixture.MY_BOOK_REVIEW_WITHOUT_RELATION.getMyBookReviewBuilder()
-                        .book(book).myBook(myBook).build());
-
         myBookMeaningTagRepository.save(myBookMeaningTag);
 
         entityManager.flush();
@@ -227,7 +224,6 @@ class MyBookRepositoryTest {
                     assertThat(myBookDetail.get().getBook() instanceof HibernateProxy).isFalse();
                     assertThat(myBookDetail.get().getMyBookMeaningTag() instanceof HibernateProxy).isFalse();
                     assertThat(myBookDetail.get().getMyBookMeaningTag().getMeaningTag() instanceof HibernateProxy).isFalse();
-                    assertThat(myBookDetail.get().getMyBookReview() instanceof HibernateProxy).isFalse();
                     assertThat(myBookDetail.get().getBook().getTitle()).isEqualTo(book.getTitle());
                     assertThat(myBookDetail.get().getBook().getIsbn13()).isEqualTo(book.getIsbn13());
                     assertThat(myBookDetail.get().getMyBookMeaningTag().getMeaningTagColor()).isEqualTo(myBookMeaningTag.getMeaningTagColor());
