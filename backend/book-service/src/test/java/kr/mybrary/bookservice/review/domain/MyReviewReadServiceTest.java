@@ -14,7 +14,7 @@ import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
-import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
+import kr.mybrary.bookservice.review.MyReviewDtoTestData;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewOfMyBookGetServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewsOfBookGetServiceRequest;
 import kr.mybrary.bookservice.review.persistence.model.MyReviewFromMyBookModel;
@@ -55,10 +55,10 @@ class MyReviewReadServiceTest {
 
         // given
         Book book = BookFixture.COMMON_BOOK.getBook();
-        List<MyReviewElementModel> myReviewElementModelList = MyBookReviewDtoTestData.createMyBookReviewElementDtoList();
-        UserInfoServiceResponse userInfoServiceResponse = MyBookReviewDtoTestData.createUserInfoResponseList();
+        List<MyReviewElementModel> myReviewElementModelList = MyReviewDtoTestData.createMyBookReviewElementDtoList();
+        UserInfoServiceResponse userInfoServiceResponse = MyReviewDtoTestData.createUserInfoResponseList();
 
-        MyReviewsOfBookGetServiceRequest serviceRequest = MyBookReviewDtoTestData.createReviewOfBookGetServiceRequest()
+        MyReviewsOfBookGetServiceRequest serviceRequest = MyReviewDtoTestData.createReviewOfBookGetServiceRequest()
                 .isbn13(book.getIsbn13()).build();
 
         given(bookReadService.getRegisteredBookByISBN13(any())).willReturn(book);
@@ -90,8 +90,8 @@ class MyReviewReadServiceTest {
 
         // given
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
-        MyReviewFromMyBookModel model = MyBookReviewDtoTestData.createReviewFromMyBookModel();
-        MyReviewOfMyBookGetServiceRequest request = MyBookReviewDtoTestData.createReviewOfMyBookGetServiceRequest();
+        MyReviewFromMyBookModel model = MyReviewDtoTestData.createReviewFromMyBookModel();
+        MyReviewOfMyBookGetServiceRequest request = MyReviewDtoTestData.createReviewOfMyBookGetServiceRequest();
 
         given(myBookService.findMyBookById(any())).willReturn(myBook);
         given(myBookReviewRepository.findReviewByMyBook(any())).willReturn(Optional.ofNullable(model));
@@ -119,7 +119,7 @@ class MyReviewReadServiceTest {
 
         // given
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
-        MyReviewOfMyBookGetServiceRequest request = MyBookReviewDtoTestData.createReviewOfMyBookGetServiceRequest();
+        MyReviewOfMyBookGetServiceRequest request = MyReviewDtoTestData.createReviewOfMyBookGetServiceRequest();
 
         given(myBookService.findMyBookById(any())).willReturn(myBook);
         given(myBookReviewRepository.findReviewByMyBook(any())).willReturn(Optional.empty());

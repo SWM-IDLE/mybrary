@@ -11,7 +11,6 @@ import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
-import kr.mybrary.bookservice.review.MyBookReviewFixture;
 import kr.mybrary.bookservice.tag.MeaningTagFixture;
 import kr.mybrary.bookservice.tag.MyBookMeaningTagFixture;
 import kr.mybrary.bookservice.tag.persistence.MeaningTag;

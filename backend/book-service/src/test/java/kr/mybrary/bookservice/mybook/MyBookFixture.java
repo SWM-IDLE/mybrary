@@ -6,7 +6,7 @@ import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.MyBook.MyBookBuilder;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
-import kr.mybrary.bookservice.review.MyBookReviewFixture;
+import kr.mybrary.bookservice.review.MyReviewFixture;
 import kr.mybrary.bookservice.review.persistence.MyReview;
 import lombok.AllArgsConstructor;
 
@@ -23,7 +23,7 @@ public enum MyBookFixture {
             LocalDateTime.now(), false, false, false, false),
     COMMON_OTHER_USER_MYBOOK(5L, "OTHER_USER_ID", BookFixture.COMMON_BOOK.getBook(), null, ReadStatus.TO_READ,
             LocalDateTime.now(), true, false, false, false),
-    MYBOOK_WITH_REVIEW(6L, "LOGIN_USER_ID", BookFixture.COMMON_BOOK.getBook(), MyBookReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReview(), ReadStatus.TO_READ,
+    MYBOOK_WITH_REVIEW(6L, "LOGIN_USER_ID", BookFixture.COMMON_BOOK.getBook(), MyReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReview(), ReadStatus.TO_READ,
             LocalDateTime.now(), true, false, false, false),
     MY_BOOK_WITHOUT_RELATION(null, "LOGIN_USER_ID", null, null, ReadStatus.TO_READ, LocalDateTime.now(),
             true, false, false, false);

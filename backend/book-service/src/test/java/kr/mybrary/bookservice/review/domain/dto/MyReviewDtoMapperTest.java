@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
+import kr.mybrary.bookservice.review.MyReviewDtoTestData;
 import kr.mybrary.bookservice.review.persistence.model.MyReviewFromMyBookModel;
 import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewOfMyBookGetResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +17,7 @@ class MyReviewDtoMapperTest {
     void ReviewOfMyBookModelToResponse() {
 
         // given
-        MyReviewFromMyBookModel source = MyBookReviewDtoTestData.createReviewFromMyBookModel();
+        MyReviewFromMyBookModel source = MyReviewDtoTestData.createReviewFromMyBookModel();
 
         // when
         MyReviewOfMyBookGetResponse target = MyReviewDtoMapper.INSTANCE.reviewOfMyBookModelToResponse(source);

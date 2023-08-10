@@ -10,7 +10,7 @@ import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
-import kr.mybrary.bookservice.review.MyBookReviewFixture;
+import kr.mybrary.bookservice.review.MyReviewFixture;
 import kr.mybrary.bookservice.review.persistence.model.MyReviewElementModel;
 import kr.mybrary.bookservice.review.persistence.model.MyReviewFromMyBookModel;
 import kr.mybrary.bookservice.review.persistence.repository.MyReviewRepository;
@@ -38,7 +38,7 @@ class MyReviewRepositoryTest {
         MyBook myBook = entityManager.persist(
                 MyBookFixture.MY_BOOK_WITHOUT_RELATION.getMyBookBuilder().book(book).build());
 
-        entityManager.persist(MyBookReviewFixture.MY_BOOK_REVIEW_WITHOUT_RELATION.getMyBookReviewBuilder()
+        entityManager.persist(MyReviewFixture.MY_BOOK_REVIEW_WITHOUT_RELATION.getMyBookReviewBuilder()
                 .book(book).myBook(myBook).build());
 
         entityManager.flush();
@@ -62,7 +62,7 @@ class MyReviewRepositoryTest {
         MyBook myBook = entityManager.persist(
                 MyBookFixture.MY_BOOK_WITHOUT_RELATION.getMyBookBuilder().book(book).build());
 
-        MyReview myReview = entityManager.persist(MyBookReviewFixture.MY_BOOK_REVIEW_WITHOUT_RELATION
+        MyReview myReview = entityManager.persist(MyReviewFixture.MY_BOOK_REVIEW_WITHOUT_RELATION
                 .getMyBookReviewBuilder().book(book).myBook(myBook).build());
 
         entityManager.flush();
@@ -94,7 +94,7 @@ class MyReviewRepositoryTest {
         MyBook myBook = entityManager.persist(
                 MyBookFixture.MY_BOOK_WITHOUT_RELATION.getMyBookBuilder().book(book).build());
 
-        MyReview myReview = entityManager.persist(MyBookReviewFixture.MY_BOOK_REVIEW_WITHOUT_RELATION
+        MyReview myReview = entityManager.persist(MyReviewFixture.MY_BOOK_REVIEW_WITHOUT_RELATION
                 .getMyBookReviewBuilder().book(book).myBook(myBook).build());
 
         entityManager.flush();
@@ -125,7 +125,7 @@ class MyReviewRepositoryTest {
         MyBook myBook = entityManager.persist(
                 MyBookFixture.MY_BOOK_WITHOUT_RELATION.getMyBookBuilder().book(book).build());
 
-        MyReview myReview = entityManager.persist(MyBookReviewFixture.MY_BOOK_REVIEW_WITHOUT_RELATION
+        MyReview myReview = entityManager.persist(MyReviewFixture.MY_BOOK_REVIEW_WITHOUT_RELATION
                 .getMyBookReviewBuilder().book(book).myBook(myBook).build());
 
         entityManager.flush();
