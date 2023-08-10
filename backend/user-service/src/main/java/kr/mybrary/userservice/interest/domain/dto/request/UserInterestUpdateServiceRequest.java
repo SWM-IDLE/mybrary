@@ -10,11 +10,14 @@ import java.util.List;
 @Builder
 public class UserInterestUpdateServiceRequest {
 
+    private String userId;
     private String loginId;
     private List<Long> interestIds;
 
-    public static UserInterestUpdateServiceRequest of(String loginId, List<UserInterestUpdateRequest.InterestRequest> interestRequests) {
+    public static UserInterestUpdateServiceRequest of(String userId, String loginId,
+                                                      List<UserInterestUpdateRequest.InterestRequest> interestRequests) {
         return UserInterestUpdateServiceRequest.builder()
+                .userId(userId)
                 .loginId(loginId)
                 .interestIds(interestRequests.stream().map(UserInterestUpdateRequest.InterestRequest::getId).toList())
                 .build();

@@ -25,20 +25,21 @@ public class InterestController {
     }
 
     @GetMapping("/users/{userId}/interests")
-    public ResponseEntity<SuccessResponse> getUserInterests(@PathVariable("userId") String loginId) {
+    public ResponseEntity<SuccessResponse> getUserInterests(@PathVariable("userId") String userId) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 관심사를 모두 조회했습니다.",
-                        interestService.getUserInterests(loginId))
+                        interestService.getUserInterests(userId))
         );
     }
 
     @PutMapping("/users/{userId}/interests")
-    public ResponseEntity<SuccessResponse> updateUserInterests(@PathVariable("userId") String loginId,
+    public ResponseEntity<SuccessResponse> updateUserInterests(@PathVariable("userId") String userId,
+                                                               @RequestHeader("USER-ID") String loginId,
                                                                @RequestBody UserInterestUpdateRequest request) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 관심사를 수정했습니다.",
                         interestService.updateUserInterests(
-                                UserInterestUpdateServiceRequest.of(loginId, request.getInterestRequests())))
+                                UserInterestUpdateServiceRequest.of(userId, loginId, request.getInterestRequests())))
         );
     }
 

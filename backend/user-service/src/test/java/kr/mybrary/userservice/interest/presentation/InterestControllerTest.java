@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.mybrary.userservice.interest.domain.InterestService;
 import kr.mybrary.userservice.interest.domain.dto.request.UserInterestUpdateServiceRequest;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryResponse;
-import kr.mybrary.userservice.interest.domain.dto.response.InterestResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
+import kr.mybrary.userservice.interest.domain.dto.response.InterestResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.UserInterestServiceResponse;
 import kr.mybrary.userservice.interest.presentation.dto.request.UserInterestUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -28,13 +28,14 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -174,7 +175,7 @@ class InterestControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(String.format(BASE_URL + "/users/%s/interests", LOGIN_ID))
+                RestDocumentationRequestBuilders.get(BASE_URL + "/users/{userId}/interests", LOGIN_ID)
                         .with(csrf()));
 
         // then
@@ -198,6 +199,9 @@ class InterestControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("user-interest")
                                 .summary("사용자의 관심사를 모두 조회한다.")
+                                .pathParameters(
+                                        parameterWithName("userId").description("사용자 ID")
+                                )
                                 .responseSchema(Schema.schema("get_user_interests_response_body"))
                                 .responseFields(
                                         fieldWithPath("status").type(JsonFieldType.STRING).description(STATUS_FIELD_DESCRIPTION),
@@ -256,8 +260,9 @@ class InterestControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.put(String.format(BASE_URL + "/users/%s/interests", LOGIN_ID))
+                RestDocumentationRequestBuilders.put(BASE_URL + "/users/{userId}/interests", LOGIN_ID)
                         .with(csrf())
+                        .header("USER-ID", LOGIN_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)));
 
@@ -283,7 +288,13 @@ class InterestControllerTest {
                                 .tag("user-interest")
                                 .summary("사용자의 관심사를 수정한다.")
                                 .description("관심사는 최대 3개까지 설정할 수 있으며, 중복된 관심사는 설정할 수 없다.")
+                                .pathParameters(
+                                        parameterWithName("userId").description("사용자 ID")
+                                )
                                 .requestSchema(Schema.schema("put_user_interests_request_body"))
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
                                 .requestFields(
                                         fieldWithPath("interestRequests[].id").type(JsonFieldType.NUMBER).description("관심사 ID"),
                                         fieldWithPath("interestRequests[].name").type(JsonFieldType.STRING).description("관심사 이름")
