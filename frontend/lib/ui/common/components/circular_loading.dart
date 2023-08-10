@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 
 class CircularLoading extends StatelessWidget {
   const CircularLoading({super.key});
@@ -10,8 +10,8 @@ class CircularLoading extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.5,
       child: Center(
         child: CircularProgressIndicator(
-          backgroundColor: PRIMARY_COLOR.withOpacity(0.2),
-          valueColor: const AlwaysStoppedAnimation<Color>(PRIMARY_COLOR),
+          backgroundColor: primaryColor.withOpacity(0.2),
+          valueColor: const AlwaysStoppedAnimation<Color>(primaryColor),
         ),
       ),
     );

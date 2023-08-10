@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
 import 'package:mybrary/ui/auth/components/sign_in_input.dart';
 import 'package:mybrary/ui/auth/components/sing_in_button.dart';
@@ -74,8 +74,8 @@ class _SignUpVerifyForm extends StatelessWidget {
               isEnabled: isVerifyEnabled,
               isOAuth: false,
               btnText: '가입하기',
-              btnBackgroundColor: LOGIN_PRIMARY_COLOR,
-              textColor: BLACK_COLOR,
+              btnBackgroundColor: loginPrimaryColor,
+              textColor: commonBlackColor,
             ),
           ),
         ],
@@ -106,7 +106,7 @@ class _VerifyForm extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: BLACK_COLOR,
+                color: commonBlackColor,
                 width: 1.0,
               ),
             ),

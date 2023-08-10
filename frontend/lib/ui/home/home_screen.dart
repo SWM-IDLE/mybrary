@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/home/components/home_barcode_button.dart';
@@ -33,13 +33,13 @@ class _HomeScreenState extends State<HomeScreen> {
   SliverAppBar _homeAppBar() {
     return SliverAppBar(
       toolbarHeight: 70.0,
-      backgroundColor: WHITE_COLOR,
+      backgroundColor: commonWhiteColor,
       elevation: 0,
       pinned: true,
       title: SvgPicture.asset('assets/svg/icon/home_logo.svg'),
       titleTextStyle: appBarTitleStyle,
       centerTitle: false,
-      foregroundColor: BLACK_COLOR,
+      foregroundColor: commonBlackColor,
       actions: [
         IconButton(
           onPressed: () {},

@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/data/repository/search_repository.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/search/components/search_loading.dart';
@@ -180,10 +180,10 @@ class _SearchBookListState extends State<SearchBookList> {
           hintText: '책, 저자, 회원을 검색해보세요.',
           hintStyle: commonSubRegularStyle,
           filled: true,
-          fillColor: GREY_COLOR_OPACITY_TWO,
+          fillColor: commonGreyOpacityColor,
           focusedBorder: searchInputBorderStyle,
           enabledBorder: searchInputBorderStyle,
-          focusColor: GREY_COLOR,
+          focusColor: commonGreyColor,
           prefixIcon: SvgPicture.asset(
             'assets/svg/icon/search_small.svg',
             fit: BoxFit.scaleDown,
@@ -198,7 +198,7 @@ class _SearchBookListState extends State<SearchBookList> {
                   },
                   icon: const Icon(
                     Icons.cancel_rounded,
-                    color: GREY_05_COLOR,
+                    color: grey777777,
                     size: 18.0,
                   ),
                 )

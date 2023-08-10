@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 
 class SearchHeader extends StatelessWidget {
   final TextEditingController bookSearchController;
@@ -29,7 +29,7 @@ class SearchHeader extends StatelessWidget {
             child: TextField(
               textInputAction: TextInputAction.search,
               controller: bookSearchController,
-              cursorColor: PRIMARY_COLOR,
+              cursorColor: primaryColor,
               onSubmitted: (value) => onSubmittedSearchKeyword(value),
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
@@ -40,10 +40,10 @@ class SearchHeader extends StatelessWidget {
                   fontSize: 14.0,
                 ),
                 filled: true,
-                fillColor: GREY_COLOR_OPACITY_TWO,
+                fillColor: commonGreyOpacityColor,
                 focusedBorder: searchInputBorderStyle,
                 enabledBorder: searchInputBorderStyle,
-                focusColor: GREY_COLOR,
+                focusColor: commonGreyColor,
                 prefixIcon: SvgPicture.asset(
                   'assets/svg/icon/search_small.svg',
                   fit: BoxFit.scaleDown,
@@ -55,7 +55,7 @@ class SearchHeader extends StatelessWidget {
                         },
                         icon: const Icon(
                           Icons.cancel_rounded,
-                          color: GREY_05_COLOR,
+                          color: grey777777,
                           size: 18.0,
                         ),
                       )

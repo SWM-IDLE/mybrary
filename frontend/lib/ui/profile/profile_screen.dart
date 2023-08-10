@@ -8,7 +8,7 @@ import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/repository/follow_repository.dart';
 import 'package:mybrary/data/repository/interests_repository.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/enum.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
@@ -122,12 +122,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   AppBar _profileAppBar() {
     return AppBar(
       toolbarHeight: 70.0,
-      backgroundColor: WHITE_COLOR,
+      backgroundColor: commonWhiteColor,
       elevation: 0,
       title: const Text('프로필'),
       titleTextStyle: appBarTitleStyle,
       centerTitle: false,
-      foregroundColor: BLACK_COLOR,
+      foregroundColor: commonBlackColor,
       actions: [
         IconButton(
           onPressed: () {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 
 class IsbnScanBox extends StatelessWidget {
   final double width;
@@ -21,7 +21,7 @@ class IsbnScanBox extends StatelessWidget {
             width: width,
             height: height * 0.11,
             decoration: BoxDecoration(
-              color: MYBOOK_SCAN_BACKGROUND_COLOR.withOpacity(0.3),
+              color: myBookScanBackgroundColor.withOpacity(0.3),
             ),
           ),
           Row(
@@ -30,7 +30,7 @@ class IsbnScanBox extends StatelessWidget {
                 width: width * 0.1,
                 height: height * 0.25,
                 decoration: BoxDecoration(
-                  color: MYBOOK_SCAN_BACKGROUND_COLOR.withOpacity(0.3),
+                  color: myBookScanBackgroundColor.withOpacity(0.3),
                 ),
               ),
               Stack(
@@ -54,14 +54,14 @@ class IsbnScanBox extends StatelessWidget {
                           width: 30.0,
                           height: 3.0,
                           decoration: BoxDecoration(
-                            color: PRIMARY_COLOR,
+                            color: primaryColor,
                           ),
                         ),
                         Container(
                           width: 3.0,
                           height: 30.0,
                           decoration: BoxDecoration(
-                            color: PRIMARY_COLOR,
+                            color: primaryColor,
                           ),
                         ),
                       ],
@@ -77,14 +77,14 @@ class IsbnScanBox extends StatelessWidget {
                           width: 30.0,
                           height: 3.0,
                           decoration: BoxDecoration(
-                            color: PRIMARY_COLOR,
+                            color: primaryColor,
                           ),
                         ),
                         Container(
                           width: 3.0,
                           height: 30.0,
                           decoration: BoxDecoration(
-                            color: PRIMARY_COLOR,
+                            color: primaryColor,
                           ),
                         ),
                       ],
@@ -100,14 +100,14 @@ class IsbnScanBox extends StatelessWidget {
                           width: 3.0,
                           height: 30.0,
                           decoration: BoxDecoration(
-                            color: PRIMARY_COLOR,
+                            color: primaryColor,
                           ),
                         ),
                         Container(
                           width: 30.0,
                           height: 3.0,
                           decoration: BoxDecoration(
-                            color: PRIMARY_COLOR,
+                            color: primaryColor,
                           ),
                         ),
                       ],
@@ -123,14 +123,14 @@ class IsbnScanBox extends StatelessWidget {
                           width: 3.0,
                           height: 30.0,
                           decoration: BoxDecoration(
-                            color: PRIMARY_COLOR,
+                            color: primaryColor,
                           ),
                         ),
                         Container(
                           width: 30.0,
                           height: 3.0,
                           decoration: BoxDecoration(
-                            color: PRIMARY_COLOR,
+                            color: primaryColor,
                           ),
                         ),
                       ],
@@ -142,7 +142,7 @@ class IsbnScanBox extends StatelessWidget {
                 width: width * 0.1,
                 height: height * 0.25,
                 decoration: BoxDecoration(
-                  color: MYBOOK_SCAN_BACKGROUND_COLOR.withOpacity(0.3),
+                  color: myBookScanBackgroundColor.withOpacity(0.3),
                 ),
               ),
             ],
@@ -151,7 +151,7 @@ class IsbnScanBox extends StatelessWidget {
             width: width,
             height: height * 0.11,
             decoration: BoxDecoration(
-              color: MYBOOK_SCAN_BACKGROUND_COLOR.withOpacity(0.3),
+              color: myBookScanBackgroundColor.withOpacity(0.3),
             ),
           ),
         ],

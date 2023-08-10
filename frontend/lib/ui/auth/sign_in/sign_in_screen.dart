@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:mybrary/data/network/api.dart';
-import 'package:mybrary/res/colors/color.dart';
-import 'package:mybrary/res/config/config.dart';
+import 'package:mybrary/res/constants/color.dart';
+import 'package:mybrary/res/constants/config.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
 import 'package:mybrary/ui/auth/components/sign_in_input.dart';
 import 'package:mybrary/ui/auth/components/sing_in_button.dart';
@@ -108,8 +108,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             isOAuth: false,
                             isEnabled: _isValid ?? false,
                             btnText: '로그인',
-                            btnBackgroundColor: LOGIN_PRIMARY_COLOR,
-                            textColor: BLACK_COLOR,
+                            btnBackgroundColor: loginPrimaryColor,
+                            textColor: commonBlackColor,
                           ),
                           SizedBox(
                             height: 25.0,
@@ -121,7 +121,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             child: Text(
                               '비밀번호를 잊으셨나요?',
                               style: TextStyle(
-                                color: BLACK_COLOR,
+                                color: commonBlackColor,
                                 fontSize: 15.0,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -139,14 +139,14 @@ class _SignInScreenState extends State<SignInScreen> {
                           SizedBox(
                             width: 130,
                             child: Divider(
-                              color: LESS_BLACK_COLOR,
+                              color: commonLessBlackColor,
                               thickness: 1.0,
                             ),
                           ),
                           SizedBox(
                             width: 130,
                             child: Divider(
-                              color: LESS_BLACK_COLOR,
+                              color: commonLessBlackColor,
                               thickness: 1.0,
                             ),
                           ),
@@ -168,8 +168,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               height: 30.0,
                             ),
                             btnText: 'Google로 시작하기',
-                            btnBackgroundColor: GOOGLE_COLOR,
-                            textColor: WHITE_COLOR,
+                            btnBackgroundColor: googleLoginColor,
+                            textColor: commonWhiteColor,
                           ),
                           SizedBox(
                             height: 10.0,
@@ -184,8 +184,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               height: 30.0,
                             ),
                             btnText: 'Naver로 시작하기',
-                            btnBackgroundColor: NAVER_COLOR,
-                            textColor: WHITE_COLOR,
+                            btnBackgroundColor: naverLoginColor,
+                            textColor: commonWhiteColor,
                           ),
                           SizedBox(
                             height: 10.0,
@@ -200,8 +200,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               height: 30.0,
                             ),
                             btnText: 'Kakao로 시작하기',
-                            btnBackgroundColor: KAKAO_COLOR,
-                            textColor: BLACK_COLOR,
+                            btnBackgroundColor: kakaoLoginColor,
+                            textColor: commonBlackColor,
                           ),
                           SizedBox(
                             height: 25.0,
@@ -212,7 +212,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               Text(
                                 '계정이 없으신가요?',
                                 style: TextStyle(
-                                  color: BLACK_COLOR,
+                                  color: commonBlackColor,
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.w300,
                                 ),
@@ -228,7 +228,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 child: Text(
                                   '회원가입',
                                   style: TextStyle(
-                                    color: BLACK_COLOR,
+                                    color: commonBlackColor,
                                     fontSize: 15.0,
                                     fontWeight: FontWeight.w600,
                                   ),

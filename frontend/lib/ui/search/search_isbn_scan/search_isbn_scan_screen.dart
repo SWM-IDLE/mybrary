@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_appbar.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/components/isbn_scan_box.dart';
@@ -26,10 +26,10 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: MYBOOK_SCAN_BACKGROUND_COLOR,
+        statusBarColor: myBookScanBackgroundColor,
         statusBarBrightness: Brightness.dark,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: MYBOOK_SCAN_BACKGROUND_COLOR,
+        systemNavigationBarColor: myBookScanBackgroundColor,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
@@ -43,7 +43,7 @@ class _SearchIsbnScanScreenState extends State<SearchIsbnScanScreen> {
         statusBarColor: Colors.transparent,
         statusBarBrightness: Brightness.light,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: LESS_GREY_COLOR.withOpacity(0.2),
+        systemNavigationBarColor: commonLessGreyColor.withOpacity(0.2),
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );

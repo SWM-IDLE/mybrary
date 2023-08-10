@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class FollowUserInfo extends StatelessWidget {
@@ -18,7 +18,7 @@ class FollowUserInfo extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 20.0,
-          backgroundColor: GREY_03_COLOR,
+          backgroundColor: greyACACAC,
           backgroundImage: NetworkImage(
             profileImageUrl,
           ),

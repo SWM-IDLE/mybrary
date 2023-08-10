@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 
 // common style
 const appBarTitleStyle = TextStyle(
-  color: BLACK_COLOR,
+  color: commonBlackColor,
   fontSize: 22.0,
   fontWeight: FontWeight.w700,
 );
@@ -16,7 +16,7 @@ const bottomSheetStyle = RoundedRectangleBorder(
 );
 
 const bottomSheetMenuTextStyle = TextStyle(
-  color: GREY_06_COLOR,
+  color: grey262626,
   height: 1.0,
   fontSize: 16.0,
   fontWeight: FontWeight.w400,
@@ -28,25 +28,25 @@ const commonSubTitleStyle = TextStyle(
 );
 
 const commonSubThinStyle = TextStyle(
-  color: GREY_05_COLOR,
+  color: grey777777,
   fontSize: 12.0,
   fontWeight: FontWeight.w300,
 );
 
 const commonSubRegularStyle = TextStyle(
-  color: GREY_06_COLOR,
+  color: grey262626,
   fontSize: 14.0,
   fontWeight: FontWeight.w400,
 );
 
 const commonSubMediumStyle = TextStyle(
-  color: GREY_06_COLOR,
+  color: grey262626,
   fontSize: 16.0,
   fontWeight: FontWeight.w500,
 );
 
 const commonSubBoldStyle = TextStyle(
-  color: GREY_06_COLOR,
+  color: grey262626,
   fontSize: 18.0,
   fontWeight: FontWeight.w700,
 );
@@ -57,7 +57,7 @@ const commonButtonTextStyle = TextStyle(
 );
 
 const commonDialogMessageStyle = TextStyle(
-  color: BLACK_COLOR,
+  color: commonBlackColor,
   fontSize: 15.0,
   fontWeight: FontWeight.w400,
 );
@@ -70,7 +70,7 @@ final commonMenuButtonStyle = TextButton.styleFrom(
 );
 
 const commonSnackBarMessageStyle = TextStyle(
-  color: WHITE_COLOR,
+  color: commonWhiteColor,
   fontSize: 13.0,
 );
 
@@ -81,7 +81,7 @@ const boxBorderRadiusStyle = RoundedRectangleBorder(
 );
 
 const saveTextButtonStyle = TextStyle(
-  color: PRIMARY_COLOR,
+  color: primaryColor,
   fontSize: 17.0,
   fontWeight: FontWeight.w400,
 );
@@ -113,31 +113,31 @@ const introInputBorderStyle = OutlineInputBorder(
 );
 
 const profileEditTitleStyle = TextStyle(
-  color: GREY_06_COLOR,
+  color: grey262626,
   fontSize: 14.0,
   fontWeight: FontWeight.w500,
 );
 
 const profileEditContentStyle = TextStyle(
-  color: GREY_05_COLOR,
+  color: grey777777,
   fontSize: 14.0,
   fontWeight: FontWeight.w400,
 );
 
 const interestDescriptionStyle = TextStyle(
-  color: GREY_06_COLOR,
+  color: grey262626,
   fontSize: 16.0,
   fontWeight: FontWeight.w400,
 );
 
 const followNicknameStyle = TextStyle(
-  color: BLACK_COLOR,
+  color: commonBlackColor,
   fontSize: 15.0,
   fontWeight: FontWeight.w400,
 );
 
 const followButtonTextStyle = TextStyle(
-  color: BLACK_COLOR,
+  color: commonBlackColor,
   fontSize: 12.0,
   fontWeight: FontWeight.w400,
 );
@@ -168,53 +168,53 @@ final searchInputBorderStyle = OutlineInputBorder(
 
 // book search page style
 const searchBookTitleStyle = TextStyle(
-  color: GREY_06_COLOR,
+  color: grey262626,
   fontSize: 15.0,
   fontWeight: FontWeight.w700,
 );
 
 const bookDetailTitleStyle = TextStyle(
-  color: BLACK_COLOR,
+  color: commonBlackColor,
   fontSize: 19.0,
   fontWeight: FontWeight.w700,
 );
 
 const bookDetailDescriptionStyle = TextStyle(
   height: 1.5,
-  color: GREY_05_COLOR,
+  color: grey777777,
   fontSize: 15.0,
   fontWeight: FontWeight.w400,
 );
 
 const bookDetailSubStyle = TextStyle(
   height: 1.5,
-  color: GREY_05_COLOR,
+  color: grey777777,
   fontSize: 16.0,
   fontWeight: FontWeight.w400,
 );
 
 const bookDetailInfoStyle = TextStyle(
   height: 1.5,
-  color: GREY_05_COLOR,
+  color: grey777777,
   fontSize: 16.0,
   fontWeight: FontWeight.w300,
 );
 
 const bookStatusStyle = TextStyle(
-  color: GREY_05_COLOR,
+  color: grey777777,
   fontSize: 12.0,
   fontWeight: FontWeight.w400,
 );
 
 const bookStatusCountStyle = TextStyle(
-  color: GREY_06_COLOR,
+  color: grey262626,
   fontSize: 14.0,
   fontWeight: FontWeight.w700,
 );
 
 const aladinTextStyle = TextStyle(
   height: 1.2,
-  color: GREY_05_COLOR,
+  color: grey777777,
   fontSize: 11.0,
   fontWeight: FontWeight.w400,
 );
@@ -222,14 +222,14 @@ const aladinTextStyle = TextStyle(
 // main page style
 const mainIntroTextStyle = TextStyle(
   height: 1.2,
-  color: GREY_06_COLOR,
+  color: grey262626,
   fontSize: 14.0,
   fontWeight: FontWeight.w500,
 );
 
 // mybook page style
 const myBookAppBarTextStyle = TextStyle(
-  color: BLACK_COLOR,
+  color: commonBlackColor,
   fontSize: 17.0,
   fontWeight: FontWeight.w400,
 );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class SearchBookListHeader extends StatelessWidget {
@@ -22,7 +22,7 @@ class SearchBookListHeader extends StatelessWidget {
       ),
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: GREY_01_COLOR,
+        color: greyF1F2F5,
       ),
       child: const Text(
         '검색 결과',
