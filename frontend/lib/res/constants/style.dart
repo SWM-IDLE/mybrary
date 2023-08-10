@@ -233,3 +233,35 @@ const myBookAppBarTextStyle = TextStyle(
   fontSize: 17.0,
   fontWeight: FontWeight.w400,
 );
+
+const myBookButtonTitleStyle = TextStyle(
+  color: grey262626,
+  fontSize: 13.0,
+  fontWeight: FontWeight.w500,
+);
+
+const myBookSubTextStyle = TextStyle(
+  color: grey262626,
+  fontSize: 12.0,
+  fontWeight: FontWeight.w400,
+);
+
+const myBookSortTextStyle = TextStyle(
+  height: 1.3,
+  color: grey262626,
+  fontSize: 16.0,
+  fontWeight: FontWeight.w700,
+);
+
+const myBookListTitleStyle = TextStyle(
+  height: 1.2,
+  color: grey262626,
+  fontSize: 13.0,
+  fontWeight: FontWeight.w700,
+);
+
+const myBookListSubStyle = TextStyle(
+  color: grey777777,
+  fontSize: 11.0,
+  fontWeight: FontWeight.w400,
+);
