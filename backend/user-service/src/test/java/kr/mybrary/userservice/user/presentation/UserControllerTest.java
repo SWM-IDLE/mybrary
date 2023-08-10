@@ -224,7 +224,7 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.put(BASE_URL+"/profile")
+                RestDocumentationRequestBuilders.put(BASE_URL+"/{userId}/profile", LOGIN_ID)
                         .with(csrf())
                         .header("USER-ID", LOGIN_ID)
                         .content(objectMapper.writeValueAsString(profileUpdateRequest))
@@ -252,6 +252,9 @@ class UserControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("user-profile")
                                 .summary("로그인한 사용자의 프로필 정보를 수정한다.")
+                                .pathParameters(
+                                        parameterWithName("userId").description("사용자 아이디")
+                                )
                                 .requestSchema(Schema.schema("update_user_profile_request_body"))
                                 .requestHeaders(
                                         headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
@@ -349,7 +352,7 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.multipart(BASE_URL+"/profile/image")
+                RestDocumentationRequestBuilders.multipart(BASE_URL+"/{userId}/profile/image", LOGIN_ID)
                         .file(profileImage)
                         .with(request -> {
                             request.setMethod("PUT");
@@ -377,6 +380,9 @@ class UserControllerTest {
                                 .tag("user-profile")
                                 .summary("로그인한 사용자의 프로필 이미지를 수정한다.")
                                 .description("프로필 이미지는 5MB 이하의 jpg, png 파일만 등록할 수 있습니다.")
+                                .pathParameters(
+                                        parameterWithName("userId").description("사용자 아이디")
+                                )
                                 .requestSchema(
                                         Schema.schema("update_user_profile_image_request_body"))
                                 .requestHeaders(
@@ -405,12 +411,12 @@ class UserControllerTest {
                 .profileImageUrl("profileImageUrl_1")
                 .build();
 
-        given(userService.deleteProfileImage(anyString())).willReturn(
+        given(userService.deleteProfileImage(any(ProfileImageUpdateServiceRequest.class))).willReturn(
                 profileImageUrlServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.delete(BASE_URL+"/profile/image")
+                RestDocumentationRequestBuilders.delete(BASE_URL+"/{userId}/profile/image", LOGIN_ID)
                         .with(csrf())
                         .header("USER-ID", LOGIN_ID));
 
@@ -422,7 +428,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.data.profileImageUrl").value(
                         profileImageUrlServiceResponse.getProfileImageUrl()));
 
-        verify(userService).deleteProfileImage(anyString());
+        verify(userService).deleteProfileImage(any(ProfileImageUpdateServiceRequest.class));
 
         // docs
         actions.andDo(document("delete-user-profile-image",
@@ -432,6 +438,9 @@ class UserControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("user-profile")
                                 .summary("로그인한 사용자의 프로필 이미지를 삭제한다.")
+                                .pathParameters(
+                                        parameterWithName("userId").description("사용자 아이디")
+                                )
                                 .requestSchema(
                                         Schema.schema("delete_user_profile_image_request_body"))
                                 .requestHeaders(
@@ -825,7 +834,6 @@ class UserControllerTest {
         // when
         ResultActions actions = mockMvc.perform(
                 RestDocumentationRequestBuilders.get(BASE_URL + "/search")
-                        .header("USER-ID", LOGIN_ID)
                         .param("nickname", "nickname"));
 
         // then
@@ -849,9 +857,6 @@ class UserControllerTest {
                                 .summary("닉네임으로 사용자를 검색한다.")
                                 .queryParameters(
                                         parameterWithName("nickname").type(SimpleType.STRING).description("검색할 닉네임")
-                                )
-                                .requestHeaders(
-                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
                                 )
                                 .responseSchema(Schema.schema("search_user_by_nickname_response_body"))
                                 .responseFields(
@@ -966,7 +971,7 @@ class UserControllerTest {
                 preprocessResponse(prettyPrint()),
                 resource(
                         ResourceSnippetParameters.builder()
-                                .tag("user-info")
+                                .tag("user-info (for book-service)")
                                 .summary("사용자 정보를 조회한다.")
                                 .requestFields(
                                         fieldWithPath("userIds").type(JsonFieldType.ARRAY).description("조회할 사용자 아이디 목록")

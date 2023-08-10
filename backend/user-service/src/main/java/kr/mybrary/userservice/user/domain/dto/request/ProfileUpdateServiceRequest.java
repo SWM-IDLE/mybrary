@@ -8,12 +8,14 @@ import lombok.Getter;
 @Builder
 public class ProfileUpdateServiceRequest {
 
+    private String userId;
     private String loginId;
     private String nickname;
     private String introduction;
 
-    public static ProfileUpdateServiceRequest of(ProfileUpdateRequest profileUpdateRequest, String loginId) {
+    public static ProfileUpdateServiceRequest of(ProfileUpdateRequest profileUpdateRequest, String userId, String loginId) {
         return ProfileUpdateServiceRequest.builder()
+                .userId(userId)
                 .loginId(loginId)
                 .nickname(profileUpdateRequest.getNickname())
                 .introduction(profileUpdateRequest.getIntroduction())

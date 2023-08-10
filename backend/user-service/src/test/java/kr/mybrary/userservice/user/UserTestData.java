@@ -19,6 +19,7 @@ public class UserTestData {
 
     public static ProfileUpdateServiceRequest createProfileUpdateServiceRequest() {
         return ProfileUpdateServiceRequest.builder()
+                .userId("loginId")
                 .loginId("loginId")
                 .nickname("updated_nickname")
                 .introduction("updated_introduction")
@@ -28,6 +29,7 @@ public class UserTestData {
     public static ProfileImageUpdateServiceRequest createProfileImageUpdateServiceRequest()
             throws Exception {
         return ProfileImageUpdateServiceRequest.builder()
+                .userId("loginId")
                 .loginId("loginId")
                 .profileImage(new MockMultipartFile("profileImage", "user1.png", "image/jpg",
                         new FileInputStream("src/test/resources/images/Image1MB.jpg")))
@@ -36,6 +38,7 @@ public class UserTestData {
 
     public static ProfileImageUpdateServiceRequest createProfileImageUpdateServiceRequestWithEmptyFile() {
         return ProfileImageUpdateServiceRequest.builder()
+                .userId("loginId")
                 .loginId("loginId")
                 .profileImage(new MockMultipartFile("profileImage", "user1.png", "image/jpg", new byte[0]))
                 .build();
@@ -44,6 +47,7 @@ public class UserTestData {
     public static ProfileImageUpdateServiceRequest createProfileImageUpdateServiceRequestOver5MB()
             throws Exception {
         return ProfileImageUpdateServiceRequest.builder()
+                .userId("loginId")
                 .loginId("loginId")
                 .profileImage(new MockMultipartFile("profileImage", "user1.png", "image/jpeg",
                         new FileInputStream("src/test/resources/images/Image6MB.jpeg")))

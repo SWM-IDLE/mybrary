@@ -30,8 +30,8 @@ public class UserController {
     }
 
      @GetMapping("/{userId}/profile")
-    public ResponseEntity<SuccessResponse> getProfile(@PathVariable("userId") String loginId) {
-        ProfileServiceResponse serviceResponse = userService.getProfile(loginId);
+    public ResponseEntity<SuccessResponse> getProfile(@PathVariable("userId") String userId) {
+        ProfileServiceResponse serviceResponse = userService.getProfile(userId);
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 프로필 정보입니다.",
@@ -39,11 +39,12 @@ public class UserController {
         );
     }
 
-    @PutMapping("/profile")
-    public ResponseEntity<SuccessResponse> updateProfile(@RequestHeader("USER-ID") String loginId,
-            @Valid @RequestBody ProfileUpdateRequest profileUpdateRequest) {
+    @PutMapping("/{userId}/profile")
+    public ResponseEntity<SuccessResponse> updateProfile(@PathVariable("userId") String userId,
+                                                         @RequestHeader("USER-ID") String loginId,
+                                                         @Valid @RequestBody ProfileUpdateRequest profileUpdateRequest) {
         ProfileUpdateServiceRequest serviceRequest = ProfileUpdateServiceRequest.of(
-                profileUpdateRequest, loginId);
+                profileUpdateRequest, userId, loginId);
         ProfileServiceResponse serviceResponse = userService.updateProfile(serviceRequest);
 
         return ResponseEntity.ok().body(
@@ -53,8 +54,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/profile/image")
-    public ResponseEntity<SuccessResponse> getProfileImageUrl(@PathVariable("userId") String loginId) {
-        ProfileImageUrlServiceResponse serviceResponse = userService.getProfileImageUrl(loginId);
+    public ResponseEntity<SuccessResponse> getProfileImageUrl(@PathVariable("userId") String userId) {
+        ProfileImageUrlServiceResponse serviceResponse = userService.getProfileImageUrl(userId);
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 프로필 이미지 URL입니다.",
@@ -62,11 +63,12 @@ public class UserController {
         );
     }
 
-    @PutMapping("/profile/image")
-    public ResponseEntity<SuccessResponse> updateProfileImage(
-            @RequestHeader("USER-ID") String loginId, @RequestParam("profileImage") MultipartFile profileImage) {
+    @PutMapping("/{userId}/profile/image")
+    public ResponseEntity<SuccessResponse> updateProfileImage(@PathVariable("userId") String userId,
+                                                              @RequestHeader("USER-ID") String loginId,
+                                                              @RequestParam("profileImage") MultipartFile profileImage) {
         ProfileImageUpdateServiceRequest serviceRequest = ProfileImageUpdateServiceRequest.of(
-                profileImage, loginId);
+                profileImage, loginId, userId);
         ProfileImageUrlServiceResponse serviceResponse = userService.updateProfileImage(
                 serviceRequest);
 
@@ -76,9 +78,11 @@ public class UserController {
         );
     }
 
-    @DeleteMapping("/profile/image")
-    public ResponseEntity<SuccessResponse> deleteProfileImage(@RequestHeader("USER-ID") String loginId) {
-        ProfileImageUrlServiceResponse serviceResponse = userService.deleteProfileImage(loginId);
+    @DeleteMapping("/{userId}/profile/image")
+    public ResponseEntity<SuccessResponse> deleteProfileImage(@PathVariable("userId") String userId,
+                                                              @RequestHeader("USER-ID") String loginId) {
+        ProfileImageUrlServiceResponse serviceResponse = userService.deleteProfileImage(
+                ProfileImageUpdateServiceRequest.of(loginId, userId));
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 프로필 이미지를 삭제했습니다.",
@@ -87,8 +91,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/followers")
-    public ResponseEntity<SuccessResponse> getFollowers(@PathVariable("userId") String loginId) {
-        FollowerServiceResponse serviceResponse = userService.getFollowers(loginId);
+    public ResponseEntity<SuccessResponse> getFollowers(@PathVariable("userId") String userId) {
+        FollowerServiceResponse serviceResponse = userService.getFollowers(userId);
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 팔로워 목록을 조회했습니다.",
@@ -97,8 +101,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/followings")
-    public ResponseEntity<SuccessResponse> getFollowings(@PathVariable("userId") String loginId) {
-        FollowingServiceResponse serviceResponse = userService.getFollowings(loginId);
+    public ResponseEntity<SuccessResponse> getFollowings(@PathVariable("userId") String userId) {
+        FollowingServiceResponse serviceResponse = userService.getFollowings(userId);
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 팔로잉 목록을 조회했습니다.",
@@ -108,7 +112,7 @@ public class UserController {
 
     @PostMapping("/follow")
     public ResponseEntity<SuccessResponse> follow(@RequestHeader("USER-ID") String loginId,
-            @RequestBody FollowRequest followRequest) {
+                                                  @RequestBody FollowRequest followRequest) {
         String targetId = followRequest.getTargetId();
         FollowServiceRequest serviceRequest = FollowServiceRequest.of(loginId, targetId);
         userService.follow(serviceRequest);
@@ -120,7 +124,7 @@ public class UserController {
 
     @DeleteMapping("/follow")
     public ResponseEntity<SuccessResponse> unfollow(@RequestHeader("USER-ID") String loginId,
-            @RequestBody FollowRequest followRequest) {
+                                                    @RequestBody FollowRequest followRequest) {
         String targetId = followRequest.getTargetId();
         FollowServiceRequest serviceRequest = FollowServiceRequest.of(loginId, targetId);
         userService.unfollow(serviceRequest);
@@ -132,7 +136,7 @@ public class UserController {
 
     @DeleteMapping("/follower")
     public ResponseEntity<SuccessResponse> unfollowing(@RequestHeader("USER-ID") String loginId,
-            @RequestBody FollowerRequest followerRequest) {
+                                                       @RequestBody FollowerRequest followerRequest) {
         String sourceId = followerRequest.getSourceId();
         FollowerServiceRequest serviceRequest = FollowerServiceRequest.of(loginId, sourceId);
         userService.deleteFollower(serviceRequest);

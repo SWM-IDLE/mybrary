@@ -8,6 +8,7 @@ import kr.mybrary.userservice.user.domain.dto.response.*;
 import kr.mybrary.userservice.user.domain.exception.io.EmptyFileException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageFileSizeExceededException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFoundException;
+import kr.mybrary.userservice.user.domain.exception.profile.ProfileUpdateRequestNotAuthenticated;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateNicknameException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
@@ -272,6 +273,25 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 정보를 수정할 때 로그인한 사용자와 수정할 사용자가 다르면 예외를 던진다")
+    void updateProfileWithDifferentUser() {
+        // Given
+        ProfileUpdateServiceRequest serviceRequest = ProfileUpdateServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .loginId("another")
+                .nickname("newNickname")
+                .introduction("newIntroduction")
+                .build();
+
+        // When Then
+        assertThatThrownBy(() -> userService.updateProfile(serviceRequest))
+                .isInstanceOf(ProfileUpdateRequestNotAuthenticated.class)
+                .hasFieldOrPropertyWithValue("status", 403)
+                .hasFieldOrPropertyWithValue("errorCode", "P-03")
+                .hasFieldOrPropertyWithValue("errorMessage", "프로필을 수정할 수 있는 권한이 없습니다. 로그인한 사용자와 프로필 수정을 요청한 사용자가 일치하지 않습니다.");
+    }
+
+    @Test
     @DisplayName("로그인 아이디로 사용자 프로필 정보를 수정할 때 닉네임이 중복되면 예외를 던진다")
     void updateProfileWithDuplicateNickname() {
         // Given
@@ -367,12 +387,16 @@ class UserServiceImplTest {
     @DisplayName("로그인 아이디로 사용자 프로필 이미지를 삭제한다(기본 프로필 이미지로 대체한다)")
     void deleteProfileImage() {
         // Given
+        ProfileImageUpdateServiceRequest serviceRequest = ProfileImageUpdateServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .loginId(LOGIN_ID)
+                .build();
+
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
                 Optional.of(UserFixture.COMMON_USER.getUser()));
 
         // When
-        ProfileImageUrlServiceResponse updatedProfileImage = userService.deleteProfileImage(
-                LOGIN_ID);
+        ProfileImageUrlServiceResponse updatedProfileImage = userService.deleteProfileImage(serviceRequest);
 
         // Then
         assertAll(
@@ -384,13 +408,35 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지를 삭제할 때 로그인한 사용자와 삭제할 사용자가 다르면 예외를 던진다")
+    void deleteProfileImageWithDifferentUser() {
+        // Given
+        ProfileImageUpdateServiceRequest serviceRequest = ProfileImageUpdateServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .loginId("another")
+                .build();
+
+        // When Then
+        assertThatThrownBy(() -> userService.deleteProfileImage(serviceRequest))
+                .isInstanceOf(ProfileUpdateRequestNotAuthenticated.class)
+                .hasFieldOrPropertyWithValue("status", 403)
+                .hasFieldOrPropertyWithValue("errorCode", "P-03")
+                .hasFieldOrPropertyWithValue("errorMessage", "프로필을 수정할 수 있는 권한이 없습니다. 로그인한 사용자와 프로필 수정을 요청한 사용자가 일치하지 않습니다.");
+    }
+
+    @Test
     @DisplayName("로그인 아이디로 사용자 프로필 이미지를 삭제할 때 사용자가 없으면 예외를 던진다")
     void deleteProfileImageWithNotExistUser() {
         // Given
+        ProfileImageUpdateServiceRequest serviceRequest = ProfileImageUpdateServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .loginId(LOGIN_ID)
+                .build();
+
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.empty());
 
         // When
-        assertThatThrownBy(() -> userService.deleteProfileImage(LOGIN_ID))
+        assertThatThrownBy(() -> userService.deleteProfileImage(serviceRequest))
                 .isInstanceOf(UserNotFoundException.class)
                 .hasFieldOrPropertyWithValue("status", 404)
                 .hasFieldOrPropertyWithValue("errorCode", "U-05")
