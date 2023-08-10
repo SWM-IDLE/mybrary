@@ -50,3 +50,6 @@ const Color BOOK_DETAIL_COLOR = Color(0xFF535353);
 const Color POPULAR_TEXT_COLOR = Color(0xFF727272);
 const Color POPULAR_BORDER_COLOR = Color(0xCCDEDEDE);
 const Color MYBOOK_SCAN_BACKGROUND_COLOR = Color(0xFF1C1C1C);
+
+// Main Page Color
+const Color mainPageButtonColor = Color(0xFFEEEEEE);
