@@ -45,7 +45,7 @@ class MyReviewWriteServiceTest {
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
         given(myBookService.findMyBookByIdWithBook(request.getMyBookId())).willReturn(myBook);
-        given(myBookReviewRepository.existsByMyBookAndBook(myBook, myBook.getBook())).willReturn(false);
+        given(myBookReviewRepository.existsByMyBook(myBook)).willReturn(false);
         given(myBookReviewRepository.save(any())).willReturn(any());
 
         // when
@@ -54,7 +54,7 @@ class MyReviewWriteServiceTest {
         // then
         assertAll(
                 () -> verify(myBookService, times(1)).findMyBookByIdWithBook(request.getMyBookId()),
-                () -> verify(myBookReviewRepository, times(1)).existsByMyBookAndBook(myBook, myBook.getBook()),
+                () -> verify(myBookReviewRepository, times(1)).existsByMyBook(myBook),
                 () -> verify(myBookReviewRepository, times(1)).save(any())
         );
     }
@@ -68,14 +68,14 @@ class MyReviewWriteServiceTest {
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
         given(myBookService.findMyBookByIdWithBook(request.getMyBookId())).willReturn(myBook);
-        given(myBookReviewRepository.existsByMyBookAndBook(myBook, myBook.getBook())).willReturn(true);
+        given(myBookReviewRepository.existsByMyBook(myBook)).willReturn(true);
 
         // when, then
         assertAll(
                 () -> assertThatThrownBy(() -> myReviewWriteService.create(request))
                         .isInstanceOf(MyReviewAlreadyExistsException.class),
                 () -> verify(myBookService, times(1)).findMyBookByIdWithBook(request.getMyBookId()),
-                () -> verify(myBookReviewRepository, times(1)).existsByMyBookAndBook(myBook, myBook.getBook()),
+                () -> verify(myBookReviewRepository, times(1)).existsByMyBook(myBook),
                 () -> verify(myBookReviewRepository, never()).save(any())
         );
     }
