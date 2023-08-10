@@ -6,6 +6,7 @@ import java.util.stream.IntStream;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse.UserInfoElement;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewDeleteServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewOfMyBookGetServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewUpdateServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewsOfBookGetServiceRequest;
@@ -149,4 +150,12 @@ public class MyBookReviewDtoTestData {
                 .starRating(5.0)
                 .build();
     }
+
+    public static MyReviewDeleteServiceRequest createMyReviewDeleteServiceRequest(String loginId, Long myBookId) {
+        return MyReviewDeleteServiceRequest.builder()
+                .loginId(loginId)
+                .myReviewId(myBookId)
+                .build();
+    }
+
 }
