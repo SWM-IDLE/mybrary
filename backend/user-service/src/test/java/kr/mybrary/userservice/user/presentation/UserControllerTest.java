@@ -811,6 +811,70 @@ class UserControllerTest {
         );
     }
 
+    @DisplayName("사용자를 팔로우 중인지 확인한다.")
+    @Test
+    void isFollowing() throws Exception {
+        // given
+        IsFollowingServiceResponse isFollowingServiceResponse = IsFollowingServiceResponse.builder()
+                .requestLoginId("loginId")
+                .targetLoginId("targetId")
+                .isFollowing(true)
+                .build();
+
+        given(userService.isFollowing(any(FollowServiceRequest.class))).willReturn(isFollowingServiceResponse);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                RestDocumentationRequestBuilders.get(BASE_URL+"/follow")
+                        .param("targetId", "targetId")
+                        .header("USER-ID", LOGIN_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
+                .andExpect(jsonPath("$.message").value("사용자를 팔로우 중인지 확인했습니다."))
+                .andExpect(jsonPath("$.data.requestLoginId").value("loginId"))
+                .andExpect(jsonPath("$.data.targetLoginId").value("targetId"))
+                .andExpect(jsonPath("$.data.following").value(true));
+
+        verify(userService).isFollowing(any(FollowServiceRequest.class));
+
+        // docs
+        actions.andDo(document("is-following",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-follow")
+                                .summary("사용자를 팔로우 중인지 확인한다.")
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .queryParameters(
+                                        parameterWithName("targetId").description("팔로우 중인지 확인할 사용자의 아이디")
+                                )
+                                .responseSchema(Schema.schema("is_following_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING)
+                                                .description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.requestLoginId").type(JsonFieldType.STRING)
+                                                .description("요청한 사용자의 아이디"),
+                                        fieldWithPath("data.targetLoginId").type(JsonFieldType.STRING)
+                                                .description("팔로우 중인지 확인할 사용자의 아이디"),
+                                        fieldWithPath("data.following").type(JsonFieldType.BOOLEAN)
+                                                .description("팔로우 중인지 여부")
+                                )
+                                .build()
+                ))
+        );
+    }
+
+
     @DisplayName("닉네임으로 사용자를 검색한다.")
     @Test
     void searchByNickname() throws Exception {
