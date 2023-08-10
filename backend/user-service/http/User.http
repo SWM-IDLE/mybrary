@@ -48,11 +48,10 @@ Authorization: Bearer invalidToken1234
 Authorization-Refresh: Bearer invalidRefreshToken1234
 
 ### 11. 프로필 조회
-GET http://localhost:8080/api/v1/users/profile
-USER-ID: loginId
+GET http://localhost:8080/api/v1/users/loginId/profile
 
 ### 12. 프로필 수정
-PUT http://localhost:8080/api/v1/users/profile
+PUT http://localhost:8080/api/v1/users/loginId/profile
 Content-Type: application/json
 USER-ID: loginId
 
@@ -63,24 +62,61 @@ USER-ID: loginId
 }
 
 ### 13. 프로필 이미지 조회
-GET http://localhost:8080/api/v1/users/profile/image
-USER-ID: loginId
+GET http://localhost:8080/api/v1/users/loginId/profile/image
 
 ### 14. 프로필 이미지 삭제
-DELETE http://localhost:8080/api/v1/users/profile/image
+DELETE http://localhost:8080/api/v1/users/loginId/profile/image
 USER-ID: loginId
 
 ### 15. 사용자 검색
 GET http://localhost:8080/api/v1/users/search?nickname=nick
 
-### 16. 카테고리별 관심사 모두 조회
-GET http://43.200.200.185:8003/api/v1/interest-categories // mybrary.kr
+### 16. 팔로워 조회
+GET http://localhost:8080/api/v1/users/loginId2/followers
 
-### 17. 사용자 관심사 조회
-GET http://43.200.200.185:8003/api/v1/users/testId/interests
+### 17. 팔로잉 조회
+GET http://localhost:8080/api/v1/users/loginId/followings
 
-### 18. 사용자 관심사 업데이트
-PUT http://43.200.200.185:8003/api/v1/users/testId/interests
+### 18. 팔로우
+POST http://localhost:8080/api/v1/users/follow
+USER-ID: loginId
+Content-Type: application/json
+
+{
+  "targetId": "loginId2"
+}
+
+### 19. 언팔로우
+DELETE http://localhost:8080/api/v1/users/follow
+USER-ID: loginId
+Content-Type: application/json
+
+{
+  "targetId": "loginId2"
+}
+
+### 20. 팔로워 삭제
+DELETE http://localhost:8080/api/v1/users/follower
+USER-ID: loginId2
+Content-Type: application/json
+
+{
+  "sourceId": "loginId"
+}
+
+### 21. 팔로잉 여부 조회
+GET http://localhost:8080/api/v1/users/follow?targetId=loginId2
+USER-ID: loginId
+
+### 22. 카테고리별 관심사 모두 조회
+GET http://localhost:8080/api/v1/interest-categories
+
+### 23. 사용자 관심사 조회
+GET http://localhost:8080/api/v1/users/loginId/interests
+
+### 24. 사용자 관심사 업데이트
+PUT http://localhost:8080/api/v1/users/loginId/interests
+USER-ID: loginId
 Content-Type: application/json
 
 {
@@ -96,7 +132,7 @@ Content-Type: application/json
     ]
 }
 
-### 19. 사용자 정보 모두 조회
+### 25. 사용자 정보 모두 조회
 GET http://localhost:8080/api/v1/users/info
 Content-Type: application/json
 
