@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.review.domain;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.exception.MyReviewAccessDeniedException;
 import kr.mybrary.bookservice.review.domain.exception.MyReviewAlreadyExistsException;
 import kr.mybrary.bookservice.review.persistence.MyReview;
 import kr.mybrary.bookservice.review.persistence.repository.MyReviewRepository;
@@ -21,9 +22,16 @@ public class MyReviewWriteService {
     public void create(MyReviewCreateServiceRequest request) {
 
         MyBook myBook = myBookService.findMyBookByIdWithBook(request.getMyBookId());
+        checkIsOwnerSameAsRequester(myBook.getUserId(), request.getLoginId());
         checkMyBookReviewAlreadyRegistered(myBook);
 
         myBookReviewRepository.save(MyReview.of(myBook, request));
+    }
+
+    private void checkIsOwnerSameAsRequester(String myBookOwnerUserId, String loginId) {
+        if (!myBookOwnerUserId.equals(loginId)) {
+            throw new MyReviewAccessDeniedException();
+        }
     }
 
     private void checkMyBookReviewAlreadyRegistered(MyBook myBook) {

@@ -6,13 +6,13 @@ import jakarta.validation.constraints.NotBlank;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Builder
 public class MyReviewCreateRequest {
 
-    @Max(value = 50, message = "리뷰 내용은 50자 이하로 작성해주세요.")
-    @NotBlank(message = "리뷰 내용은 필수입니다.")
+    @Length(max = 500, message = "리뷰 내용은 500자 이하로 작성해주세요.")
     private String content;
 
     @Min(value = 0, message = "별점은 0점 이상으로 작성해주세요.")
