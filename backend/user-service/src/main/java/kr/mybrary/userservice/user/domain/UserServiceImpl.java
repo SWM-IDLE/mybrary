@@ -192,48 +192,30 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public FollowerServiceResponse getFollowers(String loginId) {
-        User user = getUser(loginId);
-
-        FollowerServiceResponse serviceResponse = FollowerServiceResponse.builder()
+        return FollowerServiceResponse.builder()
                 .requestLoginId(loginId)
-                .followers(getFollowerResponses(user))
+                .followers(getFollowerResponses(getUser(loginId)))
                 .build();
-
-        return serviceResponse;
     }
 
     private List<FollowResponse> getFollowerResponses(User user) {
-        return user.getFollowers().stream()
-                .map(follow -> FollowResponse.builder()
-                        .id(follow.getId())
-                        .loginId(follow.getSource().getLoginId())
-                        .nickname(follow.getSource().getNickname())
-                        .profileImageUrl(follow.getSource().getProfileImageUrl())
-                        .build())
+        return userRepository.findAllFollowers(user.getId()).stream()
+                .map(userInfoModel -> FollowResponse.of(userInfoModel))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public FollowingServiceResponse getFollowings(String loginId) {
-        User user = getUser(loginId);
-
-        FollowingServiceResponse serviceResponse = FollowingServiceResponse.builder()
+        return FollowingServiceResponse.builder()
                 .requestLoginId(loginId)
-                .followings(getFollowingResponses(user))
+                .followings(getFollowingResponses(getUser(loginId)))
                 .build();
-
-        return serviceResponse;
     }
 
     private List<FollowResponse> getFollowingResponses(User user) {
-        return user.getFollowings().stream()
-                .map(follow -> FollowResponse.builder()
-                        .id(follow.getId())
-                        .loginId(follow.getTarget().getLoginId())
-                        .nickname(follow.getTarget().getNickname())
-                        .profileImageUrl(follow.getTarget().getProfileImageUrl())
-                        .build())
+        return userRepository.findAllFollowings(user.getId()).stream()
+                .map(userInfoModel -> FollowResponse.of(userInfoModel))
                 .collect(Collectors.toList());
     }
 
