@@ -200,7 +200,7 @@ public class UserServiceImpl implements UserService {
 
     private List<FollowResponse> getFollowerResponses(User user) {
         return userRepository.findAllFollowers(user.getId()).stream()
-                .map(userInfoModel -> FollowResponse.of(userInfoModel))
+                .map(followUserInfoModel -> FollowResponse.of(followUserInfoModel))
                 .collect(Collectors.toList());
     }
 
@@ -215,7 +215,7 @@ public class UserServiceImpl implements UserService {
 
     private List<FollowResponse> getFollowingResponses(User user) {
         return userRepository.findAllFollowings(user.getId()).stream()
-                .map(userInfoModel -> FollowResponse.of(userInfoModel))
+                .map(followUserInfoModel -> FollowResponse.of(followUserInfoModel))
                 .collect(Collectors.toList());
     }
 

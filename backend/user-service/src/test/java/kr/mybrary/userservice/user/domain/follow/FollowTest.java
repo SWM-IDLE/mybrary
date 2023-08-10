@@ -3,14 +3,14 @@ package kr.mybrary.userservice.user.domain.follow;
 import kr.mybrary.userservice.user.domain.UserServiceImpl;
 import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.FollowStatusServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.FollowStatusServiceResponse;
 import kr.mybrary.userservice.user.domain.exception.follow.DuplicateFollowException;
 import kr.mybrary.userservice.user.domain.exception.follow.SameSourceTargetUserException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
 import kr.mybrary.userservice.user.persistence.User;
-import kr.mybrary.userservice.user.persistence.model.UserInfoModel;
+import kr.mybrary.userservice.user.persistence.model.FollowUserInfoModel;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -93,7 +93,7 @@ public class FollowTest {
         given(userRepository.findByLoginId(userA.getLoginId())).willReturn(Optional.of(userA));
 
         given(userRepository.findAllFollowings(userA.getId())).willReturn(
-                Arrays.asList(UserInfoModel.builder()
+                Arrays.asList(FollowUserInfoModel.builder()
                                 .loginId(userB.getLoginId())
                                 .nickname(userB.getNickname())
                                 .profileImageUrl(userB.getProfileImageUrl())
@@ -184,12 +184,12 @@ public class FollowTest {
         given(userRepository.findByLoginId(userB.getLoginId())).willReturn(Optional.of(userB));
 
         given(userRepository.findAllFollowers(userB.getId())).willReturn(
-                Arrays.asList(UserInfoModel.builder()
+                Arrays.asList(FollowUserInfoModel.builder()
                                 .loginId(userA.getLoginId())
                                 .nickname(userA.getNickname())
                                 .profileImageUrl(userA.getProfileImageUrl())
                                 .build(),
-                        UserInfoModel.builder()
+                        FollowUserInfoModel.builder()
                                 .loginId(userC.getLoginId())
                                 .nickname(userC.getNickname())
                                 .profileImageUrl(userC.getProfileImageUrl())

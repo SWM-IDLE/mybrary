@@ -2,6 +2,7 @@ package kr.mybrary.userservice.user.persistence.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import kr.mybrary.userservice.user.persistence.model.FollowUserInfoModel;
 import kr.mybrary.userservice.user.persistence.model.UserInfoModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -30,9 +31,9 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public List<UserInfoModel> findAllFollowings(Long sourceId) {
+    public List<FollowUserInfoModel> findAllFollowings(Long sourceId) {
         return queryFactory
-                .selectDistinct(Projections.fields(UserInfoModel.class,
+                .selectDistinct(Projections.fields(FollowUserInfoModel.class,
                         user.loginId,
                         user.nickname,
                         user.profileImageUrl))
@@ -43,9 +44,9 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public List<UserInfoModel> findAllFollowers(Long targetId) {
+    public List<FollowUserInfoModel> findAllFollowers(Long targetId) {
         return queryFactory
-                .selectDistinct(Projections.fields(UserInfoModel.class,
+                .selectDistinct(Projections.fields(FollowUserInfoModel.class,
                         user.loginId,
                         user.nickname,
                         user.profileImageUrl))

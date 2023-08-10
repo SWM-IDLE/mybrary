@@ -16,6 +16,7 @@ import kr.mybrary.userservice.user.domain.exception.user.UserNotSearchedExceptio
 import kr.mybrary.userservice.user.domain.storage.StorageService;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
+import kr.mybrary.userservice.user.persistence.model.FollowUserInfoModel;
 import kr.mybrary.userservice.user.persistence.model.UserInfoModel;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -453,7 +454,7 @@ class UserServiceImplTest {
         // Given
         given(userRepository.findByLoginId(FOLLOWING_ID)).willReturn(Optional.of(UserFixture.USER_WITH_FOLLOWER.getUser()));
 
-        UserInfoModel followerUser = UserInfoModel.builder()
+        FollowUserInfoModel followerUser = FollowUserInfoModel.builder()
                 .loginId(FOLLOWER_ID)
                 .nickname("followerNickname")
                 .profileImageUrl("followerProfileImageUrl")
@@ -500,7 +501,7 @@ class UserServiceImplTest {
         // Given
         given(userRepository.findByLoginId(FOLLOWER_ID)).willReturn(Optional.of(UserFixture.USER_AS_FOLLOWER.getUser()));
 
-        UserInfoModel followingUser = UserInfoModel.builder()
+        FollowUserInfoModel followingUser = FollowUserInfoModel.builder()
                 .loginId(FOLLOWING_ID)
                 .nickname("followingNickname")
                 .profileImageUrl("followingProfileImageUrl1")

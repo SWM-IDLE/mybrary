@@ -3,6 +3,7 @@ package kr.mybrary.userservice.user.persistence.repository;
 import kr.mybrary.userservice.PersistenceTest;
 import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.persistence.User;
+import kr.mybrary.userservice.user.persistence.model.FollowUserInfoModel;
 import kr.mybrary.userservice.user.persistence.model.UserInfoModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -193,14 +194,14 @@ class UserRepositoryTest {
         User savedUser = userRepository.save(user);
 
         // when
-        List<UserInfoModel> userInfos = userRepository.findAllFollowings(savedUser.getId());
+        List<FollowUserInfoModel> followUserInfoModels = userRepository.findAllFollowings(savedUser.getId());
 
         // then
         assertAll(
-            () -> assertThat(userInfos).hasSize(1),
-            () -> assertThat(userInfos).extracting("loginId").containsExactly(followingUser.getLoginId()),
-            () -> assertThat(userInfos).extracting("nickname").containsExactly(followingUser.getNickname()),
-            () -> assertThat(userInfos).extracting("profileImageUrl").containsExactly(followingUser.getProfileImageUrl())
+            () -> assertThat(followUserInfoModels).hasSize(1),
+            () -> assertThat(followUserInfoModels).extracting("loginId").containsExactly(followingUser.getLoginId()),
+            () -> assertThat(followUserInfoModels).extracting("nickname").containsExactly(followingUser.getNickname()),
+            () -> assertThat(followUserInfoModels).extracting("profileImageUrl").containsExactly(followingUser.getProfileImageUrl())
         );
     }
 
@@ -228,14 +229,14 @@ class UserRepositoryTest {
         User savedUser = userRepository.save(user);
 
         // when
-        List<UserInfoModel> userInfos = userRepository.findAllFollowers(savedUser.getId());
+        List<FollowUserInfoModel> followUserInfoModels = userRepository.findAllFollowers(savedUser.getId());
 
         // then
         assertAll(
-            () -> assertThat(userInfos).hasSize(1),
-            () -> assertThat(userInfos).extracting("loginId").containsExactly(followerUser.getLoginId()),
-            () -> assertThat(userInfos).extracting("nickname").containsExactly(followerUser.getNickname()),
-            () -> assertThat(userInfos).extracting("profileImageUrl").containsExactly(followerUser.getProfileImageUrl())
+            () -> assertThat(followUserInfoModels).hasSize(1),
+            () -> assertThat(followUserInfoModels).extracting("loginId").containsExactly(followerUser.getLoginId()),
+            () -> assertThat(followUserInfoModels).extracting("nickname").containsExactly(followerUser.getNickname()),
+            () -> assertThat(followUserInfoModels).extracting("profileImageUrl").containsExactly(followerUser.getProfileImageUrl())
         );
     }
 
