@@ -5,7 +5,7 @@ import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
-import kr.mybrary.userservice.user.domain.dto.response.IsFollowingServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.FollowStatusServiceResponse;
 import kr.mybrary.userservice.user.domain.exception.follow.DuplicateFollowException;
 import kr.mybrary.userservice.user.domain.exception.follow.SameSourceTargetUserException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
@@ -122,7 +122,7 @@ public class FollowTest {
         given(userRepository.findByLoginId(userB.getLoginId())).willReturn(Optional.of(userB));
 
         // when
-        IsFollowingServiceResponse response = userService.isFollowing(FollowServiceRequest.of(userA.getLoginId(), userB.getLoginId()));
+        FollowStatusServiceResponse response = userService.getFollowStatus(FollowServiceRequest.of(userA.getLoginId(), userB.getLoginId()));
 
         // then
         assertAll(
@@ -239,7 +239,7 @@ public class FollowTest {
         given(userRepository.findByLoginId(userB.getLoginId())).willReturn(Optional.of(userB));
 
         // when
-        IsFollowingServiceResponse response = userService.isFollowing(FollowServiceRequest.of(userA.getLoginId(), userB.getLoginId()));
+        FollowStatusServiceResponse response = userService.getFollowStatus(FollowServiceRequest.of(userA.getLoginId(), userB.getLoginId()));
 
         // then
         assertAll(

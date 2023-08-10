@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class IsFollowingServiceResponse {
+public class FollowStatusServiceResponse {
 
     String userId;
     String targetId;

@@ -265,8 +265,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public IsFollowingServiceResponse isFollowing(FollowServiceRequest serviceRequest) {
-        return IsFollowingServiceResponse.builder()
+    public FollowStatusServiceResponse getFollowStatus(FollowServiceRequest serviceRequest) {
+        return FollowStatusServiceResponse.builder()
                 .userId(serviceRequest.getSourceId())
                 .targetId(serviceRequest.getTargetId())
                 .isFollowing(checkFollowing(getUser(serviceRequest.getSourceId()), getUser(serviceRequest.getTargetId())))

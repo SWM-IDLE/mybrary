@@ -803,13 +803,13 @@ class UserControllerTest {
     @Test
     void isFollowing() throws Exception {
         // given
-        IsFollowingServiceResponse isFollowingServiceResponse = IsFollowingServiceResponse.builder()
+        FollowStatusServiceResponse followStatusServiceResponse = FollowStatusServiceResponse.builder()
                 .userId(USER_ID)
                 .targetId("targetId")
                 .isFollowing(true)
                 .build();
 
-        given(userService.isFollowing(any(FollowServiceRequest.class))).willReturn(isFollowingServiceResponse);
+        given(userService.getFollowStatus(any(FollowServiceRequest.class))).willReturn(followStatusServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -828,7 +828,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.data.targetId").value("targetId"))
                 .andExpect(jsonPath("$.data.following").value(true));
 
-        verify(userService).isFollowing(any(FollowServiceRequest.class));
+        verify(userService).getFollowStatus(any(FollowServiceRequest.class));
 
         // docs
         actions.andDo(document("is-following",
