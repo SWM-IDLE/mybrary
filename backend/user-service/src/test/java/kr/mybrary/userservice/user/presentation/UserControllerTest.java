@@ -467,13 +467,11 @@ class UserControllerTest {
         // given
         List<FollowResponse> followers = new ArrayList<>();
         followers.add(FollowResponse.builder()
-                .id(1L)
                 .loginId("loginId_1")
                 .nickname("name_1")
                 .profileImageUrl("profileImageUrl_1")
                 .build());
         followers.add(FollowResponse.builder()
-                .id(2L)
                 .loginId("loginId_2")
                 .nickname("name_2")
                 .profileImageUrl("profileImageUrl_2")
@@ -498,8 +496,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.message").value("사용자의 팔로워 목록을 조회했습니다."))
                 .andExpect(jsonPath("$.data.requestLoginId").value(
                         followerServiceResponse.getRequestLoginId()))
-                .andExpect(jsonPath("$.data.followers[0].id").value(followers.get(0).getId()))
-                .andExpect(jsonPath("$.data.followers[1].id").value(followers.get(1).getId()))
                 .andExpect(jsonPath("$.data.followers[0].loginId").value(
                         followers.get(0).getLoginId()))
                 .andExpect(jsonPath("$.data.followers[1].loginId").value(
@@ -534,8 +530,6 @@ class UserControllerTest {
                                                 .description(MESSAGE_FIELD_DESCRIPTION),
                                         fieldWithPath("data.requestLoginId").type(
                                                 JsonFieldType.STRING).description("요청한 사용자의 아이디"),
-                                        fieldWithPath("data.followers[].id").type(
-                                                JsonFieldType.NUMBER).description("팔로워의 식별자"),
                                         fieldWithPath("data.followers[].loginId").type(
                                                 JsonFieldType.STRING).description("팔로워의 아이디"),
                                         fieldWithPath("data.followers[].nickname").type(
@@ -555,13 +549,11 @@ class UserControllerTest {
         // given
         List<FollowResponse> followings = new ArrayList<>();
         followings.add(FollowResponse.builder()
-                .id(1L)
                 .loginId("loginId_1")
                 .nickname("name_1")
                 .profileImageUrl("profileImageUrl_1")
                 .build());
         followings.add(FollowResponse.builder()
-                .id(2L)
                 .loginId("loginId_2")
                 .nickname("name_2")
                 .profileImageUrl("profileImageUrl_2")
@@ -586,8 +578,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.message").value("사용자의 팔로잉 목록을 조회했습니다."))
                 .andExpect(jsonPath("$.data.requestLoginId").value(
                         followingServiceResponse.getRequestLoginId()))
-                .andExpect(jsonPath("$.data.followings[0].id").value(followings.get(0).getId()))
-                .andExpect(jsonPath("$.data.followings[1].id").value(followings.get(1).getId()))
                 .andExpect(jsonPath("$.data.followings[0].loginId").value(
                         followings.get(0).getLoginId()))
                 .andExpect(jsonPath("$.data.followings[1].loginId").value(
@@ -622,8 +612,6 @@ class UserControllerTest {
                                                 .description(MESSAGE_FIELD_DESCRIPTION),
                                         fieldWithPath("data.requestLoginId").type(
                                                 JsonFieldType.STRING).description("요청한 사용자의 아이디"),
-                                        fieldWithPath("data.followings[].id").type(
-                                                JsonFieldType.NUMBER).description("팔로잉의 식별자"),
                                         fieldWithPath("data.followings[].loginId").type(
                                                 JsonFieldType.STRING).description("팔로잉의 아이디"),
                                         fieldWithPath("data.followings[].nickname").type(

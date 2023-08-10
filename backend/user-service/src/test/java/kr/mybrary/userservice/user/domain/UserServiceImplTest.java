@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -452,6 +453,14 @@ class UserServiceImplTest {
         // Given
         given(userRepository.findByLoginId(FOLLOWING_ID)).willReturn(Optional.of(UserFixture.USER_WITH_FOLLOWER.getUser()));
 
+        UserInfoModel followerUser = UserInfoModel.builder()
+                .loginId(FOLLOWER_ID)
+                .nickname("followerNickname")
+                .profileImageUrl("followerProfileImageUrl")
+                .build();
+
+        given(userRepository.findAllFollowers(anyLong())).willReturn(Arrays.asList(followerUser));
+
         // When
         FollowerServiceResponse followerServiceResponse = userService.getFollowers(FOLLOWING_ID);
 
@@ -459,10 +468,13 @@ class UserServiceImplTest {
         assertAll(
                 () -> assertThat(followerServiceResponse.getRequestLoginId()).isEqualTo(FOLLOWING_ID),
                 () -> assertThat(followerServiceResponse.getFollowers()).hasSize(1),
-                () -> assertThat(followerServiceResponse.getFollowers()).extracting("loginId").containsExactly(FOLLOWER_ID)
+                () -> assertThat(followerServiceResponse.getFollowers()).extracting("loginId").containsExactly(FOLLOWER_ID),
+                () -> assertThat(followerServiceResponse.getFollowers()).extracting("nickname").containsExactly(followerUser.getNickname()),
+                () -> assertThat(followerServiceResponse.getFollowers()).extracting("profileImageUrl").containsExactly(followerUser.getProfileImageUrl())
         );
 
         verify(userRepository).findByLoginId(FOLLOWING_ID);
+        verify(userRepository).findAllFollowers(anyLong());
     }
 
     @Test
@@ -488,6 +500,14 @@ class UserServiceImplTest {
         // Given
         given(userRepository.findByLoginId(FOLLOWER_ID)).willReturn(Optional.of(UserFixture.USER_AS_FOLLOWER.getUser()));
 
+        UserInfoModel followingUser = UserInfoModel.builder()
+                .loginId(FOLLOWING_ID)
+                .nickname("followingNickname")
+                .profileImageUrl("followingProfileImageUrl1")
+                .build();
+
+        given(userRepository.findAllFollowings(anyLong())).willReturn(Arrays.asList(followingUser));
+
         // When
         FollowingServiceResponse followingServiceResponse = userService.getFollowings(FOLLOWER_ID);
 
@@ -495,10 +515,13 @@ class UserServiceImplTest {
         assertAll(
                 () -> assertThat(followingServiceResponse.getRequestLoginId()).isEqualTo(FOLLOWER_ID),
                 () -> assertThat(followingServiceResponse.getFollowings()).hasSize(1),
-                () -> assertThat(followingServiceResponse.getFollowings()).extracting("loginId").containsExactly(FOLLOWING_ID)
+                () -> assertThat(followingServiceResponse.getFollowings()).extracting("loginId").containsExactly(FOLLOWING_ID),
+                () -> assertThat(followingServiceResponse.getFollowings()).extracting("nickname").containsExactly(followingUser.getNickname()),
+                () -> assertThat(followingServiceResponse.getFollowings()).extracting("profileImageUrl").containsExactly(followingUser.getProfileImageUrl())
         );
 
         verify(userRepository).findByLoginId(FOLLOWER_ID);
+        verify(userRepository).findAllFollowings(anyLong());
     }
 
     @Test
