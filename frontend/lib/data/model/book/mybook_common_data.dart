@@ -1,5 +1,5 @@
 import 'package:mybrary/data/model/book/book_list_response.dart';
-import 'package:mybrary/data/model/book/my_books_response.dart';
+import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 
 class MyBookCommonData {

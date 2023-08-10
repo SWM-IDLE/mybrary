@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/model/book/interest_book_response.dart';
-import 'package:mybrary/data/model/book/my_books_response.dart';
+import 'package:mybrary/data/model/book/mybook_detail_response.dart';
+import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/utils/dios/dio_service.dart';
 
@@ -58,21 +59,44 @@ class BookDataSource {
 
   Future<List<MyBooksResponseData>> getMyBooks(String userId) async {
     Dio dio = DioService().to();
-    final createOrDeleteInterestBookResponse = await dio.get(
+    final getMyBooksResponse = await dio.get(
       '${getBookServiceApi(API.getMyBooks)}/$userId/mybooks',
       options: Options(headers: {'User-Id': userId}),
     );
 
-    log('마이북 전체 조회 응답값: $createOrDeleteInterestBookResponse');
+    log('마이북 전체 조회 응답값: $getMyBooksResponse');
     final MyBooksResponse result = commonResponseResult(
-      createOrDeleteInterestBookResponse,
+      getMyBooksResponse,
       () => MyBooksResponse(
-        status: createOrDeleteInterestBookResponse.data['status'],
-        message: createOrDeleteInterestBookResponse.data['message'],
+        status: getMyBooksResponse.data['status'],
+        message: getMyBooksResponse.data['message'],
         data: List<MyBooksResponseData>.from(
-          createOrDeleteInterestBookResponse.data['data'].map(
+          getMyBooksResponse.data['data'].map(
             (x) => MyBooksResponseData.fromJson(x),
           ),
+        ),
+      ),
+    );
+
+    return result.data!;
+  }
+
+  Future<MyBookDetailResponseData> getMyBookDetail(
+      String userId, int myBookId) async {
+    Dio dio = DioService().to();
+    final getMyBookDetailResponse = await dio.get(
+      '${getBookServiceApi(API.getMyBookDetail)}/$myBookId',
+      options: Options(headers: {'User-Id': userId}),
+    );
+
+    log('마이북 상세 조회 응답값: $getMyBookDetailResponse');
+    final MyBookDetailResponse result = commonResponseResult(
+      getMyBookDetailResponse,
+      () => MyBookDetailResponse(
+        status: getMyBookDetailResponse.data['status'],
+        message: getMyBookDetailResponse.data['message'],
+        data: MyBookDetailResponseData.fromJson(
+          getMyBookDetailResponse.data['data'],
         ),
       ),
     );

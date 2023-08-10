@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
-import 'package:mybrary/data/model/book/my_book_common_data.dart';
-import 'package:mybrary/data/model/book/my_books_response.dart';
+import 'package:mybrary/data/model/book/mybook_common_data.dart';
+import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
@@ -47,6 +47,12 @@ class _MyBookScreenState extends State<MyBookScreen> {
           (data) => _futureMyBookResponseData(data),
         ),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('마이북 데이터를 불러오는데 실패했습니다.'),
+            );
+          }
+
           if (snapshot.hasData) {
             MyBookCommonData data = snapshot.data!;
             ProfileResponseData profileData = data.profileResponseData;

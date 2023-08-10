@@ -64,6 +64,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           future: Future.wait(_futureProfileData())
               .then((data) => _buildProfileData(data)),
           builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('프로필 데이터를 불러오는데 실패했습니다.'),
+              );
+            }
+
             if (snapshot.hasData) {
               ProfileCommonData data = snapshot.data!;
               final ProfileResponseData profileData = data.profileData;

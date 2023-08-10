@@ -1,7 +1,8 @@
 import 'package:mybrary/data/datasource/book/book_datasource.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/model/book/interest_book_response.dart';
-import 'package:mybrary/data/model/book/my_books_response.dart';
+import 'package:mybrary/data/model/book/mybook_detail_response.dart';
+import 'package:mybrary/data/model/book/mybooks_response.dart';
 
 class BookRepository {
   final BookDataSource _bookDataSource = BookDataSource();
@@ -24,5 +25,12 @@ class BookRepository {
     required String userId,
   }) {
     return _bookDataSource.getMyBooks(userId);
+  }
+
+  Future<MyBookDetailResponseData> getMyBookDetail({
+    required String userId,
+    required int myBookId,
+  }) {
+    return _bookDataSource.getMyBookDetail(userId, myBookId);
   }
 }

@@ -79,7 +79,7 @@ class BookInfo {
   String? title;
   String? description;
   String? thumbnailUrl;
-  int? stars;
+  double? stars;
 
   BookInfo({
     this.id,
