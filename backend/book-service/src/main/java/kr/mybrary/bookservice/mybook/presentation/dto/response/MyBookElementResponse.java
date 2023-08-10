@@ -14,7 +14,7 @@ public class MyBookElementResponse {
     private boolean exchangeable;
     private boolean shareable;
     private ReadStatus readStatus;
-    private LocalDateTime startDateOfPossession;
+    private String startDateOfPossession;
 
     private BookElementResponse book;
 
@@ -26,5 +26,6 @@ public class MyBookElementResponse {
         private String description;
         private String thumbnailUrl;
         private Double stars;
+        private String publicationDate;
     }
 }

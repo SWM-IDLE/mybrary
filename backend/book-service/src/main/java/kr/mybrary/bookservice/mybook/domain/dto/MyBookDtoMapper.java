@@ -17,7 +17,9 @@ public interface MyBookDtoMapper {
 
     MyBookDtoMapper INSTANCE = Mappers.getMapper(MyBookDtoMapper.class);
 
-    @Mapping(target = "book.stars", constant = "0.0")
+    @Mapping(target = "book.stars", source = "book.starRating")
+    @Mapping(target = "book.publicationDate", source = "book.publicationDate", dateFormat = "yyyy.MM.dd")
+    @Mapping(target = "startDateOfPossession", source = "startDateOfPossession", dateFormat = "yyyy.MM.dd")
     MyBookElementResponse entityToMyBookElementResponse(MyBook myBook);
 
     @Mapping(target = "book.stars", constant = "0.0")

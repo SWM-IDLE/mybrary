@@ -26,7 +26,7 @@ public class MybookDtoTestData {
         return MyBookElementResponse.builder()
                 .id(1L)
                 .shareable(true)
-                .startDateOfPossession(LocalDateTime.now())
+                .startDateOfPossession("2020.01.01")
                 .exchangeable(true)
                 .showable(true).readStatus(ReadStatus.TO_READ)
                 .book(BookElementResponse.builder()
@@ -35,6 +35,7 @@ public class MybookDtoTestData {
                         .description("스프링의 기본기를 다지기 위한 책")
                         .thumbnailUrl("https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?type=m1&udate=20191226")
                         .stars(5.0)
+                        .publicationDate("2012.01.01")
                         .build())
                 .build();
     }

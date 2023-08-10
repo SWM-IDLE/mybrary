@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.mybook.domain.dto;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import kr.mybrary.bookservice.global.util.DateUtils;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
@@ -27,7 +28,7 @@ class MyBookDtoMapperTest {
         // then
         assertAll(
                 () -> assertThat(myBookElementResponse.getId()).isEqualTo(myBook.getId()),
-                () -> assertThat(myBookElementResponse.getStartDateOfPossession()).isEqualTo(myBook.getStartDateOfPossession()),
+                () -> assertThat(myBookElementResponse.getStartDateOfPossession()).isEqualTo(DateUtils.toDotFormatYYYYMMDD(myBook.getStartDateOfPossession())),
                 () -> assertThat(myBookElementResponse.getReadStatus()).isEqualTo(myBook.getReadStatus()),
                 () -> assertThat(myBookElementResponse.isExchangeable()).isEqualTo(myBook.isExchangeable()),
                 () -> assertThat(myBookElementResponse.isShareable()).isEqualTo(myBook.isShareable()),
@@ -36,7 +37,8 @@ class MyBookDtoMapperTest {
                 () -> assertThat(myBookElementResponse.getBook().getTitle()).isEqualTo(myBook.getBook().getTitle()),
                 () -> assertThat(myBookElementResponse.getBook().getDescription()).isEqualTo(myBook.getBook().getDescription()),
                 () -> assertThat(myBookElementResponse.getBook().getThumbnailUrl()).isEqualTo(myBook.getBook().getThumbnailUrl()),
-                () -> assertThat(myBookElementResponse.getBook().getStars()).isEqualTo(0.0)
+                () -> assertThat(myBookElementResponse.getBook().getStars()).isEqualTo(myBook.getBook().getStarRating()),
+                () -> assertThat(myBookElementResponse.getBook().getPublicationDate()).isEqualTo(DateUtils.toDotFormatYYYYMMDD(myBook.getBook().getPublicationDate()))
         );
     }
 

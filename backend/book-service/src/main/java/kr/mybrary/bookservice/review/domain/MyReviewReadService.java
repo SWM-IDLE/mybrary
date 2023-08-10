@@ -76,7 +76,7 @@ public class MyReviewReadService {
                 .map(reviewElement -> ReviewElement.builder()
                         .id(reviewElement.getId())
                         .starRating(reviewElement.getStarRating())
-                        .createdAt(DateUtils.toFormatYYYMMddHHmm(reviewElement.getCreatedAt()))
+                        .createdAt(DateUtils.toHyphenFormatYYYMMddHHmm(reviewElement.getCreatedAt()))
                         .content(reviewElement.getContent())
                         .userId(reviewElement.getUserId())
                         .userNickname(userInfoMap.get(reviewElement.getUserId()).getNickname())
