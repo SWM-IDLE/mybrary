@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class BookContents extends StatelessWidget {
@@ -14,7 +15,7 @@ class BookContents extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          toc == '' ? '목차가 없습니다.' : toc,
+          toc == '' ? '목차가 없습니다.' : parse(toc).documentElement!.text,
           style: bookDetailDescriptionStyle,
         ),
         const SizedBox(height: 10.0),

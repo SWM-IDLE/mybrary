@@ -96,7 +96,7 @@ class BookDetailInfo extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 15.0),
-          infoItem('쪽수', '${pages}쪽'),
+          infoItem('쪽수', '$pages쪽'),
           const SizedBox(height: 15.0),
           infoItem('출판사', publisher),
           const SizedBox(height: 15.0),

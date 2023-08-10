@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:html/parser.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
@@ -68,7 +69,7 @@ class BookDetailHeader extends StatelessWidget {
             children: [
               const SizedBox(height: 2.0),
               Text(
-                title,
+                parse(title).documentElement!.text,
                 style: bookDetailTitleStyle,
               ),
               const SizedBox(height: 6.0),
