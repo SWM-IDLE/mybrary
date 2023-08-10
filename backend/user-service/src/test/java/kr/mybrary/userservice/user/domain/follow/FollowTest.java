@@ -5,6 +5,7 @@ import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
 import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
 import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.IsFollowingServiceResponse;
 import kr.mybrary.userservice.user.domain.exception.follow.DuplicateFollowException;
 import kr.mybrary.userservice.user.domain.exception.follow.SameSourceTargetUserException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
@@ -101,6 +102,25 @@ public class FollowTest {
 
     @Test
     @Order(3)
+    @DisplayName("userA가 userB를 팔로우 중인지 확인한다.")
+    void checkUserAFollowingUserBTrue() {
+        // given
+        given(userRepository.findByLoginId(userA.getLoginId())).willReturn(Optional.of(userA));
+        given(userRepository.findByLoginId(userB.getLoginId())).willReturn(Optional.of(userB));
+
+        // when
+        IsFollowingServiceResponse response = userService.isFollowing(FollowServiceRequest.of(userA.getLoginId(), userB.getLoginId()));
+
+        // then
+        assertAll(
+                () -> assertThat(response.getRequestLoginId()).isEqualTo(userA.getLoginId()),
+                () -> assertThat(response.getTargetLoginId()).isEqualTo(userB.getLoginId()),
+                () -> assertThat(response.isFollowing()).isTrue()
+        );
+    }
+
+    @Test
+    @Order(4)
     @DisplayName("userC는 userB를 팔로우한다.")
     void userCFollowUserB() {
         // given
@@ -125,7 +145,7 @@ public class FollowTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     @DisplayName("userC가 userB를 다시 팔로우하면 예외가 발생한다.")
     void userCFollowUserBAgain() {
         // given
@@ -144,7 +164,7 @@ public class FollowTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     @DisplayName("userB의 팔로워 목록을 조회하면 2명(userA, userC)이 조회된다.")
     void getUserBFollowers() {
         // given
@@ -164,7 +184,7 @@ public class FollowTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     @DisplayName("userA는 userB를 언팔로우한다.")
     void userAUnfollowUserB() {
         // given
@@ -185,7 +205,26 @@ public class FollowTest {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
+    @DisplayName("userA가 userB를 팔로우 중이지 않은지 확인한다.")
+    void checkUserAFollowingUserBFalse() {
+        // given
+        given(userRepository.findByLoginId(userA.getLoginId())).willReturn(Optional.of(userA));
+        given(userRepository.findByLoginId(userB.getLoginId())).willReturn(Optional.of(userB));
+
+        // when
+        IsFollowingServiceResponse response = userService.isFollowing(FollowServiceRequest.of(userA.getLoginId(), userB.getLoginId()));
+
+        // then
+        assertAll(
+                () -> assertThat(response.getRequestLoginId()).isEqualTo(userA.getLoginId()),
+                () -> assertThat(response.getTargetLoginId()).isEqualTo(userB.getLoginId()),
+                () -> assertThat(response.isFollowing()).isFalse()
+        );
+    }
+
+    @Test
+    @Order(9)
     @DisplayName("userA의 팔로잉 목록을 조회 하면 0명이 조회된다.")
     void getUserAFollowingsAfterUnfollow() {
         // given
@@ -204,7 +243,7 @@ public class FollowTest {
     }
 
     @Test
-    @Order(8)
+    @Order(10)
     @DisplayName("userB는 userC를 팔로워 목록에서 삭제한다.")
     void userBDeletefollowerUserC() {
         // given
@@ -225,7 +264,7 @@ public class FollowTest {
     }
 
     @Test
-    @Order(9)
+    @Order(11)
     @DisplayName("userB의 팔로워 목록을 조회하면 0명이 조회된다.")
     void getUserBFollowersAfterFollowerDelete() {
         // given
@@ -244,7 +283,7 @@ public class FollowTest {
     }
 
     @Test
-    @Order(10)
+    @Order(12)
     @DisplayName("userA가 userA 자신을 팔로우하면 예외가 발생한다.")
     void userAFollowUserA() {
         // given
@@ -261,7 +300,7 @@ public class FollowTest {
     }
 
     @Test
-    @Order(11)
+    @Order(13)
     @DisplayName("userA가 없는 사용자를 팔로우하면 예외가 발생한다.")
     void userAFollowNonExistUser() {
         // given
