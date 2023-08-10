@@ -10,6 +10,7 @@ import kr.mybrary.userservice.user.domain.exception.follow.DuplicateFollowExcept
 import kr.mybrary.userservice.user.domain.exception.follow.SameSourceTargetUserException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
 import kr.mybrary.userservice.user.persistence.User;
+import kr.mybrary.userservice.user.persistence.model.UserInfoModel;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,18 +40,21 @@ public class FollowTest {
     UserServiceImpl userService;
 
     static User userA = User.builder()
+            .id(1L)
             .loginId("userA")
             .followers(new ArrayList<>())
             .followings(new ArrayList<>())
             .build();
 
     static User userB = User.builder()
+            .id(2L)
             .loginId("userB")
             .followers(new ArrayList<>())
             .followings(new ArrayList<>())
             .build();
 
     static User userC = User.builder()
+            .id(3L)
             .loginId("userC")
             .followers(new ArrayList<>())
             .followings(new ArrayList<>())
@@ -87,6 +92,13 @@ public class FollowTest {
         // given
         given(userRepository.findByLoginId(userA.getLoginId())).willReturn(Optional.of(userA));
 
+        given(userRepository.findAllFollowings(userA.getId())).willReturn(
+                Arrays.asList(UserInfoModel.builder()
+                                .loginId(userB.getLoginId())
+                                .nickname(userB.getNickname())
+                                .profileImageUrl(userB.getProfileImageUrl())
+                                .build()));
+
         // when
         FollowingServiceResponse response = userService.getFollowings(userA.getLoginId());
 
@@ -98,6 +110,7 @@ public class FollowTest {
         );
 
         verify(userRepository).findByLoginId(userA.getLoginId());
+        verify(userRepository).findAllFollowings(userA.getId());
     }
 
     @Test
@@ -170,6 +183,18 @@ public class FollowTest {
         // given
         given(userRepository.findByLoginId(userB.getLoginId())).willReturn(Optional.of(userB));
 
+        given(userRepository.findAllFollowers(userB.getId())).willReturn(
+                Arrays.asList(UserInfoModel.builder()
+                                .loginId(userA.getLoginId())
+                                .nickname(userA.getNickname())
+                                .profileImageUrl(userA.getProfileImageUrl())
+                                .build(),
+                        UserInfoModel.builder()
+                                .loginId(userC.getLoginId())
+                                .nickname(userC.getNickname())
+                                .profileImageUrl(userC.getProfileImageUrl())
+                                .build()));
+
         // when
         FollowerServiceResponse response = userService.getFollowers(userB.getLoginId());
 
@@ -181,6 +206,7 @@ public class FollowTest {
         );
 
         verify(userRepository).findByLoginId(userB.getLoginId());
+        verify(userRepository).findAllFollowers(userB.getId());
     }
 
     @Test
