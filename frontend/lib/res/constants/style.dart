@@ -218,3 +218,11 @@ const aladinTextStyle = TextStyle(
   fontSize: 11.0,
   fontWeight: FontWeight.w400,
 );
+
+// main page style
+const mainIntroTextStyle = TextStyle(
+  height: 1.2,
+  color: GREY_06_COLOR,
+  fontSize: 14.0,
+  fontWeight: FontWeight.w500,
+);

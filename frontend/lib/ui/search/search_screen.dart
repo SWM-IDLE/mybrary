@@ -6,7 +6,7 @@ import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/search/components/search_popular_keyword.dart';
 import 'package:mybrary/ui/search/search_book_list/search_book_list.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:mybrary/utils/logics/permission_utils.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -70,79 +70,90 @@ class _SearchScreenState extends State<SearchScreen> {
             foregroundColor: BLACK_COLOR,
             actions: [
               IconButton(
-                onPressed: onIsbnScan,
+                onPressed: () => onIsbnScan(context),
                 icon: SvgPicture.asset('assets/svg/icon/barcode_scan.svg'),
               ),
             ],
           ),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 0.0,
-                    left: 18.0,
-                    bottom: 12.0,
-                    right: 18.0,
-                  ),
-                  child: TextField(
-                    textInputAction: TextInputAction.search,
-                    controller: _bookSearchKeywordController,
-                    cursorColor: primaryColor,
-                    onChanged: (value) {
-                      setState(() {
-                        _isClearButtonVisible = value.isNotEmpty;
-                      });
-                    },
-                    onSubmitted: (value) {
-                      if (value.isNotEmpty) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => SearchBookList(
-                              bookSearchKeyword: value,
-                            ),
-                          ),
-                        ).then(
-                          (value) => {
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics()),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 0.0,
+                          left: 18.0,
+                          bottom: 12.0,
+                          right: 18.0,
+                        ),
+                        child: TextField(
+                          textInputAction: TextInputAction.search,
+                          controller: _bookSearchKeywordController,
+                          cursorColor: primaryColor,
+                          onChanged: (value) {
                             setState(() {
-                              _bookSearchKeywordController.clear();
-                              _isClearButtonVisible = false;
-                            })
+                              _isClearButtonVisible = value.isNotEmpty;
+                            });
                           },
-                        );
-                      }
-                    },
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 6.0,
+                          onSubmitted: (value) {
+                            if (value.isNotEmpty) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => SearchBookList(
+                                    bookSearchKeyword: value,
+                                  ),
+                                ),
+                              ).then(
+                                (value) => {
+                                  setState(() {
+                                    _bookSearchKeywordController.clear();
+                                    _isClearButtonVisible = false;
+                                  })
+                                },
+                              );
+                            }
+                          },
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 6.0,
+                            ),
+                            hintText: '책, 저자, 회원을 검색해보세요.',
+                            hintStyle: commonSubRegularStyle,
+                            filled: true,
+                            fillColor: GREY_COLOR_OPACITY_TWO,
+                            focusedBorder: searchInputBorderStyle,
+                            enabledBorder: searchInputBorderStyle,
+                            focusColor: GREY_COLOR,
+                            prefixIcon: SvgPicture.asset(
+                              'assets/svg/icon/search_small.svg',
+                              fit: BoxFit.scaleDown,
+                            ),
+                            suffixIcon: _searchInputClearIcon(),
+                          ),
+                        ),
                       ),
-                      hintText: '책, 저자, 회원을 검색해보세요.',
-                      hintStyle: commonSubRegularStyle,
-                      filled: true,
-                      fillColor: GREY_COLOR_OPACITY_TWO,
-                      focusedBorder: searchInputBorderStyle,
-                      enabledBorder: searchInputBorderStyle,
-                      focusColor: GREY_COLOR,
-                      prefixIcon: SvgPicture.asset(
-                        'assets/svg/icon/search_small.svg',
-                        fit: BoxFit.scaleDown,
+                      const SizedBox(
+                        height: 8.0,
                       ),
-                      suffixIcon: _searchInputClearIcon(),
-                    ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: SearchPopularKeyword(
+                          bookSearchKeywordController:
+                              _bookSearchKeywordController,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(
-                  height: 8.0,
-                ),
-                SearchPopularKeyword(
-                  bookSearchKeywordController: _bookSearchKeywordController,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -165,37 +176,5 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           )
         : null;
-  }
-
-  Future<dynamic> onIsbnScan() async {
-    await Permission.camera.request();
-
-    final permissionCameraStatus = await Permission.camera.status;
-
-    switch (permissionCameraStatus) {
-      case PermissionStatus.granted || PermissionStatus.provisional:
-        if (!mounted) break;
-        return Navigator.of(context).pushNamed('/search/barcode');
-      case PermissionStatus.denied || PermissionStatus.permanentlyDenied:
-        if (!mounted) break;
-        return ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            action: SnackBarAction(
-              label: '설정',
-              textColor: PRIMARY_COLOR,
-              onPressed: () {
-                openAppSettings();
-              },
-            ),
-            content: const Text(
-              '카메라 권한이 없습니다.\n설정에서 권한을 허용해주세요.',
-              style: commonSnackBarMessageStyle,
-            ),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      default:
-        return Permission.camera.request();
-    }
   }
 }

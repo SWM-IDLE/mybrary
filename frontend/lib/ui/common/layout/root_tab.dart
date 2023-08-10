@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/res/colors/color.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/home/home_screen.dart';
+import 'package:mybrary/ui/mybook/mybook_screen.dart';
 import 'package:mybrary/ui/profile/profile_screen.dart';
 import 'package:mybrary/ui/search/search_screen.dart';
 
@@ -80,7 +81,9 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
           selectedItemColor: BLACK_COLOR,
           unselectedItemColor: GREY_03_COLOR,
           selectedFontSize: 12,
-          selectedLabelStyle: TextStyle(fontWeight: FontWeight.w700),
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w700,
+          ),
           unselectedFontSize: 12,
           type: BottomNavigationBarType.fixed,
           onTap: (int index) {
@@ -88,37 +91,39 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
           },
           currentIndex: index,
           items: bottomNavigationBarItemList
-              .map((e) => BottomNavigationBarItem(
-                    label: e['label'],
-                    icon: Column(
-                      children: [
-                        SvgPicture.asset(
-                          e['iconPath']!,
-                          colorFilter:
-                              ColorFilter.mode(GREY_03_COLOR, BlendMode.srcIn),
+              .map(
+                (e) => BottomNavigationBarItem(
+                  label: e['label'],
+                  icon: Column(
+                    children: [
+                      SvgPicture.asset(
+                        e['iconPath']!,
+                        colorFilter: const ColorFilter.mode(
+                          GREY_03_COLOR,
+                          BlendMode.srcIn,
                         ),
-                        SizedBox(height: 4.0),
-                      ],
-                    ),
-                    activeIcon: Column(
-                      children: [
-                        SvgPicture.asset(e['iconPath']!),
-                        SizedBox(height: 4.0),
-                      ],
-                    ),
-                  ))
+                      ),
+                      const SizedBox(height: 4.0),
+                    ],
+                  ),
+                  activeIcon: Column(
+                    children: [
+                      SvgPicture.asset(e['iconPath']!),
+                      const SizedBox(height: 4.0),
+                    ],
+                  ),
+                ),
+              )
               .toList(),
         ),
       ),
       child: TabBarView(
         physics: const NeverScrollableScrollPhysics(),
         controller: tabController,
-        children: [
+        children: const [
           HomeScreen(),
           SearchScreen(),
-          Center(
-            child: Text('마이북'),
-          ),
+          MyBookScreen(),
           ProfileScreen(),
         ],
       ),
