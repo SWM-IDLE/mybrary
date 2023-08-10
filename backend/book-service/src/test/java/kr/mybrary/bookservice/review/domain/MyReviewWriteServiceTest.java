@@ -16,6 +16,7 @@ import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
 import kr.mybrary.bookservice.review.MyBookReviewFixture;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewDeleteServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewUpdateServiceRequest;
 import kr.mybrary.bookservice.review.domain.exception.MyReviewAccessDeniedException;
 import kr.mybrary.bookservice.review.domain.exception.MyReviewAlreadyExistsException;
@@ -149,6 +150,50 @@ class MyReviewWriteServiceTest {
                 () -> verify(myBookReviewRepository, times(1)).findById(any()),
                 () -> assertThat(myReview.getContent()).isNotEqualTo(request.getContent()),
                 () -> assertThat(myReview.getStarRating()).isNotEqualTo(request.getStarRating())
+        );
+    }
+
+    @DisplayName("마이 리뷰를 삭제한다.")
+    @Test
+    void deleteMyReview() {
+
+        // given
+        MyReview myReview = MyBookReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
+                .myBook(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()).build();
+
+        MyReviewDeleteServiceRequest request = MyBookReviewDtoTestData.createMyReviewDeleteServiceRequest(
+                myReview.getMyBook().getUserId(), myReview.getId());
+
+        given(myBookReviewRepository.findById(any())).willReturn(Optional.of(myReview));
+
+        // when
+        myReviewWriteService.delete(request);
+
+        // then
+        assertAll(
+                () -> assertThat(myReview.isDeleted()).isTrue(),
+                () -> verify(myBookReviewRepository, times(1)).findById(any())
+        );
+    }
+
+    @DisplayName("다른 유저의 마이 리뷰를 삭제시, 예외가 발생한다.")
+    @Test
+    void occurExceptionWhenDeleteOtherBookReview() {
+
+        // given
+        MyReview myReview = MyBookReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
+                .myBook(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()).build();
+
+        MyReviewDeleteServiceRequest request = MyBookReviewDtoTestData.createMyReviewDeleteServiceRequest(
+                "OTHER_USER_ID", myReview.getId());
+
+        given(myBookReviewRepository.findById(any())).willReturn(Optional.of(myReview));
+
+        // when, then
+        assertAll(
+                () -> assertThatThrownBy(() -> myReviewWriteService.delete(request)).isInstanceOf(MyReviewAccessDeniedException.class),
+                () -> verify(myBookReviewRepository, times(1)).findById(any()),
+                () -> assertThat(myReview.isDeleted()).isFalse()
         );
     }
 }

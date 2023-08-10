@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.review.domain;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewDeleteServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewUpdateServiceRequest;
 import kr.mybrary.bookservice.review.domain.exception.MyReviewAccessDeniedException;
 import kr.mybrary.bookservice.review.domain.exception.MyReviewAlreadyExistsException;
@@ -33,13 +34,24 @@ public class MyReviewWriteService {
 
     public MyReviewUpdateResponse update(MyReviewUpdateServiceRequest request) {
 
-        MyReview myReview = myReviewRepository.findById(request.getMyReviewId())
-                .orElseThrow(MyReviewNotFoundException::new);
+        MyReview myReview = getMyReviewById(request.getMyReviewId());
 
         checkIsOwnerSameAsRequester(myReview.getMyBook().getUserId(), request.getLoginId());
 
         myReview.update(request);
         return MyReviewUpdateResponse.of(myReview);
+    }
+
+    public void delete(MyReviewDeleteServiceRequest request) {
+
+        MyReview myReview = getMyReviewById(request.getMyReviewId());
+        checkIsOwnerSameAsRequester(myReview.getMyBook().getUserId(), request.getLoginId());
+
+        myReview.delete();
+    }
+
+    private MyReview getMyReviewById(Long myReviewId) {
+        return myReviewRepository.findById(myReviewId).orElseThrow(MyReviewNotFoundException::new);
     }
 
     private void checkIsOwnerSameAsRequester(String myBookOwnerUserId, String loginId) {

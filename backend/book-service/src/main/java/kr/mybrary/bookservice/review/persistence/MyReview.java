@@ -56,4 +56,8 @@ public class MyReview extends BaseEntity {
         this.content = request.getContent();
         this.starRating = request.getStarRating();
     }
+
+    public void delete() {
+        this.deleted = true;
+    }
 }
