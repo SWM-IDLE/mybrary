@@ -23,6 +23,6 @@ public interface MyReviewDtoMapper {
 
     @Named("toFormatMyBookReviewUI")
     static String toFormatMyBookReviewUI(LocalDateTime dateTime) {
-        return DateUtils.toFormatMyBookReviewUI(dateTime);
+        return DateUtils.toDotFormatYYYYMMDD(dateTime);
     }
 }

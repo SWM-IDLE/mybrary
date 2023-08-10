@@ -152,14 +152,15 @@ class MyBookControllerTest {
                                         fieldWithPath("data[].id").type(NUMBER).description("마이북 ID"),
                                         fieldWithPath("data[].readStatus").type(STRING).description("독서 진행 상태"),
                                         fieldWithPath("data[].startDateOfPossession").type(STRING).description("보유 시작일"),
+                                        fieldWithPath("data[].showable").type(BOOLEAN).description("공개 여부"),
+                                        fieldWithPath("data[].exchangeable").type(BOOLEAN).description("교환 여부"),
+                                        fieldWithPath("data[].shareable").type(BOOLEAN).description("나눔 여부"),
                                         fieldWithPath("data[].book.id").type(NUMBER).description("도서 ID"),
                                         fieldWithPath("data[].book.title").type(STRING).description("도서 제목"),
                                         fieldWithPath("data[].book.description").type(STRING).description("도서 설명"),
                                         fieldWithPath("data[].book.thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
                                         fieldWithPath("data[].book.stars").type(NUMBER).description("도서 별점"),
-                                        fieldWithPath("data[].showable").type(BOOLEAN).description("공개 여부"),
-                                        fieldWithPath("data[].exchangeable").type(BOOLEAN).description("교환 여부"),
-                                        fieldWithPath("data[].shareable").type(BOOLEAN).description("나눔 여부")
+                                        fieldWithPath("data[].book.publicationDate").type(STRING).description("도서 출판일")
                                 ).build())));
 
     }
@@ -370,14 +371,15 @@ class MyBookControllerTest {
                                                 fieldWithPath("data[].id").type(NUMBER).description("마이북 ID"),
                                                 fieldWithPath("data[].readStatus").type(STRING).description("독서 진행 상태"),
                                                 fieldWithPath("data[].startDateOfPossession").type(STRING).description("보유 시작일"),
+                                                fieldWithPath("data[].showable").type(BOOLEAN).description("공개 여부"),
+                                                fieldWithPath("data[].exchangeable").type(BOOLEAN).description("교환 여부"),
+                                                fieldWithPath("data[].shareable").type(BOOLEAN).description("나눔 여부"),
                                                 fieldWithPath("data[].book.id").type(NUMBER).description("도서 ID"),
                                                 fieldWithPath("data[].book.title").type(STRING).description("도서 제목"),
                                                 fieldWithPath("data[].book.description").type(STRING).description("도서 설명"),
                                                 fieldWithPath("data[].book.thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
                                                 fieldWithPath("data[].book.stars").type(NUMBER).description("도서 별점"),
-                                                fieldWithPath("data[].showable").type(BOOLEAN).description("공개 여부"),
-                                                fieldWithPath("data[].exchangeable").type(BOOLEAN).description("교환 여부"),
-                                                fieldWithPath("data[].shareable").type(BOOLEAN).description("나눔 여부"))
+                                                fieldWithPath("data[].book.publicationDate").type(STRING).description("도서 출판일"))
                                         .build())));
     }
 }
