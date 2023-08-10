@@ -56,7 +56,7 @@ class InterestControllerTest {
     private MockMvc mockMvc;
 
     private final String BASE_URL = "/api/v1";
-    private final String LOGIN_ID = "loginId_1";
+    private final String USER_ID = "userId";
     private final String STATUS_FIELD_DESCRIPTION = "응답 상태";
     private final String MESSAGE_FIELD_DESCRIPTION = "응답 메시지";
 
@@ -158,7 +158,7 @@ class InterestControllerTest {
     void getUserInterests() throws Exception {
         // given
         UserInterestServiceResponse interestServiceResponse = UserInterestServiceResponse.builder()
-                .loginId(LOGIN_ID)
+                .userId(USER_ID)
                 .userInterests(List.of(
                         InterestResponse.builder()
                                 .id(1L)
@@ -171,11 +171,11 @@ class InterestControllerTest {
                 ))
                 .build();
 
-        given(interestService.getUserInterests(LOGIN_ID)).willReturn(interestServiceResponse);
+        given(interestService.getUserInterests(USER_ID)).willReturn(interestServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL + "/users/{userId}/interests", LOGIN_ID)
+                RestDocumentationRequestBuilders.get(BASE_URL + "/users/{userId}/interests", USER_ID)
                         .with(csrf()));
 
         // then
@@ -183,13 +183,13 @@ class InterestControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("사용자의 관심사를 모두 조회했습니다."))
-                .andExpect(jsonPath("$.data.loginId").value(LOGIN_ID))
+                .andExpect(jsonPath("$.data.userId").value(USER_ID))
                 .andExpect(jsonPath("$.data.userInterests[0].id").value(1L))
                 .andExpect(jsonPath("$.data.userInterests[0].name").value("국내소설"))
                 .andExpect(jsonPath("$.data.userInterests[1].id").value(2L))
                 .andExpect(jsonPath("$.data.userInterests[1].name").value("외국소설"));
 
-        verify(interestService).getUserInterests(LOGIN_ID);
+        verify(interestService).getUserInterests(USER_ID);
 
         // docs
         actions.andDo(document("get-user-interests",
@@ -206,7 +206,7 @@ class InterestControllerTest {
                                 .responseFields(
                                         fieldWithPath("status").type(JsonFieldType.STRING).description(STATUS_FIELD_DESCRIPTION),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description(MESSAGE_FIELD_DESCRIPTION),
-                                        fieldWithPath("data.loginId").type(JsonFieldType.STRING).description("사용자 ID"),
+                                        fieldWithPath("data.userId").type(JsonFieldType.STRING).description("사용자 ID"),
                                         fieldWithPath("data.userInterests[].id").type(JsonFieldType.NUMBER).description("관심사 ID"),
                                         fieldWithPath("data.userInterests[].name").type(JsonFieldType.STRING).description("관심사 이름")
                                 )
@@ -239,7 +239,7 @@ class InterestControllerTest {
                 .build();
 
         UserInterestServiceResponse interestServiceResponse = UserInterestServiceResponse.builder()
-                .loginId(LOGIN_ID)
+                .userId(USER_ID)
                 .userInterests(List.of(
                         InterestResponse.builder()
                                 .id(10L)
@@ -260,9 +260,9 @@ class InterestControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.put(BASE_URL + "/users/{userId}/interests", LOGIN_ID)
+                RestDocumentationRequestBuilders.put(BASE_URL + "/users/{userId}/interests", USER_ID)
                         .with(csrf())
-                        .header("USER-ID", LOGIN_ID)
+                        .header("USER-ID", USER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)));
 
@@ -271,7 +271,7 @@ class InterestControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("사용자의 관심사를 수정했습니다."))
-                .andExpect(jsonPath("$.data.loginId").value(LOGIN_ID))
+                .andExpect(jsonPath("$.data.userId").value(USER_ID))
                 .andExpect(jsonPath("$.data.userInterests[0].id").value(10L))
                 .andExpect(jsonPath("$.data.userInterests[0].name").value("IT"))
                 .andExpect(jsonPath("$.data.userInterests[1].id").value(11L))
@@ -303,7 +303,7 @@ class InterestControllerTest {
                                 .responseFields(
                                         fieldWithPath("status").type(JsonFieldType.STRING).description(STATUS_FIELD_DESCRIPTION),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description(MESSAGE_FIELD_DESCRIPTION),
-                                        fieldWithPath("data.loginId").type(JsonFieldType.STRING).description("사용자 ID"),
+                                        fieldWithPath("data.userId").type(JsonFieldType.STRING).description("사용자 ID"),
                                         fieldWithPath("data.userInterests[].id").type(JsonFieldType.NUMBER).description("관심사 ID"),
                                         fieldWithPath("data.userInterests[].name").type(JsonFieldType.STRING).description("관심사 이름")
                                 )

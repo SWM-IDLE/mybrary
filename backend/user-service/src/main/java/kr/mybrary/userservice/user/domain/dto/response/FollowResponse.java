@@ -8,13 +8,13 @@ import lombok.Getter;
 @Builder
 public class FollowResponse {
 
-    private String loginId;
+    private String userId;
     private String nickname;
     private String profileImageUrl;
 
     public static FollowResponse of(UserInfoModel userInfoModel) {
         return FollowResponse.builder()
-                .loginId(userInfoModel.getLoginId())
+                .userId(userInfoModel.getLoginId())
                 .nickname(userInfoModel.getNickname())
                 .profileImageUrl(userInfoModel.getProfileImageUrl())
                 .build();

@@ -57,7 +57,7 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     private final String BASE_URL = "/api/v1/users";
-    private final String LOGIN_ID = "loginId_1";
+    private final String USER_ID = "userId";
     private final String STATUS_FIELD_DESCRIPTION = "응답 상태";
     private final String MESSAGE_FIELD_DESCRIPTION = "응답 메시지";
 
@@ -157,7 +157,7 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/profile", LOGIN_ID)
+                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/profile", USER_ID)
                         .with(csrf()));
 
         // then
@@ -224,9 +224,9 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.put(BASE_URL+"/{userId}/profile", LOGIN_ID)
+                RestDocumentationRequestBuilders.put(BASE_URL+"/{userId}/profile", USER_ID)
                         .with(csrf())
-                        .header("USER-ID", LOGIN_ID)
+                        .header("USER-ID", USER_ID)
                         .content(objectMapper.writeValueAsString(profileUpdateRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -296,7 +296,7 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/profile/image", LOGIN_ID)
+                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/profile/image", USER_ID)
                         .with(csrf()));
 
         // then
@@ -352,14 +352,14 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.multipart(BASE_URL+"/{userId}/profile/image", LOGIN_ID)
+                RestDocumentationRequestBuilders.multipart(BASE_URL+"/{userId}/profile/image", USER_ID)
                         .file(profileImage)
                         .with(request -> {
                             request.setMethod("PUT");
                             return request;
                         })
                         .with(csrf())
-                        .header("USER-ID", LOGIN_ID));
+                        .header("USER-ID", USER_ID));
 
         // then
         actions
@@ -416,9 +416,9 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.delete(BASE_URL+"/{userId}/profile/image", LOGIN_ID)
+                RestDocumentationRequestBuilders.delete(BASE_URL+"/{userId}/profile/image", USER_ID)
                         .with(csrf())
-                        .header("USER-ID", LOGIN_ID));
+                        .header("USER-ID", USER_ID));
 
         // then
         actions
@@ -467,18 +467,18 @@ class UserControllerTest {
         // given
         List<FollowResponse> followers = new ArrayList<>();
         followers.add(FollowResponse.builder()
-                .loginId("loginId_1")
-                .nickname("name_1")
-                .profileImageUrl("profileImageUrl_1")
+                .userId("followerId_1")
+                .nickname("followerNickname_1")
+                .profileImageUrl("followerProfileImageUrl_1")
                 .build());
         followers.add(FollowResponse.builder()
-                .loginId("loginId_2")
-                .nickname("name_2")
-                .profileImageUrl("profileImageUrl_2")
+                .userId("followerId_2")
+                .nickname("followerNickname_2")
+                .profileImageUrl("followerProfileImageUrl_2")
                 .build());
 
         FollowerServiceResponse followerServiceResponse = FollowerServiceResponse.builder()
-                .requestLoginId("loginId")
+                .userId(USER_ID)
                 .followers(followers)
                 .build();
 
@@ -486,7 +486,7 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/followers", LOGIN_ID)
+                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/followers", USER_ID)
                         .with(csrf()));
 
         // then
@@ -494,12 +494,12 @@ class UserControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("사용자의 팔로워 목록을 조회했습니다."))
-                .andExpect(jsonPath("$.data.requestLoginId").value(
-                        followerServiceResponse.getRequestLoginId()))
-                .andExpect(jsonPath("$.data.followers[0].loginId").value(
-                        followers.get(0).getLoginId()))
-                .andExpect(jsonPath("$.data.followers[1].loginId").value(
-                        followers.get(1).getLoginId()))
+                .andExpect(jsonPath("$.data.userId").value(
+                        followerServiceResponse.getUserId()))
+                .andExpect(jsonPath("$.data.followers[0].userId").value(
+                        followers.get(0).getUserId()))
+                .andExpect(jsonPath("$.data.followers[1].userId").value(
+                        followers.get(1).getUserId()))
                 .andExpect(jsonPath("$.data.followers[0].nickname").value(
                         followers.get(0).getNickname()))
                 .andExpect(jsonPath("$.data.followers[1].nickname").value(
@@ -528,9 +528,9 @@ class UserControllerTest {
                                                 .description(STATUS_FIELD_DESCRIPTION),
                                         fieldWithPath("message").type(JsonFieldType.STRING)
                                                 .description(MESSAGE_FIELD_DESCRIPTION),
-                                        fieldWithPath("data.requestLoginId").type(
+                                        fieldWithPath("data.userId").type(
                                                 JsonFieldType.STRING).description("요청한 사용자의 아이디"),
-                                        fieldWithPath("data.followers[].loginId").type(
+                                        fieldWithPath("data.followers[].userId").type(
                                                 JsonFieldType.STRING).description("팔로워의 아이디"),
                                         fieldWithPath("data.followers[].nickname").type(
                                                 JsonFieldType.STRING).description("팔로워의 닉네임"),
@@ -549,18 +549,18 @@ class UserControllerTest {
         // given
         List<FollowResponse> followings = new ArrayList<>();
         followings.add(FollowResponse.builder()
-                .loginId("loginId_1")
-                .nickname("name_1")
-                .profileImageUrl("profileImageUrl_1")
+                .userId("followingId_1")
+                .nickname("followingNickname_1")
+                .profileImageUrl("followingProfileImageUrl_1")
                 .build());
         followings.add(FollowResponse.builder()
-                .loginId("loginId_2")
-                .nickname("name_2")
-                .profileImageUrl("profileImageUrl_2")
+                .userId("followingId_2")
+                .nickname("followingNickname_2")
+                .profileImageUrl("followingProfileImageUrl_2")
                 .build());
 
         FollowingServiceResponse followingServiceResponse = FollowingServiceResponse.builder()
-                .requestLoginId("loginId")
+                .userId(USER_ID)
                 .followings(followings)
                 .build();
 
@@ -568,7 +568,7 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/followings", LOGIN_ID)
+                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/followings", USER_ID)
                         .with(csrf()));
 
         // then
@@ -576,12 +576,12 @@ class UserControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("사용자의 팔로잉 목록을 조회했습니다."))
-                .andExpect(jsonPath("$.data.requestLoginId").value(
-                        followingServiceResponse.getRequestLoginId()))
-                .andExpect(jsonPath("$.data.followings[0].loginId").value(
-                        followings.get(0).getLoginId()))
-                .andExpect(jsonPath("$.data.followings[1].loginId").value(
-                        followings.get(1).getLoginId()))
+                .andExpect(jsonPath("$.data.userId").value(
+                        followingServiceResponse.getUserId()))
+                .andExpect(jsonPath("$.data.followings[0].userId").value(
+                        followings.get(0).getUserId()))
+                .andExpect(jsonPath("$.data.followings[1].userId").value(
+                        followings.get(1).getUserId()))
                 .andExpect(jsonPath("$.data.followings[0].nickname").value(
                         followings.get(0).getNickname()))
                 .andExpect(jsonPath("$.data.followings[1].nickname").value(
@@ -610,9 +610,9 @@ class UserControllerTest {
                                                 .description(STATUS_FIELD_DESCRIPTION),
                                         fieldWithPath("message").type(JsonFieldType.STRING)
                                                 .description(MESSAGE_FIELD_DESCRIPTION),
-                                        fieldWithPath("data.requestLoginId").type(
+                                        fieldWithPath("data.userId").type(
                                                 JsonFieldType.STRING).description("요청한 사용자의 아이디"),
-                                        fieldWithPath("data.followings[].loginId").type(
+                                        fieldWithPath("data.followings[].userId").type(
                                                 JsonFieldType.STRING).description("팔로잉의 아이디"),
                                         fieldWithPath("data.followings[].nickname").type(
                                                 JsonFieldType.STRING).description("팔로잉의 닉네임"),
@@ -639,7 +639,7 @@ class UserControllerTest {
         ResultActions actions = mockMvc.perform(
                 RestDocumentationRequestBuilders.post(BASE_URL+"/follow")
                         .with(csrf())
-                        .header("USER-ID", LOGIN_ID)
+                        .header("USER-ID", USER_ID)
                         .content(objectMapper.writeValueAsString(followRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -697,7 +697,7 @@ class UserControllerTest {
         ResultActions actions = mockMvc.perform(
                 RestDocumentationRequestBuilders.delete(BASE_URL+"/follow")
                         .with(csrf())
-                        .header("USER-ID", LOGIN_ID)
+                        .header("USER-ID", USER_ID)
                         .content(objectMapper.writeValueAsString(followRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -755,7 +755,7 @@ class UserControllerTest {
         ResultActions actions = mockMvc.perform(
                 RestDocumentationRequestBuilders.delete(BASE_URL+"/follower")
                         .with(csrf())
-                        .header("USER-ID", LOGIN_ID)
+                        .header("USER-ID", USER_ID)
                         .content(objectMapper.writeValueAsString(followerRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
@@ -804,8 +804,8 @@ class UserControllerTest {
     void isFollowing() throws Exception {
         // given
         IsFollowingServiceResponse isFollowingServiceResponse = IsFollowingServiceResponse.builder()
-                .requestLoginId("loginId")
-                .targetLoginId("targetId")
+                .userId(USER_ID)
+                .targetId("targetId")
                 .isFollowing(true)
                 .build();
 
@@ -815,7 +815,7 @@ class UserControllerTest {
         ResultActions actions = mockMvc.perform(
                 RestDocumentationRequestBuilders.get(BASE_URL+"/follow")
                         .param("targetId", "targetId")
-                        .header("USER-ID", LOGIN_ID)
+                        .header("USER-ID", USER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
 
@@ -824,8 +824,8 @@ class UserControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
                 .andExpect(jsonPath("$.message").value("사용자를 팔로우 중인지 확인했습니다."))
-                .andExpect(jsonPath("$.data.requestLoginId").value("loginId"))
-                .andExpect(jsonPath("$.data.targetLoginId").value("targetId"))
+                .andExpect(jsonPath("$.data.userId").value(USER_ID))
+                .andExpect(jsonPath("$.data.targetId").value("targetId"))
                 .andExpect(jsonPath("$.data.following").value(true));
 
         verify(userService).isFollowing(any(FollowServiceRequest.class));
@@ -850,9 +850,9 @@ class UserControllerTest {
                                                 .description(STATUS_FIELD_DESCRIPTION),
                                         fieldWithPath("message").type(JsonFieldType.STRING)
                                                 .description(MESSAGE_FIELD_DESCRIPTION),
-                                        fieldWithPath("data.requestLoginId").type(JsonFieldType.STRING)
+                                        fieldWithPath("data.userId").type(JsonFieldType.STRING)
                                                 .description("요청한 사용자의 아이디"),
-                                        fieldWithPath("data.targetLoginId").type(JsonFieldType.STRING)
+                                        fieldWithPath("data.targetId").type(JsonFieldType.STRING)
                                                 .description("팔로우 중인지 확인할 사용자의 아이디"),
                                         fieldWithPath("data.following").type(JsonFieldType.BOOLEAN)
                                                 .description("팔로우 중인지 여부")
@@ -870,14 +870,14 @@ class UserControllerTest {
         SearchServiceResponse searchServiceResponse = SearchServiceResponse.builder()
                 .searchedUsers(List.of(
                         SearchServiceResponse.SearchedUser.builder()
-                                .loginId("loginId1")
-                                .nickname("nickname1")
-                                .profileImageUrl("profileImageUrl1")
+                                .userId("userId_1")
+                                .nickname("nickname_1")
+                                .profileImageUrl("profileImageUrl_1")
                                 .build(),
                         SearchServiceResponse.SearchedUser.builder()
-                                .loginId("loginId2")
-                                .nickname("nickname2")
-                                .profileImageUrl("profileImageUrl2")
+                                .userId("userId_2")
+                                .nickname("nickname_2")
+                                .profileImageUrl("profileImageUrl_2")
                                 .build()
                 )).build();
 
@@ -917,7 +917,7 @@ class UserControllerTest {
                                         fieldWithPath("message").type(JsonFieldType.STRING)
                                                 .description(MESSAGE_FIELD_DESCRIPTION),
                                         fieldWithPath("data.searchedUsers").type(JsonFieldType.ARRAY).description("검색된 사용자 목록"),
-                                        fieldWithPath("data.searchedUsers[].loginId").type(JsonFieldType.STRING).description("검색된 사용자의 아이디"),
+                                        fieldWithPath("data.searchedUsers[].userId").type(JsonFieldType.STRING).description("검색된 사용자의 아이디"),
                                         fieldWithPath("data.searchedUsers[].nickname").type(JsonFieldType.STRING).description("검색된 사용자의 닉네임"),
                                         fieldWithPath("data.searchedUsers[].profileImageUrl").type(JsonFieldType.STRING).description("검색된 사용자의 프로필 이미지 URL")
                                 )
@@ -936,7 +936,7 @@ class UserControllerTest {
         ResultActions actions = mockMvc.perform(
                 RestDocumentationRequestBuilders.delete(BASE_URL + "/account")
                         .with(csrf())
-                        .header("USER-ID", LOGIN_ID));
+                        .header("USER-ID", USER_ID));
 
         // then
         actions
@@ -977,20 +977,20 @@ class UserControllerTest {
     void getUserInfo() throws Exception {
         // given
         UserInfoRequest userInfoRequest = UserInfoRequest.builder()
-                .userIds(List.of("loginId1", "loginId2"))
+                .userIds(List.of("userId_1", "userId_2"))
                 .build();
 
         UserInfoServiceResponse userInfoServiceResponse = UserInfoServiceResponse.builder()
                 .userInfoElements(List.of(
                         UserInfoServiceResponse.UserInfoElement.builder()
-                                .userId("loginId1")
-                                .nickname("nickname1")
-                                .profileImageUrl("profileImageUrl1")
+                                .userId("userId_1")
+                                .nickname("nickname_1")
+                                .profileImageUrl("profileImageUrl_1")
                                 .build(),
                         UserInfoServiceResponse.UserInfoElement.builder()
-                                .userId("loginId2")
-                                .nickname("nickname2")
-                                .profileImageUrl("profileImageUrl2")
+                                .userId("userId_2")
+                                .nickname("nickname_2")
+                                .profileImageUrl("profileImageUrl_2")
                                 .build()
                 )).build();
 

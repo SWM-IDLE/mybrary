@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 public class FollowerServiceResponse {
 
-    private String requestLoginId;
+    private String userId;
     private List<FollowResponse> followers;
 
 }

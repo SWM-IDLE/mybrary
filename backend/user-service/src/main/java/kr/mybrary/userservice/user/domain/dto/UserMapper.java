@@ -22,5 +22,6 @@ public interface UserMapper {
 
     ProfileServiceResponse toProfileServiceResponse(User user);
 
+    @Mapping(target = "userId", source = "loginId")
     SearchServiceResponse.SearchedUser toSearchedUser(User user);
 }
