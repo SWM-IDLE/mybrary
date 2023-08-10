@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -165,6 +166,76 @@ class UserRepositoryTest {
             () -> assertThat(userInfos).extracting("loginId").containsExactly(savedUser.getLoginId(), savedUser2.getLoginId()),
             () -> assertThat(userInfos).extracting("nickname").containsExactly(savedUser.getNickname(), savedUser2.getNickname()),
             () -> assertThat(userInfos).extracting("profileImageUrl").containsExactly(savedUser.getProfileImageUrl(), savedUser2.getProfileImageUrl())
+        );
+    }
+
+    @Test
+    @DisplayName("사용자 아이디로 팔로잉 사용자 정보 목록을 가져온다.")
+    void findAllFollowings() {
+        // given
+        User user = User.builder()
+            .loginId("loginId")
+            .nickname("nickname")
+            .profileImageUrl("profileImageUrl")
+            .password("password")
+            .followings(new ArrayList<>())
+            .build();
+        User followingUser = User.builder()
+            .loginId("followingLoginId")
+            .nickname("followingNickname")
+            .profileImageUrl("followingProfileImageUrl")
+            .password("password")
+            .followers(new ArrayList<>())
+            .build();
+
+        userRepository.save(followingUser);
+        user.follow(followingUser);
+        User savedUser = userRepository.save(user);
+
+        // when
+        List<UserInfoModel> userInfos = userRepository.findAllFollowings(savedUser.getId());
+
+        // then
+        assertAll(
+            () -> assertThat(userInfos).hasSize(1),
+            () -> assertThat(userInfos).extracting("loginId").containsExactly(followingUser.getLoginId()),
+            () -> assertThat(userInfos).extracting("nickname").containsExactly(followingUser.getNickname()),
+            () -> assertThat(userInfos).extracting("profileImageUrl").containsExactly(followingUser.getProfileImageUrl())
+        );
+    }
+
+    @Test
+    @DisplayName("사용자 아이디로 팔로워 사용자 정보 목록을 가져온다.")
+    void findAllFollowers() {
+        // given
+        User user = User.builder()
+            .loginId("loginId")
+            .nickname("nickname")
+            .profileImageUrl("profileImageUrl")
+            .password("password")
+            .followers(new ArrayList<>())
+            .build();
+        User followerUser = User.builder()
+            .loginId("followerLoginId")
+            .nickname("followerNickname")
+            .profileImageUrl("followerProfileImageUrl")
+            .password("password")
+            .followings(new ArrayList<>())
+            .build();
+
+        userRepository.save(followerUser);
+        followerUser.follow(user);
+        User savedUser = userRepository.save(user);
+
+        // when
+        List<UserInfoModel> userInfos = userRepository.findAllFollowers(savedUser.getId());
+
+        // then
+        assertAll(
+            () -> assertThat(userInfos).hasSize(1),
+            () -> assertThat(userInfos).extracting("loginId").containsExactly(followerUser.getLoginId()),
+            () -> assertThat(userInfos).extracting("nickname").containsExactly(followerUser.getNickname()),
+            () -> assertThat(userInfos).extracting("profileImageUrl").containsExactly(followerUser.getProfileImageUrl())
         );
     }
 

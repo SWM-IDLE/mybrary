@@ -8,4 +8,8 @@ public interface UserRepositoryCustom {
 
     List<UserInfoModel> findAllUserInfoByLoginIds(List<String> loginIds);
 
+    List<UserInfoModel> findAllFollowings(Long sourceId);
+
+    List<UserInfoModel> findAllFollowers(Long targetId);
+
 }
