@@ -29,12 +29,12 @@ public class UserController {
         );
     }
 
-     @GetMapping("/profile")
-    public ResponseEntity<SuccessResponse> getProfile(@RequestHeader("USER-ID") String loginId) {
+     @GetMapping("/{userId}/profile")
+    public ResponseEntity<SuccessResponse> getProfile(@PathVariable("userId") String loginId) {
         ProfileServiceResponse serviceResponse = userService.getProfile(loginId);
 
         return ResponseEntity.ok().body(
-                SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 프로필 정보입니다.",
+                SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 프로필 정보입니다.",
                         serviceResponse)
         );
     }
@@ -52,13 +52,12 @@ public class UserController {
         );
     }
 
-    @GetMapping("/profile/image")
-    public ResponseEntity<SuccessResponse> getProfileImageUrl(
-            @RequestHeader("USER-ID") String loginId) {
+    @GetMapping("/{userId}/profile/image")
+    public ResponseEntity<SuccessResponse> getProfileImageUrl(@PathVariable("userId") String loginId) {
         ProfileImageUrlServiceResponse serviceResponse = userService.getProfileImageUrl(loginId);
 
         return ResponseEntity.ok().body(
-                SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 프로필 이미지 URL입니다.",
+                SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 프로필 이미지 URL입니다.",
                         serviceResponse)
         );
     }
@@ -78,8 +77,7 @@ public class UserController {
     }
 
     @DeleteMapping("/profile/image")
-    public ResponseEntity<SuccessResponse> deleteProfileImage(
-            @RequestHeader("USER-ID") String loginId) {
+    public ResponseEntity<SuccessResponse> deleteProfileImage(@RequestHeader("USER-ID") String loginId) {
         ProfileImageUrlServiceResponse serviceResponse = userService.deleteProfileImage(loginId);
 
         return ResponseEntity.ok().body(

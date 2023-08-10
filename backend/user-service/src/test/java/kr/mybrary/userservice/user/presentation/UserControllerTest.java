@@ -143,7 +143,7 @@ class UserControllerTest {
     }
 
 
-    @DisplayName("로그인 된 사용자의 프로필 정보를 조회한다.")
+    @DisplayName("사용자의 프로필 정보를 조회한다.")
     @Test
     void getProfile() throws Exception {
         // given
@@ -157,15 +157,14 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL+"/profile")
-                        .with(csrf())
-                        .header("USER-ID", LOGIN_ID));
+                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/profile", LOGIN_ID)
+                        .with(csrf()));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
-                .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 정보입니다."))
+                .andExpect(jsonPath("$.message").value("사용자의 프로필 정보입니다."))
                 .andExpect(jsonPath("$.data.nickname").value(profileServiceResponse.getNickname()))
                 .andExpect(jsonPath("$.data.profileImageUrl").value(
                         profileServiceResponse.getProfileImageUrl()))
@@ -181,10 +180,10 @@ class UserControllerTest {
                 resource(
                         ResourceSnippetParameters.builder()
                                 .tag("user-profile")
-                                .summary("로그인한 사용자의 프로필 정보를 조회한다.")
+                                .summary("사용자의 프로필 정보를 조회한다.")
                                 .requestSchema(Schema.schema("get_user_profile_request_body"))
-                                .requestHeaders(
-                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                .pathParameters(
+                                        parameterWithName("userId").description("사용자 아이디")
                                 )
                                 .responseSchema(Schema.schema("get_user_profile_response_body"))
                                 .responseFields(
@@ -281,7 +280,7 @@ class UserControllerTest {
         );
     }
 
-    @DisplayName("로그인 된 사용자의 프로필 이미지 URL을 조회한다.")
+    @DisplayName("사용자의 프로필 이미지 URL을 조회한다.")
     @Test
     void getProfileImageUrl() throws Exception {
         // given
@@ -294,15 +293,14 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL+"/profile/image")
-                        .with(csrf())
-                        .header("USER-ID", LOGIN_ID));
+                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/profile/image", LOGIN_ID)
+                        .with(csrf()));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
-                .andExpect(jsonPath("$.message").value("로그인 된 사용자의 프로필 이미지 URL입니다."))
+                .andExpect(jsonPath("$.message").value("사용자의 프로필 이미지 URL입니다."))
                 .andExpect(jsonPath("$.data.profileImageUrl").value(
                         profileImageUrlServiceResponse.getProfileImageUrl()));
 
@@ -315,10 +313,10 @@ class UserControllerTest {
                 resource(
                         ResourceSnippetParameters.builder()
                                 .tag("user-profile")
-                                .summary("로그인한 사용자의 프로필 이미지 URL을 조회한다.")
+                                .summary("사용자의 프로필 이미지 URL을 조회한다.")
                                 .requestSchema(Schema.schema("get_user_profile_image_request_body"))
-                                .requestHeaders(
-                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                .pathParameters(
+                                        parameterWithName("userId").description("사용자의 아이디")
                                 )
                                 .responseSchema(
                                         Schema.schema("get_user_profile_image_response_body"))
