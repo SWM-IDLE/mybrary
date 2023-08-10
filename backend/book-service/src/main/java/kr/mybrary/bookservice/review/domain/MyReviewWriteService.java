@@ -51,7 +51,8 @@ public class MyReviewWriteService {
     }
 
     private MyReview getMyReviewById(Long myReviewId) {
-        return myReviewRepository.findById(myReviewId).orElseThrow(MyReviewNotFoundException::new);
+        return myReviewRepository.findByIdWithMyBookUsingFetchJoin(myReviewId)
+                .orElseThrow(MyReviewNotFoundException::new);
     }
 
     private void checkIsOwnerSameAsRequester(String myBookOwnerUserId, String loginId) {
