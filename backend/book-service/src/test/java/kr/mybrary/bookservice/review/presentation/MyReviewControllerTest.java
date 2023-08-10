@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.doNothing;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -27,7 +28,9 @@ import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
 import kr.mybrary.bookservice.review.domain.MyReviewReadService;
 import kr.mybrary.bookservice.review.domain.MyReviewWriteService;
 import kr.mybrary.bookservice.review.presentation.dto.request.MyReviewCreateRequest;
+import kr.mybrary.bookservice.review.presentation.dto.request.MyReviewUpdateRequest;
 import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewOfMyBookGetResponse;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewUpdateResponse;
 import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewsOfBookGetResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -204,6 +207,61 @@ class MyReviewControllerTest {
                                                 fieldWithPath("data.starRating").type(NUMBER).description("리뷰 별점"),
                                                 fieldWithPath("data.createdAt").type(STRING).description("리뷰 생성일"),
                                                 fieldWithPath("data.updatedAt").type(STRING).description("리뷰 수정일")
+                                        ).build())));
+    }
+
+    @DisplayName("마이북 리뷰를 수정한다.")
+    @Test
+    void update() throws Exception {
+
+        // given
+        MyReviewUpdateRequest request = MyBookReviewDtoTestData.createMyReviewUpdateRequest();
+        MyReviewUpdateResponse response = MyBookReviewDtoTestData.createMyReviewUpdateResponse();
+
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        given(myReviewWriteService.update(any())).willReturn(response);
+
+        // when
+        ResultActions actions = mockMvc.perform(put("/api/v1/reviews/{reviewId}", 1L)
+                .header("USER-ID", LOGIN_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson));
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("마이 리뷰를 수정했습니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // document
+        actions
+                .andDo(document("update-mybook-review",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("review")
+                                        .summary("마이북 리뷰를 수정한다.")
+                                        .requestSchema(Schema.schema("update_mybook_review_request_body"))
+                                        .pathParameters(
+                                                parameterWithName("reviewId").type(SimpleType.NUMBER).description("마이 리뷰 ID")
+                                        )
+                                        .requestHeaders(
+                                                headerWithName("USER-ID").description("사용자 ID")
+                                        )
+                                        .requestFields(
+                                                fieldWithPath("content").type(STRING).description("마이 리뷰 수정 내용"),
+                                                fieldWithPath("starRating").type(NUMBER).description("마이 리뷰 수정 별점")
+                                        )
+                                        .responseSchema(Schema.schema("update_mybook_review_response_body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data.id").type(NUMBER).description("마이 리뷰 ID"),
+                                                fieldWithPath("data.content").type(STRING).description("마이 리뷰 수정된 내용"),
+                                                fieldWithPath("data.starRating").type(NUMBER).description("마이 리뷰 수정된 별점")
                                         ).build())));
     }
 }
