@@ -118,14 +118,14 @@ class MyReviewWriteServiceTest {
         MyReviewUpdateServiceRequest request = MyReviewDtoTestData.createMyReviewUpdateServiceRequest(
                 myReview.getMyBook().getUserId(), myReview.getId());
 
-        given(myBookReviewRepository.findById(any())).willReturn(Optional.of(myReview));
+        given(myBookReviewRepository.findByIdWithMyBookUsingFetchJoin(any())).willReturn(Optional.of(myReview));
 
         // when
         MyReviewUpdateResponse response = myReviewWriteService.update(request);
 
         // then
         assertAll(
-                () -> verify(myBookReviewRepository, times(1)).findById(any()),
+                () -> verify(myBookReviewRepository, times(1)).findByIdWithMyBookUsingFetchJoin(any()),
                 () -> assertThat(response.getId()).isEqualTo(myReview.getId()),
                 () -> assertThat(response.getContent()).isEqualTo(myReview.getContent()),
                 () -> assertThat(response.getStarRating()).isEqualTo(myReview.getStarRating())
@@ -142,12 +142,12 @@ class MyReviewWriteServiceTest {
         MyReviewUpdateServiceRequest request = MyReviewDtoTestData.createMyReviewUpdateServiceRequest(
                 "OTHER_LOGIN_ID", myReview.getId());
 
-        given(myBookReviewRepository.findById(any())).willReturn(Optional.of(myReview));
+        given(myBookReviewRepository.findByIdWithMyBookUsingFetchJoin(any())).willReturn(Optional.of(myReview));
 
         // when, then
         assertAll(
                 () -> assertThatThrownBy(() -> myReviewWriteService.update(request)).isInstanceOf(MyReviewAccessDeniedException.class),
-                () -> verify(myBookReviewRepository, times(1)).findById(any()),
+                () -> verify(myBookReviewRepository, times(1)).findByIdWithMyBookUsingFetchJoin(any()),
                 () -> assertThat(myReview.getContent()).isNotEqualTo(request.getContent()),
                 () -> assertThat(myReview.getStarRating()).isNotEqualTo(request.getStarRating())
         );
@@ -164,7 +164,7 @@ class MyReviewWriteServiceTest {
         MyReviewDeleteServiceRequest request = MyReviewDtoTestData.createMyReviewDeleteServiceRequest(
                 myReview.getMyBook().getUserId(), myReview.getId());
 
-        given(myBookReviewRepository.findById(any())).willReturn(Optional.of(myReview));
+        given(myBookReviewRepository.findByIdWithMyBookUsingFetchJoin(any())).willReturn(Optional.of(myReview));
 
         // when
         myReviewWriteService.delete(request);
@@ -172,7 +172,7 @@ class MyReviewWriteServiceTest {
         // then
         assertAll(
                 () -> assertThat(myReview.isDeleted()).isTrue(),
-                () -> verify(myBookReviewRepository, times(1)).findById(any())
+                () -> verify(myBookReviewRepository, times(1)).findByIdWithMyBookUsingFetchJoin(any())
         );
     }
 
@@ -187,12 +187,12 @@ class MyReviewWriteServiceTest {
         MyReviewDeleteServiceRequest request = MyReviewDtoTestData.createMyReviewDeleteServiceRequest(
                 "OTHER_USER_ID", myReview.getId());
 
-        given(myBookReviewRepository.findById(any())).willReturn(Optional.of(myReview));
+        given(myBookReviewRepository.findByIdWithMyBookUsingFetchJoin(any())).willReturn(Optional.of(myReview));
 
         // when, then
         assertAll(
                 () -> assertThatThrownBy(() -> myReviewWriteService.delete(request)).isInstanceOf(MyReviewAccessDeniedException.class),
-                () -> verify(myBookReviewRepository, times(1)).findById(any()),
+                () -> verify(myBookReviewRepository, times(1)).findByIdWithMyBookUsingFetchJoin(any()),
                 () -> assertThat(myReview.isDeleted()).isFalse()
         );
     }
