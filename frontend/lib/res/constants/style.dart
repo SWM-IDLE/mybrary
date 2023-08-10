@@ -175,7 +175,7 @@ const searchBookTitleStyle = TextStyle(
 
 const bookDetailTitleStyle = TextStyle(
   color: commonBlackColor,
-  fontSize: 19.0,
+  fontSize: 18.0,
   fontWeight: FontWeight.w700,
 );
 

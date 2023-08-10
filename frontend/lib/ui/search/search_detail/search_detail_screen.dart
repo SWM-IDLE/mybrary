@@ -5,6 +5,7 @@ import 'package:mybrary/data/repository/book_repository.dart';
 import 'package:mybrary/data/repository/search_repository.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
+import 'package:mybrary/ui/common/components/book_detail_divider.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
@@ -108,6 +109,12 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
         child: FutureBuilder<BookSearchDetailResponseData>(
           future: _bookSearchDetailResponse,
           builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('도서 정보를 불러오는데 실패했습니다.'),
+              );
+            }
+
             if (snapshot.hasData) {
               final bookSearchDetail = snapshot.data!;
               bool interested = bookSearchDetail.interested!;
@@ -150,7 +157,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                       readCount: bookSearchDetail.readCount!,
                       holderCount: bookSearchDetail.holderCount!,
                     ),
-                    bookDetailDivider(),
+                    const BookDetailDivider(),
                     BookDetailInfo(
                       publicationDate: bookSearchDetail.publicationDate!,
                       category: bookSearchDetail.category!,
@@ -160,7 +167,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                       link: bookSearchDetail.link!,
                       aladinStarRating: bookSearchDetail.aladinStarRating!,
                     ),
-                    bookDetailDivider(),
+                    const BookDetailDivider(),
                     bookDetailExpansion(
                       expansionTitle: '책 소개',
                       initiallyExpanded: true,
@@ -169,14 +176,14 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                         description: bookSearchDetail.description!,
                       ),
                     ),
-                    bookDetailDivider(),
+                    const BookDetailDivider(),
                     bookDetailExpansion(
                       expansionTitle: '목차',
                       children: BookContents(
                         toc: bookSearchDetail.toc!,
                       ),
                     ),
-                    bookDetailDivider(),
+                    const BookDetailDivider(),
                     BookDetails(
                       isbn10: bookSearchDetail.isbn10!,
                       isbn13: bookSearchDetail.isbn13!,
@@ -186,7 +193,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                       sizeWidth: bookSearchDetail.sizeWidth!,
                       translators: bookSearchDetail.translators!,
                     ),
-                    bookDetailDivider(),
+                    const BookDetailDivider(),
                     BookDetailProvider(
                       link: bookSearchDetail.link!,
                     ),
@@ -232,17 +239,6 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
         snackBarText: '관심 도서가 삭제되었습니다.',
       );
     }
-  }
-
-  Widget bookDetailDivider() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.0),
-      child: Divider(
-        height: 1,
-        thickness: 6,
-        color: greyF1F2F5,
-      ),
-    );
   }
 
   ExpansionTile bookDetailExpansion({

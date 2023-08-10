@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
@@ -41,6 +43,12 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
       child: FutureBuilder<List<BookListResponseData>>(
           future: _bookList,
           builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('관심북 데이터를 불러오는데 실패했습니다.'),
+              );
+            }
+
             if (snapshot.hasData) {
               List<BookListResponseData> bookList = snapshot.data!;
 
@@ -110,7 +118,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                   ),
                   child: Text(
                     '정렬',
-                    style: commonSubMediumStyle,
+                    style: commonSubBoldStyle,
                   ),
                 ),
                 _sortItemRow(
@@ -172,8 +180,9 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
 
   Padding _sortButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
+      padding: EdgeInsets.only(
         top: 16.0,
+        bottom: Platform.isIOS ? 32.0 : 0.0,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -274,9 +283,9 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: 150,
+        width: 160,
         padding: const EdgeInsets.symmetric(
-          vertical: 10.0,
+          vertical: 14.0,
         ),
         alignment: Alignment.center,
         decoration: BoxDecoration(
@@ -288,8 +297,9 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
         child: Text(
           sortTitle,
           style: commonSubRegularStyle.copyWith(
+            color: _sortType == sortItemType ? grey262626 : grey999999,
             fontWeight:
-                _sortType == sortItemType ? FontWeight.w700 : FontWeight.w400,
+                _sortType == sortItemType ? FontWeight.w500 : FontWeight.w400,
           ),
         ),
       ),

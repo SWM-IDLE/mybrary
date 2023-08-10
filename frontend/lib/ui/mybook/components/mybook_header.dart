@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
-import 'package:mybrary/data/model/book/my_books_response.dart';
+import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
-import 'package:mybrary/ui/mybook/book_list/book_list_screen.dart';
 import 'package:mybrary/ui/mybook/interest_book_list/interest_book_list_screen.dart';
+import 'package:mybrary/ui/mybook/mybook_list/mybook_list_screen.dart';
 
 class MyBookHeader extends StatelessWidget {
   final List<MyBooksResponseData> myBooksData;
@@ -66,7 +66,7 @@ class MyBookHeader extends StatelessWidget {
                 iconUrl:
                     myBooksData.isEmpty ? 'holder.svg' : 'holder_green.svg',
                 count: '${myBooksData.length}',
-                bookList: [],
+                bookList: myBooksData,
               ),
             ],
           ),
@@ -81,7 +81,7 @@ class MyBookHeader extends StatelessWidget {
     required String iconUrl,
     required String count,
     GestureTapCallback? onTap,
-    List<BookListResponseData>? bookList,
+    List<MyBooksResponseData>? bookList,
   }) {
     return InkWell(
       onTap: onTap ??
@@ -89,7 +89,7 @@ class MyBookHeader extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => BookListScreen(
+                builder: (_) => MyBookListScreen(
                   bookListTitle: status,
                   bookList: bookList!,
                 ),

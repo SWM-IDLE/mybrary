@@ -71,6 +71,7 @@ class BookDetailHeader extends StatelessWidget {
               Text(
                 parse(title).documentElement!.text,
                 style: bookDetailTitleStyle,
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 6.0),
               Text(

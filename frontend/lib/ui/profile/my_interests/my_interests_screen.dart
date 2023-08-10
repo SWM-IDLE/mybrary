@@ -103,6 +103,12 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
                     FutureBuilder<InterestCategoriesResponseData>(
                       future: _interestCategoriesResponseData,
                       builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return const Center(
+                            child: Text('마이 관심사를 불러오는데 실패했습니다.'),
+                          );
+                        }
+
                         if (snapshot.hasData) {
                           final interestCategories =
                               snapshot.data!.interestCategories!;

@@ -105,6 +105,12 @@ class _FollowScreenState extends State<FollowScreen>
             ),
           ),
           builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('팔로우/팔로잉 데이터를 불러오는데 실패했습니다.'),
+              );
+            }
+
             if (snapshot.hasData) {
               FollowCommonData data = snapshot.data!;
               final followers = data.followerData.followers!;

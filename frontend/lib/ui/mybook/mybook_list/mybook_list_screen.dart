@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/model/book/book_list_response.dart';
+import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
-import 'package:mybrary/ui/mybook/book_list/components/book_list.dart';
+import 'package:mybrary/ui/mybook/mybook_list/components/book_list.dart';
 
-class BookListScreen extends StatefulWidget {
+class MyBookListScreen extends StatefulWidget {
   final String bookListTitle;
-  final List<BookListResponseData> bookList;
+  final List<MyBooksResponseData> bookList;
 
-  const BookListScreen({
+  const MyBookListScreen({
     required this.bookListTitle,
     required this.bookList,
     super.key,
   });
 
   @override
-  State<BookListScreen> createState() => _BookListScreenState();
+  State<MyBookListScreen> createState() => _MyBookListScreenState();
 }
 
-class _BookListScreenState extends State<BookListScreen> {
-  late List<BookListResponseData> _bookList;
+class _MyBookListScreenState extends State<MyBookListScreen> {
+  late List<MyBooksResponseData> _bookList;
 
   @override
   void initState() {
@@ -45,9 +45,7 @@ class _BookListScreenState extends State<BookListScreen> {
             ),
             sliver: SliverToBoxAdapter(
               child: InkWell(
-                onTap: () {
-                  print('sort1');
-                },
+                onTap: () {},
                 child: Row(
                   children: [
                     Text(
