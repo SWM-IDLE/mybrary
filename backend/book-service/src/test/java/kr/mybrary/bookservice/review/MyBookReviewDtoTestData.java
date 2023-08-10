@@ -7,12 +7,15 @@ import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse.UserInfoElement;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewOfMyBookGetServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewUpdateServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewsOfBookGetServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewsOfBookGetServiceRequest.MyReviewsOfBookGetServiceRequestBuilder;
 import kr.mybrary.bookservice.review.persistence.model.MyReviewElementModel;
 import kr.mybrary.bookservice.review.persistence.model.MyReviewFromMyBookModel;
 import kr.mybrary.bookservice.review.presentation.dto.request.MyReviewCreateRequest;
+import kr.mybrary.bookservice.review.presentation.dto.request.MyReviewUpdateRequest;
 import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewOfMyBookGetResponse;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewUpdateResponse;
 import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewsOfBookGetResponse;
 import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewsOfBookGetResponse.ReviewElement;
 
@@ -120,6 +123,30 @@ public class MyBookReviewDtoTestData {
                 .starRating(4.5)
                 .createdAt("2023.01.01")
                 .updatedAt("2023.01.01")
+                .build();
+    }
+
+    public static MyReviewUpdateServiceRequest createMyReviewUpdateServiceRequest(String loginId, Long myBookId) {
+        return MyReviewUpdateServiceRequest.builder()
+                .loginId(loginId)
+                .myReviewId(myBookId)
+                .content("update content")
+                .starRating(5.0)
+                .build();
+    }
+
+    public static MyReviewUpdateRequest createMyReviewUpdateRequest() {
+        return MyReviewUpdateRequest.builder()
+                .content("update content")
+                .starRating(5.0)
+                .build();
+    }
+
+    public static MyReviewUpdateResponse createMyReviewUpdateResponse() {
+        return MyReviewUpdateResponse.builder()
+                .id(1L)
+                .content("update content")
+                .starRating(5.0)
                 .build();
     }
 }

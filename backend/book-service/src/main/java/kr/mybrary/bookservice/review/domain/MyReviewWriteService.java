@@ -3,10 +3,13 @@ package kr.mybrary.bookservice.review.domain;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewUpdateServiceRequest;
 import kr.mybrary.bookservice.review.domain.exception.MyReviewAccessDeniedException;
 import kr.mybrary.bookservice.review.domain.exception.MyReviewAlreadyExistsException;
+import kr.mybrary.bookservice.review.domain.exception.MyReviewNotFoundException;
 import kr.mybrary.bookservice.review.persistence.MyReview;
 import kr.mybrary.bookservice.review.persistence.repository.MyReviewRepository;
+import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewUpdateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MyReviewWriteService {
 
-    private final MyReviewRepository myBookReviewRepository;
+    private final MyReviewRepository myReviewRepository;
     private final MyBookService myBookService;
 
     public void create(MyReviewCreateServiceRequest request) {
@@ -25,7 +28,18 @@ public class MyReviewWriteService {
         checkIsOwnerSameAsRequester(myBook.getUserId(), request.getLoginId());
         checkMyBookReviewAlreadyRegistered(myBook);
 
-        myBookReviewRepository.save(MyReview.of(myBook, request));
+        myReviewRepository.save(MyReview.of(myBook, request));
+    }
+
+    public MyReviewUpdateResponse update(MyReviewUpdateServiceRequest request) {
+
+        MyReview myReview = myReviewRepository.findById(request.getMyReviewId())
+                .orElseThrow(MyReviewNotFoundException::new);
+
+        checkIsOwnerSameAsRequester(myReview.getMyBook().getUserId(), request.getLoginId());
+
+        myReview.update(request);
+        return MyReviewUpdateResponse.of(myReview);
     }
 
     private void checkIsOwnerSameAsRequester(String myBookOwnerUserId, String loginId) {
@@ -35,7 +49,7 @@ public class MyReviewWriteService {
     }
 
     private void checkMyBookReviewAlreadyRegistered(MyBook myBook) {
-        if (myBookReviewRepository.existsByMyBook(myBook)) {
+        if (myReviewRepository.existsByMyBook(myBook)) {
             throw new MyReviewAlreadyExistsException();
         }
     }

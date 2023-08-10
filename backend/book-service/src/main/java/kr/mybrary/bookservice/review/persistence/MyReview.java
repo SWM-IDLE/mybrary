@@ -12,6 +12,7 @@ import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.global.BaseEntity;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewUpdateServiceRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,5 +50,10 @@ public class MyReview extends BaseEntity {
                 .content(request.getContent())
                 .starRating(request.getStarRating())
                 .build();
+    }
+
+    public void update (MyReviewUpdateServiceRequest request) {
+        this.content = request.getContent();
+        this.starRating = request.getStarRating();
     }
 }
