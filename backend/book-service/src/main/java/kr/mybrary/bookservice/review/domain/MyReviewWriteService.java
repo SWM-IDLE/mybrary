@@ -27,7 +27,7 @@ public class MyReviewWriteService {
     }
 
     private void checkMyBookReviewAlreadyRegistered(MyBook myBook) {
-        if (myBookReviewRepository.existsByMyBookAndBook(myBook, myBook.getBook())) {
+        if (myBookReviewRepository.existsByMyBook(myBook)) {
             throw new MyReviewAlreadyExistsException();
         }
     }

@@ -44,7 +44,7 @@ class MyReviewRepositoryTest {
         entityManager.clear();
 
         // when
-        boolean result = myBookReviewRepository.existsByMyBookAndBook(myBook, book);
+        boolean result = myBookReviewRepository.existsByMyBook(myBook);
 
         // then
         assertAll(
