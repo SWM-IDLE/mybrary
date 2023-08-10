@@ -25,7 +25,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
+import kr.mybrary.bookservice.review.MyReviewDtoTestData;
 import kr.mybrary.bookservice.review.domain.MyReviewReadService;
 import kr.mybrary.bookservice.review.domain.MyReviewWriteService;
 import kr.mybrary.bookservice.review.presentation.dto.request.MyReviewCreateRequest;
@@ -72,7 +72,7 @@ class MyReviewControllerTest {
     void create() throws Exception {
 
         // given
-        MyReviewCreateRequest request = MyBookReviewDtoTestData.createMyBookReviewCreateRequest();
+        MyReviewCreateRequest request = MyReviewDtoTestData.createMyBookReviewCreateRequest();
 
         String requestJson = objectMapper.writeValueAsString(request);
         doNothing().when(myReviewWriteService).create(any());
@@ -123,7 +123,7 @@ class MyReviewControllerTest {
     void getReviewsFromBook() throws Exception {
 
         // given
-        MyReviewsOfBookGetResponse response = MyBookReviewDtoTestData.createReviewsOfBookGetResponse();
+        MyReviewsOfBookGetResponse response = MyReviewDtoTestData.createReviewsOfBookGetResponse();
 
         given(myReviewReadService.getReviewsFromBook(any())).willReturn(response);
 
@@ -173,7 +173,7 @@ class MyReviewControllerTest {
     void getReviewFormMyBook() throws Exception {
 
         // given
-        MyReviewOfMyBookGetResponse response = MyBookReviewDtoTestData.createReviewOfMyBookGetResponse();
+        MyReviewOfMyBookGetResponse response = MyReviewDtoTestData.createReviewOfMyBookGetResponse();
 
         given(myReviewReadService.getReviewFromMyBook(any())).willReturn(response);
 
@@ -217,8 +217,8 @@ class MyReviewControllerTest {
     void update() throws Exception {
 
         // given
-        MyReviewUpdateRequest request = MyBookReviewDtoTestData.createMyReviewUpdateRequest();
-        MyReviewUpdateResponse response = MyBookReviewDtoTestData.createMyReviewUpdateResponse();
+        MyReviewUpdateRequest request = MyReviewDtoTestData.createMyReviewUpdateRequest();
+        MyReviewUpdateResponse response = MyReviewDtoTestData.createMyReviewUpdateResponse();
 
         String requestJson = objectMapper.writeValueAsString(request);
 

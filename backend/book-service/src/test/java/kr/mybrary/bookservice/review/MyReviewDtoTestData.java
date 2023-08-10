@@ -20,7 +20,7 @@ import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewUpdateRes
 import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewsOfBookGetResponse;
 import kr.mybrary.bookservice.review.presentation.dto.response.MyReviewsOfBookGetResponse.ReviewElement;
 
-public class MyBookReviewDtoTestData {
+public class MyReviewDtoTestData {
 
     public static MyReviewCreateServiceRequest createMyBookReviewCreateServiceRequest() {
         return MyReviewCreateServiceRequest.builder()

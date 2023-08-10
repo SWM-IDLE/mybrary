@@ -13,8 +13,8 @@ import java.util.Optional;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
-import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
-import kr.mybrary.bookservice.review.MyBookReviewFixture;
+import kr.mybrary.bookservice.review.MyReviewDtoTestData;
+import kr.mybrary.bookservice.review.MyReviewFixture;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewDeleteServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewUpdateServiceRequest;
@@ -49,7 +49,7 @@ class MyReviewWriteServiceTest {
     void create() {
 
         // given
-        MyReviewCreateServiceRequest request = MyBookReviewDtoTestData.createMyBookReviewCreateServiceRequest();
+        MyReviewCreateServiceRequest request = MyReviewDtoTestData.createMyBookReviewCreateServiceRequest();
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
         given(myBookService.findMyBookByIdWithBook(request.getMyBookId())).willReturn(myBook);
@@ -72,7 +72,7 @@ class MyReviewWriteServiceTest {
     void occurExceptionWhenWriteOtherBookReview() {
 
         // given
-        MyReviewCreateServiceRequest request = MyBookReviewDtoTestData.createMyBookReviewCreateServiceRequest();
+        MyReviewCreateServiceRequest request = MyReviewDtoTestData.createMyBookReviewCreateServiceRequest();
         MyBook myBook = MyBookFixture.COMMON_OTHER_USER_MYBOOK.getMyBook();
 
         given(myBookService.findMyBookByIdWithBook(request.getMyBookId())).willReturn(myBook);
@@ -92,7 +92,7 @@ class MyReviewWriteServiceTest {
     void occurExceptionWhenExistMyBookReview() {
 
         // given
-        MyReviewCreateServiceRequest request = MyBookReviewDtoTestData.createMyBookReviewCreateServiceRequest();
+        MyReviewCreateServiceRequest request = MyReviewDtoTestData.createMyBookReviewCreateServiceRequest();
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
         given(myBookService.findMyBookByIdWithBook(request.getMyBookId())).willReturn(myBook);
@@ -113,9 +113,9 @@ class MyReviewWriteServiceTest {
     void updateMyReview() {
 
         // given
-        MyReview myReview = MyBookReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
+        MyReview myReview = MyReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
                 .myBook(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()).build();
-        MyReviewUpdateServiceRequest request = MyBookReviewDtoTestData.createMyReviewUpdateServiceRequest(
+        MyReviewUpdateServiceRequest request = MyReviewDtoTestData.createMyReviewUpdateServiceRequest(
                 myReview.getMyBook().getUserId(), myReview.getId());
 
         given(myBookReviewRepository.findById(any())).willReturn(Optional.of(myReview));
@@ -137,9 +137,9 @@ class MyReviewWriteServiceTest {
     void occurExceptionWhenUpdateOtherBookReview() {
 
         // given
-        MyReview myReview = MyBookReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
+        MyReview myReview = MyReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
                 .myBook(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()).build();
-        MyReviewUpdateServiceRequest request = MyBookReviewDtoTestData.createMyReviewUpdateServiceRequest(
+        MyReviewUpdateServiceRequest request = MyReviewDtoTestData.createMyReviewUpdateServiceRequest(
                 "OTHER_LOGIN_ID", myReview.getId());
 
         given(myBookReviewRepository.findById(any())).willReturn(Optional.of(myReview));
@@ -158,10 +158,10 @@ class MyReviewWriteServiceTest {
     void deleteMyReview() {
 
         // given
-        MyReview myReview = MyBookReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
+        MyReview myReview = MyReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
                 .myBook(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()).build();
 
-        MyReviewDeleteServiceRequest request = MyBookReviewDtoTestData.createMyReviewDeleteServiceRequest(
+        MyReviewDeleteServiceRequest request = MyReviewDtoTestData.createMyReviewDeleteServiceRequest(
                 myReview.getMyBook().getUserId(), myReview.getId());
 
         given(myBookReviewRepository.findById(any())).willReturn(Optional.of(myReview));
@@ -181,10 +181,10 @@ class MyReviewWriteServiceTest {
     void occurExceptionWhenDeleteOtherBookReview() {
 
         // given
-        MyReview myReview = MyBookReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
+        MyReview myReview = MyReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
                 .myBook(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()).build();
 
-        MyReviewDeleteServiceRequest request = MyBookReviewDtoTestData.createMyReviewDeleteServiceRequest(
+        MyReviewDeleteServiceRequest request = MyReviewDtoTestData.createMyReviewDeleteServiceRequest(
                 "OTHER_USER_ID", myReview.getId());
 
         given(myBookReviewRepository.findById(any())).willReturn(Optional.of(myReview));
