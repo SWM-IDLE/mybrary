@@ -151,7 +151,7 @@ public class UserController {
                                                        @RequestParam("targetId") String targetId) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "사용자를 팔로우 중인지 확인했습니다.",
-                        userService.isFollowing(FollowServiceRequest.of(loginId, targetId)))
+                        userService.getFollowStatus(FollowServiceRequest.of(loginId, targetId)))
         );
     }
 

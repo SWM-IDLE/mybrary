@@ -29,7 +29,7 @@ public interface UserService {
 
     void deleteFollower(FollowerServiceRequest serviceRequest);
 
-    IsFollowingServiceResponse isFollowing(FollowServiceRequest serviceRequest);
+    FollowStatusServiceResponse getFollowStatus(FollowServiceRequest serviceRequest);
 
     SearchServiceResponse searchByNickname(String nickname);
 
