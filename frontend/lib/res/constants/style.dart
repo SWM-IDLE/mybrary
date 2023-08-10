@@ -180,9 +180,9 @@ const bookDetailTitleStyle = TextStyle(
 );
 
 const bookDetailDescriptionStyle = TextStyle(
-  height: 1.5,
+  height: 1.6,
   color: grey777777,
-  fontSize: 15.0,
+  fontSize: 14.0,
   fontWeight: FontWeight.w400,
 );
 

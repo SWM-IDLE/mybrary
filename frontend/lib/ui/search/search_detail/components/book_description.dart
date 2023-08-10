@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class BookDescription extends StatelessWidget {
@@ -21,7 +22,7 @@ class BookDescription extends StatelessWidget {
         ),
         const SizedBox(height: 10.0),
         Text(
-          subTitle == '' ? '부제가 없습니다.' : subTitle,
+          subTitle == '' ? '부제가 없습니다.' : parse(subTitle).documentElement!.text,
           style: bookDetailDescriptionStyle,
         ),
         const SizedBox(height: 24.0),
@@ -31,7 +32,9 @@ class BookDescription extends StatelessWidget {
         ),
         const SizedBox(height: 10.0),
         Text(
-          description == '' ? '책 설명이 없습니다.' : description,
+          description == ''
+              ? '책 설명이 없습니다.'
+              : parse(description).documentElement!.text,
           style: bookDetailDescriptionStyle,
         ),
         const SizedBox(height: 10.0),

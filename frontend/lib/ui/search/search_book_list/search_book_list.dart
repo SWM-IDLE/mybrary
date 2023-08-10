@@ -163,13 +163,19 @@ class _SearchBookListState extends State<SearchBookList> {
               )
               .then(
                 (value) => setState(() {
+                  _bookSearchResponse = _searchRepository.getBookSearchResponse(
+                    requestUrl:
+                        '$_bookSearchKeywordRequestUrl?keyword=${_bookSearchKeywordController.text}',
+                  );
                   _bookSearchResultData = value.bookSearchResult!;
                   _bookSearchNextUrl = value.nextRequestUrl!;
-                  _searchScrollController.animateTo(
-                    0,
-                    duration: const Duration(microseconds: 500),
-                    curve: Curves.easeInOut,
-                  );
+                  if (_searchScrollController.hasClients) {
+                    _searchScrollController.animateTo(
+                      0,
+                      duration: const Duration(microseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+                  }
                 }),
               );
         },

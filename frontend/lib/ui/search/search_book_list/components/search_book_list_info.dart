@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
@@ -89,7 +90,10 @@ class SearchBookListInfo extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 4.0),
                                     bookInfo(
-                                      infoText: searchBookData.description!,
+                                      infoText:
+                                          parse(searchBookData.description!)
+                                              .documentElement!
+                                              .text,
                                       fontSize: 13.0,
                                       fontColor: bookDescriptionColor,
                                     ),

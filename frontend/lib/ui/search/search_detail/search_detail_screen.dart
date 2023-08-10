@@ -163,6 +163,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                     bookDetailDivider(),
                     bookDetailExpansion(
                       expansionTitle: '책 소개',
+                      initiallyExpanded: true,
                       children: BookDescription(
                         subTitle: bookSearchDetail.subTitle!,
                         description: bookSearchDetail.description!,
@@ -183,6 +184,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                       sizeDepth: bookSearchDetail.sizeDepth!,
                       sizeHeight: bookSearchDetail.sizeHeight!,
                       sizeWidth: bookSearchDetail.sizeWidth!,
+                      translators: bookSearchDetail.translators!,
                     ),
                     bookDetailDivider(),
                     BookDetailProvider(
@@ -246,6 +248,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
   ExpansionTile bookDetailExpansion({
     required String expansionTitle,
     required Widget children,
+    bool? initiallyExpanded,
   }) {
     return ExpansionTile(
       title: Text(
@@ -257,6 +260,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
         horizontal: 20.0,
         vertical: 6.0,
       ),
+      initiallyExpanded: initiallyExpanded ?? false,
       expandedAlignment: Alignment.centerLeft,
       shape: const Border(),
       iconColor: grey777777,

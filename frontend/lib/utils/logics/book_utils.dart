@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/res/constants/style.dart';
 
-String bookAuthorsOrTranslators(List<Authors> authorsOrTranslators) {
+String bookAuthorsOrTranslators(List<dynamic> authorsOrTranslators) {
   String result = "";
   if (authorsOrTranslators.isEmpty) {
     return result;
