@@ -7,8 +7,8 @@ import lombok.Getter;
 @Builder
 public class IsFollowingServiceResponse {
 
-    String requestLoginId;
-    String targetLoginId;
+    String userId;
+    String targetId;
     boolean isFollowing;
 
 }

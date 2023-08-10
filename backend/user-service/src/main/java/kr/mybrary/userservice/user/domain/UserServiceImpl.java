@@ -193,7 +193,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public FollowerServiceResponse getFollowers(String loginId) {
         return FollowerServiceResponse.builder()
-                .requestLoginId(loginId)
+                .userId(loginId)
                 .followers(getFollowerResponses(getUser(loginId)))
                 .build();
     }
@@ -208,7 +208,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public FollowingServiceResponse getFollowings(String loginId) {
         return FollowingServiceResponse.builder()
-                .requestLoginId(loginId)
+                .userId(loginId)
                 .followings(getFollowingResponses(getUser(loginId)))
                 .build();
     }
@@ -267,8 +267,8 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public IsFollowingServiceResponse isFollowing(FollowServiceRequest serviceRequest) {
         return IsFollowingServiceResponse.builder()
-                .requestLoginId(serviceRequest.getSourceId())
-                .targetLoginId(serviceRequest.getTargetId())
+                .userId(serviceRequest.getSourceId())
+                .targetId(serviceRequest.getTargetId())
                 .isFollowing(checkFollowing(getUser(serviceRequest.getSourceId()), getUser(serviceRequest.getTargetId())))
                 .build();
     }

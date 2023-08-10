@@ -14,7 +14,7 @@ public class SearchServiceResponse {
     @Getter
     @Builder
     public static class SearchedUser {
-        private String loginId;
+        private String userId;
         private String nickname;
         private String profileImageUrl;
     }

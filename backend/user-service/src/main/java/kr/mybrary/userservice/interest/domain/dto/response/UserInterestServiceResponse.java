@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public class UserInterestServiceResponse {
 
-    private String loginId;
+    private String userId;
     private List<InterestResponse> userInterests;
 
 }

@@ -466,9 +466,9 @@ class UserServiceImplTest {
 
         // Then
         assertAll(
-                () -> assertThat(followerServiceResponse.getRequestLoginId()).isEqualTo(FOLLOWING_ID),
+                () -> assertThat(followerServiceResponse.getUserId()).isEqualTo(FOLLOWING_ID),
                 () -> assertThat(followerServiceResponse.getFollowers()).hasSize(1),
-                () -> assertThat(followerServiceResponse.getFollowers()).extracting("loginId").containsExactly(FOLLOWER_ID),
+                () -> assertThat(followerServiceResponse.getFollowers()).extracting("userId").containsExactly(FOLLOWER_ID),
                 () -> assertThat(followerServiceResponse.getFollowers()).extracting("nickname").containsExactly(followerUser.getNickname()),
                 () -> assertThat(followerServiceResponse.getFollowers()).extracting("profileImageUrl").containsExactly(followerUser.getProfileImageUrl())
         );
@@ -513,9 +513,9 @@ class UserServiceImplTest {
 
         // Then
         assertAll(
-                () -> assertThat(followingServiceResponse.getRequestLoginId()).isEqualTo(FOLLOWER_ID),
+                () -> assertThat(followingServiceResponse.getUserId()).isEqualTo(FOLLOWER_ID),
                 () -> assertThat(followingServiceResponse.getFollowings()).hasSize(1),
-                () -> assertThat(followingServiceResponse.getFollowings()).extracting("loginId").containsExactly(FOLLOWING_ID),
+                () -> assertThat(followingServiceResponse.getFollowings()).extracting("userId").containsExactly(FOLLOWING_ID),
                 () -> assertThat(followingServiceResponse.getFollowings()).extracting("nickname").containsExactly(followingUser.getNickname()),
                 () -> assertThat(followingServiceResponse.getFollowings()).extracting("profileImageUrl").containsExactly(followingUser.getProfileImageUrl())
         );

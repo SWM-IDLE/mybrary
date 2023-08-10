@@ -104,9 +104,9 @@ public class FollowTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getRequestLoginId()).isEqualTo(userA.getLoginId()),
+                () -> assertThat(response.getUserId()).isEqualTo(userA.getLoginId()),
                 () -> assertThat(response.getFollowings()).hasSize(1),
-                () -> assertThat(response.getFollowings()).extracting("loginId").contains(userB.getLoginId())
+                () -> assertThat(response.getFollowings()).extracting("userId").contains(userB.getLoginId())
         );
 
         verify(userRepository).findByLoginId(userA.getLoginId());
@@ -126,8 +126,8 @@ public class FollowTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getRequestLoginId()).isEqualTo(userA.getLoginId()),
-                () -> assertThat(response.getTargetLoginId()).isEqualTo(userB.getLoginId()),
+                () -> assertThat(response.getUserId()).isEqualTo(userA.getLoginId()),
+                () -> assertThat(response.getTargetId()).isEqualTo(userB.getLoginId()),
                 () -> assertThat(response.isFollowing()).isTrue()
         );
     }
@@ -200,9 +200,9 @@ public class FollowTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getRequestLoginId()).isEqualTo(userB.getLoginId()),
+                () -> assertThat(response.getUserId()).isEqualTo(userB.getLoginId()),
                 () -> assertThat(response.getFollowers()).hasSize(2),
-                () -> assertThat(response.getFollowers()).extracting("loginId").containsExactly(userA.getLoginId(), userC.getLoginId())
+                () -> assertThat(response.getFollowers()).extracting("userId").containsExactly(userA.getLoginId(), userC.getLoginId())
         );
 
         verify(userRepository).findByLoginId(userB.getLoginId());
@@ -243,8 +243,8 @@ public class FollowTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getRequestLoginId()).isEqualTo(userA.getLoginId()),
-                () -> assertThat(response.getTargetLoginId()).isEqualTo(userB.getLoginId()),
+                () -> assertThat(response.getUserId()).isEqualTo(userA.getLoginId()),
+                () -> assertThat(response.getTargetId()).isEqualTo(userB.getLoginId()),
                 () -> assertThat(response.isFollowing()).isFalse()
         );
     }
@@ -261,7 +261,7 @@ public class FollowTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getRequestLoginId()).isEqualTo(userA.getLoginId()),
+                () -> assertThat(response.getUserId()).isEqualTo(userA.getLoginId()),
                 () -> assertThat(response.getFollowings()).hasSize(0)
         );
 
@@ -301,7 +301,7 @@ public class FollowTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getRequestLoginId()).isEqualTo(userB.getLoginId()),
+                () -> assertThat(response.getUserId()).isEqualTo(userB.getLoginId()),
                 () -> assertThat(response.getFollowers()).hasSize(0)
         );
 

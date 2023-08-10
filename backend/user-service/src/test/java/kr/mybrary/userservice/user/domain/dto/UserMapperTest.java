@@ -82,7 +82,7 @@ class UserMapperTest {
 
         // then
         assertAll(
-            () -> assertEquals(user.getLoginId(), searchedUser.getLoginId()),
+            () -> assertEquals(user.getLoginId(), searchedUser.getUserId()),
             () -> assertEquals(user.getNickname(), searchedUser.getNickname()),
             () -> assertEquals(user.getProfileImageUrl(), searchedUser.getProfileImageUrl())
         );

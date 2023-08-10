@@ -55,7 +55,7 @@ public class InterestServiceImpl implements InterestService {
     @Transactional(readOnly = true)
     public UserInterestServiceResponse getUserInterests(String loginId) {
         return UserInterestServiceResponse.builder()
-                .loginId(loginId)
+                .userId(loginId)
                 .userInterests(getInterestResponses(getAllUserInterestsBy(loginId)))
                 .build();
     }
