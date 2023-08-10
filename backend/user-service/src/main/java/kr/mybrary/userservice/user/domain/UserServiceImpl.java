@@ -255,8 +255,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateDuplicateFollow(User source, User target) {
-        if (source.getFollowings().stream()
-                .anyMatch(follow -> follow.getTarget().equals(target))) {
+        if (checkFollowing(source, target)) {
             throw new DuplicateFollowException();
         }
     }
@@ -280,6 +279,20 @@ public class UserServiceImpl implements UserService {
         validateDifferentSourceTarget(sourceUser, targetUser);
 
         sourceUser.unfollow(targetUser);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public IsFollowingServiceResponse isFollowing(FollowServiceRequest serviceRequest) {
+        return IsFollowingServiceResponse.builder()
+                .requestLoginId(serviceRequest.getSourceId())
+                .targetLoginId(serviceRequest.getTargetId())
+                .isFollowing(checkFollowing(getUser(serviceRequest.getSourceId()), getUser(serviceRequest.getTargetId())))
+                .build();
+    }
+
+    private boolean checkFollowing(User sourceUser, User targetUser) {
+        return sourceUser.getFollowings().stream().anyMatch(follow -> follow.getTarget().equals(targetUser));
     }
 
     @Override

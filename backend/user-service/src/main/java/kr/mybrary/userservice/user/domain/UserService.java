@@ -29,6 +29,8 @@ public interface UserService {
 
     void deleteFollower(FollowerServiceRequest serviceRequest);
 
+    IsFollowingServiceResponse isFollowing(FollowServiceRequest serviceRequest);
+
     SearchServiceResponse searchByNickname(String nickname);
 
     void deleteAccount(String loginId);
