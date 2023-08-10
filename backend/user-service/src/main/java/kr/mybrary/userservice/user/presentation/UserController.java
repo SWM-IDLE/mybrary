@@ -9,15 +9,7 @@ import kr.mybrary.userservice.user.presentation.dto.request.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -96,22 +88,22 @@ public class UserController {
         );
     }
 
-    @GetMapping("/followers")
-    public ResponseEntity<SuccessResponse> getFollowers(@RequestHeader("USER-ID") String loginId) {
+    @GetMapping("/{userId}/followers")
+    public ResponseEntity<SuccessResponse> getFollowers(@PathVariable("userId") String loginId) {
         FollowerServiceResponse serviceResponse = userService.getFollowers(loginId);
 
         return ResponseEntity.ok().body(
-                SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 팔로워 목록을 조회했습니다.",
+                SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 팔로워 목록을 조회했습니다.",
                         serviceResponse)
         );
     }
 
-    @GetMapping("/followings")
-    public ResponseEntity<SuccessResponse> getFollowings(@RequestHeader("USER-ID") String loginId) {
+    @GetMapping("/{userId}/followings")
+    public ResponseEntity<SuccessResponse> getFollowings(@PathVariable("userId") String loginId) {
         FollowingServiceResponse serviceResponse = userService.getFollowings(loginId);
 
         return ResponseEntity.ok().body(
-                SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 팔로잉 목록을 조회했습니다.",
+                SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 팔로잉 목록을 조회했습니다.",
                         serviceResponse)
         );
     }
