@@ -13,6 +13,7 @@ import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.review.MyBookReviewDtoTestData;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
+import kr.mybrary.bookservice.review.domain.exception.MyReviewAccessDeniedException;
 import kr.mybrary.bookservice.review.domain.exception.MyReviewAlreadyExistsException;
 import kr.mybrary.bookservice.review.persistence.repository.MyReviewRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -56,6 +57,26 @@ class MyReviewWriteServiceTest {
                 () -> verify(myBookService, times(1)).findMyBookByIdWithBook(request.getMyBookId()),
                 () -> verify(myBookReviewRepository, times(1)).existsByMyBook(myBook),
                 () -> verify(myBookReviewRepository, times(1)).save(any())
+        );
+    }
+
+    @DisplayName("다른 유저의 마이북 리뷰를 등록할 시, 예외가 발생한다.")
+    @Test
+    void occurExceptionWhenWriteOtherBookReview() {
+
+        // given
+        MyReviewCreateServiceRequest request = MyBookReviewDtoTestData.createMyBookReviewCreateServiceRequest();
+        MyBook myBook = MyBookFixture.COMMON_OTHER_USER_MYBOOK.getMyBook();
+
+        given(myBookService.findMyBookByIdWithBook(request.getMyBookId())).willReturn(myBook);
+
+        // when, then
+        assertAll(
+                () -> assertThatThrownBy(() -> myReviewWriteService.create(request))
+                        .isInstanceOf(MyReviewAccessDeniedException.class),
+                () -> verify(myBookService, times(1)).findMyBookByIdWithBook(request.getMyBookId()),
+                () -> verify(myBookReviewRepository, never()).existsByMyBook(myBook),
+                () -> verify(myBookReviewRepository, never()).save(any())
         );
     }
 
