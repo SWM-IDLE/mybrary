@@ -1,6 +1,6 @@
 package kr.mybrary.userservice.user.domain.dto.response;
 
-import kr.mybrary.userservice.user.persistence.model.UserInfoModel;
+import kr.mybrary.userservice.user.persistence.model.FollowUserInfoModel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,11 +12,11 @@ public class FollowResponse {
     private String nickname;
     private String profileImageUrl;
 
-    public static FollowResponse of(UserInfoModel userInfoModel) {
+    public static FollowResponse of(FollowUserInfoModel followUserInfoModel) {
         return FollowResponse.builder()
-                .userId(userInfoModel.getLoginId())
-                .nickname(userInfoModel.getNickname())
-                .profileImageUrl(userInfoModel.getProfileImageUrl())
+                .userId(followUserInfoModel.getLoginId())
+                .nickname(followUserInfoModel.getNickname())
+                .profileImageUrl(followUserInfoModel.getProfileImageUrl())
                 .build();
     }
 
