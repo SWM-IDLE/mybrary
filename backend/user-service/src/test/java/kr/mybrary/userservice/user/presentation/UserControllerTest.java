@@ -454,7 +454,7 @@ class UserControllerTest {
         );
     }
 
-    @DisplayName("로그인 된 사용자의 팔로워 목록을 조회한다.")
+    @DisplayName("사용자의 팔로워 목록을 조회한다.")
     @Test
     void getFollowers() throws Exception {
         // given
@@ -481,15 +481,14 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL+"/followers")
-                        .with(csrf())
-                        .header("USER-ID", LOGIN_ID));
+                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/followers", LOGIN_ID)
+                        .with(csrf()));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
-                .andExpect(jsonPath("$.message").value("로그인 된 사용자의 팔로워 목록을 조회했습니다."))
+                .andExpect(jsonPath("$.message").value("사용자의 팔로워 목록을 조회했습니다."))
                 .andExpect(jsonPath("$.data.requestLoginId").value(
                         followerServiceResponse.getRequestLoginId()))
                 .andExpect(jsonPath("$.data.followers[0].id").value(followers.get(0).getId()))
@@ -516,9 +515,9 @@ class UserControllerTest {
                 resource(
                         ResourceSnippetParameters.builder()
                                 .tag("user-follow")
-                                .summary("로그인한 사용자의 팔로워 목록을 조회한다.")
-                                .requestHeaders(
-                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                .summary("사용자의 팔로워 목록을 조회한다.")
+                                .pathParameters(
+                                        parameterWithName("userId").type(SimpleType.STRING).description("사용자의 아이디")
                                 )
                                 .responseSchema(Schema.schema("get_user_followers_response_body"))
                                 .responseFields(
@@ -543,7 +542,7 @@ class UserControllerTest {
         );
     }
 
-    @DisplayName("로그인 된 사용자의 팔로잉 목록을 조회한다.")
+    @DisplayName("사용자의 팔로잉 목록을 조회한다.")
     @Test
     void getFollowings() throws Exception {
         // given
@@ -570,15 +569,14 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL+"/followings")
-                        .with(csrf())
-                        .header("USER-ID", LOGIN_ID));
+                RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/followings", LOGIN_ID)
+                        .with(csrf()));
 
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
-                .andExpect(jsonPath("$.message").value("로그인 된 사용자의 팔로잉 목록을 조회했습니다."))
+                .andExpect(jsonPath("$.message").value("사용자의 팔로잉 목록을 조회했습니다."))
                 .andExpect(jsonPath("$.data.requestLoginId").value(
                         followingServiceResponse.getRequestLoginId()))
                 .andExpect(jsonPath("$.data.followings[0].id").value(followings.get(0).getId()))
@@ -605,9 +603,9 @@ class UserControllerTest {
                 resource(
                         ResourceSnippetParameters.builder()
                                 .tag("user-follow")
-                                .summary("로그인한 사용자의 팔로잉 목록을 조회한다.")
-                                .requestHeaders(
-                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                .summary("사용자의 팔로잉 목록을 조회한다.")
+                                .pathParameters(
+                                        parameterWithName("userId").type(SimpleType.STRING).description("사용자의 아이디")
                                 )
                                 .responseSchema(Schema.schema("get_user_followings_response_body"))
                                 .responseFields(
