@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
@@ -80,7 +80,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
     return SubPageLayout(
       appBarTitle: '프로필 편집',
-      backgroundColor: WHITE_COLOR,
+      backgroundColor: commonWhiteColor,
       child: LayoutBuilder(builder: (context, constraint) {
         return SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -253,8 +253,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: PRIMARY_COLOR,
-          foregroundColor: WHITE_COLOR,
+          backgroundColor: primaryColor,
+          foregroundColor: commonWhiteColor,
         ),
         onPressed: () {
           Navigator.pop(context);

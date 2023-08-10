@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
 import 'package:mybrary/ui/auth/components/sign_in_input.dart';
 import 'package:mybrary/ui/auth/components/sing_in_button.dart';
@@ -140,8 +140,8 @@ class _FindPasswordForm extends StatelessWidget {
             isEnabled: isVerifyEnabled,
             isOAuth: false,
             btnText: isInputValid && isValidLoginId ? '확인' : '임시 비밀번호 받기',
-            btnBackgroundColor: LOGIN_PRIMARY_COLOR,
-            textColor: BLACK_COLOR,
+            btnBackgroundColor: loginPrimaryColor,
+            textColor: commonBlackColor,
           ),
         ),
       ],
@@ -174,8 +174,8 @@ class _IdVerifyForm extends StatelessWidget {
           '아이디',
           style: TextStyle(
             color: !(isInputValid && isValidLoginId)
-                ? BLACK_COLOR
-                : DISABLED_COLOR,
+                ? commonBlackColor
+                : commonDisabledColor,
           ),
         ),
         SignInInput(
@@ -205,7 +205,7 @@ class _IdVerifyForm extends StatelessWidget {
           Text(
             '존재하지 않는 아이디입니다.',
             style: TextStyle(
-              color: LOGIN_ERROR_COLOR,
+              color: loginErrorColor,
             ),
           ),
       ],

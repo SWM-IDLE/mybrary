@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/search/search_book_list/search_book_list.dart';
 
@@ -62,7 +62,7 @@ class SearchPopularKeyword extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: GREY_02_COLOR,
+                      color: greyDDDDDD,
                     ),
                     borderRadius: BorderRadius.circular(30.0),
                   ),

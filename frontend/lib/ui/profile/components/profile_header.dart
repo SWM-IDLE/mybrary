@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class ProfileHeader extends StatelessWidget {
@@ -25,7 +25,7 @@ class ProfileHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: GREY_01_COLOR,
+        color: greyF1F2F5,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -40,7 +40,7 @@ class ProfileHeader extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   side: const BorderSide(
                     width: 2,
-                    color: BOOK_BORDER_COLOR,
+                    color: bookBorderColor,
                   ),
                   borderRadius: BorderRadius.circular(50),
                 ),

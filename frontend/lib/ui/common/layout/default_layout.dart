@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 
 class DefaultLayout extends StatelessWidget {
   final Widget child;
@@ -19,7 +19,7 @@ class DefaultLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor ?? WHITE_COLOR,
+      backgroundColor: backgroundColor ?? commonWhiteColor,
       appBar: appBar,
       body: child,
       bottomNavigationBar: bottomNavigationBar,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class ProfileEditBody extends StatelessWidget {
@@ -63,7 +63,7 @@ class ProfileEditBody extends StatelessWidget {
           child: Text(
             '한글, 영문, 숫자 (2-20자)',
             style: TextStyle(
-              color: GREY_05_COLOR,
+              color: grey777777,
               fontSize: 13.0,
               fontWeight: FontWeight.w400,
             ),
@@ -109,8 +109,8 @@ class ProfileEditBody extends StatelessWidget {
             padding: const EdgeInsets.symmetric(
               vertical: 14.0,
             ),
-            backgroundColor: PRIMARY_COLOR,
-            disabledForegroundColor: WHITE_COLOR,
+            backgroundColor: primaryColor,
+            disabledForegroundColor: commonWhiteColor,
           ),
           child: const Text('저장'),
         ),

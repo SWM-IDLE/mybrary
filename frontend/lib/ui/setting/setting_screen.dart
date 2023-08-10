@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 
@@ -10,14 +10,14 @@ class SettingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultLayout(
       appBar: AppBar(
-        backgroundColor: WHITE_COLOR,
+        backgroundColor: commonWhiteColor,
         elevation: 0,
         title: const Text('설정'),
         titleTextStyle: appBarTitleStyle.copyWith(
           fontSize: 17.0,
         ),
         centerTitle: true,
-        foregroundColor: BLACK_COLOR,
+        foregroundColor: commonBlackColor,
       ),
       child: Center(
         child: Text('설정'),

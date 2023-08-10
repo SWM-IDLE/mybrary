@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -19,7 +19,7 @@ Future<dynamic> onIsbnScan(BuildContext context) async {
           SnackBar(
             action: SnackBarAction(
               label: '설정',
-              textColor: PRIMARY_COLOR,
+              textColor: primaryColor,
               onPressed: () {
                 openAppSettings();
               },

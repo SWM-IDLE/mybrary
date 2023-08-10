@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class BookDetailInfo extends StatelessWidget {
@@ -77,11 +77,11 @@ class BookDetailInfo extends StatelessWidget {
                   message: category,
                   textStyle: bookDetailInfoStyle.copyWith(
                     fontSize: 12.0,
-                    color: GREY_06_COLOR,
+                    color: grey262626,
                   ),
                   triggerMode: TooltipTriggerMode.tap,
                   decoration: const BoxDecoration(
-                    color: GREY_01_COLOR,
+                    color: greyF1F2F5,
                     borderRadius: BorderRadius.all(Radius.circular(4.0)),
                   ),
                   verticalOffset: 16.0,
@@ -89,7 +89,7 @@ class BookDetailInfo extends StatelessWidget {
                   child: const Icon(
                     Icons.info,
                     size: 18.0,
-                    color: GREY_02_COLOR,
+                    color: greyDDDDDD,
                   ),
                 ),
               ],
@@ -130,8 +130,8 @@ class BookDetailInfo extends StatelessWidget {
               'assets/img/icon/star.png',
               // 별점 표시. 예로, 3.3은 3점이며 4.8은 4점으로 표시
               color: e < starRating.floor()
-                  ? BOOK_STAR_COLOR
-                  : BOOK_STAR_DISABLED_COLOR,
+                  ? bookStarColor
+                  : bookStarDisabledColor,
             ),
           )
           .toList(),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:mybrary/res/config/config.dart';
+import 'package:mybrary/res/constants/config.dart';
 import 'package:mybrary/ui/auth/find_pw/find_password_screen.dart';
 import 'package:mybrary/ui/auth/sign_in/sign_in_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_screen.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 
 class IsbnScanAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppBar appBar;
@@ -14,13 +13,13 @@ class IsbnScanAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       elevation: 0.0,
-      backgroundColor: MYBOOK_SCAN_BACKGROUND_COLOR,
+      backgroundColor: myBookScanBackgroundColor,
       automaticallyImplyLeading: false,
       centerTitle: true,
       title: Text(
         '마이북 스캔',
         style: TextStyle(
-          color: WHITE_COLOR,
+          color: commonWhiteColor,
           fontSize: 16.0,
           fontWeight: FontWeight.bold,
         ),

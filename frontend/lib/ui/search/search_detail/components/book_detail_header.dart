@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
 
@@ -48,7 +48,7 @@ class BookDetailHeader extends StatelessWidget {
             ),
             shadows: [
               BoxShadow(
-                color: BLACK_COLOR.withOpacity(0.3),
+                color: commonBlackColor.withOpacity(0.3),
                 blurRadius: 6,
                 offset: const Offset(0, 4),
                 spreadRadius: 0,
@@ -75,7 +75,7 @@ class BookDetailHeader extends StatelessWidget {
               Text(
                 bookAuthorsOrTranslators(authors),
                 style: commonSubRegularStyle.copyWith(
-                  color: BOOK_DESCRIPTION_COLOR,
+                  color: bookDescriptionColor,
                 ),
               ),
             ],
@@ -146,7 +146,7 @@ class BookDetailHeader extends StatelessWidget {
           : const BoxDecoration(
               border: Border(
                 right: BorderSide(
-                  color: GREY_02_COLOR,
+                  color: greyDDDDDD,
                   width: 1,
                 ),
               ),

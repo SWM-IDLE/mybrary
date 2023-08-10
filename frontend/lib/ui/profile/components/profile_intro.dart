@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/profile/my_interests_response.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/profile/my_badge/my_badge_screen.dart';
 
@@ -126,7 +126,7 @@ class ProfileIntro extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       side: const BorderSide(
                         width: 1,
-                        color: BOOK_BORDER_COLOR,
+                        color: bookBorderColor,
                       ),
                       borderRadius: BorderRadius.circular(50),
                     ),

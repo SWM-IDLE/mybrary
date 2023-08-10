@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class InterestCategory extends StatelessWidget {
@@ -20,7 +20,7 @@ class InterestCategory extends StatelessWidget {
         vertical: 8.0,
       ),
       decoration: BoxDecoration(
-        color: isSelected ? primaryColor : WHITE_COLOR,
+        color: isSelected ? primaryColor : commonWhiteColor,
         border: Border.all(
           color: isSelected ? primaryColor : circularBorderColor,
         ),
@@ -30,7 +30,7 @@ class InterestCategory extends StatelessWidget {
         name,
         style: isSelected
             ? commonSubRegularStyle.copyWith(
-                color: WHITE_COLOR,
+                color: commonWhiteColor,
                 fontWeight: FontWeight.w700,
               )
             : commonSubRegularStyle,

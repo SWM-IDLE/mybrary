@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 
 class IsbnScanDescription extends StatelessWidget {
   final double width;
@@ -15,7 +15,7 @@ class IsbnScanDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const barcodeDescriptionTextStyle = TextStyle(
-      color: WHITE_COLOR,
+      color: commonWhiteColor,
       fontSize: 15.0,
     );
 
@@ -25,7 +25,7 @@ class IsbnScanDescription extends StatelessWidget {
         width: width,
         height: height * 0.35,
         decoration: BoxDecoration(
-          color: MYBOOK_SCAN_BACKGROUND_COLOR.withOpacity(0.7),
+          color: myBookScanBackgroundColor.withOpacity(0.7),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -52,14 +52,14 @@ class IsbnScanDescription extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
               style: ElevatedButton.styleFrom(
                 fixedSize: Size(66.0, 66.0),
-                backgroundColor: PRIMARY_COLOR,
+                backgroundColor: primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(100.0),
                 ),
               ),
               child: Icon(
                 CupertinoIcons.xmark,
-                color: WHITE_COLOR,
+                color: commonWhiteColor,
                 size: 44.0,
               ),
             ),

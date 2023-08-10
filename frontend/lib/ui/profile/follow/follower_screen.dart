@@ -3,7 +3,7 @@ import 'package:mybrary/data/model/profile/follower_response.dart';
 import 'package:mybrary/data/model/profile/following_response.dart';
 import 'package:mybrary/data/model/profile/profile_common_response.dart';
 import 'package:mybrary/data/repository/follow_repository.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/enum.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
@@ -164,7 +164,7 @@ class _FollowerScreenState extends State<FollowerScreen>
                 ),
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
-                  backgroundColor: GREY_02_COLOR,
+                  backgroundColor: greyDDDDDD,
                   shape: followButtonRoundStyle,
                   minimumSize: const Size(60.0, 10.0),
                   splashFactory: NoSplash.splashFactory,
@@ -206,9 +206,8 @@ class _FollowerScreenState extends State<FollowerScreen>
                 ),
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
-                  backgroundColor: isFollowing(followingUserId)
-                      ? GREY_02_COLOR
-                      : primaryColor,
+                  backgroundColor:
+                      isFollowing(followingUserId) ? greyDDDDDD : primaryColor,
                   shape: followButtonRoundStyle,
                   minimumSize: const Size(60.0, 10.0),
                   splashFactory: NoSplash.splashFactory,
@@ -221,8 +220,8 @@ class _FollowerScreenState extends State<FollowerScreen>
                   isFollowing(followingUserId) ? '팔로잉' : '팔로우',
                   style: followButtonTextStyle.copyWith(
                     color: isFollowing(followingUserId)
-                        ? BLACK_COLOR
-                        : WHITE_COLOR,
+                        ? commonBlackColor
+                        : commonWhiteColor,
                   ),
                 ),
               ),
@@ -282,7 +281,7 @@ class _FollowerScreenState extends State<FollowerScreen>
   }) {
     return showDialog(
       context: context,
-      barrierColor: BLACK_COLOR.withOpacity(0.1),
+      barrierColor: commonBlackColor.withOpacity(0.1),
       barrierDismissible: false,
       builder: (BuildContext context) {
         return Center(
@@ -290,14 +289,14 @@ class _FollowerScreenState extends State<FollowerScreen>
             width: 76.0,
             height: 38.0,
             decoration: BoxDecoration(
-              color: GREY_06_COLOR.withOpacity(0.8),
+              color: grey262626.withOpacity(0.8),
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: Center(
               child: Text(
                 message,
                 style: commonSubRegularStyle.copyWith(
-                  color: WHITE_COLOR,
+                  color: commonWhiteColor,
                 ),
               ),
             ),
@@ -323,12 +322,12 @@ class _FollowerScreenState extends State<FollowerScreen>
         handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
         sliver: SliverAppBar(
           elevation: 0,
-          foregroundColor: BLACK_COLOR,
-          backgroundColor: WHITE_COLOR,
+          foregroundColor: commonBlackColor,
+          backgroundColor: commonWhiteColor,
           // expandedHeight: 120,
           flexibleSpace: FlexibleSpaceBar(
             background: Container(
-              color: WHITE_COLOR,
+              color: commonWhiteColor,
             ),
           ),
           title: Text(widget.nickname),
@@ -354,10 +353,10 @@ class _FollowerScreenState extends State<FollowerScreen>
   ) {
     return TabBar(
       controller: tabController,
-      indicatorColor: GREY_06_COLOR,
-      labelColor: GREY_06_COLOR,
+      indicatorColor: grey262626,
+      labelColor: grey262626,
       labelStyle: commonButtonTextStyle,
-      unselectedLabelColor: GREY_03_COLOR,
+      unselectedLabelColor: greyACACAC,
       unselectedLabelStyle: commonButtonTextStyle.copyWith(
         fontWeight: FontWeight.w400,
       ),

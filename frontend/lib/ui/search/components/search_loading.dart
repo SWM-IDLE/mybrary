@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 
 class SearchLoading extends StatelessWidget {
   const SearchLoading({super.key});
@@ -8,8 +8,8 @@ class SearchLoading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: CircularProgressIndicator(
-        backgroundColor: PRIMARY_COLOR.withOpacity(0.2),
-        valueColor: const AlwaysStoppedAnimation<Color>(PRIMARY_COLOR),
+        backgroundColor: primaryColor.withOpacity(0.2),
+        valueColor: const AlwaysStoppedAnimation<Color>(primaryColor),
       ),
     );
   }

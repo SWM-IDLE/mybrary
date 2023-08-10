@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
@@ -55,7 +55,7 @@ class SearchBookListInfo extends StatelessWidget {
                             height: 126,
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: GREY_01_COLOR,
+                                color: greyF1F2F5,
                                 width: 1,
                               ),
                               borderRadius: BorderRadius.circular(8.0),
@@ -91,7 +91,7 @@ class SearchBookListInfo extends StatelessWidget {
                                     bookInfo(
                                       infoText: searchBookData.description!,
                                       fontSize: 13.0,
-                                      fontColor: BOOK_DESCRIPTION_COLOR,
+                                      fontColor: bookDescriptionColor,
                                     ),
                                   ],
                                 ),
@@ -101,14 +101,14 @@ class SearchBookListInfo extends StatelessWidget {
                                     bookInfo(
                                       infoText: searchBookData.author!,
                                       fontSize: 13.0,
-                                      fontColor: BOOK_DESCRIPTION_COLOR,
+                                      fontColor: bookDescriptionColor,
                                     ),
                                     const SizedBox(height: 1.0),
                                     bookInfo(
                                       infoText:
                                           '${publishDate.year}.${publishDate.month}',
                                       fontSize: 13.0,
-                                      fontColor: BOOK_DESCRIPTION_COLOR,
+                                      fontColor: bookDescriptionColor,
                                     ),
                                   ],
                                 ),
@@ -127,7 +127,7 @@ class SearchBookListInfo extends StatelessWidget {
             return const Divider(
               thickness: 1,
               height: 1,
-              color: GREY_01_COLOR,
+              color: greyF1F2F5,
             );
           },
         ),
@@ -147,7 +147,7 @@ class SearchBookListInfo extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       textWidthBasis: TextWidthBasis.parent,
       style: TextStyle(
-        color: fontColor ?? BLACK_COLOR,
+        color: fontColor ?? commonBlackColor,
         fontSize: fontSize,
         fontWeight: fontWeight ?? FontWeight.w500,
       ),

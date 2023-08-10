@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -27,7 +27,7 @@ class BookDetailProvider extends StatelessWidget {
             height: 40.0,
             padding: const EdgeInsets.symmetric(horizontal: 6.0),
             decoration: const BoxDecoration(
-              color: GREY_01_COLOR,
+              color: greyF1F2F5,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

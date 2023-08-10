@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 
 class SignInInput extends StatelessWidget {
   final String hintText;
@@ -27,7 +27,7 @@ class SignInInput extends StatelessWidget {
       obscureText: obscureText,
       initialValue: initialValue,
       validator: validator,
-      cursorColor: ORANGE_COLOR,
+      cursorColor: commonOrangeColor,
       decoration: InputDecoration(
         hintText: hintText,
         contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -39,7 +39,7 @@ class SignInInput extends StatelessWidget {
   UnderlineInputBorder loginInputBorderStyle() {
     return const UnderlineInputBorder(
       borderSide: BorderSide(
-        color: BLACK_COLOR,
+        color: commonBlackColor,
       ),
     );
   }

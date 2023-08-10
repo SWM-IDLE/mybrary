@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
 import 'package:mybrary/ui/auth/components/sign_in_input.dart';
 import 'package:mybrary/ui/auth/components/sing_in_button.dart';
@@ -243,8 +243,8 @@ class _SignUpForm extends StatelessWidget {
             isOAuth: false,
             isEnabled: isEnabledSignUp,
             btnText: '인증번호 발송',
-            btnBackgroundColor: LOGIN_PRIMARY_COLOR,
-            textColor: BLACK_COLOR,
+            btnBackgroundColor: loginPrimaryColor,
+            textColor: commonBlackColor,
           ),
         ),
       ],

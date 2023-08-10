@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
@@ -51,14 +51,14 @@ class _MyBookScreenState extends State<MyBookScreen> {
   SliverAppBar _myBookAppBar(ProfileResponseData profileData) {
     return SliverAppBar(
       toolbarHeight: 80.0,
-      backgroundColor: WHITE_COLOR,
+      backgroundColor: commonWhiteColor,
       elevation: 0,
       pinned: true,
       title: Row(
         children: [
           CircleAvatar(
             radius: 20.0,
-            backgroundColor: GREY_03_COLOR,
+            backgroundColor: greyACACAC,
             backgroundImage: NetworkImage(
               profileData.profileImageUrl!,
             ),
@@ -87,7 +87,7 @@ class _MyBookScreenState extends State<MyBookScreen> {
       ),
       titleTextStyle: appBarTitleStyle,
       centerTitle: false,
-      foregroundColor: BLACK_COLOR,
+      foregroundColor: commonBlackColor,
     );
   }
 }

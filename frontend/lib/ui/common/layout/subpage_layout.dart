@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class SubPageLayout extends StatelessWidget {
@@ -24,7 +24,7 @@ class SubPageLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor ?? WHITE_COLOR,
+      backgroundColor: backgroundColor ?? commonWhiteColor,
       appBar: renderAppBar(),
       body: child,
       bottomNavigationBar: bottomNavigationBar,
@@ -42,8 +42,8 @@ class SubPageLayout extends StatelessWidget {
           fontSize: 16.0,
         ),
         centerTitle: true,
-        backgroundColor: WHITE_COLOR,
-        foregroundColor: BLACK_COLOR,
+        backgroundColor: commonWhiteColor,
+        foregroundColor: commonBlackColor,
         actions: appBarActions,
       );
     }

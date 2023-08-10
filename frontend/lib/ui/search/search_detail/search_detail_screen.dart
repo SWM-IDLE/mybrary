@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
 import 'package:mybrary/data/repository/search_repository.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
@@ -238,7 +238,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       child: Divider(
         height: 1,
         thickness: 6,
-        color: GREY_01_COLOR,
+        color: greyF1F2F5,
       ),
     );
   }
@@ -259,8 +259,8 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       ),
       expandedAlignment: Alignment.centerLeft,
       shape: const Border(),
-      iconColor: GREY_05_COLOR,
-      collapsedIconColor: GREY_05_COLOR,
+      iconColor: grey777777,
+      collapsedIconColor: grey777777,
       children: [
         children,
       ],

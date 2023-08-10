@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 
 class IsbnScanHeader extends StatelessWidget {
   final double width;
@@ -19,7 +19,7 @@ class IsbnScanHeader extends StatelessWidget {
         width: width,
         height: height * 0.08,
         decoration: BoxDecoration(
-          color: MYBOOK_SCAN_BACKGROUND_COLOR.withOpacity(0.7),
+          color: myBookScanBackgroundColor.withOpacity(0.7),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -27,7 +27,7 @@ class IsbnScanHeader extends StatelessWidget {
             Text(
               '바코드 스캔',
               style: TextStyle(
-                color: PRIMARY_COLOR,
+                color: primaryColor,
                 fontSize: 15.0,
               ),
             ),
@@ -43,7 +43,7 @@ class IsbnScanHeader extends StatelessWidget {
               child: Text(
                 '책장 스캔',
                 style: TextStyle(
-                  color: WHITE_COLOR.withOpacity(0.3),
+                  color: commonWhiteColor.withOpacity(0.3),
                   fontSize: 15.0,
                 ),
               ),

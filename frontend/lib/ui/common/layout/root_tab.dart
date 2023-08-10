@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/home/home_screen.dart';
 import 'package:mybrary/ui/mybook/mybook_screen.dart';
@@ -70,16 +70,16 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: GREY_01_COLOR,
+              color: greyF1F2F5,
               width: 1.0,
             ),
           ),
         ),
         child: BottomNavigationBar(
           elevation: 0,
-          backgroundColor: WHITE_COLOR,
-          selectedItemColor: BLACK_COLOR,
-          unselectedItemColor: GREY_03_COLOR,
+          backgroundColor: commonWhiteColor,
+          selectedItemColor: commonBlackColor,
+          unselectedItemColor: greyACACAC,
           selectedFontSize: 12,
           selectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.w700,
@@ -99,7 +99,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
                       SvgPicture.asset(
                         e['iconPath']!,
                         colorFilter: const ColorFilter.mode(
-                          GREY_03_COLOR,
+                          greyACACAC,
                           BlendMode.srcIn,
                         ),
                       ),

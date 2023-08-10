@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 
 class ProfileEditImage extends StatelessWidget {
   final File? profileImage;
@@ -24,7 +24,7 @@ class ProfileEditImage extends StatelessWidget {
             shape: RoundedRectangleBorder(
               side: const BorderSide(
                 width: 1,
-                color: BOOK_BORDER_COLOR,
+                color: bookBorderColor,
               ),
               borderRadius: BorderRadius.circular(50),
             ),

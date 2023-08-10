@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mybrary/res/colors/color.dart';
+import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/search/components/search_popular_keyword.dart';
@@ -29,7 +29,7 @@ class _SearchScreenState extends State<SearchScreen> {
         statusBarColor: Colors.transparent,
         statusBarBrightness: Brightness.light,
         statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: LESS_GREY_COLOR.withOpacity(0.2),
+        systemNavigationBarColor: commonLessGreyColor.withOpacity(0.2),
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
@@ -60,14 +60,14 @@ class _SearchScreenState extends State<SearchScreen> {
         child: DefaultLayout(
           appBar: AppBar(
             toolbarHeight: 60.0,
-            backgroundColor: WHITE_COLOR,
+            backgroundColor: commonWhiteColor,
             elevation: 0,
             title: const Text('검색'),
             titleTextStyle: commonSubTitleStyle.copyWith(
-              color: BLACK_COLOR,
+              color: commonBlackColor,
             ),
             centerTitle: true,
-            foregroundColor: BLACK_COLOR,
+            foregroundColor: commonBlackColor,
             actions: [
               IconButton(
                 onPressed: () => onIsbnScan(context),
@@ -127,10 +127,10 @@ class _SearchScreenState extends State<SearchScreen> {
                             hintText: '책, 저자, 회원을 검색해보세요.',
                             hintStyle: commonSubRegularStyle,
                             filled: true,
-                            fillColor: GREY_COLOR_OPACITY_TWO,
+                            fillColor: commonGreyOpacityColor,
                             focusedBorder: searchInputBorderStyle,
                             enabledBorder: searchInputBorderStyle,
-                            focusColor: GREY_COLOR,
+                            focusColor: commonGreyColor,
                             prefixIcon: SvgPicture.asset(
                               'assets/svg/icon/search_small.svg',
                               fit: BoxFit.scaleDown,
@@ -171,7 +171,7 @@ class _SearchScreenState extends State<SearchScreen> {
             },
             icon: const Icon(
               Icons.cancel_rounded,
-              color: GREY_05_COLOR,
+              color: grey777777,
               size: 18.0,
             ),
           )
