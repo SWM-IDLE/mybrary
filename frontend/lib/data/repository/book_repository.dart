@@ -4,10 +4,10 @@ import 'package:mybrary/data/model/book/interest_book_response.dart';
 class BookRepository {
   final BookDataSource _searchDataSource = BookDataSource();
 
-  Future<InterestBookResponseData> registerInterestBook({
+  Future<InterestBookResponseData> createOrDeleteInterestBook({
     required String userId,
     required String isbn13,
   }) {
-    return _searchDataSource.registerInterestBook(userId, isbn13);
+    return _searchDataSource.createOrDeleteInterestBook(userId, isbn13);
   }
 }

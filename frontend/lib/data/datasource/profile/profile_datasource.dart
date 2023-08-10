@@ -27,25 +27,25 @@ class ProfileDataSource {
     return result.data!;
   }
 
-  Future<ProfileResponseData> editProfileData(
+  Future<ProfileResponseData> updateProfileData(
     String newNickname,
     String introduction,
   ) async {
     Dio dio = DioService().to();
-    final profileEditResponse = await dio.put(
-      getApi(API.editUserProfile),
+    final profileUpdateResponse = await dio.put(
+      getApi(API.updateUserProfile),
       options: Options(headers: {'User-Id': 'testId'}),
       data: {'nickname': newNickname, 'introduction': introduction},
     );
 
-    log('프로필 수정 응답값: $profileEditResponse');
+    log('프로필 수정 응답값: $profileUpdateResponse');
     final ProfileResponse result = commonResponseResult(
-      profileEditResponse,
+      profileUpdateResponse,
       () => ProfileResponse(
-        status: profileEditResponse.data['status'],
-        message: profileEditResponse.data['message'],
+        status: profileUpdateResponse.data['status'],
+        message: profileUpdateResponse.data['message'],
         data: ProfileResponseData.fromJson(
-          profileEditResponse.data['data'],
+          profileUpdateResponse.data['data'],
         ),
       ),
     );
@@ -73,11 +73,11 @@ class ProfileDataSource {
     return result.data!;
   }
 
-  Future<ProfileImageResponseData> editProfileImage(
+  Future<ProfileImageResponseData> updateProfileImage(
       FormData newProfileImage) async {
     Dio dio = DioService().to();
-    final profileImageEditResponse = await dio.put(
-      getApi(API.editUserProfileImage),
+    final profileImageUpdateResponse = await dio.put(
+      getApi(API.updateUserProfileImage),
       options: Options(
         headers: {'User-Id': 'testId'},
         contentType: 'multipart/form-data',
@@ -85,14 +85,14 @@ class ProfileDataSource {
       data: newProfileImage,
     );
 
-    log('프로필 이미지 수정 응답값: $profileImageEditResponse');
+    log('프로필 이미지 수정 응답값: $profileImageUpdateResponse');
     final ProfileImageResponse result = commonResponseResult(
-      profileImageEditResponse,
+      profileImageUpdateResponse,
       () => ProfileImageResponse(
-        status: profileImageEditResponse.data['status'],
-        message: profileImageEditResponse.data['message'],
+        status: profileImageUpdateResponse.data['status'],
+        message: profileImageUpdateResponse.data['message'],
         data: ProfileImageResponseData.fromJson(
-          profileImageEditResponse.data['data'],
+          profileImageUpdateResponse.data['data'],
         ),
       ),
     );
@@ -103,7 +103,7 @@ class ProfileDataSource {
   Future<ProfileImageResponseData> deleteProfileImage() async {
     Dio dio = DioService().to();
     final profileImageDeleteResponse = await dio.delete(
-      getApi(API.editUserProfileImage),
+      getApi(API.updateUserProfileImage),
       options: Options(
         headers: {'User-Id': 'testId'},
       ),

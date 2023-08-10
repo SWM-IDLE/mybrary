@@ -274,7 +274,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         )) {
       return _showValidationFailedMessage(context);
     } else {
-      await _profileRepository.editProfileData(
+      await _profileRepository.updateProfileData(
         newNickname: _nicknameController.text,
         introduction: _introductionController.text,
       );
@@ -287,7 +287,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           },
         );
 
-        await _profileRepository.editProfileImage(
+        await _profileRepository.updateProfileImage(
           newProfileImage: _profileImageFormData,
         );
       }

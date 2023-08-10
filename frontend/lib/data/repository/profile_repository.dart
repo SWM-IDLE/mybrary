@@ -10,11 +10,11 @@ class ProfileRepository {
     return profileDataSource.getProfileData();
   }
 
-  Future<ProfileResponseData> editProfileData({
+  Future<ProfileResponseData> updateProfileData({
     required String newNickname,
     required String introduction,
   }) {
-    return profileDataSource.editProfileData(
+    return profileDataSource.updateProfileData(
       newNickname,
       introduction,
     );
@@ -24,10 +24,10 @@ class ProfileRepository {
     return profileDataSource.getProfileImage();
   }
 
-  Future<ProfileImageResponseData> editProfileImage({
+  Future<ProfileImageResponseData> updateProfileImage({
     required FormData newProfileImage,
   }) {
-    return profileDataSource.editProfileImage(newProfileImage);
+    return profileDataSource.updateProfileImage(newProfileImage);
   }
 
   Future<ProfileImageResponseData> deleteProfileImage() {

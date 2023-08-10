@@ -13,6 +13,7 @@ class HomeBarcodeButton extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(
           horizontal: 16.0,
+          vertical: 4.0,
         ),
         padding: const EdgeInsets.symmetric(
           vertical: 4.0,
@@ -36,7 +37,7 @@ class HomeBarcodeButton extends StatelessWidget {
                   height: 22.0,
                 ),
               ),
-              Text(
+              const Text(
                 '바코드로 마이북 등록하기',
                 style: mainIntroTextStyle,
               ),

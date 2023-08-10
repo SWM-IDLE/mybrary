@@ -31,7 +31,7 @@ class SearchDataSource {
       String isbn13) async {
     Dio dio = DioService().to();
     final bookSearchDetailResponse = await dio
-        .get('${getBookServiceApi(API.getBookSearchDetail)}?isbn=$isbn13');
+        .get('${getBookServiceApi(API.getBookSearchDetail)}?isbn13=$isbn13');
 
     log('도서 단순 상세 조회 응답값: $bookSearchDetailResponse');
     final BookSearchDetailResponse result = commonResponseResult(
@@ -55,7 +55,7 @@ class SearchDataSource {
   ) async {
     Dio dio = DioService().to();
     final bookSearchDetailAndSaveBookResponse = await dio.get(
-      '${getBookServiceApi(API.getBookSearchDetailAndSaveBook)}?isbn13=$isbn13${isbn10 != null ? '&isbn10=$isbn10' : ''}',
+      '${getBookServiceApi(API.getBookSearchDetail)}?isbn13=$isbn13${isbn10 != null ? '&isbn10=$isbn10' : ''}',
       options: Options(headers: {'User-Id': userId}),
     );
 

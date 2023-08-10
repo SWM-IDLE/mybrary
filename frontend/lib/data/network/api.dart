@@ -13,24 +13,32 @@ enum API {
   kakaoLogin,
   googleLogin,
   // user-service
-  getInterestCategories,
-  getUserInterests,
-  getUserFollowers,
-  getUserFollowings,
-  updateUserFollowing,
-  deleteUserFollower,
-  deleteUserFollowing,
   getUserProfile,
   getUserProfileImage,
-  editUserProfile,
-  editUserProfileImage,
+  getUserFollowers,
+  getUserFollowings,
+  getUserInterests,
+  getInterestCategories,
+  updateUserProfile,
+  updateUserProfileImage,
+  updateUserFollowing,
   deleteUserProfileImage,
-  // book-service
+  deleteUserFollower,
+  deleteUserFollowing,
+  // book-service search
   getBookService,
   getBookSearchKeyword,
   getBookSearchDetail,
-  getBookSearchDetailAndSaveBook,
-  registerInterestBook,
+  getBookSearchDetailReviews,
+  getMyBooks,
+  getMyBookDetail,
+  getMyBookReview,
+  getInterestBooks,
+  createMyBook,
+  createMyBookReview,
+  createOrDeleteInterestBook,
+  updateMyBookDetailInfo,
+  deleteMyBook,
 }
 
 Map<API, String> apiMap = {
@@ -39,24 +47,32 @@ Map<API, String> apiMap = {
   API.kakaoLogin: "/oauth2/authorization/kakao",
   API.googleLogin: "/oauth2/authorization/google",
   // user-service
-  API.getInterestCategories: "/api/v1/interest-categories",
-  API.getUserInterests: "/api/v1/users", // '/{userId}/interests'
-  API.getUserFollowers: "/api/v1/users/followers",
-  API.getUserFollowings: "/api/v1/users/followings",
-  API.updateUserFollowing: "/api/v1/users/follow",
-  API.deleteUserFollower: "/api/v1/users/follower",
-  API.deleteUserFollowing: "/api/v1/users/follow",
   API.getUserProfile: "/api/v1/users/profile",
   API.getUserProfileImage: "/api/v1/users/profile/image",
-  API.editUserProfile: "/api/v1/users/profile",
-  API.editUserProfileImage: "/api/v1/users/profile/image",
+  API.getUserFollowers: "/api/v1/users/followers",
+  API.getUserFollowings: "/api/v1/users/followings",
+  API.getUserInterests: "/api/v1/users", // '/{userId}/interests'
+  API.getInterestCategories: "/api/v1/interest-categories",
+  API.updateUserProfile: "/api/v1/users/profile",
+  API.updateUserProfileImage: "/api/v1/users/profile/image",
+  API.updateUserFollowing: "/api/v1/users/follow",
   API.deleteUserProfileImage: "/api/v1/users/profile/image",
+  API.deleteUserFollower: "/api/v1/users/follower",
+  API.deleteUserFollowing: "/api/v1/users/follow",
   // book-service
   API.getBookService: "/api/v1",
   API.getBookSearchKeyword: "/api/v1/books/search",
-  API.getBookSearchDetail: "/api/v1/books/search/detail",
-  API.getBookSearchDetailAndSaveBook: "/api/v1/books/detail",
-  API.registerInterestBook: "/api/v1/books", // '/{isbn13}/interest'
+  API.getBookSearchDetail: "/api/v1/books/detail",
+  API.getBookSearchDetailReviews: "/api/v1/books", // '/{isbn13}/reviews'
+  API.getMyBooks: "/api/v1/users/", // '/{userId}/mybooks'
+  API.getMyBookDetail: "/api/v1/mybooks", // '/{mybookId}'
+  API.getMyBookReview: "/api/v1/mybooks", // '/{mybookId}/review'
+  API.getInterestBooks: "/api/v1/books", // '/{isbn13}/reviews'
+  API.createMyBook: "/api/v1/mybooks",
+  API.createMyBookReview: "/api/v1/mybooks", // '/{mybookId}/reviews'
+  API.createOrDeleteInterestBook: "/api/v1/books", // '/{isbn13}/interest'
+  API.updateMyBookDetailInfo: "/api/v1/mybooks", // '/{mybookId}'
+  API.deleteMyBook: "/api/v1/mybooks", // '/{mybookId}'
 };
 
 String getApi(API apiType) {

@@ -125,7 +125,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                       key: _bookDetailHeaderKey,
                       onTapInterestBook: () async {
                         final result =
-                            await _bookRepository.registerInterestBook(
+                            await _bookRepository.createOrDeleteInterestBook(
                           userId: 'testId',
                           isbn13: bookSearchDetail.isbn13!,
                         );

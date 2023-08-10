@@ -226,3 +226,10 @@ const mainIntroTextStyle = TextStyle(
   fontSize: 14.0,
   fontWeight: FontWeight.w500,
 );
+
+// mybook page style
+const myBookAppBarTextStyle = TextStyle(
+  color: BLACK_COLOR,
+  fontSize: 17.0,
+  fontWeight: FontWeight.w400,
+);
