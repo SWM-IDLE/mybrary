@@ -146,6 +146,15 @@ public class UserController {
         );
     }
 
+    @GetMapping("/follow")
+    public ResponseEntity<SuccessResponse> isFollowing(@RequestHeader("USER-ID") String loginId,
+                                                       @RequestParam("targetId") String targetId) {
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(HttpStatus.OK.toString(), "사용자를 팔로우 중인지 확인했습니다.",
+                        userService.isFollowing(FollowServiceRequest.of(loginId, targetId)))
+        );
+    }
+
     @GetMapping("/search")
     public ResponseEntity<SuccessResponse> searchByNickname(@RequestParam(value = "nickname") String nickname) {
         SearchServiceResponse serviceResponse = userService.searchByNickname(nickname);
