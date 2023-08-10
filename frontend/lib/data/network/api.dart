@@ -64,10 +64,10 @@ Map<API, String> apiMap = {
   API.getBookSearchKeyword: "/api/v1/books/search",
   API.getBookSearchDetail: "/api/v1/books/detail",
   API.getBookSearchDetailReviews: "/api/v1/books", // '/{isbn13}/reviews'
-  API.getMyBooks: "/api/v1/users/", // '/{userId}/mybooks'
+  API.getMyBooks: "/api/v1/users", // '/{userId}/mybooks'
   API.getMyBookDetail: "/api/v1/mybooks", // '/{mybookId}'
   API.getMyBookReview: "/api/v1/mybooks", // '/{mybookId}/review'
-  API.getInterestBooks: "/api/v1/books", // '/{isbn13}/reviews'
+  API.getInterestBooks: "/api/v1/books/users", // '/{userId}/interest'
   API.createMyBook: "/api/v1/mybooks",
   API.createMyBookReview: "/api/v1/mybooks", // '/{mybookId}/reviews'
   API.createOrDeleteInterestBook: "/api/v1/books", // '/{isbn13}/interest'

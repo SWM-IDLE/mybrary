@@ -15,7 +15,7 @@ import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/profile/components/profile_header.dart';
 import 'package:mybrary/ui/profile/components/profile_intro.dart';
-import 'package:mybrary/ui/profile/follow/follower_screen.dart';
+import 'package:mybrary/ui/profile/follow/follow_screen.dart';
 import 'package:mybrary/ui/profile/my_interests/my_interests_screen.dart';
 import 'package:mybrary/ui/profile/profile_edit/profile_edit_screen.dart';
 import 'package:mybrary/ui/setting/setting_screen.dart';
@@ -245,7 +245,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => FollowerScreen(
+        builder: (_) => FollowScreen(
           nickname: nickname,
           pageType: FollowPageType.follower,
         ),
@@ -266,7 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => FollowerScreen(
+        builder: (_) => FollowScreen(
           nickname: nickname,
           pageType: FollowPageType.following,
         ),

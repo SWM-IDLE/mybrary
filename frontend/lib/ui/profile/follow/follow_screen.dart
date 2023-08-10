@@ -11,21 +11,21 @@ import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/profile/follow/components/follow_layout.dart';
 import 'package:mybrary/ui/profile/follow/components/follow_user_info.dart';
 
-class FollowerScreen extends StatefulWidget {
+class FollowScreen extends StatefulWidget {
   final String nickname;
   final FollowPageType pageType;
 
-  const FollowerScreen({
+  const FollowScreen({
     required this.nickname,
     required this.pageType,
     super.key,
   });
 
   @override
-  State<FollowerScreen> createState() => _FollowerScreenState();
+  State<FollowScreen> createState() => _FollowScreenState();
 }
 
-class _FollowerScreenState extends State<FollowerScreen>
+class _FollowScreenState extends State<FollowScreen>
     with TickerProviderStateMixin {
   late List<String> _followTabs = ['팔로워', '팔로잉'];
 
