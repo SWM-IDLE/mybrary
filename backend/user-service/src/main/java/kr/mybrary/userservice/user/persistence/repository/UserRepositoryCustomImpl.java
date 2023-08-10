@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static kr.mybrary.userservice.user.persistence.QFollow.follow;
 import static kr.mybrary.userservice.user.persistence.QUser.user;
 
 @Repository
@@ -25,6 +26,32 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                         user.profileImageUrl))
                 .from(user)
                 .where(user.loginId.in(loginIds))
+                .fetch();
+    }
+
+    @Override
+    public List<UserInfoModel> findAllFollowings(Long sourceId) {
+        return queryFactory
+                .selectDistinct(Projections.fields(UserInfoModel.class,
+                        user.loginId,
+                        user.nickname,
+                        user.profileImageUrl))
+                .from(user)
+                .join(user.followers, follow)
+                .where(follow.source.id.eq(sourceId))
+                .fetch();
+    }
+
+    @Override
+    public List<UserInfoModel> findAllFollowers(Long targetId) {
+        return queryFactory
+                .selectDistinct(Projections.fields(UserInfoModel.class,
+                        user.loginId,
+                        user.nickname,
+                        user.profileImageUrl))
+                .from(user)
+                .join(user.followings, follow)
+                .where(follow.target.id.eq(targetId))
                 .fetch();
     }
 }
