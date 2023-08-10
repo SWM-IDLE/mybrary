@@ -7,6 +7,7 @@ import kr.mybrary.userservice.user.domain.dto.request.*;
 import kr.mybrary.userservice.user.domain.dto.response.*;
 import kr.mybrary.userservice.user.domain.exception.follow.DuplicateFollowException;
 import kr.mybrary.userservice.user.domain.exception.follow.SameSourceTargetUserException;
+import kr.mybrary.userservice.user.domain.exception.profile.ProfileUpdateRequestNotAuthenticated;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateNicknameException;
 import kr.mybrary.userservice.user.domain.exception.io.EmptyFileException;
@@ -93,6 +94,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileServiceResponse updateProfile(ProfileUpdateServiceRequest serviceRequest) {
+        checkProfileUpdateRequestAuthentication(serviceRequest);
+
         User user = getUser(serviceRequest.getLoginId());
 
         checkIfNicknameUpdateIsPossible(user.getNickname(), serviceRequest.getNickname());
@@ -101,6 +104,12 @@ public class UserServiceImpl implements UserService {
         ProfileServiceResponse serviceResponse = UserMapper.INSTANCE.toProfileServiceResponse(user);
 
         return serviceResponse;
+    }
+
+    private void checkProfileUpdateRequestAuthentication(ProfileUpdateServiceRequest serviceRequest) {
+        if(!serviceRequest.getUserId().equals(serviceRequest.getLoginId())) {
+            throw new ProfileUpdateRequestNotAuthenticated();
+        }
     }
 
     private void checkIfNicknameUpdateIsPossible(String userNickname, String requestNickname) {
@@ -131,6 +140,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileImageUrlServiceResponse updateProfileImage(ProfileImageUpdateServiceRequest serviceRequest) {
+        checkProfileImageUpdateRequestAuthentication(serviceRequest);
         checkProfileImageExistence(serviceRequest.getProfileImage());
         checkProfileImageSize(serviceRequest.getProfileImage());
 
@@ -147,6 +157,12 @@ public class UserServiceImpl implements UserService {
         return serviceResponse;
     }
 
+    private void checkProfileImageUpdateRequestAuthentication(ProfileImageUpdateServiceRequest serviceRequest) {
+        if(!serviceRequest.getUserId().equals(serviceRequest.getLoginId())) {
+            throw new ProfileUpdateRequestNotAuthenticated();
+        }
+    }
+
     private void checkProfileImageExistence(MultipartFile multipartFile) {
         if (multipartFile.isEmpty()) {
             throw new EmptyFileException();
@@ -160,8 +176,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ProfileImageUrlServiceResponse deleteProfileImage(String loginId) {
-        User user = getUser(loginId);
+    public ProfileImageUrlServiceResponse deleteProfileImage(ProfileImageUpdateServiceRequest serviceRequest) {
+        checkProfileImageUpdateRequestAuthentication(serviceRequest);
+
+        User user = getUser(serviceRequest.getLoginId());
 
         user.updateProfileImageUrl(DEFAULT_PROFILE_IMAGE_URL);
         ProfileImageUrlServiceResponse serviceResponse = ProfileImageUrlServiceResponse.builder()

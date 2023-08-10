@@ -17,7 +17,7 @@ public interface UserService {
 
     ProfileImageUrlServiceResponse updateProfileImage(ProfileImageUpdateServiceRequest serviceRequest);
 
-    ProfileImageUrlServiceResponse deleteProfileImage(String loginId);
+    ProfileImageUrlServiceResponse deleteProfileImage(ProfileImageUpdateServiceRequest serviceRequest);
 
     FollowerServiceResponse getFollowers(String loginId);
 
