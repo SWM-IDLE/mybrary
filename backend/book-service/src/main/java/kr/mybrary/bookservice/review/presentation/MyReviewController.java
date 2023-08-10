@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.review.presentation;
 import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import kr.mybrary.bookservice.review.domain.MyReviewReadService;
 import kr.mybrary.bookservice.review.domain.MyReviewWriteService;
+import kr.mybrary.bookservice.review.domain.dto.request.MyReviewDeleteServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewOfMyBookGetServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewUpdateServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewsOfBookGetServiceRequest;
@@ -11,6 +12,7 @@ import kr.mybrary.bookservice.review.presentation.dto.request.MyReviewUpdateRequ
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,5 +71,16 @@ public class MyReviewController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(HttpStatus.OK.toString(), "마이 리뷰를 수정했습니다.",
                         myReviewWriteService.update(serviceRequest)));
+    }
+
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity deleteReview(@RequestHeader("USER-ID") String loginId,
+            @PathVariable Long reviewId) {
+
+        MyReviewDeleteServiceRequest request = MyReviewDeleteServiceRequest.of(reviewId, loginId);
+        myReviewWriteService.delete(request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(HttpStatus.OK.toString(), "마이 리뷰를 삭제했습니다.", null));
     }
 }

@@ -7,6 +7,7 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.doNothing;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
@@ -40,6 +41,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -262,6 +264,48 @@ class MyReviewControllerTest {
                                                 fieldWithPath("data.id").type(NUMBER).description("마이 리뷰 ID"),
                                                 fieldWithPath("data.content").type(STRING).description("마이 리뷰 수정된 내용"),
                                                 fieldWithPath("data.starRating").type(NUMBER).description("마이 리뷰 수정된 별점")
+                                        ).build())));
+    }
+
+    @DisplayName("마이북 리뷰를 삭제한다.")
+    @Test
+    void delete() throws Exception {
+
+        // given
+        doNothing().when(myReviewWriteService).delete(any());
+
+        // when
+        ResultActions actions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/reviews/{reviewId}", 1L)
+                .header("USER-ID", LOGIN_ID));
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("마이 리뷰를 삭제했습니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+        // document
+        actions
+                .andDo(document("delete-mybook-review",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("review")
+                                        .summary("마이북 리뷰를 삭제한다.")
+                                        .requestSchema(Schema.schema("delete_mybook_review_request_body"))
+                                        .pathParameters(
+                                                parameterWithName("reviewId").type(SimpleType.NUMBER).description("마이 리뷰 ID")
+                                        )
+                                        .requestHeaders(
+                                                headerWithName("USER-ID").description("사용자 ID")
+                                        )
+                                        .responseSchema(Schema.schema("delete_mybook_review_response_body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data").type(OBJECT).description("응답 데이터").optional()
                                         ).build())));
     }
 }
