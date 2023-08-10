@@ -9,11 +9,11 @@ Content-Type: application/json
   "email": "email@email.com"
 }
 
-### 회원 탈퇴
+### 2. 회원 탈퇴
 DELETE http://localhost:8080/api/v1/users/account
 USER-ID: loginId
 
-### 2. 로그인
+### 3. 로그인
 POST http://43.200.200.185:8003/api/v1/auth/login
 Content-Type: application/json
 
@@ -22,39 +22,36 @@ Content-Type: application/json
   "password": "password123!"
 }
 
-### 3. 로그아웃
+### 4. 로그아웃
 POST http://localhost:8080/api/v1/auth/logout
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImxvZ2luSWQiOiI3ZWFlM2QwZC0wYzU5LTQxMzctYWU5My1hYjhjOTZmNWZiMGUiLCJleHAiOjE2OTEyMTUyODh9.DkPQdLlegkCVONgElh9UoAr_YpmsX5Ci11TGzsYtVYtK9fHJ7ypjPXpVvMM_fEy1gnDtyjWz0Q9a0TcapedAmA
 
-### 4. 인가 테스트
+### 5. 인가 테스트
 GET http://localhost:8080/auth/v1/test
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImxvZ2luSWQiOiI3ZWFlM2QwZC0wYzU5LTQxMzctYWU5My1hYjhjOTZmNWZiMGUiLCJleHAiOjE2OTEyMTUyODh9.DkPQdLlegkCVONgElh9UoAr_YpmsX5Ci11TGzsYtVYtK9fHJ7ypjPXpVvMM_fEy1gnDtyjWz0Q9a0TcapedAmA
 
-### 3. 구글 소셜 로그인
+### 6. 구글 소셜 로그인
 GET http://localhost:8080/oauth2/authorization/google
 
-### 4. 카카오 소셜 로그인
+### 7. 카카오 소셜 로그인
 GET http://localhost:8080/oauth2/authorization/kakao
 
-### 5. 네이버 소셜 로그인
+### 8. 네이버 소셜 로그인
 GET http://localhost:8080/oauth2/authorization/naver
 
-### 6. 인증 오류
+### 9. 인증 오류
 GET http://localhost:8080/user/profile
 
-### 7. 토큰 오류
+### 10. 토큰 오류
 GET http://localhost:8080/api/v1/users/profile
 Authorization: Bearer invalidToken1234
 Authorization-Refresh: Bearer invalidRefreshToken1234
 
-### 8. API 문서 조회
-GET http://localhost:8080/docs/swagger-ui/index.html
-
-### 9. 프로필 조회
+### 11. 프로필 조회
 GET http://localhost:8080/api/v1/users/profile
 USER-ID: loginId
 
-### 10. 프로필 수정
+### 12. 프로필 수정
 PUT http://localhost:8080/api/v1/users/profile
 Content-Type: application/json
 USER-ID: loginId
@@ -65,24 +62,24 @@ USER-ID: loginId
   "introduction": "new-introduction"
 }
 
-### 11. 프로필 이미지 조회
+### 13. 프로필 이미지 조회
 GET http://localhost:8080/api/v1/users/profile/image
 USER-ID: loginId
 
-### 12. 프로필 이미지 삭제
+### 14. 프로필 이미지 삭제
 DELETE http://localhost:8080/api/v1/users/profile/image
 USER-ID: loginId
 
-### 13. 사용자 검색
+### 15. 사용자 검색
 GET http://localhost:8080/api/v1/users/search?nickname=nick
 
-### 14. 카테고리별 관심사 모두 조회
+### 16. 카테고리별 관심사 모두 조회
 GET http://43.200.200.185:8003/api/v1/interest-categories // mybrary.kr
 
-### 15. 사용자 관심사 조회
+### 17. 사용자 관심사 조회
 GET http://43.200.200.185:8003/api/v1/users/testId/interests
 
-### 16. 사용자 관심사 업데이트
+### 18. 사용자 관심사 업데이트
 PUT http://43.200.200.185:8003/api/v1/users/testId/interests
 Content-Type: application/json
 
@@ -97,4 +94,15 @@ Content-Type: application/json
         "name": "외국소설"
       }
     ]
+}
+
+### 19. 사용자 정보 모두 조회
+GET http://localhost:8080/api/v1/users/info
+Content-Type: application/json
+
+{
+  "userIds": [
+    "loginId1",
+    "loginId2"
+  ]
 }
