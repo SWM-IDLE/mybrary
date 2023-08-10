@@ -10,6 +10,7 @@ import kr.mybrary.userservice.interest.domain.dto.response.InterestResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.UserInterestServiceResponse;
 import kr.mybrary.userservice.interest.domain.exception.DuplicateUserInterestUpdateRequestException;
 import kr.mybrary.userservice.interest.domain.exception.InterestNotFoundException;
+import kr.mybrary.userservice.interest.domain.exception.UserInterestUpdateRequestNotAuthenticated;
 import kr.mybrary.userservice.interest.domain.exception.UserInterestUpdateRequestSizeExceededException;
 import kr.mybrary.userservice.interest.persistence.Interest;
 import kr.mybrary.userservice.interest.persistence.UserInterest;
@@ -73,6 +74,7 @@ public class InterestServiceImpl implements InterestService {
 
     @Override
     public UserInterestServiceResponse updateUserInterests(UserInterestUpdateServiceRequest request) {
+        checkUserInterestUpdateRequestAuthentication(request);
         checkUserInterestUpdateRequestSize(request);
         checkDuplicatedUserInterestUpdateRequest(request);
 
@@ -80,6 +82,12 @@ public class InterestServiceImpl implements InterestService {
         deleteOriginalUserInterests(user);
         saveRequestedUserInterests(request.getInterestIds(), user);
         return getUserInterests(request.getLoginId());
+    }
+
+    private void checkUserInterestUpdateRequestAuthentication(UserInterestUpdateServiceRequest request) {
+        if(!request.getUserId().equals(request.getLoginId())) {
+            throw new UserInterestUpdateRequestNotAuthenticated();
+        }
     }
 
     private void checkUserInterestUpdateRequestSize(UserInterestUpdateServiceRequest request) {

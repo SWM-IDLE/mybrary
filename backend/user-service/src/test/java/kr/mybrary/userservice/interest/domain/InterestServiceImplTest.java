@@ -8,6 +8,7 @@ import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServi
 import kr.mybrary.userservice.interest.domain.dto.response.UserInterestServiceResponse;
 import kr.mybrary.userservice.interest.domain.exception.DuplicateUserInterestUpdateRequestException;
 import kr.mybrary.userservice.interest.domain.exception.InterestNotFoundException;
+import kr.mybrary.userservice.interest.domain.exception.UserInterestUpdateRequestNotAuthenticated;
 import kr.mybrary.userservice.interest.domain.exception.UserInterestUpdateRequestSizeExceededException;
 import kr.mybrary.userservice.interest.persistence.InterestCategory;
 import kr.mybrary.userservice.interest.persistence.UserInterest;
@@ -167,6 +168,7 @@ class InterestServiceImplTest {
                         UserInterestFixture.COMMON_USER_INTEREST_2.getUserInterest()));
         UserInterestUpdateServiceRequest serviceRequest = UserInterestUpdateServiceRequest.builder()
                 .loginId(LOGIN_ID)
+                .userId(LOGIN_ID)
                 .interestIds(List.of(1L, 2L))
                 .build();
 
@@ -195,6 +197,7 @@ class InterestServiceImplTest {
         // given
         UserInterestUpdateServiceRequest serviceRequest = UserInterestUpdateServiceRequest.builder()
                 .loginId(LOGIN_ID)
+                .userId(LOGIN_ID)
                 .interestIds(List.of(1L, 2L))
                 .build();
         given(userService.getUserResponse(LOGIN_ID)).willThrow(new UserNotFoundException());
@@ -221,6 +224,7 @@ class InterestServiceImplTest {
         given(interestRepository.findById(2L)).willReturn(Optional.empty());
         UserInterestUpdateServiceRequest serviceRequest = UserInterestUpdateServiceRequest.builder()
                 .loginId(LOGIN_ID)
+                .userId(LOGIN_ID)
                 .interestIds(List.of(1L, 2L))
                 .build();
 
@@ -238,11 +242,31 @@ class InterestServiceImplTest {
     }
 
     @Test
+    @DisplayName("사용자의 관심사를 업데이트할 때 로그인한 사용자와 업데이트할 사용자가 다르면 예외가 발생한다.")
+    void updateUserInterestsWithDifferentUser() {
+        // given
+        UserInterestUpdateServiceRequest serviceRequest = UserInterestUpdateServiceRequest.builder()
+                .loginId(LOGIN_ID)
+                .userId("another")
+                .interestIds(List.of(1L, 2L, 3L))
+                .build();
+
+        // when then
+        assertThatThrownBy(() -> interestService.updateUserInterests(serviceRequest))
+                .isInstanceOf(UserInterestUpdateRequestNotAuthenticated.class)
+                .hasFieldOrPropertyWithValue("status", 403)
+                .hasFieldOrPropertyWithValue("errorCode", "I-04")
+                .hasFieldOrPropertyWithValue("errorMessage", "관심사를 수정할 수 있는 권한이 없습니다. 로그인한 사용자와 관심사 수정을 요청한 사용자가 일치하지 않습니다.");
+
+    }
+
+    @Test
     @DisplayName("사용자의 관심사를 업데이트할 때 관심사가 3개보다 많으면 예외가 발생한다.")
     void updateUserInterestsWithRequestSizeExceeded() {
         // given
         UserInterestUpdateServiceRequest serviceRequest = UserInterestUpdateServiceRequest.builder()
                 .loginId(LOGIN_ID)
+                .userId(LOGIN_ID)
                 .interestIds(List.of(1L, 2L, 3L, 4L))
                 .build();
 
@@ -260,6 +284,7 @@ class InterestServiceImplTest {
         // given
         UserInterestUpdateServiceRequest serviceRequest = UserInterestUpdateServiceRequest.builder()
                 .loginId(LOGIN_ID)
+                .userId(LOGIN_ID)
                 .interestIds(List.of(1L, 1L, 2L))
                 .build();
 
