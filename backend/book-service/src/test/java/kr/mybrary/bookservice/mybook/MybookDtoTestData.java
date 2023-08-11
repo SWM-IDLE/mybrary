@@ -2,14 +2,20 @@ package kr.mybrary.bookservice.mybook;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kr.mybrary.bookservice.book.persistence.bookInfo.Author;
+import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
+import kr.mybrary.bookservice.mybook.persistence.MyBookOrderType;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
+import kr.mybrary.bookservice.mybook.persistence.model.MyBookListDisplayElementModel;
+import kr.mybrary.bookservice.mybook.persistence.model.MyBookListDisplayElementModel.MyBookListDisplayElementModelBuilder;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookUpdateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse.BookDetailResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse.BookElementResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
@@ -30,6 +36,25 @@ public class MybookDtoTestData {
                 .exchangeable(true)
                 .showable(true).readStatus(ReadStatus.TO_READ)
                 .book(BookElementResponse.builder()
+                        .id(1L)
+                        .title("토비의 스프링 3.1")
+                        .description("스프링의 기본기를 다지기 위한 책")
+                        .thumbnailUrl("https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?type=m1&udate=20191226")
+                        .stars(5.0)
+                        .publicationDate("2012.01.01")
+                        .authors("저자_1, 저자_2")
+                        .build())
+                .build();
+    }
+
+    public static MyBookElementFromMeaningTagResponse createMyBookElementFromMeaningTagResponse() {
+        return MyBookElementFromMeaningTagResponse.builder()
+                .id(1L)
+                .shareable(true)
+                .startDateOfPossession("2020.01.01")
+                .exchangeable(true)
+                .showable(true).readStatus(ReadStatus.TO_READ)
+                .book(MyBookElementFromMeaningTagResponse.BookElementResponse.builder()
                         .id(1L)
                         .title("토비의 스프링 3.1")
                         .description("스프링의 기본기를 다지기 위한 책")
@@ -78,6 +103,8 @@ public class MybookDtoTestData {
         return MyBookFindAllServiceRequest.builder()
                 .userId(userId)
                 .loginId(loginId)
+                .myBookOrderType(MyBookOrderType.INITIAL)
+                .readStatus(ReadStatus.READING)
                 .build();
     }
 
@@ -123,5 +150,29 @@ public class MybookDtoTestData {
                         .colorCode("#FFFFFF")
                         .build())
                 .build();
+    }
+
+    public static MyBookListDisplayElementModelBuilder createMyBookListDisplayElementModelBuilder() {
+        return MyBookListDisplayElementModel.builder()
+                .myBookId(1L)
+                .shareable(true)
+                .startDateOfPossession(LocalDateTime.of(2023, 1, 1, 0, 0, 0))
+                .exchangeable(true)
+                .showable(true)
+                .readStatus(ReadStatus.TO_READ)
+                .bookId(1L)
+                .title("test_title")
+                .description("test_description")
+                .thumbnailUrl("test_thumbnail_url")
+                .starRating(5.0)
+                .publicationDate(LocalDateTime.of(2023, 1, 2, 0, 0, 0))
+                .bookAuthors(List.of(
+                        BookAuthor.builder()
+                                .author(Author.builder().name("저자_1").build())
+                                .build(),
+                        BookAuthor.builder()
+                                .author(Author.builder().name("저자_2").build())
+                                .build()));
+
     }
 }
