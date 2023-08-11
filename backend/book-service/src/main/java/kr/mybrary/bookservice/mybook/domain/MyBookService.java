@@ -14,8 +14,10 @@ import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedExceptio
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookNotFoundException;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
+import kr.mybrary.bookservice.mybook.persistence.model.MyBookListDisplayElementModel;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import kr.mybrary.bookservice.tag.domain.MeaningTagService;
@@ -45,11 +47,14 @@ public class MyBookService {
     @Transactional(readOnly = true)
     public List<MyBookElementResponse> findAllMyBooks(MyBookFindAllServiceRequest request) {
 
-        List<MyBook> mybooks = myBookRepository.findAllByUserId(request.getUserId());
+        List<MyBookListDisplayElementModel> model = myBookRepository.findMyBookListDisplayElementModelsByUserId(
+                request.getUserId(),
+                request.getMyBookOrderType(),
+                request.getReadStatus());
 
-        return mybooks.stream()
+        return model.stream()
                 .filter(myBook -> request.getUserId().equals(request.getLoginId()) || myBook.isShowable())
-                .map(MyBookDtoMapper.INSTANCE::entityToMyBookElementResponse)
+                .map(MyBookDtoMapper.INSTANCE::modelToMyBookElementResponse)
                 .toList();
     }
 
@@ -67,13 +72,13 @@ public class MyBookService {
     }
 
     @Transactional(readOnly = true)
-    public List<MyBookElementResponse> findByMeaningTagQuote(
+    public List<MyBookElementFromMeaningTagResponse> findByMeaningTagQuote(
             MyBookFindByMeaningTagQuoteServiceRequest request) {
 
         return myBookRepository.findByMeaningTagQuote(request.getQuote())
                 .stream()
                 .filter(myBook -> myBook.getUserId().equals(request.getLoginId()) || myBook.isShowable())
-                .map(MyBookDtoMapper.INSTANCE::entityToMyBookElementResponse)
+                .map(MyBookDtoMapper.INSTANCE::entityToMyBookElementFromMeaningTagResponse)
                 .toList();
     }
 
