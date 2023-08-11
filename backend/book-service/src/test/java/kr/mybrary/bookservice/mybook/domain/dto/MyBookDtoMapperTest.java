@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import kr.mybrary.bookservice.global.util.DateUtils;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
+import kr.mybrary.bookservice.mybook.MybookDtoTestData;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
+import kr.mybrary.bookservice.mybook.persistence.model.MyBookListDisplayElementModel;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import kr.mybrary.bookservice.tag.MyBookMeaningTagFixture;
@@ -20,25 +22,26 @@ class MyBookDtoMapperTest {
     void entityToMyBookElementResponse() {
 
         // given
-        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
+        MyBookListDisplayElementModel source = MybookDtoTestData.createMyBookListDisplayElementModelBuilder().build();
 
         // when
-        MyBookElementResponse myBookElementResponse = MyBookDtoMapper.INSTANCE.entityToMyBookElementResponse(myBook);
+        MyBookElementResponse target = MyBookDtoMapper.INSTANCE.modelToMyBookElementResponse(source);
 
         // then
         assertAll(
-                () -> assertThat(myBookElementResponse.getId()).isEqualTo(myBook.getId()),
-                () -> assertThat(myBookElementResponse.getStartDateOfPossession()).isEqualTo(DateUtils.toDotFormatYYYYMMDD(myBook.getStartDateOfPossession())),
-                () -> assertThat(myBookElementResponse.getReadStatus()).isEqualTo(myBook.getReadStatus()),
-                () -> assertThat(myBookElementResponse.isExchangeable()).isEqualTo(myBook.isExchangeable()),
-                () -> assertThat(myBookElementResponse.isShareable()).isEqualTo(myBook.isShareable()),
-                () -> assertThat(myBookElementResponse.isShowable()).isEqualTo(myBook.isShowable()),
-                () -> assertThat(myBookElementResponse.getBook().getId()).isEqualTo(myBook.getBook().getId()),
-                () -> assertThat(myBookElementResponse.getBook().getTitle()).isEqualTo(myBook.getBook().getTitle()),
-                () -> assertThat(myBookElementResponse.getBook().getDescription()).isEqualTo(myBook.getBook().getDescription()),
-                () -> assertThat(myBookElementResponse.getBook().getThumbnailUrl()).isEqualTo(myBook.getBook().getThumbnailUrl()),
-                () -> assertThat(myBookElementResponse.getBook().getStars()).isEqualTo(myBook.getBook().getStarRating()),
-                () -> assertThat(myBookElementResponse.getBook().getPublicationDate()).isEqualTo(DateUtils.toDotFormatYYYYMMDD(myBook.getBook().getPublicationDate()))
+                () -> assertThat(target.getId()).isEqualTo(source.getMyBookId()),
+                () -> assertThat(target.getStartDateOfPossession()).isEqualTo(DateUtils.toDotFormatYYYYMMDD(source.getStartDateOfPossession())),
+                () -> assertThat(target.getReadStatus()).isEqualTo(source.getReadStatus()),
+                () -> assertThat(target.isExchangeable()).isEqualTo(source.isExchangeable()),
+                () -> assertThat(target.isShareable()).isEqualTo(source.isShareable()),
+                () -> assertThat(target.isShowable()).isEqualTo(source.isShowable()),
+                () -> assertThat(target.getBook().getId()).isEqualTo(source.getBookId()),
+                () -> assertThat(target.getBook().getTitle()).isEqualTo(source.getTitle()),
+                () -> assertThat(target.getBook().getDescription()).isEqualTo(source.getDescription()),
+                () -> assertThat(target.getBook().getThumbnailUrl()).isEqualTo(source.getThumbnailUrl()),
+                () -> assertThat(target.getBook().getStars()).isEqualTo(source.getStarRating()),
+                () -> assertThat(target.getBook().getPublicationDate()).isEqualTo(DateUtils.toDotFormatYYYYMMDD(source.getPublicationDate())),
+                () -> assertThat(target.getBook().getAuthors()).isEqualTo("저자_1, 저자_2")
         );
     }
 

@@ -1,10 +1,13 @@
 package kr.mybrary.bookservice.mybook.domain.dto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookTranslator;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
+import kr.mybrary.bookservice.mybook.persistence.model.MyBookListDisplayElementModel;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,10 +20,21 @@ public interface MyBookDtoMapper {
 
     MyBookDtoMapper INSTANCE = Mappers.getMapper(MyBookDtoMapper.class);
 
+    @Mapping(target = "id", source = "myBookId")
+    @Mapping(target = "startDateOfPossession", source = "startDateOfPossession", dateFormat = "yyyy.MM.dd")
+    @Mapping(target = "book.id", source = "bookId")
+    @Mapping(target = "book.title", source = "title")
+    @Mapping(target = "book.description", source = "description")
+    @Mapping(target = "book.thumbnailUrl", source = "thumbnailUrl")
+    @Mapping(target = "book.stars", source = "starRating")
+    @Mapping(target = "book.publicationDate", source = "publicationDate", dateFormat = "yyyy.MM.dd")
+    @Mapping(target = "book.authors", source = "bookAuthors", qualifiedByName = "getAuthorNameFromBookAuthors")
+    MyBookElementResponse modelToMyBookElementResponse(MyBookListDisplayElementModel myBookListDisplayElementModel);
+
     @Mapping(target = "book.stars", source = "book.starRating")
     @Mapping(target = "book.publicationDate", source = "book.publicationDate", dateFormat = "yyyy.MM.dd")
     @Mapping(target = "startDateOfPossession", source = "startDateOfPossession", dateFormat = "yyyy.MM.dd")
-    MyBookElementResponse entityToMyBookElementResponse(MyBook myBook);
+    MyBookElementFromMeaningTagResponse entityToMyBookElementFromMeaningTagResponse(MyBook myBook);
 
     @Mapping(target = "book.stars", constant = "0.0")
     @Mapping(target = "book.authors", source = "book.bookAuthors", qualifiedByName = "getAuthors")
@@ -41,5 +55,12 @@ public interface MyBookDtoMapper {
         return bookTranslators.stream()
                 .map(bookTranslator -> bookTranslator.getTranslator().getName())
                 .toList();
+    }
+
+    @Named("getAuthorNameFromBookAuthors")
+    static String getAuthorNameFromBookAuthors(List<BookAuthor> bookAuthors) {
+        return bookAuthors.stream()
+                .map(bookAuthor -> bookAuthor.getAuthor().getName())
+                .collect(Collectors.joining(", "));
     }
 }

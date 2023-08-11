@@ -6,8 +6,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MyBookElementResponse {
-
+public class MyBookElementFromMeaningTagResponse {
     private Long id;
     private boolean showable;
     private boolean exchangeable;
@@ -15,7 +14,7 @@ public class MyBookElementResponse {
     private ReadStatus readStatus;
     private String startDateOfPossession;
 
-    private BookElementResponse book;
+    private MyBookElementFromMeaningTagResponse.BookElementResponse book;
 
     @Getter
     @Builder
@@ -26,6 +25,5 @@ public class MyBookElementResponse {
         private String thumbnailUrl;
         private Double stars;
         private String publicationDate;
-        private String authors;
     }
 }
