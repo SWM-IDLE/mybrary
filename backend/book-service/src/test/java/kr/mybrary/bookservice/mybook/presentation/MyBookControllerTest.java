@@ -32,6 +32,7 @@ import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookUpdateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -122,6 +123,8 @@ class MyBookControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/v1/users/{userId}/mybooks", LOGIN_ID)
+                .param("order", "initial")
+                .param("readStatus", "TO_READ")
                 .header("USER-ID", LOGIN_ID));
 
         // then
@@ -139,11 +142,19 @@ class MyBookControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("mybook")
                                 .summary("내 서재의 도서를 모두 조회한다.")
+                                .description("쿼리 파라미터 order를 통해 정렬 순서를 지정할 수 있다. 초성순(initial), 등록순(registration), 발행일순(publication)이 있다."
+                                        + " 정렬이 필요없는 경우 order 파라미터를 생략할 수 있다."
+                                        + " 또한 쿼리 파라미터 readStatus를 통해 읽은 상태 필터링을 할 수 있다. 읽기전(TO_READ), 읽는중(READING), 읽음(COMPLETE)이 있다."
+                                        + " 읽은 상태 필터링이 필요없는 경우 readStatus 파라미터를 생략할 수 있다.")
                                 .pathParameters(
                                         parameterWithName("userId").type(SimpleType.STRING).description("사용자 ID")
                                 )
                                 .requestHeaders(
                                         headerWithName("USER-ID").description("사용자 ID")
+                                )
+                                .queryParameters(
+                                        parameterWithName("order").type(SimpleType.STRING).description("정렬 순서"),
+                                        parameterWithName("readStatus").type(SimpleType.STRING).description("읽은 상태 필터 조건")
                                 )
                                 .responseSchema(Schema.schema("find_all_mybooks_response_body"))
                                 .responseFields(
@@ -160,6 +171,7 @@ class MyBookControllerTest {
                                         fieldWithPath("data[].book.description").type(STRING).description("도서 설명"),
                                         fieldWithPath("data[].book.thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
                                         fieldWithPath("data[].book.stars").type(NUMBER).description("도서 별점"),
+                                        fieldWithPath("data[].book.authors").type(STRING).description("도서 저자 이름 (, 로 분리)"),
                                         fieldWithPath("data[].book.publicationDate").type(STRING).description("도서 출판일")
                                 ).build())));
 
@@ -334,8 +346,8 @@ class MyBookControllerTest {
     void getMyBookByMeaningTag() throws Exception {
 
         // given
-        MyBookElementResponse expectedResponse_1 = MybookDtoTestData.createMyBookElementResponse();
-        MyBookElementResponse expectedResponse_2 = MybookDtoTestData.createMyBookElementResponse();
+        MyBookElementFromMeaningTagResponse expectedResponse_1 = MybookDtoTestData.createMyBookElementFromMeaningTagResponse();
+        MyBookElementFromMeaningTagResponse expectedResponse_2 = MybookDtoTestData.createMyBookElementFromMeaningTagResponse();
 
         given(myBookService.findByMeaningTagQuote(any())).willReturn(List.of(expectedResponse_1, expectedResponse_2));
 

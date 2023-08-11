@@ -1,6 +1,5 @@
 package kr.mybrary.bookservice.mybook.presentation;
 
-import java.util.List;
 import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceRequest;
@@ -8,9 +7,10 @@ import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceReque
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindByMeaningTagQuoteServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
+import kr.mybrary.bookservice.mybook.persistence.MyBookOrderType;
+import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookCreateRequest;
 import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookUpdateRequest;
-import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -43,12 +44,15 @@ public class MyBookController {
 
     @GetMapping("/users/{userId}/mybooks")
     public ResponseEntity findAllMyBooks(@RequestHeader("USER-ID") String loginId,
-            @PathVariable("userId") String userId) {
+            @PathVariable("userId") String userId,
+            @RequestParam(value = "order", required = false, defaultValue = "none") String order,
+            @RequestParam(value = "readStatus", required = false) String readStatus) {
 
-        List<MyBookElementResponse> myBooks = myBookService.findAllMyBooks(
-                MyBookFindAllServiceRequest.of(userId, loginId));
+        MyBookFindAllServiceRequest request = MyBookFindAllServiceRequest.of(userId, loginId, MyBookOrderType.of(order),
+                ReadStatus.of(readStatus));
 
-        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "서재의 도서 목록입니다.", myBooks));
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "서재의 도서 목록입니다.",
+                myBookService.findAllMyBooks(request)));
     }
 
     @GetMapping("/mybooks/{mybookId}")
