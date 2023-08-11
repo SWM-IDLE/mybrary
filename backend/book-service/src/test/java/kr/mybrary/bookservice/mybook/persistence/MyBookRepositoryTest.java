@@ -8,8 +8,11 @@ import java.util.Optional;
 import kr.mybrary.bookservice.PersistenceTest;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.persistence.Book;
+import kr.mybrary.bookservice.book.persistence.bookInfo.Author;
+import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
 import kr.mybrary.bookservice.mybook.MyBookFixture;
+import kr.mybrary.bookservice.mybook.persistence.model.MyBookListDisplayElementModel;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.tag.MeaningTagFixture;
 import kr.mybrary.bookservice.tag.MyBookMeaningTagFixture;
@@ -281,6 +284,89 @@ class MyBookRepositoryTest {
                     assertThat(foundMyBook.get().getBook() instanceof HibernateProxy).isFalse();
                     assertThat(foundMyBook.get().getBook().getIsbn13()).isEqualTo(book.getIsbn13());
                 }
+        );
+    }
+
+    @DisplayName("한 유저의 모든 마이북 리스트를 조회한다.")
+    @Test
+    void getAllMyBookList() {
+
+        // given
+        Author author_1 = entityManager.persist(Author.builder().aid(11).name("테스트 저자 1").build());
+        Author author_2 = entityManager.persist(Author.builder().aid(12).name("테스트 저자 2").build());
+        Author author_3 = entityManager.persist(Author.builder().aid(13).name("테스트 저자 3").build());
+
+        Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().isbn10("isbn10_1").isbn13("isbn13_1").build());
+        Book savedBook_2 = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().isbn10("isbn10_2").isbn13("isbn13_2").build());
+        Book savedBook_3 = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().isbn10("isbn10_3").isbn13("isbn13_3").build());
+
+        entityManager.persist(BookAuthor.builder().book(savedBook_1).author(author_1).build());
+        entityManager.persist(BookAuthor.builder().book(savedBook_1).author(author_2).build());
+        entityManager.persist(BookAuthor.builder().book(savedBook_2).author(author_1).build());
+        entityManager.persist(BookAuthor.builder().book(savedBook_3).author(author_3).build());
+
+        MyBook myBook_1 = entityManager.persist(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(1L).book(savedBook_1).readStatus(ReadStatus.COMPLETED).build());
+        MyBook myBook_2 = entityManager.persist(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(2L).book(savedBook_2).readStatus(ReadStatus.COMPLETED).build());
+        MyBook myBook_3 = entityManager.persist(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(3L).book(savedBook_3).readStatus(ReadStatus.TO_READ).build());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        List<MyBookListDisplayElementModel> myBookList = myBookRepository.findMyBookListDisplayElementModelsByUserId(
+                "LOGIN_USER_ID", MyBookOrderType.NONE, null);
+
+        // then
+        assertAll(
+                () -> assertThat(myBookList.size()).isEqualTo(3),
+                () -> assertThat(myBookList).extracting("myBookId")
+                        .contains(myBook_1.getId(), myBook_2.getId(), myBook_3.getId()),
+                () -> assertThat(myBookList.get(0).getBookAuthors().get(0).getAuthor()).isNotInstanceOf(HibernateProxy.class),
+                () -> assertThat(myBookList.get(1).getBookAuthors().get(0).getAuthor()).isNotInstanceOf(HibernateProxy.class),
+                () -> assertThat(myBookList.get(2).getBookAuthors().get(0).getAuthor()).isNotInstanceOf(HibernateProxy.class)
+        );
+    }
+
+    @DisplayName("한 유저의 완독한 마이북 리스트를 조회한다.")
+    @Test
+    void getMyBookListReadDone() {
+
+        // given
+        Author author_1 = entityManager.persist(Author.builder().aid(11).name("테스트 저자 1").build());
+        Author author_2 = entityManager.persist(Author.builder().aid(12).name("테스트 저자 2").build());
+        Author author_3 = entityManager.persist(Author.builder().aid(13).name("테스트 저자 3").build());
+
+        Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().isbn10("isbn10_1").isbn13("isbn13_1").build());
+        Book savedBook_2 = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().isbn10("isbn10_2").isbn13("isbn13_2").build());
+        Book savedBook_3 = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().isbn10("isbn10_3").isbn13("isbn13_3").build());
+
+        entityManager.persist(BookAuthor.builder().book(savedBook_1).author(author_1).build());
+        entityManager.persist(BookAuthor.builder().book(savedBook_1).author(author_2).build());
+        entityManager.persist(BookAuthor.builder().book(savedBook_2).author(author_1).build());
+        entityManager.persist(BookAuthor.builder().book(savedBook_3).author(author_3).build());
+
+        MyBook myBook_1 = entityManager.persist(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(1L).book(savedBook_1).readStatus(ReadStatus.COMPLETED).build());
+        MyBook myBook_2 = entityManager.persist(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(2L).book(savedBook_2).readStatus(ReadStatus.COMPLETED).build());
+        MyBook myBook_3 = entityManager.persist(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .id(3L).book(savedBook_3).readStatus(ReadStatus.TO_READ).build());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        List<MyBookListDisplayElementModel> myBookList = myBookRepository.findMyBookListDisplayElementModelsByUserId(
+                "LOGIN_USER_ID", MyBookOrderType.NONE, ReadStatus.COMPLETED);
+
+        // then
+        assertAll(
+                () -> assertThat(myBookList.size()).isEqualTo(2),
+                () -> assertThat(myBookList).extracting("myBookId")
+                        .contains(myBook_1.getId(), myBook_2.getId())
         );
     }
 }

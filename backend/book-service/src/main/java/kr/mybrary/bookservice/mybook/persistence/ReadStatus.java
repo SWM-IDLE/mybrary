@@ -11,4 +11,15 @@ public enum ReadStatus {
     ReadStatus(String status) {
         this.status = status;
     }
+
+    public static ReadStatus of(String readStatus) {
+
+        for (ReadStatus value : values()) {
+            if (value.name().equals(readStatus.toUpperCase())) {
+                return value;
+            }
+        }
+
+        return null;
+    }
 }
