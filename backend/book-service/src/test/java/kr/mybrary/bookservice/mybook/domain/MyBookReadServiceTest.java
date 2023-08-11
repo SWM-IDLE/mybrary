@@ -32,6 +32,7 @@ import kr.mybrary.bookservice.mybook.domain.exception.MyBookNotFoundException;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import kr.mybrary.bookservice.tag.domain.MeaningTagService;
@@ -117,14 +118,17 @@ class MyBookReadServiceTest {
         MyBookFindAllServiceRequest request = MybookDtoTestData.createMyBookFindAllServiceRequest(
                 LOGIN_ID, LOGIN_ID);
 
-        given(myBookRepository.findAllByUserId(any())).willReturn(
-                List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(),
-                        MyBookFixture.NOT_SHOWABLE_LOGIN_USER_MYBOOK.getMyBook()));
+        given(myBookRepository.findMyBookListDisplayElementModelsByUserId(any(), any(), any())).willReturn(
+                List.of(MybookDtoTestData.createMyBookListDisplayElementModelBuilder().build(),
+                        MybookDtoTestData.createMyBookListDisplayElementModelBuilder().build()));
 
-        // when, then
+        // when,
+        List<MyBookElementResponse> response = myBookService.findAllMyBooks(request);
+
+        // then
         assertAll(
-                () -> assertThat(myBookService.findAllMyBooks(request).size()).isEqualTo(2),
-                () -> verify(myBookRepository).findAllByUserId(request.getUserId())
+                () -> assertThat(response.size()).isEqualTo(2),
+                () -> verify(myBookRepository).findMyBookListDisplayElementModelsByUserId(any(), any(), any())
         );
     }
 
@@ -136,14 +140,17 @@ class MyBookReadServiceTest {
         MyBookFindAllServiceRequest request = MybookDtoTestData.createMyBookFindAllServiceRequest(
                 OTHER_USER_ID, LOGIN_ID);
 
-        given(myBookRepository.findAllByUserId(any())).willReturn(
-                List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook(),
-                        MyBookFixture.NOT_SHOWABLE_OTHER_USER_MYBOOK.getMyBook()));
+        given(myBookRepository.findMyBookListDisplayElementModelsByUserId(any(), any(), any())).willReturn(
+                List.of(MybookDtoTestData.createMyBookListDisplayElementModelBuilder().build(),
+                        MybookDtoTestData.createMyBookListDisplayElementModelBuilder().showable(false).build()));
 
-        // when, then
+        // when
+        List<MyBookElementResponse> response = myBookService.findAllMyBooks(request);
+
+        // then
         assertAll(
-                () -> assertThat(myBookService.findAllMyBooks(request).size()).isEqualTo(1),
-                () -> verify(myBookRepository).findAllByUserId(request.getUserId())
+                () -> assertThat(response.size()).isEqualTo(1),
+                () -> verify(myBookRepository).findMyBookListDisplayElementModelsByUserId(any(), any(), any())
         );
     }
 
@@ -323,7 +330,7 @@ class MyBookReadServiceTest {
                 List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()));
 
         // when
-        List<MyBookElementResponse> result = myBookService.findByMeaningTagQuote(request);
+        List<MyBookElementFromMeaningTagResponse> result = myBookService.findByMeaningTagQuote(request);
 
         // then
         assertAll(
@@ -347,7 +354,7 @@ class MyBookReadServiceTest {
                         MyBookFixture.NOT_SHOWABLE_OTHER_USER_MYBOOK.getMyBook()));
 
         // when
-        List<MyBookElementResponse> result = myBookService.findByMeaningTagQuote(request);
+        List<MyBookElementFromMeaningTagResponse> result = myBookService.findByMeaningTagQuote(request);
 
         // then
         assertAll(
