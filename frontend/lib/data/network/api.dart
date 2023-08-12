@@ -95,7 +95,7 @@ commonResponseResult(
 ) {
   try {
     switch (response.statusCode) {
-      case 200:
+      case 200 || 201:
         return successCallback();
       case 404:
         log('ERROR: 서버에 404 에러가 있습니다.');

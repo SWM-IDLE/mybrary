@@ -6,6 +6,7 @@ import 'package:mybrary/data/model/book/interest_book_response.dart';
 import 'package:mybrary/data/model/book/mybook_detail_response.dart';
 import 'package:mybrary/data/model/book/mybook_review_response.dart';
 import 'package:mybrary/data/model/book/mybooks_response.dart';
+import 'package:mybrary/data/model/common/common_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/utils/dios/dio_service.dart';
 
@@ -105,7 +106,28 @@ class BookDataSource {
     return result.data!;
   }
 
-  Future<MyBookReviewResponseData> getMyBookReview(int myBookId) async {
+  Future<CommonResponse> createMyBook(String userId, String isbn13) async {
+    Dio dio = DioService().to();
+    final createMyBookResponse = await dio.post(
+      getBookServiceApi(API.createMyBook),
+      options: Options(headers: {'User-Id': userId}),
+      data: {'isbn13': isbn13},
+    );
+
+    log('마이북 등록 응답값: $createMyBookResponse');
+    final CommonResponse result = commonResponseResult(
+      createMyBookResponse,
+      () => CommonResponse(
+        status: createMyBookResponse.data['status'],
+        message: createMyBookResponse.data['message'],
+        data: null,
+      ),
+    );
+
+    return result;
+  }
+
+  Future<MyBookReviewResponseData?> getMyBookReview(int myBookId) async {
     Dio dio = DioService().to();
     final getMyBookReviewResponse = await dio.get(
       '${getBookServiceApi(API.getMyBookReview)}/$myBookId/review',
@@ -117,12 +139,13 @@ class BookDataSource {
       () => MyBookReviewResponse(
         status: getMyBookReviewResponse.data['status'],
         message: getMyBookReviewResponse.data['message'],
-        data: MyBookReviewResponseData.fromJson(
-          getMyBookReviewResponse.data['data'],
-        ),
+        data: getMyBookReviewResponse.data['data'] != null
+            ? MyBookReviewResponseData.fromJson(
+                getMyBookReviewResponse.data['data'])
+            : null,
       ),
     );
 
-    return result.data!;
+    return result.data;
   }
 }

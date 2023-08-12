@@ -82,7 +82,9 @@ class SearchBookListInfo extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      searchBookData.title!,
+                                      parse(searchBookData.title!)
+                                          .documentElement!
+                                          .text,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       textWidthBasis: TextWidthBasis.parent,

@@ -74,6 +74,12 @@ const commonSnackBarMessageStyle = TextStyle(
   fontSize: 13.0,
 );
 
+const commonSnackBarButtonStyle = TextStyle(
+  color: primaryColor,
+  fontSize: 14.0,
+  fontWeight: FontWeight.w700,
+);
+
 const boxBorderRadiusStyle = RoundedRectangleBorder(
   borderRadius: BorderRadius.all(
     Radius.circular(50.0),
@@ -164,6 +170,13 @@ const popularKeywordTextStyle = TextStyle(
 final searchInputBorderStyle = OutlineInputBorder(
   borderSide: BorderSide.none,
   borderRadius: BorderRadius.circular(5.0),
+);
+
+// button style
+const bottomButtonTextStyle = TextStyle(
+  color: commonWhiteColor,
+  fontSize: 15.0,
+  fontWeight: FontWeight.w700,
 );
 
 // book search page style

@@ -6,13 +6,11 @@ class MyBookReview extends StatelessWidget {
   final String content;
   final double starRating;
   final String createdAt;
-  final double updatedAt;
 
   const MyBookReview({
     required this.content,
     required this.starRating,
     required this.createdAt,
-    required this.updatedAt,
     super.key,
   });
 
@@ -31,26 +29,15 @@ class MyBookReview extends StatelessWidget {
             ),
             const SizedBox(height: 20.0),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    starRatingRow(),
-                    const SizedBox(width: 10.0),
-                    Text(
-                      '$starRating',
-                      style: commonSubBoldStyle.copyWith(
-                        fontSize: 24.0,
-                      ),
-                    ),
-                  ],
-                ),
+                starRatingRow(),
+                const SizedBox(width: 10.0),
                 Text(
-                  '리뷰 0개',
-                  style: bookDetailSubStyle.copyWith(
-                    decoration: TextDecoration.underline,
+                  '${starRating}',
+                  style: commonSubBoldStyle.copyWith(
+                    fontSize: 24.0,
                   ),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 15.0),

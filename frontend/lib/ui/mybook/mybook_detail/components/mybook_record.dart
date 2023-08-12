@@ -24,7 +24,7 @@ class MyBookRecord extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String readStatusText = '읽기전';
-    String shareOrExchange = '아직 고민중이에요.';
+    String shareOrExchange = '고민중이에요.';
 
     if (shareable && exchangeable) {
       shareOrExchange = '교환/나눔';
@@ -55,7 +55,7 @@ class MyBookRecord extends StatelessWidget {
             detailItem(
               itemTitle: '나에게 이 책은',
               itemDescription:
-                  meaningTag.quote == '' ? '무엇인지 설정해보세요!' : meaningTag.quote!,
+                  meaningTag.quote == '' ? '어떤 의미인가요?' : meaningTag.quote!,
               colorCode: meaningTag.colorCode == ''
                   ? grey777777
                   : Color(
