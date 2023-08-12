@@ -128,7 +128,7 @@ public class BookSearchDtoTestData {
 
     public static AladinBookSearchDetailResponse.Item createAladinBookSearchDetailResponseItem() {
         return AladinBookSearchDetailResponse.Item.builder()
-                .title("Sample Book Title")
+                .title("Sample Book Title - Sub Title")
                 .link("https://sample-link.com")
                 .author("John Doe")
                 .pubDate("2023-07-27")

@@ -256,7 +256,7 @@ class BookSearchDtoMapperTest {
                 response);
 
         assertAll(
-                () -> assertThat(dto.getTitle()).isEqualTo(response.getTitle()),
+                () -> assertThat(dto.getTitle()).isEqualTo(response.getTitle().replace(" - " + response.getSubInfo().getSubTitle(), "")),
                 () -> assertThat(dto.getSubTitle()).isEqualTo(response.getSubInfo().getSubTitle()),
                 () -> assertThat(dto.getAuthor()).isEqualTo(response.getAuthor()),
                 () -> assertThat(dto.getLink()).isEqualTo(response.getLink()),

@@ -63,7 +63,7 @@ public interface BookSearchDtoMapper {
     BookSearchDetailResponse kakaoSearchResponseToDetailResponse(
             KakaoBookSearchResponse.Document kakaoBookSearchResponse);
 
-
+    @Mapping(target = "title", expression = "java(aladinBookSearchResponse.getTitle().replace(\" - \" + aladinBookSearchResponse.getSubInfo().getSubTitle(), \"\"))")
     @Mapping(target = "subTitle", source = "subInfo.subTitle")
     @Mapping(target = "thumbnail", source = "cover")
     @Mapping(target = "starRating", expression = "java(aladinBookSearchResponse.getCustomerReviewRank() / 2.0)")
