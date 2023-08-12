@@ -225,7 +225,7 @@ class MyBookReadServiceTest {
 
         int holderCount = myBook.getBook().getHolderCount();
 
-        given(myBookRepository.findById(any())).willReturn(Optional.ofNullable(myBook));
+        given(myBookRepository.findById(any())).willReturn(Optional.of(myBook));
 
         // when
         myBookService.deleteMyBook(request);

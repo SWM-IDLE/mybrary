@@ -163,8 +163,7 @@ class MyBookRepositoryTest {
                 MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(2L).book(book_2).build());
         MyBook myBook_3 = myBookRepository.save(
                 MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(3L).book(book_3).build());
-        MyBook myBook_4 = myBookRepository.save(
-                MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(4L).book(book_4).build());
+        myBookRepository.save(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder().id(4L).book(book_4).build());
 
         myBookMeaningTagRepository.save(MyBookMeaningTagFixture.COMMON_MY_BOOK_MEANING_TAG.getMyBookMeaningTagBuilder()
                 .id(1L)
@@ -352,8 +351,7 @@ class MyBookRepositoryTest {
                 .book(savedBook_1).shareable(true).readStatus(ReadStatus.COMPLETED).build());
         MyBook myBook_2 = entityManager.persist(MyBookFixture.MY_BOOK_WITHOUT_RELATION.getMyBookBuilder()
                 .book(savedBook_2).shareable(true).readStatus(ReadStatus.COMPLETED).build());
-        MyBook myBook_3 = entityManager.persist(MyBookFixture.MY_BOOK_WITHOUT_RELATION.getMyBookBuilder()
-                .book(savedBook_3).shareable(true).readStatus(ReadStatus.TO_READ).build());
+        entityManager.persist(MyBookFixture.MY_BOOK_WITHOUT_RELATION.getMyBookBuilder().book(savedBook_3).shareable(true).readStatus(ReadStatus.TO_READ).build());
 
         entityManager.flush();
         entityManager.clear();
