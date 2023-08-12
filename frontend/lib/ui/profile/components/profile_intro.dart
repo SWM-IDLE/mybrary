@@ -6,7 +6,7 @@ import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/profile/my_badge/my_badge_screen.dart';
 
 class ProfileIntro extends StatelessWidget {
-  final String introduction;
+  final String? introduction;
   final List<UserInterests> userInterests;
   final VoidCallback onTapWriteIntroduction;
   final VoidCallback onTapMyInterests;
@@ -41,7 +41,7 @@ class ProfileIntro extends StatelessWidget {
               }
             },
             child: Text(
-              introduction == '' ? '한 줄 소개 작성하기' : introduction,
+              introduction == '' ? '한 줄 소개 작성하기' : introduction!,
               style: profileEditContentStyle.copyWith(
                 decoration:
                     introduction == '' ? TextDecoration.underline : null,

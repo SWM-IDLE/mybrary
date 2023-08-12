@@ -42,7 +42,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _profileResponseData = _profileRepository.getProfileData();
+    _profileResponseData = _profileRepository.getProfileData(
+      userId: 'testId',
+    );
     _myInterestsResponseData = _myInterestsRepository.getMyInterestsCategories(
       userId: 'testId',
     );
@@ -108,11 +110,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   ProfileCommonData _buildProfileData(List<Object> data) {
+    final [profileData, myInterestsData, followerData, followingData] = data;
     return ProfileCommonData(
-      profileData: data[0] as ProfileResponseData,
-      myInterestsData: data[1] as MyInterestsResponseData,
-      followerData: data[2] as FollowerResponseData,
-      followingData: data[3] as FollowingResponseData,
+      profileData: profileData as ProfileResponseData,
+      myInterestsData: myInterestsData as MyInterestsResponseData,
+      followerData: followerData as FollowerResponseData,
+      followingData: followingData as FollowingResponseData,
     );
   }
 
@@ -228,7 +231,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       MaterialPageRoute(builder: (_) => screen),
     ).then(
       (value) => setState(() {
-        _profileResponseData = _profileRepository.getProfileData();
+        _profileResponseData = _profileRepository.getProfileData(
+          userId: 'testId',
+        );
       }),
     );
   }

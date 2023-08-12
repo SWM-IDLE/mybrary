@@ -29,7 +29,7 @@ class ProfileImageResponse {
 }
 
 class ProfileImageResponseData {
-  String profileImageUrl;
+  String? profileImageUrl;
 
   ProfileImageResponseData({
     required this.profileImageUrl,

@@ -23,17 +23,22 @@ class MyBookRecord extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String shareOrExchange;
+    String readStatusText = '읽기전';
+    String shareOrExchange = '아직 고민중이에요.';
+
     if (shareable && exchangeable) {
       shareOrExchange = '교환/나눔';
     } else if (shareable) {
       shareOrExchange = '나눔';
     } else if (exchangeable) {
       shareOrExchange = '교환';
-    } else {
-      shareOrExchange = '해당없음';
     }
-    print(meaningTag.colorCode);
+
+    if (readStatus == 'READING') {
+      readStatusText = '읽는중';
+    } else if (readStatus == 'COMPLETED') {
+      readStatusText = '완독함';
+    }
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -50,7 +55,7 @@ class MyBookRecord extends StatelessWidget {
             detailItem(
               itemTitle: '나에게 이 책은',
               itemDescription:
-                  meaningTag.quote == '' ? '마이북 태그를 넣어보세요!' : meaningTag.quote!,
+                  meaningTag.quote == '' ? '무엇인지 설정해보세요!' : meaningTag.quote!,
               colorCode: meaningTag.colorCode == ''
                   ? grey777777
                   : Color(
@@ -61,7 +66,7 @@ class MyBookRecord extends StatelessWidget {
             const SizedBox(height: 15.0),
             detailItem(
               itemTitle: '독서 상태',
-              itemDescription: readStatus,
+              itemDescription: readStatusText,
             ),
             const SizedBox(height: 15.0),
             detailItem(

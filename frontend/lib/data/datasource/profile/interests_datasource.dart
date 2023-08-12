@@ -48,32 +48,32 @@ class InterestsDataSource {
       ),
     );
 
-    return result.data;
+    return result.data!;
   }
 
-  Future<MyInterestsResponseData> editMyInterests(
+  Future<MyInterestsResponseData> updateMyInterests(
     String userId,
     List<CategoriesResponses> categoriesResponses,
   ) async {
     Dio dio = DioService().to();
-    final myInterestsEditResponse = await dio.put(
-      '${getApi(API.getUserInterests)}/$userId/interests',
+    final myInterestsUpdateResponse = await dio.put(
+      '${getApi(API.updateUserInterests)}/$userId/interests',
       options: Options(headers: {'User-Id': userId}),
       data: {'interestRequests': categoriesResponses},
     );
 
-    log('프로필 수정 응답값: $myInterestsEditResponse');
+    log('마이 관심사 수정 응답값: $myInterestsUpdateResponse');
     final MyInterestsResponse result = commonResponseResult(
-      myInterestsEditResponse,
+      myInterestsUpdateResponse,
       () => MyInterestsResponse(
-        status: myInterestsEditResponse.data['status'],
-        message: myInterestsEditResponse.data['message'],
+        status: myInterestsUpdateResponse.data['status'],
+        message: myInterestsUpdateResponse.data['message'],
         data: MyInterestsResponseData.fromJson(
-          myInterestsEditResponse.data['data'],
+          myInterestsUpdateResponse.data['data'],
         ),
       ),
     );
 
-    return result.data;
+    return result.data!;
   }
 }

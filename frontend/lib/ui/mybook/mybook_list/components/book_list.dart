@@ -47,7 +47,7 @@ class BookList extends StatelessWidget {
                       shadows: [
                         BoxShadow(
                           color: commonBlackColor.withOpacity(0.3),
-                          blurRadius: 4,
+                          blurRadius: 2,
                           offset: const Offset(1, 1),
                           spreadRadius: 1,
                         )

@@ -21,31 +21,14 @@ class IsbnScanHeader extends StatelessWidget {
         decoration: BoxDecoration(
           color: myBookScanBackgroundColor.withOpacity(0.7),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               '바코드 스캔',
               style: TextStyle(
                 color: primaryColor,
                 fontSize: 15.0,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('준비 중인 기능입니다.'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              },
-              child: Text(
-                '책장 스캔',
-                style: TextStyle(
-                  color: commonWhiteColor.withOpacity(0.3),
-                  fontSize: 15.0,
-                ),
               ),
             ),
           ],

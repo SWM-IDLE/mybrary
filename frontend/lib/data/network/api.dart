@@ -22,6 +22,7 @@ enum API {
   updateUserProfile,
   updateUserProfileImage,
   updateUserFollowing,
+  updateUserInterests,
   deleteUserProfileImage,
   deleteUserFollower,
   deleteUserFollowing,
@@ -47,16 +48,17 @@ Map<API, String> apiMap = {
   API.kakaoLogin: "/oauth2/authorization/kakao",
   API.googleLogin: "/oauth2/authorization/google",
   // user-service
-  API.getUserProfile: "/api/v1/users/profile",
-  API.getUserProfileImage: "/api/v1/users/profile/image",
-  API.getUserFollowers: "/api/v1/users/followers",
-  API.getUserFollowings: "/api/v1/users/followings",
+  API.getUserProfile: "/api/v1/users", // /{userId}/profile",
+  API.getUserProfileImage: "/api/v1/users", // /{userId}/profile/image",
+  API.getUserFollowers: "/api/v1/users", // /{userId}/followers",
+  API.getUserFollowings: "/api/v1/users", // /{userId}/followings",
   API.getUserInterests: "/api/v1/users", // '/{userId}/interests'
   API.getInterestCategories: "/api/v1/interest-categories",
-  API.updateUserProfile: "/api/v1/users/profile",
-  API.updateUserProfileImage: "/api/v1/users/profile/image",
+  API.updateUserProfile: "/api/v1/users", // /{userId}/profile",
+  API.updateUserProfileImage: "/api/v1/users", // /{userId}/profile/image",
   API.updateUserFollowing: "/api/v1/users/follow",
-  API.deleteUserProfileImage: "/api/v1/users/profile/image",
+  API.updateUserInterests: "/api/v1/users", // '/{userId}/interests'
+  API.deleteUserProfileImage: "/api/v1/users", // /{userId}/profile/image",
   API.deleteUserFollower: "/api/v1/users/follower",
   API.deleteUserFollowing: "/api/v1/users/follow",
   // book-service

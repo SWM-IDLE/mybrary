@@ -31,7 +31,7 @@ class FollowingResponse {
 }
 
 class FollowingResponseData {
-  String requestLoginId;
+  String? requestLoginId;
   List<Followings>? followings;
 
   FollowingResponseData({
@@ -61,15 +61,17 @@ class FollowingResponseData {
 }
 
 class Followings {
-  int? id;
   String? loginId;
   String? nickname;
   String? profileImageUrl;
 
-  Followings({this.id, this.loginId, this.nickname, this.profileImageUrl});
+  Followings({
+    this.loginId,
+    this.nickname,
+    this.profileImageUrl,
+  });
 
   Followings.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
     loginId = json['loginId'];
     nickname = json['nickname'];
     profileImageUrl = json['profileImageUrl'];
@@ -77,7 +79,6 @@ class Followings {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
     data['loginId'] = loginId;
     data['nickname'] = nickname;
     data['profileImageUrl'] = profileImageUrl;

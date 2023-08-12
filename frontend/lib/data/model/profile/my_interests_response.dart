@@ -1,7 +1,7 @@
 class MyInterestsResponse {
   String status;
   String message;
-  MyInterestsResponseData data;
+  MyInterestsResponseData? data;
 
   MyInterestsResponse({
     required this.status,
@@ -13,7 +13,9 @@ class MyInterestsResponse {
     return MyInterestsResponse(
       status: json['status'],
       message: json['message'],
-      data: MyInterestsResponseData.fromJson(json['data']),
+      data: json['data'] != null
+          ? MyInterestsResponseData.fromJson(json['data'])
+          : null,
     );
   }
 
@@ -21,7 +23,9 @@ class MyInterestsResponse {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['status'] = status;
     data['message'] = message;
-    data['data'] = this.data.toJson();
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
+    }
     return data;
   }
 }
@@ -35,14 +39,15 @@ class MyInterestsResponseData {
     required this.userInterests,
   });
 
-  MyInterestsResponseData.fromJson(Map<String, dynamic> json) {
-    loginId = json['loginId'];
-    if (json['userInterests'] != null) {
-      userInterests = <UserInterests>[];
-      json['userInterests'].forEach((v) {
-        userInterests!.add(UserInterests.fromJson(v));
-      });
-    }
+  factory MyInterestsResponseData.fromJson(Map<String, dynamic> json) {
+    return MyInterestsResponseData(
+      loginId: json['loginId'],
+      userInterests: json['userInterests'] != null
+          ? (json['userInterests'] as List)
+              .map((i) => UserInterests.fromJson(i))
+              .toList()
+          : null,
+    );
   }
 
   Map<String, dynamic> toJson() {

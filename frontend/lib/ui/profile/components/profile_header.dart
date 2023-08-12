@@ -3,8 +3,8 @@ import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class ProfileHeader extends StatelessWidget {
-  final String nickname;
-  final String profileImageUrl;
+  final String? nickname;
+  final String? profileImageUrl;
   final String followerCount;
   final String followingCount;
   final VoidCallback navigateToFollowScreen;
@@ -54,7 +54,7 @@ class ProfileHeader extends StatelessWidget {
             ),
             const SizedBox(height: 10.0),
             Text(
-              nickname,
+              nickname!,
               style: commonSubTitleStyle.copyWith(
                 fontSize: 18.0,
               ),
