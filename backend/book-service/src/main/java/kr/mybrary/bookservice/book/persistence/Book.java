@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -50,9 +51,12 @@ public class Book extends BaseEntity {
     private String publisher;
     private LocalDateTime publicationDate;
 
-    @Column(length = 4000)
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
-    @Column(length = 4000)
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String toc;
 
     private Integer weight;
