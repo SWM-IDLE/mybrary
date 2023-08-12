@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
@@ -6,6 +9,7 @@ import 'package:mybrary/data/repository/search_repository.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/book_detail_divider.dart';
+import 'package:mybrary/ui/common/components/bottom_button.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
@@ -31,18 +35,16 @@ class SearchDetailScreen extends StatefulWidget {
 class _SearchDetailScreenState extends State<SearchDetailScreen> {
   final _searchRepository = SearchRepository();
   final _bookRepository = BookRepository();
-  final GlobalKey _bookDetailHeaderKey = GlobalKey();
-
-  late String _bookTitle = '';
-  late Future<BookSearchDetailResponseData> _bookSearchDetailResponse;
-
-  bool _isOverflowBookDetailHeader = false;
-  late bool _isOnTapHeart = false;
-  late int _newInterestCount = 0;
 
   final ScrollController _bookDetailScrollController = ScrollController();
+  late Future<BookSearchDetailResponseData> _bookSearchDetailResponse;
 
-  late dynamic position;
+  late String _bookTitle = '';
+  late int _newInterestCount = 0;
+  late bool _isScrollingDown = true;
+  late bool _isOnTapInterestBook = false;
+  late bool _isOverflowBookDetailHeader = false;
+  final GlobalKey _bookDetailHeaderKey = GlobalKey();
 
   @override
   void initState() {
@@ -62,21 +64,24 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
         .then(
       (response) {
         setState(() {
-          _isOnTapHeart = response.interested!;
+          _isOnTapInterestBook = response.interested!;
           _newInterestCount = response.interestCount!;
         });
       },
     );
 
-    _bookDetailScrollController.addListener(_scrollListener);
+    _bookDetailScrollController.addListener(_bookDetailScrollListener);
   }
 
-  void _scrollListener() {
+  void _bookDetailScrollListener() {
     double? position;
+    ScrollPosition scrollPosition = _bookDetailScrollController.position;
+
     if (_bookDetailHeaderKey.currentContext != null) {
       position = _bookDetailHeaderKey.currentContext!.size!.height;
     }
-    if (_bookDetailScrollController.position.pixels > position!) {
+
+    if (scrollPosition.pixels > position!) {
       setState(() {
         _isOverflowBookDetailHeader = true;
       });
@@ -85,6 +90,26 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
         _isOverflowBookDetailHeader = false;
       });
     }
+
+    if (scrollPosition.pixels ==
+            _bookDetailScrollController.position.maxScrollExtent ||
+        scrollPosition.userScrollDirection == ScrollDirection.forward) {
+      setState(() {
+        _isScrollingDown = true;
+      });
+    } else if (scrollPosition.userScrollDirection == ScrollDirection.reverse) {
+      setState(() {
+        _isScrollingDown = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _bookDetailScrollController.removeListener(_bookDetailScrollListener);
+    _bookDetailScrollController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -123,84 +148,93 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
 
               _bookTitle = bookSearchDetail.title!;
 
-              return SingleChildScrollView(
-                controller: _bookDetailScrollController,
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    BookDetailHeader(
-                      key: _bookDetailHeaderKey,
-                      onTapInterestBook: () async {
-                        final result =
-                            await _bookRepository.createOrDeleteInterestBook(
-                          userId: 'testId',
+              return Stack(
+                children: [
+                  SingleChildScrollView(
+                    controller: _bookDetailScrollController,
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        BookDetailHeader(
+                          key: _bookDetailHeaderKey,
+                          onTapInterestBook: () async {
+                            final result = await _bookRepository
+                                .createOrDeleteInterestBook(
+                              userId: 'testId',
+                              isbn13: bookSearchDetail.isbn13!,
+                            );
+
+                            setState(() {
+                              _isOnTapInterestBook = result.interested!;
+
+                              _isInterestBook(
+                                interested,
+                                interestCount,
+                                context,
+                              );
+                            });
+                          },
+                          interested: interested,
+                          isOnTapHeart: _isOnTapInterestBook,
+                          thumbnail: bookSearchDetail.thumbnail!,
+                          title: bookSearchDetail.title!,
+                          authors: bookSearchDetail.authors!,
+                          interestCount: interestCount,
+                          newInterestCount: _newInterestCount,
+                          readCount: bookSearchDetail.readCount!,
+                          holderCount: bookSearchDetail.holderCount!,
+                        ),
+                        const BookDetailDivider(),
+                        BookDetailInfo(
+                          publicationDate: bookSearchDetail.publicationDate!,
+                          category: bookSearchDetail.category!,
+                          pages: bookSearchDetail.pages!,
+                          publisher: bookSearchDetail.publisher!,
+                          starRating: bookSearchDetail.starRating!,
+                          link: bookSearchDetail.link!,
+                          aladinStarRating: bookSearchDetail.aladinStarRating!,
+                        ),
+                        const BookDetailDivider(),
+                        bookDetailExpansion(
+                          expansionTitle: '책 소개',
+                          initiallyExpanded: true,
+                          children: BookDescription(
+                            subTitle: bookSearchDetail.subTitle!,
+                            description: bookSearchDetail.description!,
+                          ),
+                        ),
+                        const BookDetailDivider(),
+                        bookDetailExpansion(
+                          expansionTitle: '목차',
+                          children: BookContents(
+                            toc: bookSearchDetail.toc!,
+                          ),
+                        ),
+                        const BookDetailDivider(),
+                        BookDetails(
+                          isbn10: bookSearchDetail.isbn10!,
                           isbn13: bookSearchDetail.isbn13!,
-                        );
-
-                        setState(() {
-                          _isOnTapHeart = result.interested!;
-
-                          _isInterestBook(
-                            interested,
-                            interestCount,
-                            context,
-                          );
-                        });
-                      },
-                      interested: interested,
-                      isOnTapHeart: _isOnTapHeart,
-                      thumbnail: bookSearchDetail.thumbnail!,
-                      title: bookSearchDetail.title!,
-                      authors: bookSearchDetail.authors!,
-                      interestCount: interestCount,
-                      newInterestCount: _newInterestCount,
-                      readCount: bookSearchDetail.readCount!,
-                      holderCount: bookSearchDetail.holderCount!,
+                          weight: bookSearchDetail.weight!,
+                          sizeDepth: bookSearchDetail.sizeDepth!,
+                          sizeHeight: bookSearchDetail.sizeHeight!,
+                          sizeWidth: bookSearchDetail.sizeWidth!,
+                          translators: bookSearchDetail.translators!,
+                        ),
+                        const BookDetailDivider(),
+                        BookDetailProvider(
+                          link: bookSearchDetail.link!,
+                        ),
+                        const SizedBox(height: 80.0),
+                      ],
                     ),
-                    const BookDetailDivider(),
-                    BookDetailInfo(
-                      publicationDate: bookSearchDetail.publicationDate!,
-                      category: bookSearchDetail.category!,
-                      pages: bookSearchDetail.pages!,
-                      publisher: bookSearchDetail.publisher!,
-                      starRating: bookSearchDetail.starRating!,
-                      link: bookSearchDetail.link!,
-                      aladinStarRating: bookSearchDetail.aladinStarRating!,
-                    ),
-                    const BookDetailDivider(),
-                    bookDetailExpansion(
-                      expansionTitle: '책 소개',
-                      initiallyExpanded: true,
-                      children: BookDescription(
-                        subTitle: bookSearchDetail.subTitle!,
-                        description: bookSearchDetail.description!,
-                      ),
-                    ),
-                    const BookDetailDivider(),
-                    bookDetailExpansion(
-                      expansionTitle: '목차',
-                      children: BookContents(
-                        toc: bookSearchDetail.toc!,
-                      ),
-                    ),
-                    const BookDetailDivider(),
-                    BookDetails(
-                      isbn10: bookSearchDetail.isbn10!,
-                      isbn13: bookSearchDetail.isbn13!,
-                      weight: bookSearchDetail.weight!,
-                      sizeDepth: bookSearchDetail.sizeDepth!,
-                      sizeHeight: bookSearchDetail.sizeHeight!,
-                      sizeWidth: bookSearchDetail.sizeWidth!,
-                      translators: bookSearchDetail.translators!,
-                    ),
-                    const BookDetailDivider(),
-                    BookDetailProvider(
-                      link: bookSearchDetail.link!,
-                    ),
-                    const SizedBox(height: 50.0),
-                  ],
-                ),
+                  ),
+                  BottomButton(
+                    isScrollingDown: _isScrollingDown,
+                    buttonText: '마이북에 담기',
+                    onTap: () => _onTapSaveMyBook(bookSearchDetail.isbn13!),
+                  ),
+                ],
               );
             }
             return const CircularLoading();
@@ -215,20 +249,20 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
     int interestCount,
     BuildContext context,
   ) {
-    if (!interested && _isOnTapHeart) {
+    if (!interested && _isOnTapInterestBook) {
       _newInterestCount = interestCount + 1;
       _showInterestBookMessage(
         context: context,
         snackBarText: '관심 도서에 담겼습니다.',
         snackBarAction: _moveNextToInterestBookListScreen(),
       );
-    } else if (interested && _isOnTapHeart == false) {
+    } else if (interested && _isOnTapInterestBook == false) {
       _newInterestCount = interestCount - 1;
       _showInterestBookMessage(
         context: context,
         snackBarText: '관심 도서가 삭제되었습니다.',
       );
-    } else if (interested && _isOnTapHeart) {
+    } else if (interested && _isOnTapInterestBook) {
       _newInterestCount = interestCount;
       _showInterestBookMessage(
         context: context,
@@ -278,9 +312,9 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          padding: const EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
             horizontal: 24.0,
-            vertical: 20.0,
+            vertical: Platform.isAndroid ? 22.0 : 16.0,
           ),
           content: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -311,13 +345,48 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
         );
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       },
-      child: Text(
+      child: const Text(
         '관심북으로 이동',
-        style: commonSnackBarMessageStyle.copyWith(
-          color: primaryColor,
-          fontSize: 14.0,
-        ),
+        style: commonSnackBarButtonStyle,
       ),
     );
+  }
+
+  void _onTapSaveMyBook(String isbn13) async {
+    await _bookRepository.createMyBook(
+      userId: 'testId',
+      isbn13: isbn13,
+    );
+
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierColor: commonBlackColor.withOpacity(0.2),
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.5,
+            height: 36.0,
+            decoration: BoxDecoration(
+              color: grey262626,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Center(
+              child: DefaultTextStyle(
+                style: commonSubRegularStyle.copyWith(
+                  color: commonWhiteColor,
+                ),
+                child: const Text('마이북에 담겼습니다.'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.of(context).pop();
+    });
   }
 }

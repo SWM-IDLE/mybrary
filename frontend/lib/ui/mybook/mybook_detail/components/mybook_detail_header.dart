@@ -7,11 +7,13 @@ class MyBookDetailHeader extends StatelessWidget {
   final String thumbnail;
   final String title;
   final List<String> authors;
+  final GlobalKey headerKey;
 
   const MyBookDetailHeader({
     required this.thumbnail,
     required this.title,
     required this.authors,
+    required this.headerKey,
     super.key,
   });
 
@@ -19,6 +21,7 @@ class MyBookDetailHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Column(
+        key: headerKey,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
