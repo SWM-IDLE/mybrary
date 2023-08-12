@@ -144,7 +144,7 @@ class MyBookControllerTest {
                                 .summary("내 서재의 도서를 모두 조회한다.")
                                 .description("쿼리 파라미터 order를 통해 정렬 순서를 지정할 수 있다. 초성순(initial), 등록순(registration), 발행일순(publication)이 있다."
                                         + " 정렬이 필요없는 경우 order 파라미터를 생략할 수 있다."
-                                        + " 또한 쿼리 파라미터 readStatus를 통해 읽은 상태 필터링을 할 수 있다. 읽기전(TO_READ), 읽는중(READING), 읽음(COMPLETE)이 있다."
+                                        + " 또한 쿼리 파라미터 readStatus를 통해 읽은 상태 필터링을 할 수 있다. 읽기전(TO_READ), 읽는중(READING), 완독(COMPLETED)이 있다."
                                         + " 읽은 상태 필터링이 필요없는 경우 readStatus 파라미터를 생략할 수 있다.")
                                 .pathParameters(
                                         parameterWithName("userId").type(SimpleType.STRING).description("사용자 ID")
