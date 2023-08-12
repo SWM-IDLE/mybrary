@@ -8,6 +8,7 @@ import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/mybook/interest_book_list/components/interest_book_list.dart';
+import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
 
 enum SortType {
@@ -71,6 +72,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                   if (bookList.isNotEmpty)
                     InterestBookList(
                       bookList: bookList,
+                      onTap: _refreshMyInterestBooksScreen,
                     ),
                 ],
               );
@@ -338,5 +340,22 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
     setState(() {
       _sortType = sortType;
     });
+  }
+
+  void _refreshMyInterestBooksScreen(String isbn13) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SearchDetailScreen(
+          isbn13: isbn13,
+        ),
+      ),
+    ).then(
+      (value) => setState(() {
+        _bookList = _bookRepository.getInterestBooks(
+          userId: 'testId',
+        );
+      }),
+    );
   }
 }

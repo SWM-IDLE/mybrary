@@ -10,6 +10,7 @@ import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/mybook/components/mybook_header.dart';
+import 'package:mybrary/ui/mybook/interest_book_list/interest_book_list_screen.dart';
 
 class MyBookScreen extends StatefulWidget {
   const MyBookScreen({super.key});
@@ -71,6 +72,7 @@ class _MyBookScreenState extends State<MyBookScreen> {
                 MyBookHeader(
                   myBooksData: myBooksData,
                   interestBooksData: interestBooksData,
+                  onTap: _refreshMyBookScreen,
                 ),
               ],
             );
@@ -143,6 +145,21 @@ class _MyBookScreenState extends State<MyBookScreen> {
       myBooksResponseData: myBooksResponseData as List<MyBooksResponseData>,
       interestBooksResponseData:
           interestBooksResponseData as List<BookListResponseData>,
+    );
+  }
+
+  void _refreshMyBookScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const InterestBookListScreen(),
+      ),
+    ).then(
+      (value) => setState(() {
+        _interestBooksResponseData = _bookRepository.getInterestBooks(
+          userId: 'testId',
+        );
+      }),
     );
   }
 }

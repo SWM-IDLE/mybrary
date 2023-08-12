@@ -4,16 +4,17 @@ import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
-import 'package:mybrary/ui/mybook/interest_book_list/interest_book_list_screen.dart';
 import 'package:mybrary/ui/mybook/mybook_list/mybook_list_screen.dart';
 
 class MyBookHeader extends StatelessWidget {
   final List<MyBooksResponseData> myBooksData;
   final List<BookListResponseData> interestBooksData;
+  final GestureTapCallback? onTap;
 
   const MyBookHeader({
     required this.myBooksData,
     required this.interestBooksData,
+    this.onTap,
     super.key,
   });
 
@@ -50,14 +51,7 @@ class MyBookHeader extends StatelessWidget {
                 iconUrl:
                     interestBooksData.isEmpty ? 'heart.svg' : 'heart_green.svg',
                 count: '${interestBooksData.length}',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const InterestBookListScreen(),
-                    ),
-                  );
-                },
+                onTap: onTap,
               ),
               _divider(),
               _headerButton(
