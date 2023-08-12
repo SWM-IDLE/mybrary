@@ -6,7 +6,7 @@ class ProfileResponse {
   ProfileResponse({
     required this.status,
     required this.message,
-    this.data,
+    required this.data,
   });
 
   factory ProfileResponse.fromJson(Map<String, dynamic> json) {

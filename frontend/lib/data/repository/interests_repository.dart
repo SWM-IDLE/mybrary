@@ -19,6 +19,6 @@ class InterestsRepository {
     required String userId,
     required List<CategoriesResponses> categoriesResponses,
   }) {
-    return _interestsDataSource.editMyInterests(userId, categoriesResponses);
+    return _interestsDataSource.updateMyInterests(userId, categoriesResponses);
   }
 }

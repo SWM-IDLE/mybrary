@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/model/book/interest_book_response.dart';
 import 'package:mybrary/data/model/book/mybook_detail_response.dart';
+import 'package:mybrary/data/model/book/mybook_review_response.dart';
 import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/utils/dios/dio_service.dart';
@@ -97,6 +98,27 @@ class BookDataSource {
         message: getMyBookDetailResponse.data['message'],
         data: MyBookDetailResponseData.fromJson(
           getMyBookDetailResponse.data['data'],
+        ),
+      ),
+    );
+
+    return result.data!;
+  }
+
+  Future<MyBookReviewResponseData> getMyBookReview(int myBookId) async {
+    Dio dio = DioService().to();
+    final getMyBookReviewResponse = await dio.get(
+      '${getBookServiceApi(API.getMyBookReview)}/$myBookId/review',
+    );
+
+    log('마이북 리뷰 조회 응답값: $getMyBookReviewResponse');
+    final MyBookReviewResponse result = commonResponseResult(
+      getMyBookReviewResponse,
+      () => MyBookReviewResponse(
+        status: getMyBookReviewResponse.data['status'],
+        message: getMyBookReviewResponse.data['message'],
+        data: MyBookReviewResponseData.fromJson(
+          getMyBookReviewResponse.data['data'],
         ),
       ),
     );

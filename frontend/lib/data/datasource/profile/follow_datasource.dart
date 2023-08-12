@@ -10,7 +10,7 @@ class FollowDataSource {
   Future<FollowerResponseData> getFollower(String userId) async {
     Dio dio = DioService().to();
     final userFollowerResponse = await dio.get(
-      getApi(API.getUserFollowers),
+      '${getApi(API.getUserFollowers)}/$userId/followers',
       options: Options(
         headers: {'User-Id': userId},
       ),
@@ -34,7 +34,7 @@ class FollowDataSource {
   Future<FollowingResponseData> getFollowings(String userId) async {
     Dio dio = DioService().to();
     final userFollowingResponse = await dio.get(
-      getApi(API.getUserFollowings),
+      '${getApi(API.getUserFollowings)}/$userId/followings',
       options: Options(
         headers: {'User-Id': userId},
       ),

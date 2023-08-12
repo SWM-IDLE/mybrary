@@ -30,7 +30,9 @@ class _MyBookScreenState extends State<MyBookScreen> {
   void initState() {
     super.initState();
 
-    _profileResponseData = _profileRepository.getProfileData();
+    _profileResponseData = _profileRepository.getProfileData(
+      userId: 'testId',
+    );
     _myBooksResponseData = _bookRepository.getMyBooks(
       userId: 'testId',
     );

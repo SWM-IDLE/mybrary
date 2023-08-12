@@ -9,6 +9,7 @@ import 'package:mybrary/ui/common/components/book_detail_divider.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
+import 'package:mybrary/ui/mybook/interest_book_list/interest_book_list_screen.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_contents.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_description.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_detail_header.dart';
@@ -219,6 +220,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       _showInterestBookMessage(
         context: context,
         snackBarText: '관심 도서에 담겼습니다.',
+        snackBarAction: _moveNextToInterestBookListScreen(),
       );
     } else if (interested && _isOnTapHeart == false) {
       _newInterestCount = interestCount - 1;
@@ -231,6 +233,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       _showInterestBookMessage(
         context: context,
         snackBarText: '관심 도서에 담겼습니다.',
+        snackBarAction: _moveNextToInterestBookListScreen(),
       );
     } else {
       _newInterestCount = interestCount;
@@ -270,12 +273,49 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
   void _showInterestBookMessage({
     required BuildContext context,
     required String snackBarText,
+    Widget? snackBarAction,
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(snackBarText),
-        duration: const Duration(
-          seconds: 1,
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24.0,
+            vertical: 20.0,
+          ),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                snackBarText,
+                style: commonSnackBarMessageStyle.copyWith(fontSize: 14.0),
+              ),
+              snackBarAction ?? const SizedBox(),
+            ],
+          ),
+          duration: Duration(
+            seconds: snackBarAction == null ? 1 : 2,
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _moveNextToInterestBookListScreen() {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const InterestBookListScreen(),
+          ),
+        );
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      },
+      child: Text(
+        '관심북으로 이동',
+        style: commonSnackBarMessageStyle.copyWith(
+          color: primaryColor,
+          fontSize: 14.0,
         ),
       ),
     );

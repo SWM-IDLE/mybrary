@@ -38,32 +38,43 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
         ),
         slivers: [
           _bookListAppBar(appBarTitle: widget.bookListTitle),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 8.0,
-            ),
-            sliver: SliverToBoxAdapter(
-              child: InkWell(
-                onTap: () {},
-                child: Row(
-                  children: [
-                    Text(
-                      '전체 ${_bookList.length}권',
-                      style: myBookSortTextStyle,
-                    ),
-                    const SizedBox(width: 4.0),
-                    const Icon(
-                      Icons.arrow_drop_down_outlined,
-                    ),
-                  ],
+          if (_bookList.isEmpty)
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height / 1.5,
+                child: const Center(
+                  child: Text('등록된 도서가 없습니다.'),
                 ),
               ),
             ),
-          ),
-          BookList(
-            bookList: widget.bookList,
-          ),
+          if (_bookList.isNotEmpty)
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
+              sliver: SliverToBoxAdapter(
+                child: InkWell(
+                  onTap: () {},
+                  child: Row(
+                    children: [
+                      Text(
+                        '전체 ${_bookList.length}권',
+                        style: myBookSortTextStyle,
+                      ),
+                      const SizedBox(width: 4.0),
+                      const Icon(
+                        Icons.arrow_drop_down_outlined,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          if (_bookList.isNotEmpty)
+            BookList(
+              bookList: widget.bookList,
+            ),
         ],
       ),
     );

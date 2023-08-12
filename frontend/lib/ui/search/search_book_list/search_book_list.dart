@@ -5,9 +5,9 @@ import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/data/repository/search_repository.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
+import 'package:mybrary/ui/common/components/error_page.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/search/components/search_loading.dart';
-import 'package:mybrary/ui/search/components/search_not_found.dart';
 import 'package:mybrary/ui/search/search_book_list/components/search_book_list_header.dart';
 import 'package:mybrary/ui/search/search_book_list/components/search_book_list_info.dart';
 
@@ -33,6 +33,7 @@ class _SearchBookListState extends State<SearchBookList> {
   late Future<BookSearchResponseData> _bookSearchResponse;
   late List<BookSearchResult> _bookSearchResultData = [];
   late bool _isScrollLoading = false;
+  late bool _isError = false;
 
   final TextEditingController _bookSearchKeywordController =
       TextEditingController();
@@ -77,11 +78,13 @@ class _SearchBookListState extends State<SearchBookList> {
         child: FutureBuilder<BookSearchResponseData>(
           future: _bookSearchResponse,
           builder: (context, snapshot) {
-            if (snapshot.hasError) {
+            if (_isError || snapshot.hasError) {
               return Column(
                 children: [
                   searchInputBox(),
-                  const SearchNotFound(),
+                  const ErrorPage(
+                    errorMessage: '검색 결과를 불러오는데 실패했습니다.',
+                  ),
                 ],
               );
             }
@@ -129,7 +132,9 @@ class _SearchBookListState extends State<SearchBookList> {
               );
             }
 
-            return const SearchNotFound();
+            return const ErrorPage(
+              errorMessage: '검색 결과를 불러오는데 실패했습니다.',
+            );
           },
         ),
       ),
@@ -163,6 +168,7 @@ class _SearchBookListState extends State<SearchBookList> {
               )
               .then(
                 (value) => setState(() {
+                  _isError = false;
                   _bookSearchResponse = _searchRepository.getBookSearchResponse(
                     requestUrl:
                         '$_bookSearchKeywordRequestUrl?keyword=${_bookSearchKeywordController.text}',
@@ -177,7 +183,12 @@ class _SearchBookListState extends State<SearchBookList> {
                     );
                   }
                 }),
-              );
+              )
+              .onError((error, stackTrace) {
+            setState(() {
+              _isError = true;
+            });
+          });
         },
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(

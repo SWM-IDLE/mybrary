@@ -32,7 +32,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   Future<void> _refreshProfileData() async {
     setState(() {
-      _profileResponseData = _profileRepository.getProfileData();
+      _profileResponseData = _profileRepository.getProfileData(
+        userId: 'testId',
+      );
     });
   }
 
@@ -57,7 +59,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     super.initState();
 
     _refreshProfileData();
-    _profileRepository.getProfileData().then((data) {
+    _profileRepository
+        .getProfileData(
+      userId: 'testId',
+    )
+        .then((data) {
       _nicknameController = TextEditingController(
         text: data.nickname!,
       );
@@ -166,7 +172,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   void _onTapChangeToDefaultImage() async {
-    await _profileRepository.deleteProfileImage();
+    await _profileRepository.deleteProfileImage(
+      userId: 'testId',
+    );
 
     _refreshProfileData();
 
@@ -281,6 +289,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       return _showValidationFailedMessage(context);
     } else {
       await _profileRepository.updateProfileData(
+        userId: 'testId',
         newNickname: _nicknameController.text,
         introduction: _introductionController.text,
       );
@@ -294,6 +303,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         );
 
         await _profileRepository.updateProfileImage(
+          userId: 'testId',
           newProfileImage: _profileImageFormData,
         );
       }

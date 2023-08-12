@@ -58,10 +58,20 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                 ),
                 slivers: [
                   _bookListAppBar(appBarTitle: '관심북'),
-                  _sortTapColumn(context, bookList),
-                  InterestBookList(
-                    bookList: bookList,
-                  ),
+                  if (bookList.isEmpty)
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height / 1.5,
+                        child: const Center(
+                          child: Text('등록된 도서가 없습니다.'),
+                        ),
+                      ),
+                    ),
+                  if (bookList.isNotEmpty) _sortTapColumn(context, bookList),
+                  if (bookList.isNotEmpty)
+                    InterestBookList(
+                      bookList: bookList,
+                    ),
                 ],
               );
             }
