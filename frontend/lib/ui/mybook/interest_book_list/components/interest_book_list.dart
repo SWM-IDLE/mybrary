@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
-import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 
 class InterestBookList extends StatelessWidget {
   final List<BookListResponseData> bookList;
+  final void Function(String)? onTap;
 
   const InterestBookList({
     required this.bookList,
+    this.onTap,
     super.key,
   });
 
@@ -19,16 +20,7 @@ class InterestBookList extends StatelessWidget {
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
           (context, index) => InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => SearchDetailScreen(
-                    isbn13: bookList[index].isbn13!,
-                  ),
-                ),
-              );
-            },
+            onTap: () => onTap!(bookList[index].isbn13!),
             child: Column(
               children: [
                 Expanded(
