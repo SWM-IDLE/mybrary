@@ -158,13 +158,15 @@ class BookSearchDtoMapperTest {
 
         // then
         assertAll(
-                () -> assertThat(authors).hasSize(3),
-                () -> assertThat(authors.get(0).getName()).isEqualTo("저자1"),
-                () -> assertThat(authors.get(0).getAuthorId()).isEqualTo(0),
-                () -> assertThat(authors.get(1).getName()).isEqualTo("저자2"),
-                () -> assertThat(authors.get(1).getAuthorId()).isEqualTo(0),
-                () -> assertThat(authors.get(2).getName()).isEqualTo("저자3"),
-                () -> assertThat(authors.get(2).getAuthorId()).isEqualTo(0)
+                () -> {
+                    assertThat(authors).hasSize(3);
+                    assertThat(authors.get(0).getName()).isEqualTo("저자1");
+                    assertThat(authors.get(0).getAuthorId()).isEqualTo(0);
+                    assertThat(authors.get(1).getName()).isEqualTo("저자2");
+                    assertThat(authors.get(1).getAuthorId()).isEqualTo(0);
+                    assertThat(authors.get(2).getName()).isEqualTo("저자3");
+                    assertThat(authors.get(2).getAuthorId()).isEqualTo(0);
+                }
         );
     }
 
@@ -180,13 +182,15 @@ class BookSearchDtoMapperTest {
 
         // then
         assertAll(
-                () -> assertThat(translators).hasSize(3),
-                () -> assertThat(translators.get(0).getName()).isEqualTo("번역가1"),
-                () -> assertThat(translators.get(0).getTranslatorId()).isEqualTo(0),
-                () -> assertThat(translators.get(1).getName()).isEqualTo("번역가2"),
-                () -> assertThat(translators.get(1).getTranslatorId()).isEqualTo(0),
-                () -> assertThat(translators.get(2).getName()).isEqualTo("번역가3"),
-                () -> assertThat(translators.get(2).getTranslatorId()).isEqualTo(0)
+                () -> {
+                    assertThat(translators).hasSize(3);
+                    assertThat(translators.get(0).getName()).isEqualTo("번역가1");
+                    assertThat(translators.get(0).getTranslatorId()).isEqualTo(0);
+                    assertThat(translators.get(1).getName()).isEqualTo("번역가2");
+                    assertThat(translators.get(1).getTranslatorId()).isEqualTo(0);
+                    assertThat(translators.get(2).getName()).isEqualTo("번역가3");
+                    assertThat(translators.get(2).getTranslatorId()).isEqualTo(0);
+                }
         );
     }
 
