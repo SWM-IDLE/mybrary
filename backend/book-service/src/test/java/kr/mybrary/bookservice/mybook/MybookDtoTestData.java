@@ -71,7 +71,7 @@ public class MybookDtoTestData {
                 .shareable(true)
                 .exchangeable(true)
                 .showable(true)
-                .startDateOfPossession(LocalDateTime.now())
+                .startDateOfPossession("2020.01.01")
                 .readStatus(ReadStatus.TO_READ)
                 .book(BookDetailResponse.builder()
                         .id(1L)

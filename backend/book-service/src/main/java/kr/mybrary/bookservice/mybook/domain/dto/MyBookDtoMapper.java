@@ -38,6 +38,7 @@ public interface MyBookDtoMapper {
     @Mapping(target = "book.starRating", constant = "0.0")
     @Mapping(target = "book.authors", source = "book.bookAuthors", qualifiedByName = "getAuthors")
     @Mapping(target = "book.translators", source = "book.bookTranslators", qualifiedByName = "getTranslators")
+    @Mapping(target = "startDateOfPossession", source = "startDateOfPossession", dateFormat = "yyyy.MM.dd")
     @Mapping(target = "meaningTag.quote", expression = "java(myBook.getMyBookMeaningTag() != null ? myBook.getMyBookMeaningTag().getMeaningTag().getQuote() : \"\")")
     @Mapping(target = "meaningTag.colorCode", expression = "java(myBook.getMyBookMeaningTag() != null ? myBook.getMyBookMeaningTag().getMeaningTagColor() : \"\")")
     MyBookDetailResponse entityToMyBookDetailResponse(MyBook myBook);

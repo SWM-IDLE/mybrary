@@ -62,7 +62,7 @@ class MyBookDtoMapperTest {
         // then
         assertAll(
                 () -> assertThat(myBookDetailResponse.getId()).isEqualTo(myBook.getId()),
-                () -> assertThat(myBookDetailResponse.getStartDateOfPossession()).isEqualTo(myBook.getStartDateOfPossession()),
+                () -> assertThat(myBookDetailResponse.getStartDateOfPossession()).isEqualTo(DateUtils.toDotFormatYYYYMMDD(myBook.getStartDateOfPossession())),
                 () -> assertThat(myBookDetailResponse.getReadStatus()).isEqualTo(myBook.getReadStatus()),
                 () -> assertThat(myBookDetailResponse.isExchangeable()).isEqualTo(myBook.isExchangeable()),
                 () -> assertThat(myBookDetailResponse.isShareable()).isEqualTo(myBook.isShareable()),
@@ -97,7 +97,7 @@ class MyBookDtoMapperTest {
         // then
         assertAll(
                 () -> assertThat(myBookDetailResponse.getId()).isEqualTo(myBook.getId()),
-                () -> assertThat(myBookDetailResponse.getStartDateOfPossession()).isEqualTo(myBook.getStartDateOfPossession()),
+                () -> assertThat(myBookDetailResponse.getStartDateOfPossession()).isEqualTo(DateUtils.toDotFormatYYYYMMDD(myBook.getStartDateOfPossession())),
                 () -> assertThat(myBookDetailResponse.getReadStatus()).isEqualTo(myBook.getReadStatus()),
                 () -> assertThat(myBookDetailResponse.isExchangeable()).isEqualTo(myBook.isExchangeable()),
                 () -> assertThat(myBookDetailResponse.isShareable()).isEqualTo(myBook.isShareable()),
