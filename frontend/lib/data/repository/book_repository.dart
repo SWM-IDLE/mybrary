@@ -25,8 +25,10 @@ class BookRepository {
 
   Future<List<MyBooksResponseData>> getMyBooks({
     required String userId,
+    required String order,
+    required String readStatus,
   }) {
-    return _bookDataSource.getMyBooks(userId);
+    return _bookDataSource.getMyBooks(userId, order, readStatus);
   }
 
   Future<CommonResponse> createMyBook({
@@ -34,6 +36,13 @@ class BookRepository {
     required String isbn13,
   }) {
     return _bookDataSource.createMyBook(userId, isbn13);
+  }
+
+  Future<CommonResponse> deleteMyBook({
+    required String userId,
+    required int myBookId,
+  }) {
+    return _bookDataSource.deleteMyBook(userId, myBookId);
   }
 
   Future<MyBookDetailResponseData> getMyBookDetail({

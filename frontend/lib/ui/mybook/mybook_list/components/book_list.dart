@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
-import 'package:mybrary/ui/mybook/mybook_detail/mybook_detail_screen.dart';
 
 class BookList extends StatelessWidget {
   final List<MyBooksResponseData> bookList;
+  final void Function(int, String)? onTapMyBookDetail;
+  final String readStatus;
 
   const BookList({
     required this.bookList,
+    required this.readStatus,
+    this.onTapMyBookDetail,
     super.key,
   });
 
@@ -19,16 +22,10 @@ class BookList extends StatelessWidget {
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
           (context, index) => InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => MyBookDetailScreen(
-                    myBookId: bookList[index].id!,
-                  ),
-                ),
-              );
-            },
+            onTap: () => onTapMyBookDetail!(
+              bookList[index].id!,
+              readStatus,
+            ),
             child: Column(
               children: [
                 Expanded(
@@ -71,8 +68,8 @@ class BookList extends StatelessWidget {
                           textAlign: TextAlign.left,
                         ),
                         const SizedBox(height: 2.0),
-                        const Text(
-                          '작가',
+                        Text(
+                          bookList[index].book!.authors!,
                           style: myBookListSubStyle,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

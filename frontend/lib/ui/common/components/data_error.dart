@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
-class ErrorPage extends StatelessWidget {
+class DataError extends StatelessWidget {
   final String errorMessage;
 
-  const ErrorPage({
+  const DataError({
     required this.errorMessage,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 1.5,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -28,7 +29,6 @@ class ErrorPage extends StatelessWidget {
               color: grey777777,
             ),
           ),
-          const SizedBox(height: 100.0),
         ],
       ),
     );

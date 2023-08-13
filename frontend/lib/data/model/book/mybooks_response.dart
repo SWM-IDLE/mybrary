@@ -80,6 +80,7 @@ class BookInfo {
   String? description;
   String? thumbnailUrl;
   double? stars;
+  String? authors;
 
   BookInfo({
     this.id,
@@ -87,14 +88,18 @@ class BookInfo {
     this.description,
     this.thumbnailUrl,
     this.stars,
+    this.authors,
   });
 
-  BookInfo.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    title = json['title'];
-    description = json['description'];
-    thumbnailUrl = json['thumbnailUrl'];
-    stars = json['stars'];
+  factory BookInfo.fromJson(Map<String, dynamic> json) {
+    return BookInfo(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      thumbnailUrl: json['thumbnailUrl'],
+      stars: json['stars'],
+      authors: json['authors'],
+    );
   }
 
   Map<String, dynamic> toJson() {

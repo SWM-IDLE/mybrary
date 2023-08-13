@@ -8,6 +8,7 @@ import 'package:mybrary/data/repository/profile_repository.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
+import 'package:mybrary/ui/common/components/single_data_error.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/profile/profile_edit/components/profile_edit_body.dart';
 import 'package:mybrary/ui/profile/profile_edit/components/profile_edit_image.dart';
@@ -102,8 +103,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 future: _profileResponseData,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return const Center(
-                      child: Text('프로필 데이터를 불러오는데 실패했습니다.'),
+                    return const SingleDataError(
+                      errorMessage: '프로필 데이터를 불러오는데 실패했습니다.',
                     );
                   }
 
@@ -158,7 +159,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(snackBarText),
+        content: Text(
+          snackBarText,
+          style: commonSnackBarMessageStyle,
+        ),
         duration: const Duration(
           seconds: 1,
         ),

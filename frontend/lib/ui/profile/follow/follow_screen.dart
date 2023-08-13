@@ -7,6 +7,7 @@ import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/enum.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
+import 'package:mybrary/ui/common/components/single_data_error.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/profile/follow/components/follow_layout.dart';
 import 'package:mybrary/ui/profile/follow/components/follow_user_info.dart';
@@ -106,8 +107,8 @@ class _FollowScreenState extends State<FollowScreen>
           ),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(
-                child: Text('팔로우/팔로잉 데이터를 불러오는데 실패했습니다.'),
+              return const SingleDataError(
+                errorMessage: '팔로워 목록을 불러오는데 실패했습니다.',
               );
             }
 
