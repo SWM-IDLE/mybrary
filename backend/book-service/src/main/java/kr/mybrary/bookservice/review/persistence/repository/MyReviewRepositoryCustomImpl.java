@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class MyReviewRepositoryImpl implements MyReviewRepositoryCustom {
+public class MyReviewRepositoryCustomImpl implements MyReviewRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 

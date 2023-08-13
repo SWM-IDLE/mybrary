@@ -175,7 +175,7 @@ public class BookDtoTestData {
     public static BookMyInterestFindServiceRequest createBookMyInterestFindServiceRequest() {
         return BookMyInterestFindServiceRequest.builder()
                 .loginId("LOGIN_USER_ID")
-                .bookOrderType(BookOrderType.INITIAL)
+                .bookOrderType(BookOrderType.TITLE)
                 .build();
     }
 

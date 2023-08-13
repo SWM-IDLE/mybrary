@@ -126,7 +126,7 @@ class BookInterestRepositoryTest {
         entityManager.clear();
 
         // when
-        List<BookInterest> sortByInitial = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.INITIAL);
+        List<BookInterest> sortByInitial = bookInterestRepository.findAllByUserIdWithBook(loginId, BookOrderType.TITLE);
 
         // given
         assertAll(

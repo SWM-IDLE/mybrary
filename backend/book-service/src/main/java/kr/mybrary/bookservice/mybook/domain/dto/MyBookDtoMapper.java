@@ -26,17 +26,16 @@ public interface MyBookDtoMapper {
     @Mapping(target = "book.title", source = "title")
     @Mapping(target = "book.description", source = "description")
     @Mapping(target = "book.thumbnailUrl", source = "thumbnailUrl")
-    @Mapping(target = "book.stars", source = "starRating")
+    @Mapping(target = "book.starRating", source = "starRating")
     @Mapping(target = "book.publicationDate", source = "publicationDate", dateFormat = "yyyy.MM.dd")
     @Mapping(target = "book.authors", source = "bookAuthors", qualifiedByName = "getAuthorNameFromBookAuthors")
     MyBookElementResponse modelToMyBookElementResponse(MyBookListDisplayElementModel myBookListDisplayElementModel);
 
-    @Mapping(target = "book.stars", source = "book.starRating")
     @Mapping(target = "book.publicationDate", source = "book.publicationDate", dateFormat = "yyyy.MM.dd")
     @Mapping(target = "startDateOfPossession", source = "startDateOfPossession", dateFormat = "yyyy.MM.dd")
     MyBookElementFromMeaningTagResponse entityToMyBookElementFromMeaningTagResponse(MyBook myBook);
 
-    @Mapping(target = "book.stars", constant = "0.0")
+    @Mapping(target = "book.starRating", constant = "0.0")
     @Mapping(target = "book.authors", source = "book.bookAuthors", qualifiedByName = "getAuthors")
     @Mapping(target = "book.translators", source = "book.bookTranslators", qualifiedByName = "getTranslators")
     @Mapping(target = "meaningTag.quote", expression = "java(myBook.getMyBookMeaningTag() != null ? myBook.getMyBookMeaningTag().getMeaningTag().getQuote() : \"\")")

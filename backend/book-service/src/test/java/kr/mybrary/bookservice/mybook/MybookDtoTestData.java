@@ -40,7 +40,7 @@ public class MybookDtoTestData {
                         .title("토비의 스프링 3.1")
                         .description("스프링의 기본기를 다지기 위한 책")
                         .thumbnailUrl("https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?type=m1&udate=20191226")
-                        .stars(5.0)
+                        .starRating(5.0)
                         .publicationDate("2012.01.01")
                         .authors("저자_1, 저자_2")
                         .build())
@@ -59,7 +59,7 @@ public class MybookDtoTestData {
                         .title("토비의 스프링 3.1")
                         .description("스프링의 기본기를 다지기 위한 책")
                         .thumbnailUrl("https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?type=m1&udate=20191226")
-                        .stars(5.0)
+                        .starRating(5.0)
                         .publicationDate("2012.01.01")
                         .build())
                 .build();
@@ -81,7 +81,7 @@ public class MybookDtoTestData {
                         .translators(List.of("토비"))
                         .publisher("토비의 출판사")
                         .thumbnailUrl("https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?type=m1&udate=20191226")
-                        .stars(5.0)
+                        .starRating(5.0)
                         .build()
                 )
                 .meaningTag(MyBookDetailResponse.MeaningTag.builder()
@@ -103,7 +103,7 @@ public class MybookDtoTestData {
         return MyBookFindAllServiceRequest.builder()
                 .userId(userId)
                 .loginId(loginId)
-                .myBookOrderType(MyBookOrderType.INITIAL)
+                .myBookOrderType(MyBookOrderType.TITLE)
                 .readStatus(ReadStatus.READING)
                 .build();
     }
