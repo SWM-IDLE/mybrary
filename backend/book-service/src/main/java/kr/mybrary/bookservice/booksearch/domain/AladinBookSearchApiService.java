@@ -7,6 +7,7 @@ import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchDtoMapper;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
+import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse.Item;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
@@ -73,6 +74,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
         }
 
         List<BookSearchResultServiceResponse> bookSearchResultServiceResponses = aladinBookSearchResponse.getItem().stream()
+                .filter(book -> hasISBN13(book))
                 .map(BookSearchDtoMapper.INSTANCE::aladinSearchResponseToServiceResponse)
                 .toList();
 
@@ -81,6 +83,10 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
         }
 
         return BookSearchResultResponse.of(bookSearchResultServiceResponses, getNextRequestUrl(request));
+    }
+
+    private boolean hasISBN13(Item book) {
+        return !book.getIsbn13().isBlank();
     }
 
     @Override

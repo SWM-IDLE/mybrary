@@ -102,6 +102,31 @@ class AladinBookSearchApiServiceTest {
         );
     }
 
+    @DisplayName("알라딘 도서 조회시, isbn13이 비어있으면 조회 목록에서 제외한다.")
+    @Test
+    void excludeResponseWhenISBN13IsBlank() throws IOException {
+
+        // given
+        BookSearchServiceRequest request = BookSearchServiceRequest.of("알라", "accuracy", 10);
+        String expectResult = readJsonFile("resultHasBlankISBN13.json");
+        String expectNextRequestUrl = "";
+
+        mockServer
+                .expect(requestTo(ITEM_SEARCH_URL
+                        + "?query=알라&MaxResults=20&start=10&output=js&Version=20131101&Sort=accuracy&TTBKey="
+                        + API_KEY))
+                .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
+
+        // when
+        BookSearchResultResponse bookSearchResultResponse = aladinBookSearchApiService.searchWithKeyword(request);
+
+        // then
+        assertAll(
+                () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isEqualTo(10),
+                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
+        );
+    }
+
     @DisplayName("알라딘의 최대 도서 검색 권수는 200권이다. 200권 이상 검색시 expectNextRequestUrl은 빈 값이다.")
     @Test
     void searchWithKeywordAndLimit200() throws IOException {
@@ -122,7 +147,7 @@ class AladinBookSearchApiServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isEqualTo(20),
+                () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isLessThan(20),
                 () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
         );
     }
