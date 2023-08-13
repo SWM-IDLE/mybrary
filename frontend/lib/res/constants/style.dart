@@ -166,6 +166,11 @@ const popularKeywordTextStyle = TextStyle(
   fontWeight: FontWeight.w400,
 );
 
+const confirmButtonTextStyle = TextStyle(
+  fontSize: 16.0,
+  fontWeight: FontWeight.w500,
+);
+
 // border style
 final searchInputBorderStyle = OutlineInputBorder(
   borderSide: BorderSide.none,
@@ -277,4 +282,10 @@ const myBookListSubStyle = TextStyle(
   color: grey777777,
   fontSize: 11.0,
   fontWeight: FontWeight.w400,
+);
+
+const bookShelfTitleStyle = TextStyle(
+  color: grey262626,
+  fontSize: 13.0,
+  fontWeight: FontWeight.w500,
 );

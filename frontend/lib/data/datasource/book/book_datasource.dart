@@ -59,14 +59,18 @@ class BookDataSource {
     return result.data;
   }
 
-  Future<List<MyBooksResponseData>> getMyBooks(String userId) async {
+  Future<List<MyBooksResponseData>> getMyBooks(
+    String userId,
+    String order,
+    String readStatus,
+  ) async {
     Dio dio = DioService().to();
     final getMyBooksResponse = await dio.get(
-      '${getBookServiceApi(API.getMyBooks)}/$userId/mybooks',
+      '${getBookServiceApi(API.getMyBooks)}/$userId/mybooks?order=$order&readStatus=$readStatus',
       options: Options(headers: {'User-Id': userId}),
     );
 
-    log('마이북 전체 조회 응답값: $getMyBooksResponse');
+    log('마이북 조건별 조회 응답값: $getMyBooksResponse');
     final MyBooksResponse result = commonResponseResult(
       getMyBooksResponse,
       () => MyBooksResponse(
@@ -120,6 +124,26 @@ class BookDataSource {
       () => CommonResponse(
         status: createMyBookResponse.data['status'],
         message: createMyBookResponse.data['message'],
+        data: null,
+      ),
+    );
+
+    return result;
+  }
+
+  Future<CommonResponse> deleteMyBook(String userId, int myBookId) async {
+    Dio dio = DioService().to();
+    final deleteMyBookResponse = await dio.delete(
+      '${getBookServiceApi(API.deleteMyBook)}/$myBookId',
+      options: Options(headers: {'User-Id': userId}),
+    );
+
+    log('마이북 삭제 응답값: $deleteMyBookResponse');
+    final CommonResponse result = commonResponseResult(
+      deleteMyBookResponse,
+      () => CommonResponse(
+        status: deleteMyBookResponse.data['status'],
+        message: deleteMyBookResponse.data['message'],
         data: null,
       ),
     );

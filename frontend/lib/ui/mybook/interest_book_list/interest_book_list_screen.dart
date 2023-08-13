@@ -4,19 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
 import 'package:mybrary/res/constants/color.dart';
+import 'package:mybrary/res/constants/enum.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
+import 'package:mybrary/ui/common/components/data_error.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/mybook/interest_book_list/components/interest_book_list.dart';
 import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
-
-enum SortType {
-  all,
-  initial,
-  registration,
-  publication,
-}
 
 class InterestBookListScreen extends StatefulWidget {
   const InterestBookListScreen({super.key});
@@ -45,8 +40,18 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
           future: _bookList,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(
-                child: Text('관심북 데이터를 불러오는데 실패했습니다.'),
+              return CustomScrollView(
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                slivers: [
+                  _bookListAppBar(appBarTitle: '관심북'),
+                  const SliverToBoxAdapter(
+                    child: DataError(
+                      errorMessage: '등록된 도서를 불러오는데 실패했습니다.',
+                    ),
+                  )
+                ],
               );
             }
 
@@ -60,12 +65,9 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                 slivers: [
                   _bookListAppBar(appBarTitle: '관심북'),
                   if (bookList.isEmpty)
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height / 1.5,
-                        child: const Center(
-                          child: Text('등록된 도서가 없습니다.'),
-                        ),
+                    const SliverToBoxAdapter(
+                      child: DataError(
+                        errorMessage: '등록된 도서가 없습니다.',
                       ),
                     ),
                   if (bookList.isNotEmpty) _sortTapColumn(context, bookList),
@@ -149,12 +151,12 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                     onTap: () {
                       bottomState(() {
                         _onTapSortItem(
-                          SortType.initial,
+                          SortType.title,
                         );
                       });
                     },
-                    sortTitle: '초성순',
-                    sortItemType: SortType.initial,
+                    sortTitle: '제목순',
+                    sortItemType: SortType.title,
                   ),
                 ),
                 _sortItemRow(
@@ -224,10 +226,10 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
               onTap: () {
                 setState(() {
                   switch (_sortType) {
-                    case SortType.initial:
+                    case SortType.title:
                       _bookList = _bookRepository.getInterestBooks(
                         userId: 'testId',
-                        order: 'initial',
+                        order: 'title',
                       );
                       break;
                     case SortType.registration:

@@ -6,6 +6,7 @@ const Color commonWhiteColor = Color(0xFFFFFFFF);
 const Color commonBlackColor = Color(0xFF000000);
 const Color commonLessBlackColor = Color(0xFF313333);
 const Color commonOrangeColor = Color(0xFFFF6846);
+const Color commonRedColor = Color(0xFFFF2D2D);
 const Color commonDisabledColor = Color(0x6B000000);
 const Color commonGreyColor = Color(0xFFA0A0A0);
 const Color commonGreyOpacityColor = Color(0x33A0A0A0);

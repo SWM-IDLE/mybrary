@@ -9,6 +9,7 @@ import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/bottom_button.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
+import 'package:mybrary/ui/common/components/data_error.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/mybook/mybook_detail/components/mybook_detail_header.dart';
@@ -101,8 +102,18 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
             .then((data) => _buildMyBookDetailData(data)),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(
-              child: Text('마이북 도서 데이터를 불러오는데 실패했습니다.'),
+            return CustomScrollView(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              slivers: [
+                _myBookDetailAppBar(appBarTitle: ''),
+                const SliverToBoxAdapter(
+                  child: DataError(
+                    errorMessage: '마이북 내용을 불러오는데 실패했습니다.',
+                  ),
+                )
+              ],
             );
           }
 
@@ -124,7 +135,11 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                   ),
                   slivers: [
                     _myBookDetailAppBar(
-                      _isOverflowMyBookDetailHeader ? _myBookAppBarTitle : '',
+                      appBarTitle: _isOverflowMyBookDetailHeader
+                          ? _myBookAppBarTitle
+                          : '',
+                      myBookId: widget.myBookId,
+                      myBookTitle: myBookDetailData.book!.title!,
                     ),
                     MyBookDetailHeader(
                       headerKey: _myBookDetailHeaderKey,
@@ -241,7 +256,11 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
     );
   }
 
-  SliverAppBar _myBookDetailAppBar(String appBarTitle) {
+  SliverAppBar _myBookDetailAppBar({
+    required String appBarTitle,
+    int? myBookId,
+    String? myBookTitle,
+  }) {
     return SliverAppBar(
       elevation: 0,
       title: Text(appBarTitle),
@@ -252,20 +271,107 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
       centerTitle: true,
       backgroundColor: commonWhiteColor,
       foregroundColor: commonBlackColor,
-      actions: [
-        IconButton(
-          onPressed: () {
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-              builder: (context) {
-                return const RootTab();
-              },
-            ), (route) => false);
-          },
-          icon: SvgPicture.asset(
-            'assets/svg/icon/home.svg',
-          ),
-        ),
-      ],
+      actions: myBookId == null && myBookTitle == null
+          ? []
+          : [
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                    builder: (context) {
+                      return const RootTab();
+                    },
+                  ), (route) => false);
+                },
+                icon: SvgPicture.asset(
+                  'assets/svg/icon/home.svg',
+                ),
+              ),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                onPressed: () async {
+                  await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        content: Wrap(
+                          alignment: WrapAlignment.center,
+                          children: [
+                            const Text(
+                              '선택한 도서를 마이북에서',
+                              style: confirmButtonTextStyle,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '삭제',
+                                  style: confirmButtonTextStyle.copyWith(
+                                    color: commonRedColor,
+                                  ),
+                                ),
+                                const Text(
+                                  '하시겠습니까?',
+                                  style: confirmButtonTextStyle,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        contentPadding: const EdgeInsets.only(
+                          top: 24.0,
+                          bottom: 16.0,
+                        ),
+                        actionsAlignment: MainAxisAlignment.center,
+                        buttonPadding:
+                            const EdgeInsets.symmetric(horizontal: 8.0),
+                        actions: [
+                          Row(
+                            children: [
+                              _confirmButton(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                buttonText: '취소',
+                                isCancel: true,
+                              ),
+                              _confirmButton(
+                                onTap: () {
+                                  _bookRepository.deleteMyBook(
+                                    userId: 'testId',
+                                    myBookId: myBookId!,
+                                  );
+
+                                  Future.delayed(const Duration(seconds: 1),
+                                      () {
+                                    Navigator.of(context).pop();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          '선택한 도서가 삭제되었습니다.',
+                                          style: commonSnackBarMessageStyle,
+                                        ),
+                                        duration: Duration(seconds: 1),
+                                      ),
+                                    );
+                                    Navigator.of(context).pop();
+                                  });
+                                },
+                                buttonText: '삭제',
+                                isCancel: false,
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(
+                  Icons.bookmark_remove_outlined,
+                ),
+              ),
+            ],
     );
   }
 
@@ -277,6 +383,37 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
           height: 1,
           thickness: 6,
           color: greyF1F2F5,
+        ),
+      ),
+    );
+  }
+
+  Widget _confirmButton({
+    required GestureTapCallback? onTap,
+    required String buttonText,
+    required bool isCancel,
+  }) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            height: 46.0,
+            decoration: BoxDecoration(
+              color: isCancel ? greyF1F2F5 : primaryColor,
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: Center(
+              child: Text(
+                buttonText,
+                style: commonSubBoldStyle.copyWith(
+                  color: isCancel ? commonBlackColor : commonWhiteColor,
+                  fontSize: 14.0,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

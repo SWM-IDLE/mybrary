@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
-class ErrorPage extends StatelessWidget {
+class SingleDataError extends StatelessWidget {
   final String errorMessage;
 
-  const ErrorPage({
+  const SingleDataError({
     required this.errorMessage,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -28,7 +28,6 @@ class ErrorPage extends StatelessWidget {
               color: grey777777,
             ),
           ),
-          const SizedBox(height: 100.0),
         ],
       ),
     );

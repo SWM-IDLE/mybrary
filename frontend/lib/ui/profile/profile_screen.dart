@@ -12,6 +12,7 @@ import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/enum.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
+import 'package:mybrary/ui/common/components/single_data_error.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/profile/components/profile_header.dart';
 import 'package:mybrary/ui/profile/components/profile_intro.dart';
@@ -67,8 +68,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               .then((data) => _buildProfileData(data)),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(
-                child: Text('프로필 데이터를 불러오는데 실패했습니다.'),
+              return const SingleDataError(
+                errorMessage: '프로필을 불러오는데 실패했습니다.',
               );
             }
 

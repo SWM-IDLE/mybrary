@@ -4,6 +4,7 @@ import 'package:mybrary/data/model/profile/my_interests_response.dart';
 import 'package:mybrary/data/repository/interests_repository.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
+import 'package:mybrary/ui/common/components/single_data_error.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/profile/my_interests/components/interest_category.dart';
 import 'package:mybrary/ui/profile/my_interests/components/interest_description.dart';
@@ -104,8 +105,8 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
                       future: _interestCategoriesResponseData,
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
-                          return const Center(
-                            child: Text('마이 관심사를 불러오는데 실패했습니다.'),
+                          return const SingleDataError(
+                            errorMessage: '마이 관심사를 불러오는데 실패했습니다.',
                           );
                         }
 

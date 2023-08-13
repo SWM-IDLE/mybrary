@@ -78,11 +78,6 @@ class MyBookRecord extends StatelessWidget {
               itemTitle: '소장일',
               itemDescription: startDateOfPossession,
             ),
-            const SizedBox(height: 15.0),
-            detailItem(
-              itemTitle: '등록일',
-              itemDescription: '2000.01.01',
-            ),
             const SizedBox(height: 20.0),
           ],
         ),

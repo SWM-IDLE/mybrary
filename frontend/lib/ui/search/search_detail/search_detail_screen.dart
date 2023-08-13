@@ -11,6 +11,7 @@ import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/book_detail_divider.dart';
 import 'package:mybrary/ui/common/components/bottom_button.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
+import 'package:mybrary/ui/common/components/single_data_error.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/mybook/interest_book_list/interest_book_list_screen.dart';
@@ -136,8 +137,8 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
           future: _bookSearchDetailResponse,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(
-                child: Text('도서 정보를 불러오는데 실패했습니다.'),
+              return const SingleDataError(
+                errorMessage: '도서 정보를 불러오는데 실패했습니다.',
               );
             }
 

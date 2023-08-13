@@ -4,17 +4,24 @@ import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
-import 'package:mybrary/ui/mybook/mybook_list/mybook_list_screen.dart';
 
 class MyBookHeader extends StatelessWidget {
   final List<MyBooksResponseData> myBooksData;
+  final List<MyBooksResponseData> completedBooksData;
   final List<BookListResponseData> interestBooksData;
-  final GestureTapCallback? onTap;
+  final GestureTapCallback? onTapInterestBook;
+  final void Function({
+    required String status,
+    required String order,
+    required String readStatus,
+  })? onTapMyBook;
 
   const MyBookHeader({
     required this.myBooksData,
+    required this.completedBooksData,
     required this.interestBooksData,
-    this.onTap,
+    this.onTapInterestBook,
+    this.onTapMyBook,
     super.key,
   });
 
@@ -41,8 +48,12 @@ class MyBookHeader extends StatelessWidget {
                 context: context,
                 status: '완독북',
                 iconUrl: 'read.svg',
-                count: '0',
-                bookList: [],
+                count: '${completedBooksData.length}',
+                onTap: () => onTapMyBook!(
+                  status: '완독북',
+                  order: '',
+                  readStatus: 'COMPLETED',
+                ),
               ),
               _divider(),
               _headerButton(
@@ -51,7 +62,7 @@ class MyBookHeader extends StatelessWidget {
                 iconUrl:
                     interestBooksData.isEmpty ? 'heart.svg' : 'heart_green.svg',
                 count: '${interestBooksData.length}',
-                onTap: onTap,
+                onTap: onTapInterestBook,
               ),
               _divider(),
               _headerButton(
@@ -60,7 +71,11 @@ class MyBookHeader extends StatelessWidget {
                 iconUrl:
                     myBooksData.isEmpty ? 'holder.svg' : 'holder_green.svg',
                 count: '${myBooksData.length}',
-                bookList: myBooksData,
+                onTap: () => onTapMyBook!(
+                  status: '마이북',
+                  order: '',
+                  readStatus: '',
+                ),
               ),
             ],
           ),
@@ -75,21 +90,9 @@ class MyBookHeader extends StatelessWidget {
     required String iconUrl,
     required String count,
     GestureTapCallback? onTap,
-    List<MyBooksResponseData>? bookList,
   }) {
     return InkWell(
-      onTap: onTap ??
-          () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MyBookListScreen(
-                  bookListTitle: status,
-                  bookList: bookList!,
-                ),
-              ),
-            );
-          },
+      onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

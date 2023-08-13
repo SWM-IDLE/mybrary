@@ -7,11 +7,13 @@ import 'package:mybrary/data/model/profile/profile_response.dart';
 class MyBookCommonData {
   ProfileResponseData profileResponseData;
   List<MyBooksResponseData> myBooksResponseData;
+  List<MyBooksResponseData> completedBooksResponseData;
   List<BookListResponseData> interestBooksResponseData;
 
   MyBookCommonData({
     required this.profileResponseData,
     required this.myBooksResponseData,
+    required this.completedBooksResponseData,
     required this.interestBooksResponseData,
   });
 }
