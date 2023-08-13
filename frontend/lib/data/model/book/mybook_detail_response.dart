@@ -116,7 +116,7 @@ class Book {
   List<String>? translators;
   String? publisher;
   String? thumbnailUrl;
-  double? stars;
+  double? starRating;
 
   Book({
     this.id,
@@ -126,7 +126,7 @@ class Book {
     this.translators,
     this.publisher,
     this.thumbnailUrl,
-    this.stars,
+    this.starRating,
   });
 
   factory Book.fromJson(Map<String, dynamic> json) {
@@ -141,7 +141,7 @@ class Book {
           : null,
       publisher: json['publisher'],
       thumbnailUrl: json['thumbnailUrl'],
-      stars: json['stars'],
+      starRating: json['starRating'],
     );
   }
 
@@ -154,7 +154,7 @@ class Book {
     data['translators'] = translators;
     data['publisher'] = publisher;
     data['thumbnailUrl'] = thumbnailUrl;
-    data['stars'] = stars;
+    data['starRating'] = starRating;
     return data;
   }
 }
