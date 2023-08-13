@@ -79,7 +79,7 @@ class BookInfo {
   String? title;
   String? description;
   String? thumbnailUrl;
-  double? stars;
+  double? starRating;
   String? authors;
 
   BookInfo({
@@ -87,7 +87,7 @@ class BookInfo {
     this.title,
     this.description,
     this.thumbnailUrl,
-    this.stars,
+    this.starRating,
     this.authors,
   });
 
@@ -97,7 +97,7 @@ class BookInfo {
       title: json['title'],
       description: json['description'],
       thumbnailUrl: json['thumbnailUrl'],
-      stars: json['stars'],
+      starRating: json['starRating'],
       authors: json['authors'],
     );
   }
@@ -108,7 +108,7 @@ class BookInfo {
     data['title'] = title;
     data['description'] = description;
     data['thumbnailUrl'] = thumbnailUrl;
-    data['stars'] = stars;
+    data['starRating'] = starRating;
     return data;
   }
 }
