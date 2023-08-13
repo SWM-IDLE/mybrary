@@ -28,6 +28,7 @@ class SingleDataError extends StatelessWidget {
               color: grey777777,
             ),
           ),
+          const SizedBox(height: 100.0),
         ],
       ),
     );

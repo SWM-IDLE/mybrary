@@ -162,19 +162,18 @@ class _MyBookScreenState extends State<MyBookScreen> {
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: status == '관심북'
-                ? _refreshInterestBookScreen
-                : () => _refreshMyBookScreen(
-                      status: status,
-                      order: order,
-                      readStatus: readStatus,
-                    ),
-            child: Row(
+      child: InkWell(
+        onTap: status == '관심북'
+            ? _refreshInterestBookScreen
+            : () => _refreshMyBookScreen(
+                  status: status,
+                  order: order,
+                  readStatus: readStatus,
+                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -201,62 +200,62 @@ class _MyBookScreenState extends State<MyBookScreen> {
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 8.0),
-          Container(
-            width: double.infinity,
-            height: 150.0,
-            decoration: BoxDecoration(
-              color: greyDDDDDD,
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-                BoxShadow(
-                  color: commonBlackColor.withOpacity(0.3),
-                  blurRadius: 2,
-                  offset: const Offset(0, 1),
-                  spreadRadius: 1,
-                )
-              ],
-            ),
-            child: myBooksBookShelfData.isEmpty
-                ? Center(
-                    child: Text(
-                      '내가 설정한 책이 자동으로 담깁니다.',
-                      style: bookShelfTitleStyle.copyWith(
-                        color: grey999999,
-                      ),
-                    ),
+            const SizedBox(height: 8.0),
+            Container(
+              width: double.infinity,
+              height: 150.0,
+              decoration: BoxDecoration(
+                color: greyDDDDDD,
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: commonBlackColor.withOpacity(0.3),
+                    blurRadius: 2,
+                    offset: const Offset(0, 1),
+                    spreadRadius: 1,
                   )
-                : Stack(
-                    children: myBooksBookShelfData
-                        .map(
-                          (myBook) => Positioned(
-                            left: myBooksBookShelfData.indexOf(myBook) * 64,
-                            child: Container(
-                              width: 100.0,
-                              height: 140.0,
-                              decoration: ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                    status == '관심북'
-                                        ? myBook.thumbnailUrl!
-                                        : myBook.book!.thumbnailUrl!,
+                ],
+              ),
+              child: myBooksBookShelfData.isEmpty
+                  ? Center(
+                      child: Text(
+                        '내가 설정한 책이 자동으로 담깁니다.',
+                        style: bookShelfTitleStyle.copyWith(
+                          color: grey999999,
+                        ),
+                      ),
+                    )
+                  : Stack(
+                      children: myBooksBookShelfData
+                          .map(
+                            (myBook) => Positioned(
+                              left: myBooksBookShelfData.indexOf(myBook) * 64,
+                              child: Container(
+                                width: 100.0,
+                                height: 140.0,
+                                decoration: ShapeDecoration(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
-                                  fit: BoxFit.fill,
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                      status == '관심북'
+                                          ? myBook.thumbnailUrl!
+                                          : myBook.book!.thumbnailUrl!,
+                                    ),
+                                    fit: BoxFit.fill,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        )
-                        .toList()
-                        .reversed
-                        .toList(),
-                  ),
-          ),
-        ],
+                          )
+                          .toList()
+                          .reversed
+                          .toList(),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

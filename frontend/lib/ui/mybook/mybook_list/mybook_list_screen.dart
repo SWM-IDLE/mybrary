@@ -33,6 +33,8 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
   final _bookRepository = BookRepository();
   late Future<List<MyBooksResponseData>> _bookList;
   late SortType _sortType;
+  late String _sortTitle = '전체';
+  late String _order = 'all';
 
   @override
   void initState() {
@@ -97,7 +99,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                           child: Row(
                             children: [
                               Text(
-                                '전체 ${bookList.length}권',
+                                '$_sortTitle ${bookList.length}권',
                                 style: myBookSortTextStyle,
                               ),
                               const SizedBox(width: 4.0),
@@ -154,7 +156,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
       (value) => setState(() {
         _bookList = _bookRepository.getMyBooks(
           userId: 'testId',
-          order: '',
+          order: _order,
           readStatus: readStatus,
         );
       }),
@@ -282,6 +284,8 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                         order: 'title',
                         readStatus: widget.readStatus,
                       );
+                      _sortTitle = '제목순';
+                      _order = 'title';
                       break;
                     case SortType.registration:
                       _bookList = _bookRepository.getMyBooks(
@@ -289,6 +293,8 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                         order: 'registration',
                         readStatus: widget.readStatus,
                       );
+                      _sortTitle = '등록순';
+                      _order = 'registration';
                       break;
                     case SortType.publication:
                       _bookList = _bookRepository.getMyBooks(
@@ -296,6 +302,8 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                         order: 'publication',
                         readStatus: widget.readStatus,
                       );
+                      _sortTitle = '발행일순';
+                      _order = 'publication';
                       break;
                     default:
                       _bookList = _bookRepository.getMyBooks(
@@ -303,6 +311,8 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                         order: 'all',
                         readStatus: widget.readStatus,
                       );
+                      _sortTitle = '전체';
+                      _order = 'all';
                   }
                   Navigator.pop(context);
                 });
