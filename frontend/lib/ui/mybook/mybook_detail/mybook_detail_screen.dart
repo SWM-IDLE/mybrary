@@ -342,8 +342,10 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                                     myBookId: myBookId!,
                                   );
 
-                                  Future.delayed(const Duration(seconds: 1),
-                                      () {
+                                  Future.delayed(
+                                      const Duration(
+                                        milliseconds: 500,
+                                      ), () {
                                     Navigator.of(context).pop();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
