@@ -14,7 +14,7 @@ public class MyBookDetailResponse {
     private boolean exchangeable;
     private boolean shareable;
     private ReadStatus readStatus;
-    private LocalDateTime startDateOfPossession;
+    private String startDateOfPossession;
 
     private MeaningTag meaningTag;
     private BookDetailResponse book;
