@@ -287,90 +287,94 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                   'assets/svg/icon/home.svg',
                 ),
               ),
-              IconButton(
-                visualDensity: VisualDensity.compact,
-                onPressed: () async {
-                  await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: Wrap(
-                          alignment: WrapAlignment.center,
-                          children: [
-                            const Text(
-                              '선택한 도서를 마이북에서',
-                              style: confirmButtonTextStyle,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '삭제',
-                                  style: confirmButtonTextStyle.copyWith(
-                                    color: commonRedColor,
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: IconButton(
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Wrap(
+                            alignment: WrapAlignment.center,
+                            children: [
+                              const Text(
+                                '선택한 도서를 마이북에서',
+                                style: confirmButtonTextStyle,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '삭제',
+                                    style: confirmButtonTextStyle.copyWith(
+                                      color: commonRedColor,
+                                    ),
                                   ),
+                                  const Text(
+                                    '하시겠습니까?',
+                                    style: confirmButtonTextStyle,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          contentPadding: const EdgeInsets.only(
+                            top: 24.0,
+                            bottom: 16.0,
+                          ),
+                          actionsAlignment: MainAxisAlignment.center,
+                          buttonPadding:
+                              const EdgeInsets.symmetric(horizontal: 8.0),
+                          actions: [
+                            Row(
+                              children: [
+                                _confirmButton(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  buttonText: '취소',
+                                  isCancel: true,
                                 ),
-                                const Text(
-                                  '하시겠습니까?',
-                                  style: confirmButtonTextStyle,
+                                _confirmButton(
+                                  onTap: () {
+                                    _bookRepository.deleteMyBook(
+                                      userId: 'testId',
+                                      myBookId: myBookId!,
+                                    );
+
+                                    Future.delayed(
+                                        const Duration(
+                                          milliseconds: 500,
+                                        ), () {
+                                      Navigator.of(context).pop();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            '선택한 도서가 삭제되었습니다.',
+                                            style: commonSnackBarMessageStyle,
+                                          ),
+                                          duration: Duration(seconds: 1),
+                                        ),
+                                      );
+                                      Navigator.of(context).pop();
+                                    });
+                                  },
+                                  buttonText: '삭제',
+                                  isCancel: false,
                                 ),
                               ],
                             ),
                           ],
-                        ),
-                        contentPadding: const EdgeInsets.only(
-                          top: 24.0,
-                          bottom: 16.0,
-                        ),
-                        actionsAlignment: MainAxisAlignment.center,
-                        buttonPadding:
-                            const EdgeInsets.symmetric(horizontal: 8.0),
-                        actions: [
-                          Row(
-                            children: [
-                              _confirmButton(
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                                buttonText: '취소',
-                                isCancel: true,
-                              ),
-                              _confirmButton(
-                                onTap: () {
-                                  _bookRepository.deleteMyBook(
-                                    userId: 'testId',
-                                    myBookId: myBookId!,
-                                  );
-
-                                  Future.delayed(
-                                      const Duration(
-                                        milliseconds: 500,
-                                      ), () {
-                                    Navigator.of(context).pop();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          '선택한 도서가 삭제되었습니다.',
-                                          style: commonSnackBarMessageStyle,
-                                        ),
-                                        duration: Duration(seconds: 1),
-                                      ),
-                                    );
-                                    Navigator.of(context).pop();
-                                  });
-                                },
-                                buttonText: '삭제',
-                                isCancel: false,
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(
-                  Icons.bookmark_remove_outlined,
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.bookmark_remove_outlined,
+                  ),
                 ),
               ),
             ],
