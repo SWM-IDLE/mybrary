@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class BookInterestRepositoryImpl implements BookInterestRepositoryCustom {
+public class BookInterestRepositoryCustomImpl implements BookInterestRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 

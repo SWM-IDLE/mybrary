@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MyBookRepositoryImpl implements MyBookRepositoryCustom {
+public class MyBookRepositoryCustomImpl implements MyBookRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
@@ -62,7 +62,11 @@ public class MyBookRepositoryImpl implements MyBookRepositoryCustom {
     }
 
     private BooleanExpression eqReadStatus(ReadStatus readStatus) {
-        return readStatus == null ? null : myBook.readStatus.eq(readStatus);
+
+        if (readStatus == null) {
+            return null;
+        }
+        return myBook.readStatus.eq(readStatus);
     }
 
     private OrderSpecifier<?> createOrderType(MyBookOrderType myBookOrderType) {

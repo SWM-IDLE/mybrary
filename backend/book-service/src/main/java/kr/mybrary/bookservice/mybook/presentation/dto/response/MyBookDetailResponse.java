@@ -29,7 +29,7 @@ public class MyBookDetailResponse {
         private List<String> translators;
         private String publisher;
         private String thumbnailUrl;
-        private Double stars;
+        private Double starRating;
     }
 
     @Getter

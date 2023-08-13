@@ -39,7 +39,7 @@ class MyBookDtoMapperTest {
                 () -> assertThat(target.getBook().getTitle()).isEqualTo(source.getTitle()),
                 () -> assertThat(target.getBook().getDescription()).isEqualTo(source.getDescription()),
                 () -> assertThat(target.getBook().getThumbnailUrl()).isEqualTo(source.getThumbnailUrl()),
-                () -> assertThat(target.getBook().getStars()).isEqualTo(source.getStarRating()),
+                () -> assertThat(target.getBook().getStarRating()).isEqualTo(source.getStarRating()),
                 () -> assertThat(target.getBook().getPublicationDate()).isEqualTo(DateUtils.toDotFormatYYYYMMDD(source.getPublicationDate())),
                 () -> assertThat(target.getBook().getAuthors()).isEqualTo("저자_1, 저자_2")
         );
@@ -71,7 +71,7 @@ class MyBookDtoMapperTest {
                 () -> assertThat(myBookDetailResponse.getBook().getTitle()).isEqualTo(myBook.getBook().getTitle()),
                 () -> assertThat(myBookDetailResponse.getBook().getDescription()).isEqualTo(myBook.getBook().getDescription()),
                 () -> assertThat(myBookDetailResponse.getBook().getThumbnailUrl()).isEqualTo(myBook.getBook().getThumbnailUrl()),
-                () -> assertThat(myBookDetailResponse.getBook().getStars()).isEqualTo(0.0),
+                () -> assertThat(myBookDetailResponse.getBook().getStarRating()).isEqualTo(0.0),
                 () -> assertThat(myBookDetailResponse.getBook().getAuthors()).isEqualTo(myBook.getBook().getBookAuthors().stream()
                         .map(bookAuthor -> bookAuthor.getAuthor().getName())
                         .toList()),
@@ -106,7 +106,7 @@ class MyBookDtoMapperTest {
                 () -> assertThat(myBookDetailResponse.getBook().getTitle()).isEqualTo(myBook.getBook().getTitle()),
                 () -> assertThat(myBookDetailResponse.getBook().getDescription()).isEqualTo(myBook.getBook().getDescription()),
                 () -> assertThat(myBookDetailResponse.getBook().getThumbnailUrl()).isEqualTo(myBook.getBook().getThumbnailUrl()),
-                () -> assertThat(myBookDetailResponse.getBook().getStars()).isEqualTo(0.0),
+                () -> assertThat(myBookDetailResponse.getBook().getStarRating()).isEqualTo(0.0),
                 () -> assertThat(myBookDetailResponse.getBook().getAuthors()).isEqualTo(myBook.getBook().getBookAuthors().stream()
                         .map(bookAuthor -> bookAuthor.getAuthor().getName())
                         .toList()),

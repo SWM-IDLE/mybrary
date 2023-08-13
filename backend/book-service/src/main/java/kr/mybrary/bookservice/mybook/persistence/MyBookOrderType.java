@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 public enum MyBookOrderType {
 
     NONE(new OrderSpecifier<>(Order.ASC, myBook.id)),
-    INITIAL(new OrderSpecifier<>(Order.ASC, myBook.book.title)),
+    TITLE(new OrderSpecifier<>(Order.ASC, myBook.book.title)),
     REGISTRATION(new OrderSpecifier<>(Order.DESC, myBook.createdAt)),
     PUBLICATION(new OrderSpecifier<>(Order.DESC, myBook.book.publicationDate));
 

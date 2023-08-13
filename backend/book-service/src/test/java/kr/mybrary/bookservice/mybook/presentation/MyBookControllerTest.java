@@ -123,7 +123,7 @@ class MyBookControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/v1/users/{userId}/mybooks", LOGIN_ID)
-                .param("order", "initial")
+                .param("order", "title")
                 .param("readStatus", "TO_READ")
                 .header("USER-ID", LOGIN_ID));
 
@@ -142,7 +142,7 @@ class MyBookControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("mybook")
                                 .summary("내 서재의 도서를 모두 조회한다.")
-                                .description("쿼리 파라미터 order를 통해 정렬 순서를 지정할 수 있다. 초성순(initial), 등록순(registration), 발행일순(publication)이 있다."
+                                .description("쿼리 파라미터 order를 통해 정렬 순서를 지정할 수 있다. 제목순(title), 등록순(registration), 발행일순(publication)이 있다."
                                         + " 정렬이 필요없는 경우 order 파라미터를 생략할 수 있다."
                                         + " 또한 쿼리 파라미터 readStatus를 통해 읽은 상태 필터링을 할 수 있다. 읽기전(TO_READ), 읽는중(READING), 완독(COMPLETED)이 있다."
                                         + " 읽은 상태 필터링이 필요없는 경우 readStatus 파라미터를 생략할 수 있다.")
@@ -170,7 +170,7 @@ class MyBookControllerTest {
                                         fieldWithPath("data[].book.title").type(STRING).description("도서 제목"),
                                         fieldWithPath("data[].book.description").type(STRING).description("도서 설명"),
                                         fieldWithPath("data[].book.thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
-                                        fieldWithPath("data[].book.stars").type(NUMBER).description("도서 별점"),
+                                        fieldWithPath("data[].book.starRating").type(NUMBER).description("도서 별점"),
                                         fieldWithPath("data[].book.authors").type(STRING).description("도서 저자 이름 (, 로 분리)"),
                                         fieldWithPath("data[].book.publicationDate").type(STRING).description("도서 출판일")
                                 ).build())));
@@ -228,7 +228,7 @@ class MyBookControllerTest {
                                                 fieldWithPath("data.book.thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
                                                 fieldWithPath("data.book.authors").type(ARRAY).description("도서 저자"),
                                                 fieldWithPath("data.book.translators").type(ARRAY).description("도서 번역자"),
-                                                fieldWithPath("data.book.stars").type(NUMBER).description("도서 별점"),
+                                                fieldWithPath("data.book.starRating").type(NUMBER).description("도서 별점"),
                                                 fieldWithPath("data.book.publisher").type(STRING).description("출판사"),
                                                 fieldWithPath("data.meaningTag.quote").type(STRING).description("의미 태그 문구"),
                                                 fieldWithPath("data.meaningTag.colorCode").type(STRING).description("의미 태그 색상")
@@ -390,7 +390,7 @@ class MyBookControllerTest {
                                                 fieldWithPath("data[].book.title").type(STRING).description("도서 제목"),
                                                 fieldWithPath("data[].book.description").type(STRING).description("도서 설명"),
                                                 fieldWithPath("data[].book.thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
-                                                fieldWithPath("data[].book.stars").type(NUMBER).description("도서 별점"),
+                                                fieldWithPath("data[].book.starRating").type(NUMBER).description("도서 별점"),
                                                 fieldWithPath("data[].book.publicationDate").type(STRING).description("도서 출판일"))
                                         .build())));
     }

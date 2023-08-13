@@ -23,7 +23,7 @@ public class MyBookElementFromMeaningTagResponse {
         private String title;
         private String description;
         private String thumbnailUrl;
-        private Double stars;
+        private Double starRating;
         private String publicationDate;
     }
 }

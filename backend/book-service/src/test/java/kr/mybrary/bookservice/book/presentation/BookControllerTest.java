@@ -326,7 +326,7 @@ class BookControllerTest {
         // when
         ResultActions actions = mockMvc.perform(get("/api/v1/books/users/{userId}/interest", userId)
                 .header("USER-ID", loginId)
-                .param("order", "initial"));
+                .param("order", "title"));
 
         // then
         actions
@@ -344,7 +344,7 @@ class BookControllerTest {
                                 ResourceSnippetParameters.builder()
                                         .tag("interest")
                                         .summary("관심 도서를 조회한다.")
-                                        .description("쿼리 파라미터 order를 통해 정렬 순서를 지정할 수 있다. 초성순(initial), 등록순(registration), 발행일순(publication)이 있다."
+                                        .description("쿼리 파라미터 order를 통해 정렬 순서를 지정할 수 있다. 제목순(title), 등록순(registration), 발행일순(publication)이 있다."
                                                 + " 정렬이 필요없는 경우 order 파라미터를 생략할 수 있다.")
                                         .requestHeaders(
                                                 headerWithName("USER-ID").description("사용자 ID")
