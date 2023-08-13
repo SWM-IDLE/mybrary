@@ -24,6 +24,8 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
   final _bookRepository = BookRepository();
   late Future<List<BookListResponseData>> _bookList;
   late SortType _sortType;
+  late String _sortTitle = '전체';
+  late String _order = 'all';
 
   @override
   void initState() {
@@ -101,7 +103,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
               child: Row(
                 children: [
                   Text(
-                    '전체 ${bookList.length}권',
+                    '$_sortTitle ${bookList.length}권',
                     style: myBookSortTextStyle,
                   ),
                   const SizedBox(width: 4.0),
@@ -231,23 +233,31 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                         userId: 'testId',
                         order: 'title',
                       );
+                      _sortTitle = '제목순';
+                      _order = 'title';
                       break;
                     case SortType.registration:
                       _bookList = _bookRepository.getInterestBooks(
                         userId: 'testId',
                         order: 'registration',
                       );
+                      _sortTitle = '등록순';
+                      _order = 'registration';
                       break;
                     case SortType.publication:
                       _bookList = _bookRepository.getInterestBooks(
                         userId: 'testId',
                         order: 'publication',
                       );
+                      _sortTitle = '발행일순';
+                      _order = 'publication';
                       break;
                     default:
                       _bookList = _bookRepository.getInterestBooks(
                         userId: 'testId',
                       );
+                      _sortTitle = '전체';
+                      _order = 'all';
                   }
                   Navigator.pop(context);
                 });
@@ -356,6 +366,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
       (value) => setState(() {
         _bookList = _bookRepository.getInterestBooks(
           userId: 'testId',
+          order: _order,
         );
       }),
     );
