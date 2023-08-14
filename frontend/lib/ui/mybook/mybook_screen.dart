@@ -14,6 +14,7 @@ import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/mybook/components/mybook_header.dart';
 import 'package:mybrary/ui/mybook/interest_book_list/interest_book_list_screen.dart';
 import 'package:mybrary/ui/mybook/mybook_list/mybook_list_screen.dart';
+import 'package:mybrary/utils/logics/ui_utils.dart';
 
 class MyBookScreen extends StatefulWidget {
   const MyBookScreen({super.key});
@@ -160,6 +161,7 @@ class _MyBookScreenState extends State<MyBookScreen> {
     required String order,
     required String readStatus,
   }) {
+    final leftPosition = mediaQueryWidth(context) / 6.2;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: InkWell(
@@ -229,7 +231,8 @@ class _MyBookScreenState extends State<MyBookScreen> {
                       children: myBooksBookShelfData
                           .map(
                             (myBook) => Positioned(
-                              left: myBooksBookShelfData.indexOf(myBook) * 64,
+                              left: myBooksBookShelfData.indexOf(myBook) *
+                                  leftPosition,
                               child: Container(
                                 width: 100.0,
                                 height: 140.0,
@@ -339,6 +342,11 @@ class _MyBookScreenState extends State<MyBookScreen> {
       (value) => setState(() {
         _interestBooksResponseData = _bookRepository.getInterestBooks(
           userId: 'testId',
+        );
+        _myBooksResponseData = _bookRepository.getMyBooks(
+          userId: 'testId',
+          order: '',
+          readStatus: '',
         );
       }),
     );

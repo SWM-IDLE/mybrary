@@ -27,7 +27,12 @@ const bottomNavigationBarItemList = [
 ];
 
 class RootTab extends StatefulWidget {
-  const RootTab({super.key});
+  final int? tapIndex;
+
+  const RootTab({
+    this.tapIndex,
+    super.key,
+  });
 
   @override
   State<RootTab> createState() => _RootTabState();
@@ -48,19 +53,24 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
       animationDuration: Duration.zero,
     );
 
-    tabController.addListener(tabListener);
-  }
+    if (widget.tapIndex != null) {
+      index = widget.tapIndex!;
+      tabController.index = widget.tapIndex!;
+    }
 
-  @override
-  void dispose() {
-    tabController.removeListener(tabListener);
-    super.dispose();
+    tabController.addListener(tabListener);
   }
 
   void tabListener() {
     setState(() {
       index = tabController.index;
     });
+  }
+
+  @override
+  void dispose() {
+    tabController.removeListener(tabListener);
+    super.dispose();
   }
 
   @override

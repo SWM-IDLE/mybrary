@@ -31,17 +31,17 @@ class FollowingResponse {
 }
 
 class FollowingResponseData {
-  String? requestLoginId;
+  String? userId;
   List<Followings>? followings;
 
   FollowingResponseData({
-    required this.requestLoginId,
+    required this.userId,
     this.followings,
   });
 
   factory FollowingResponseData.fromJson(Map<String, dynamic> json) {
     return FollowingResponseData(
-      requestLoginId: json['requestLoginId'],
+      userId: json['userId'],
       followings: json['followings'] != null
           ? (json['followings'] as List)
               .map((i) => Followings.fromJson(i))
@@ -52,7 +52,7 @@ class FollowingResponseData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['requestLoginId'] = requestLoginId;
+    data['userId'] = userId;
     if (followings != null) {
       data['followings'] = followings!.map((v) => v.toJson()).toList();
     }
@@ -61,25 +61,25 @@ class FollowingResponseData {
 }
 
 class Followings {
-  String? loginId;
+  String? userId;
   String? nickname;
   String? profileImageUrl;
 
   Followings({
-    this.loginId,
+    this.userId,
     this.nickname,
     this.profileImageUrl,
   });
 
   Followings.fromJson(Map<String, dynamic> json) {
-    loginId = json['loginId'];
+    userId = json['userId'];
     nickname = json['nickname'];
     profileImageUrl = json['profileImageUrl'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['loginId'] = loginId;
+    data['userId'] = userId;
     data['nickname'] = nickname;
     data['profileImageUrl'] = profileImageUrl;
     return data;

@@ -32,23 +32,23 @@ class _FollowScreenState extends State<FollowScreen>
 
   Set<String> notFollowingUsers = {};
 
-  bool isFollowing(String loginId) {
-    return !notFollowingUsers.contains(loginId);
+  bool isFollowing(String userId) {
+    return !notFollowingUsers.contains(userId);
   }
 
-  void onPressedAddFollowingUser(String loginId) {
+  void onPressedAddFollowingUser(String userId) {
     setState(() {
-      if (isFollowing(loginId)) {
-        notFollowingUsers.add(loginId);
+      if (isFollowing(userId)) {
+        notFollowingUsers.add(userId);
       } else {
-        notFollowingUsers.remove(loginId);
+        notFollowingUsers.remove(userId);
       }
     });
   }
 
-  void onPressedDeleteFollowingUser(String loginId) {
+  void onPressedDeleteFollowingUser(String userId) {
     setState(() {
-      notFollowingUsers.add(loginId);
+      notFollowingUsers.add(userId);
     });
   }
 
@@ -199,7 +199,7 @@ class _FollowScreenState extends State<FollowScreen>
         itemCount: followings.length,
         itemBuilder: (context, index) {
           Followings following = followings[index];
-          String followingUserId = following.loginId!;
+          String followingUserId = following.userId!;
 
           return FollowLayout(
             children: [
@@ -247,7 +247,7 @@ class _FollowScreenState extends State<FollowScreen>
   }) async {
     await _followRepository.deleteFollower(
       userId: 'testId',
-      sourceId: follower.loginId!,
+      sourceId: follower.userId!,
     );
 
     if (!mounted) return;

@@ -31,17 +31,17 @@ class MyInterestsResponse {
 }
 
 class MyInterestsResponseData {
-  String? loginId;
+  String? userId;
   List<UserInterests>? userInterests;
 
   MyInterestsResponseData({
-    required this.loginId,
+    required this.userId,
     required this.userInterests,
   });
 
   factory MyInterestsResponseData.fromJson(Map<String, dynamic> json) {
     return MyInterestsResponseData(
-      loginId: json['loginId'],
+      userId: json['userId'],
       userInterests: json['userInterests'] != null
           ? (json['userInterests'] as List)
               .map((i) => UserInterests.fromJson(i))
@@ -52,7 +52,7 @@ class MyInterestsResponseData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['loginId'] = loginId;
+    data['userId'] = userId;
     if (userInterests != null) {
       data['userInterests'] = userInterests!.map((v) => v.toJson()).toList();
     }
