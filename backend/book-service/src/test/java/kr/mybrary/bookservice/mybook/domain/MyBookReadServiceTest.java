@@ -35,6 +35,7 @@ import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegistrationCountResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import kr.mybrary.bookservice.tag.domain.MeaningTagService;
 import org.junit.jupiter.api.DisplayName;
@@ -393,12 +394,12 @@ class MyBookReadServiceTest {
         given(myBookRepository.getBookRegistrationCountOfDay(LocalDate.now())).willReturn(1L);
 
         // when
-        Long count = myBookService.getBookRegistrationCountOfToday();
+        MyBookRegistrationCountResponse response = myBookService.getBookRegistrationCountOfToday();
 
         // then
         assertAll(
                 () -> verify(myBookRepository, times(1)).getBookRegistrationCountOfDay(any()),
-                () -> assertThat(count).isEqualTo(1L)
+                () -> assertThat(response.getCount()).isEqualTo(1L)
         );
     }
 }

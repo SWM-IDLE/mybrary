@@ -34,6 +34,7 @@ import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookUpdateReques
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegistrationCountResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -393,5 +394,39 @@ class MyBookControllerTest {
                                                 fieldWithPath("data[].book.starRating").type(NUMBER).description("도서 별점"),
                                                 fieldWithPath("data[].book.publicationDate").type(STRING).description("도서 출판일"))
                                         .build())));
+    }
+
+    @DisplayName("오늘 마이북 등록수를 조회한다.")
+    @Test
+    void getTodayRegistrationCount() throws Exception {
+
+        // given
+        MyBookRegistrationCountResponse response = MybookDtoTestData.createMyBookRegistrationCountResponse();
+        given(myBookService.getBookRegistrationCountOfToday()).willReturn(response);
+
+        // when
+        ResultActions actions = mockMvc.perform(get("/api/v1/mybooks/today-registration-count"));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("오늘의 마이북 등록 수입니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // document
+        actions.andDo(document("get-today-mybook-registration-count",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("mybook")
+                                .summary("오늘 마이북 등록수를 조회한다.")
+                                .responseSchema(Schema.schema("get_today_mybook_registration_count_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(STRING).description("응답 상태"),
+                                        fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                        fieldWithPath("data.count").type(NUMBER).description("오늘의 마이북 등록 수"))
+                                .build())));
     }
 }

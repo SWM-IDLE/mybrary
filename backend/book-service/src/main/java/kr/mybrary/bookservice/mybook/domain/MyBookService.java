@@ -20,6 +20,7 @@ import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegistrationCountResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import kr.mybrary.bookservice.tag.domain.MeaningTagService;
 import lombok.RequiredArgsConstructor;
@@ -115,8 +116,9 @@ public class MyBookService {
     }
 
     @Transactional(readOnly = true)
-    public Long getBookRegistrationCountOfToday() {
-        return myBookRepository.getBookRegistrationCountOfDay(LocalDate.now());
+    public MyBookRegistrationCountResponse getBookRegistrationCountOfToday() {
+
+        return MyBookRegistrationCountResponse.of(myBookRepository.getBookRegistrationCountOfDay(LocalDate.now()));
     }
 
     private void checkBookAlreadyRegisteredAsMyBook(String userId, Book book) {

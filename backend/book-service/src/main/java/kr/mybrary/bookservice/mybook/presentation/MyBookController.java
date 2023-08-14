@@ -95,4 +95,11 @@ public class MyBookController {
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "의미 태그를 통해서 마이북을 조회했습니다.",
                         myBookService.findByMeaningTagQuote(request)));
     }
+
+    @GetMapping("/mybooks/today-registration-count")
+    public ResponseEntity getTodayRegistrationCount() {
+
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "오늘의 마이북 등록 수입니다.",
+                        myBookService.getBookRegistrationCountOfToday()));
+    }
 }

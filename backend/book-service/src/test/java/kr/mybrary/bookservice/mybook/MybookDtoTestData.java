@@ -18,6 +18,7 @@ import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailRespo
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse.BookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegistrationCountResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 
 public class MybookDtoTestData {
@@ -174,5 +175,11 @@ public class MybookDtoTestData {
                                 .author(Author.builder().name("저자_2").build())
                                 .build()));
 
+    }
+
+    public static MyBookRegistrationCountResponse createMyBookRegistrationCountResponse() {
+        return MyBookRegistrationCountResponse.builder()
+                .count(10L)
+                .build();
     }
 }
