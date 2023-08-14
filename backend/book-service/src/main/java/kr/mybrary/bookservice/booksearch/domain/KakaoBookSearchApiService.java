@@ -3,11 +3,14 @@ package kr.mybrary.bookservice.booksearch.domain;
 import java.util.List;
 import java.util.Objects;
 import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchDtoMapper;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.BookSearchResultServiceResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse.Meta;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
+import kr.mybrary.bookservice.booksearch.domain.exception.UnsupportedSearchAPIException;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategorySearchResultResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -65,6 +68,11 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
         KakaoBookSearchResponse response = requestBookSearch(API_URL_WITH_ISBN, request);
 
         return BookSearchDtoMapper.INSTANCE.kakaoSearchResponseToDetailResponse(response.getDocuments().get(0));
+    }
+
+    @Override
+    public BookListByCategorySearchResultResponse searchBookListByCategory(BookListByCategorySearchServiceRequest request) {
+        throw new UnsupportedSearchAPIException();
     }
 
     private KakaoBookSearchResponse requestBookSearch(String baseUrl, BookSearchServiceRequest request) {

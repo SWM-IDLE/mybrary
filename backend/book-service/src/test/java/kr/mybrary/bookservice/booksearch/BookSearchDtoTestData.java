@@ -1,10 +1,12 @@
 package kr.mybrary.bookservice.booksearch;
 
 import java.util.List;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.BookSearchResultServiceResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategorySearchResultResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 
 public class BookSearchDtoTestData {
@@ -206,6 +208,20 @@ public class BookSearchDtoTestData {
                 .sizeDepth(20)
                 .sizeHeight(30)
                 .sizeWidth(10)
+                .build();
+    }
+
+    public static BookListByCategorySearchServiceRequest createBookListSearchServiceRequest() {
+        return BookListByCategorySearchServiceRequest.builder()
+                .type("bestseller")
+                .categoryId(123L)
+                .build();
+    }
+
+    public static BookListByCategorySearchResultResponse createBookListSearchResultResponse() {
+        return BookListByCategorySearchResultResponse.builder()
+                .thumbnailUrl("test_thumbnail_url")
+                .isbn13("test_isbn13")
                 .build();
     }
 }
