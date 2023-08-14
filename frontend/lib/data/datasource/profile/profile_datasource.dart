@@ -66,10 +66,10 @@ class ProfileDataSource {
     log('프로필 이미지 조회 응답값: $profileImageResponse');
     final ProfileImageResponse result = commonResponseResult(
       profileImageResponse,
-      () => ProfileResponse(
+      () => ProfileImageResponse(
         status: profileImageResponse.data['status'],
         message: profileImageResponse.data['message'],
-        data: ProfileResponseData.fromJson(
+        data: ProfileImageResponseData.fromJson(
           profileImageResponse.data['data'],
         ),
       ),

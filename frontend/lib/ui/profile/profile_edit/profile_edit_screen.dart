@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
@@ -301,8 +302,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       if (_selectedImageFile != null) {
         _profileImageFormData = FormData.fromMap(
           {
-            'profileImage':
-                await MultipartFile.fromFile(_selectedImageFile!.path),
+            'profileImage': await MultipartFile.fromFile(
+              _selectedImageFile!.path,
+              contentType: MediaType(
+                'image',
+                'jpg',
+              ),
+            ),
           },
         );
 

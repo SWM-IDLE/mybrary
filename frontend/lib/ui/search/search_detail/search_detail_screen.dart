@@ -44,6 +44,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
   late int _newInterestCount = 0;
   late bool _isScrollingDown = true;
   late bool _isOnTapInterestBook = false;
+  late bool _registeredMyBook = false;
   late bool _isOverflowBookDetailHeader = false;
   final GlobalKey _bookDetailHeaderKey = GlobalKey();
 
@@ -230,11 +231,26 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                       ],
                     ),
                   ),
-                  BottomButton(
-                    isScrollingDown: _isScrollingDown,
-                    buttonText: '마이북에 담기',
-                    onTap: () => _onTapSaveMyBook(bookSearchDetail.isbn13!),
-                  ),
+                  if (_registeredMyBook)
+                    BottomButton(
+                      isScrollingDown: _isScrollingDown,
+                      buttonText: '마이북으로 이동하기',
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                          builder: (context) {
+                            return const RootTab(
+                              tapIndex: 2,
+                            );
+                          },
+                        ), (route) => false);
+                      },
+                    )
+                  else
+                    BottomButton(
+                      isScrollingDown: _isScrollingDown,
+                      buttonText: '마이북에 담기',
+                      onTap: () => _onTapSaveMyBook(bookSearchDetail.isbn13!),
+                    ),
                 ],
               );
             }
@@ -385,6 +401,10 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
         );
       },
     );
+
+    setState(() {
+      _registeredMyBook = true;
+    });
 
     Future.delayed(const Duration(seconds: 1), () {
       Navigator.of(context).pop();

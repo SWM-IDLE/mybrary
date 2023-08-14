@@ -4,6 +4,7 @@ import 'package:mybrary/data/model/profile/follower_response.dart';
 import 'package:mybrary/data/model/profile/following_response.dart';
 import 'package:mybrary/data/model/profile/my_interests_response.dart';
 import 'package:mybrary/data/model/profile/profile_common_response.dart';
+import 'package:mybrary/data/model/profile/profile_image_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/repository/follow_repository.dart';
 import 'package:mybrary/data/repository/interests_repository.dart';
@@ -37,13 +38,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late Future<MyInterestsResponseData> _myInterestsResponseData;
   late Future<FollowerResponseData> _followerResponseData;
   late Future<FollowingResponseData> _followingResponseData;
-
+  late Future<ProfileImageResponseData> _profileImageResponseData;
   late List<UserInterests> userInterests;
 
   @override
   void initState() {
     super.initState();
     _profileResponseData = _profileRepository.getProfileData(
+      userId: 'testId',
+    );
+    _profileImageResponseData = _profileRepository.getProfileImage(
       userId: 'testId',
     );
     _myInterestsResponseData = _myInterestsRepository.getMyInterestsCategories(
@@ -80,12 +84,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   data.myInterestsData;
               final FollowerResponseData followerData = data.followerData;
               final FollowingResponseData followingData = data.followingData;
+              ProfileImageResponseData profileImageData = data.profileImageData;
 
               return Column(
                 children: [
                   ProfileHeader(
                     nickname: profileData.nickname!,
-                    profileImageUrl: profileData.profileImageUrl!,
+                    profileImageUrl: profileImageData.profileImageUrl!,
                     followerCount: followerData.followers!.length.toString(),
                     followingCount: followingData.followings!.length.toString(),
                     navigateToFollowScreen: () =>
@@ -111,9 +116,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   ProfileCommonData _buildProfileData(List<Object> data) {
-    final [profileData, myInterestsData, followerData, followingData] = data;
+    final [
+      profileData,
+      profileImageData,
+      myInterestsData,
+      followerData,
+      followingData
+    ] = data;
     return ProfileCommonData(
       profileData: profileData as ProfileResponseData,
+      profileImageData: profileImageData as ProfileImageResponseData,
       myInterestsData: myInterestsData as MyInterestsResponseData,
       followerData: followerData as FollowerResponseData,
       followingData: followingData as FollowingResponseData,
@@ -123,6 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   List<Future<Object>> _futureProfileData() {
     return [
       _profileResponseData,
+      _profileImageResponseData,
       _myInterestsResponseData,
       _followerResponseData,
       _followingResponseData,
@@ -233,6 +246,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ).then(
       (value) => setState(() {
         _profileResponseData = _profileRepository.getProfileData(
+          userId: 'testId',
+        );
+        _profileImageResponseData = _profileRepository.getProfileImage(
           userId: 'testId',
         );
       }),
