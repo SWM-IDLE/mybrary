@@ -9,8 +9,11 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
+import kr.mybrary.bookservice.booksearch.domain.exception.UnsupportedSearchAPIException;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -169,6 +172,18 @@ class KakaoBookSearchApiServiceTest {
                 () -> assertThat(bookSearchDetailResponse.getIsbn10()).isEqualTo("8980782977"),
                 () -> assertThat(bookSearchDetailResponse.getIsbn13()).isEqualTo("9788980782970")
         );
+    }
+
+    @DisplayName("도서 분야별 리스트 조회시 예외가 발생한다.")
+    @Test
+    void occurExceptionWhenSearchBookListByField() {
+
+        // given
+        BookListByCategorySearchServiceRequest request = BookSearchDtoTestData.createBookListSearchServiceRequest();
+
+        // given, when
+        assertThatThrownBy(() -> kakaoBookSearchApiService.searchBookListByCategory(request)).isInstanceOf(
+                UnsupportedSearchAPIException.class);
     }
 
     private String readJsonFile(String fileName) throws IOException {
