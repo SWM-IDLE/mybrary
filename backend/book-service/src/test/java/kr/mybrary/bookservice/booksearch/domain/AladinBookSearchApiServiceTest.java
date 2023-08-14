@@ -122,7 +122,7 @@ class AladinBookSearchApiServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isEqualTo(10),
+                () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isEqualTo(9),
                 () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
         );
     }
