@@ -13,6 +13,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import kr.mybrary.bookservice.book.BookFixture;
@@ -324,7 +325,8 @@ class MyBookReadServiceTest {
     void findMyBookByMeaningTagQuote() {
 
         // given
-        MyBookFindByMeaningTagQuoteServiceRequest request = MyBookFindByMeaningTagQuoteServiceRequest.of(LOGIN_ID, "quote");
+        MyBookFindByMeaningTagQuoteServiceRequest request = MyBookFindByMeaningTagQuoteServiceRequest.of(LOGIN_ID,
+                "quote");
 
         given(myBookRepository.findByMeaningTagQuote(request.getQuote())).willReturn(
                 List.of(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()));
@@ -380,6 +382,23 @@ class MyBookReadServiceTest {
         assertAll(
                 () -> verify(myBookRepository, times(1)).findByIdWithBook(myBookId),
                 () -> assertThat(foundMyBook).isNotNull()
+        );
+    }
+
+    @DisplayName("오늘 등록된 마이북의 갯수를 조회한다.")
+    @Test
+    void getBookRegistrationCountOfToday() {
+
+        // given
+        given(myBookRepository.getBookRegistrationCountOfDay(LocalDate.now())).willReturn(1L);
+
+        // when
+        Long count = myBookService.getBookRegistrationCountOfToday();
+
+        // then
+        assertAll(
+                () -> verify(myBookRepository, times(1)).getBookRegistrationCountOfDay(any()),
+                () -> assertThat(count).isEqualTo(1L)
         );
     }
 }

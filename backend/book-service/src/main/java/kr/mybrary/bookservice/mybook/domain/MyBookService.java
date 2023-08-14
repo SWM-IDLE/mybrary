@@ -1,5 +1,6 @@
 package kr.mybrary.bookservice.mybook.domain;
 
+import java.time.LocalDate;
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.BookReadService;
 import kr.mybrary.bookservice.book.persistence.Book;
@@ -111,6 +112,11 @@ public class MyBookService {
     @Transactional(readOnly = true)
     public MyBook findMyBookByIdWithBook(Long myBookId) {
         return myBookRepository.findByIdWithBook(myBookId).orElseThrow(MyBookNotFoundException::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Long getBookRegistrationCountOfToday() {
+        return myBookRepository.getBookRegistrationCountOfDay(LocalDate.now());
     }
 
     private void checkBookAlreadyRegisteredAsMyBook(String userId, Book book) {
