@@ -8,6 +8,8 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
@@ -59,6 +61,17 @@ public class MyBookRepositoryCustomImpl implements MyBookRepositoryCustom {
         }
 
         return myBookListDisplayElementModel;
+    }
+
+    @Override
+    public Long getBookRegistrationCountOfDay(LocalDate date) {
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.atTime(23, 59, 59, 999_999_999);
+
+        return queryFactory.select(myBook.count())
+                .from(myBook)
+                .where(myBook.createdAt.between(start, end))
+                .fetchOne();
     }
 
     private BooleanExpression eqReadStatus(ReadStatus readStatus) {

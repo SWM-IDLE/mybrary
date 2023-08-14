@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.mybook.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import kr.mybrary.bookservice.PersistenceTest;
@@ -365,6 +366,38 @@ class MyBookRepositoryTest {
                 () -> assertThat(myBookList.size()).isEqualTo(2),
                 () -> assertThat(myBookList).extracting("myBookId")
                         .contains(myBook_1.getId(), myBook_2.getId())
+        );
+    }
+
+    @Test
+    @DisplayName("오늘 등록된 마이북의 갯수를 조회한다.")
+    void getTodayBookRegistrationCount() {
+
+        // when
+        LocalDate today = LocalDate.now();
+
+        Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().isbn10("isbn10_1").isbn13("isbn13_1").build());
+        Book savedBook_2 = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().isbn10("isbn10_2").isbn13("isbn13_2").build());
+        Book savedBook_3 = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().isbn10("isbn10_3").isbn13("isbn13_3").build());
+
+        entityManager.persist(MyBookFixture.MY_BOOK_WITHOUT_RELATION.getMyBookBuilder()
+                .book(savedBook_1).build());
+        entityManager.persist(MyBookFixture.MY_BOOK_WITHOUT_RELATION.getMyBookBuilder()
+                .book(savedBook_2).build());
+        entityManager.persist(MyBookFixture.MY_BOOK_WITHOUT_RELATION.getMyBookBuilder()
+                .book(savedBook_3).build());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Long todayBookRegistrationCount = myBookRepository.getBookRegistrationCountOfDay(today);
+        Long yesterdayBookRegistrationCount = myBookRepository.getBookRegistrationCountOfDay(today.minusDays(1));
+
+        // then
+        assertAll(
+                () -> assertThat(todayBookRegistrationCount).isEqualTo(3L),
+                () -> assertThat(yesterdayBookRegistrationCount).isEqualTo(0L)
         );
     }
 }
