@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
-import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +45,6 @@ public class JwtService {
     private static final String LOGIN_ID_CLAIM = "loginId";
     private static final String BEARER = "Bearer ";
     private static final String INVALID_TOKEN_MESSAGE = "유효하지 않은 토큰입니다.";
-
-    private final UserRepository userRepository;
 
     // AccessToken 생성 - loginId을 payload로 넣어서 생성
     public String createAccessToken(String loginId, LocalDateTime now) {
@@ -94,7 +91,7 @@ public class JwtService {
     }
 
     // AccessToken에서 LoginId 추출
-    public Optional<String> getLoginId(String accessToken) {
+    public Optional<String> getLoginIdFromValidAccessToken(String accessToken) {
         validateToken(accessToken);
         return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
                 .build()
@@ -102,6 +99,14 @@ public class JwtService {
                 .getClaim(LOGIN_ID_CLAIM)
                 .asString());
     }
+
+    public String parseLoginId(String accessToken) {
+        System.out.println("loginId parse");
+        String loginId = JWT.decode(accessToken).getClaim(LOGIN_ID_CLAIM).asString();
+        System.out.println("loginId parse end");
+        return loginId;
+    }
+
     public Duration getExpirationDuration(String accessToken, LocalDateTime now) {
         return Duration.ofMillis(getExpiration(accessToken).getTime() - getTimeFrom(now));
     }

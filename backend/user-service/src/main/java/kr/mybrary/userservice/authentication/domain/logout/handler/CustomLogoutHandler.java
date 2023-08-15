@@ -27,7 +27,7 @@ public class CustomLogoutHandler implements LogoutHandler {
         String accessToken = jwtService.extractAccessToken(request).orElseThrow(() -> new JwtException(ACCESS_TOKEN_NOT_FOUND));
 
         // 로그인 아이디 추출
-        String loginId = jwtService.getLoginId(accessToken).orElseThrow(() -> new JwtException(LOGIN_ID_NOT_FOUND));
+        String loginId = jwtService.getLoginIdFromValidAccessToken(accessToken).orElseThrow(() -> new JwtException(LOGIN_ID_NOT_FOUND));
 
         // 액세스 토큰 블랙리스트 등록
         redisUtil.setBlackList(accessToken, LOGOUT_VALUE, jwtService.getExpirationDuration(accessToken, LocalDateTime.now()));
