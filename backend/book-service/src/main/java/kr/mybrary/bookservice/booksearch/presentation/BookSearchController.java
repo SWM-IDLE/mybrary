@@ -1,6 +1,7 @@
 package kr.mybrary.bookservice.booksearch.presentation;
 
 import kr.mybrary.bookservice.booksearch.domain.PlatformBookSearchApiService;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
 import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,17 @@ public class BookSearchController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(HttpStatus.OK.toString(), "도서 상세 조회에 성공했습니다.", bookService.searchBookDetailWithISBN(request)));
+    }
+
+    @GetMapping("/search/book-list-by-category")
+    public ResponseEntity searchBookListByCategory(
+            @RequestParam(value = "type") String type,
+            @RequestParam(value = "categoryId", required = false, defaultValue = "0") int categoryId,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+
+        BookListByCategorySearchServiceRequest request = BookListByCategorySearchServiceRequest.of(type, categoryId, page);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(HttpStatus.OK.toString(), "카테고리별 도서 리스트 조회에 성공했습니다.", bookService.searchBookListByCategory(request)));
     }
 }

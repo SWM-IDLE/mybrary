@@ -8,12 +8,12 @@ import lombok.Getter;
 @Builder
 public class BookListByCategorySearchResultResponse {
 
-    private List<BookListByCategoryResponseElement> bookListByCategorySearchResultElement;
+    private List<BookListByCategoryResponseElement> books;
     private String nextRequestUrl;
 
     public static BookListByCategorySearchResultResponse of(List<BookListByCategoryResponseElement> bookListByCategorySearchResultElement, String nextRequestUrl) {
         return BookListByCategorySearchResultResponse.builder()
-                .bookListByCategorySearchResultElement(bookListByCategorySearchResultElement)
+                .books(bookListByCategorySearchResultElement)
                 .nextRequestUrl(nextRequestUrl)
                 .build();
     }
