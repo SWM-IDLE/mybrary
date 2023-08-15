@@ -214,8 +214,9 @@ public class BookSearchDtoTestData {
 
     public static BookListByCategorySearchServiceRequest createBookListSearchServiceRequest() {
         return BookListByCategorySearchServiceRequest.builder()
+                .page(1)
                 .type("bestseller")
-                .categoryId(123)
+                .categoryId(0)
                 .build();
     }
 

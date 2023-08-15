@@ -2,13 +2,16 @@ package kr.mybrary.bookservice.booksearch.domain;
 
 import java.util.List;
 import java.util.Objects;
-import kr.mybrary.bookservice.booksearch.domain.dto.response.BookSearchResultServiceResponse;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategoryResponseElement;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponseElement;
 import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchDtoMapper;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
+import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookListByCategorySearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
-import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse.Item;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategorySearchResultResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -28,13 +31,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 public class AladinBookSearchApiService implements PlatformBookSearchApiService {
 
-
     @Value("${aladin.api.key}")
     private String API_KEY;
 
     private static final String REQUEST_OUTPUT = "js";
     private static final String REQUEST_VERSION = "20131101";
-    private static final String REQUEST_MAX_RESULTS = "20";
+    private static final String REQUEST_MAX_RESULTS_10 = "10";
+    private static final String REQUEST_MAX_RESULTS_20 = "20";
     private static final String REQUEST_COVER_SIZE = "Big";
     private static final String REQUEST_COVER_MID_BIG_SIZE = "MidBig";
 
@@ -44,55 +47,51 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    private static final String ITEM_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx";
-    private static final String ITEM_DETAIL_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx";
-    private static final String REQUEST_NEXT_URL = "/books/search?keyword=%s&page=%d&sort=%s";
+    private static final String BOOK_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx";
+    private static final String BOOK_DETAIL_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx";
+    private static final String BOOK_LIST_BY_CATEGORY_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemList.aspx";
+    private static final String BOOK_SEARCH_NEXT_URL = "/books/search?keyword=%s&page=%d&sort=%s";
+    private static final String BOOK_LIST_BY_CATEGORY_NEXT_URL = "/books/search/book-list-by-category?type=%s&categoryId=%d&page=%d";
 
     @Override
     public BookSearchResultResponse searchWithKeyword(BookSearchServiceRequest request) {
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(ITEM_SEARCH_URL)
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(BOOK_SEARCH_URL)
                 .queryParam("TTBKey", API_KEY)
                 .queryParam("Output", REQUEST_OUTPUT)
                 .queryParam("Version", REQUEST_VERSION)
                 .queryParam("Query", request.getKeyword())
                 .queryParam("Start", String.valueOf(request.getPage()))
-                .queryParam("MaxResults", REQUEST_MAX_RESULTS)
+                .queryParam("MaxResults", REQUEST_MAX_RESULTS_20)
                 .queryParam("Cover", REQUEST_COVER_MID_BIG_SIZE)
                 .queryParam("Sort", request.getSort());
 
-        ResponseEntity<AladinBookSearchResponse> response = restTemplate.exchange(
+        ResponseEntity<AladinBookSearchResponse> searchResponse = restTemplate.exchange(
                 uriBuilder.build(false).toUriString(),
                 HttpMethod.GET,
                 null,
                 AladinBookSearchResponse.class);
 
-        AladinBookSearchResponse aladinBookSearchResponse = Objects.requireNonNull(response.getBody());
+        AladinBookSearchResponse response = Objects.requireNonNull(searchResponse.getBody());
 
-        if (aladinBookSearchResponse.getTotalResults() == 0) {
-            throw new BookSearchResultNotFoundException();
-        }
+        checkHasSearchResult(response.getTotalResults());
 
-        List<BookSearchResultServiceResponse> bookSearchResultServiceResponses = aladinBookSearchResponse.getItem().stream()
-                .filter(book -> hasISBN13(book))
+        List<BookSearchResultResponseElement> bookSearchResultResponseElement = response.getItem().stream()
+                .filter(book -> hasISBN13(book.getIsbn13()))
                 .map(BookSearchDtoMapper.INSTANCE::aladinSearchResponseToServiceResponse)
                 .toList();
 
-        if (isLastPage(aladinBookSearchResponse)) {
-            return BookSearchResultResponse.of(bookSearchResultServiceResponses, "");
+        if (isLastPage(response.getStartIndex(), response.getItemsPerPage(), response.getTotalResults())) {
+            return BookSearchResultResponse.of(bookSearchResultResponseElement, "");
         }
 
-        return BookSearchResultResponse.of(bookSearchResultServiceResponses, getNextRequestUrl(request));
-    }
-
-    private boolean hasISBN13(Item book) {
-        return !book.getIsbn13().isBlank();
+        return BookSearchResultResponse.of(bookSearchResultResponseElement, getNextRequestUrl(request));
     }
 
     @Override
     public BookSearchDetailResponse searchBookDetailWithISBN(BookSearchServiceRequest request) {
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(ITEM_DETAIL_SEARCH_URL)
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(BOOK_DETAIL_SEARCH_URL)
                 .queryParam("TTBKey", API_KEY)
                 .queryParam("Output", REQUEST_OUTPUT)
                 .queryParam("Version", REQUEST_VERSION)
@@ -101,27 +100,76 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
                 .queryParam("ItemIdType", "ISBN13")
                 .queryParam("OptResult", "packing,ratingInfo,authors,fulldescription,Toc");
 
-        ResponseEntity<AladinBookSearchDetailResponse> response = restTemplate.exchange(
+        ResponseEntity<AladinBookSearchDetailResponse> searchResponse = restTemplate.exchange(
                 uriBuilder.build(false).toUriString(),
                 HttpMethod.GET,
                 null,
                 AladinBookSearchDetailResponse.class);
 
-        AladinBookSearchDetailResponse aladinBookSearchResponse = Objects.requireNonNull(response.getBody());
+        AladinBookSearchDetailResponse response = Objects.requireNonNull(searchResponse.getBody());
 
-        if (aladinBookSearchResponse.getTotalResults() == 0) {
-            throw new BookSearchResultNotFoundException();
+        checkHasSearchResult(response.getTotalResults());
+
+        return BookSearchDtoMapper.INSTANCE.aladinSearchResponseToDetailResponse(response.getItem().get(0));
+    }
+
+    @Override
+    public BookListByCategorySearchResultResponse searchBookListByCategory(BookListByCategorySearchServiceRequest request) {
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(BOOK_LIST_BY_CATEGORY_SEARCH_URL)
+                .queryParam("TTBKey", API_KEY)
+                .queryParam("QueryType", request.getType())
+                .queryParam("MaxResults", REQUEST_MAX_RESULTS_10)
+                .queryParam("Start", String.valueOf(request.getPage()))
+                .queryParam("Output", REQUEST_OUTPUT)
+                .queryParam("Version", REQUEST_VERSION)
+                .queryParam("CategoryId", String.valueOf(request.getCategoryId()))
+                .queryParam("SearchTarget", "BOOK")
+                .queryParam("Cover", REQUEST_COVER_SIZE);
+
+        ResponseEntity<AladinBookListByCategorySearchResponse> searchResponse = restTemplate.exchange(
+                uriBuilder.build(false).toUriString(),
+                HttpMethod.GET,
+                null,
+                AladinBookListByCategorySearchResponse.class);
+
+        AladinBookListByCategorySearchResponse response = Objects.requireNonNull(searchResponse.getBody());
+
+        checkHasSearchResult(response.getTotalResults());
+
+        List<BookListByCategoryResponseElement> bookSearchResultServiceResponses =
+                response.getItem().stream()
+                .filter(book -> hasISBN13(book.getIsbn13()))
+                .map(BookSearchDtoMapper.INSTANCE::aladinBookListByCategorySearchResponseToServiceResponse)
+                .toList();
+
+        if (isLastPage(response.getStartIndex(), response.getItemsPerPage(), response.getTotalResults())) {
+            return BookListByCategorySearchResultResponse.of(bookSearchResultServiceResponses, "");
         }
 
-        return BookSearchDtoMapper.INSTANCE.aladinSearchResponseToDetailResponse(aladinBookSearchResponse.getItem().get(0));
+        return BookListByCategorySearchResultResponse.of(bookSearchResultServiceResponses, getNextRequestUrl(request));
+    }
+
+    private void checkHasSearchResult(int totalResults) {
+        if (totalResults == 0) {
+            throw new BookSearchResultNotFoundException();
+        }
+    }
+
+    private boolean hasISBN13(String isbn13) {
+        return !isbn13.isBlank();
     }
 
     private String getNextRequestUrl(BookSearchServiceRequest request) {
-        return String.format(REQUEST_NEXT_URL, request.getKeyword(), request.getPage() + 1, request.getSort());
+        return String.format(BOOK_SEARCH_NEXT_URL, request.getKeyword(), request.getPage() + 1, request.getSort());
     }
 
-    private boolean isLastPage(AladinBookSearchResponse response) {
-        int searchBookCount = response.getStartIndex() * response.getItemsPerPage();
-        return searchBookCount >= 200 || searchBookCount > response.getTotalResults();
+    private String getNextRequestUrl(BookListByCategorySearchServiceRequest request) {
+        return String.format(BOOK_LIST_BY_CATEGORY_NEXT_URL, request.getType(), request.getCategoryId(), request.getPage() + 1);
+    }
+
+    private boolean isLastPage(int startIndex, int itemsPerPage, int totalResults) {
+        int searchBookCount = startIndex * itemsPerPage;
+        return searchBookCount >= 200 || searchBookCount > totalResults;
     }
 }
