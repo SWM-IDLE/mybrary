@@ -11,15 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import kr.mybrary.userservice.global.jwt.service.JwtService;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -83,7 +77,7 @@ public class LoginTest {
 
         // JWT 토큰의 payload에서 아이디 검증
         String accessToken = result.getResponse().getHeader("Authorization");
-        jwtService.getLoginId(accessToken)
+        jwtService.getLoginIdFromValidAccessToken(accessToken)
                 .ifPresent(loginId -> assertThat(loginId).isEqualTo(LOGIN_ID));
     }
 

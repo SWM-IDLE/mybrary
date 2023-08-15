@@ -132,7 +132,7 @@ class JwtServiceTest {
         String accessToken = jwtService.createAccessToken(loginId, LocalDateTime.now());
 
         // when
-        Optional<String> extractedLoginId = jwtService.getLoginId(accessToken);
+        Optional<String> extractedLoginId = jwtService.getLoginIdFromValidAccessToken(accessToken);
 
         // then
         assertThat(extractedLoginId.get()).isEqualTo(loginId);
@@ -145,7 +145,7 @@ class JwtServiceTest {
         String accessToken = "token";
 
         // when then
-        assertThatThrownBy(() -> jwtService.getLoginId(accessToken))
+        assertThatThrownBy(() -> jwtService.getLoginIdFromValidAccessToken(accessToken))
                 .isInstanceOf(JwtException.class)
                 .hasMessage("유효하지 않은 토큰입니다.");
     }
