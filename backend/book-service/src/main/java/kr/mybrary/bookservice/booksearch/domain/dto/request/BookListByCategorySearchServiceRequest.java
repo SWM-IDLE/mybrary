@@ -8,5 +8,14 @@ import lombok.Getter;
 public class BookListByCategorySearchServiceRequest {
 
     private String type;
-    private Long categoryId;
+    private int categoryId;
+    private int page;
+
+    public static BookListByCategorySearchServiceRequest of(String type, int categoryId, int page) {
+        return BookListByCategorySearchServiceRequest.builder()
+                .type(type)
+                .categoryId(categoryId)
+                .page(page)
+                .build();
+    }
 }

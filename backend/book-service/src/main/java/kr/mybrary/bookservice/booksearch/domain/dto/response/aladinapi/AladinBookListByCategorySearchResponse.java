@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AladinBookSearchResponse {
+public class AladinBookListByCategorySearchResponse {
 
     private String version;
     private String logo;
@@ -50,16 +50,5 @@ public class AladinBookSearchResponse {
         private Integer customerReviewRank;
         private String bestDuration;
         private Integer bestRank;
-        private SeriesInfo seriesInfo;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SeriesInfo {
-        String seriesId;
-        String seriesLink;
-        String seriesName;
     }
 }

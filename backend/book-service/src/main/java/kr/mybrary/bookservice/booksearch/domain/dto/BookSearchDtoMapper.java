@@ -1,7 +1,9 @@
 package kr.mybrary.bookservice.booksearch.domain.dto;
 
 import java.util.List;
-import kr.mybrary.bookservice.booksearch.domain.dto.response.BookSearchResultServiceResponse;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategoryResponseElement;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponseElement;
+import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookListByCategorySearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse;
@@ -27,13 +29,13 @@ public interface BookSearchDtoMapper {
     @Mapping(target = "thumbnailUrl", source = "thumbnail")
     @Mapping(target = "publicationDate", expression = "java(kakaoBookSearchResponse.getDatetime().split(\"T\")[0])")
     @Mapping(target = "starRating", constant = "0.0")
-    BookSearchResultServiceResponse kakaoSearchResponseToServiceResponse(
+    BookSearchResultResponseElement kakaoSearchResponseToServiceResponse(
             KakaoBookSearchResponse.Document kakaoBookSearchResponse);
 
     @Mapping(target = "thumbnailUrl", source = "cover")
     @Mapping(target = "publicationDate", source = "pubDate")
     @Mapping(target = "starRating", expression = "java(aladinBookSearchResponse.getCustomerReviewRank() / 2.0)")
-    BookSearchResultServiceResponse aladinSearchResponseToServiceResponse(
+    BookSearchResultResponseElement aladinSearchResponseToServiceResponse(
             AladinBookSearchResponse.Item aladinBookSearchResponse);
 
     @Mapping(target = "subTitle", constant = NOT_PROVIDED_PHRASES)
@@ -84,6 +86,12 @@ public interface BookSearchDtoMapper {
     @Mapping(target = "readCount", constant = "0")
     @Mapping(target = "interestCount", constant = "0")
     BookSearchDetailResponse aladinSearchResponseToDetailResponse(AladinBookSearchDetailResponse.Item aladinBookSearchResponse);
+
+
+    @Mapping(target = "thumbnailUrl", source = "cover")
+    BookListByCategoryResponseElement aladinBookListByCategorySearchResponseToServiceResponse(
+            AladinBookListByCategorySearchResponse.Item aladinBookListByCategorySearchResponse);
+
 
     @Named("getISBN10")
     static String getISBN10(String isbn) {

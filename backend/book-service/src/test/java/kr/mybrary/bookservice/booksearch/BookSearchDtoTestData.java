@@ -2,7 +2,8 @@ package kr.mybrary.bookservice.booksearch;
 
 import java.util.List;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
-import kr.mybrary.bookservice.booksearch.domain.dto.response.BookSearchResultServiceResponse;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategoryResponseElement;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponseElement;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse;
@@ -11,8 +12,8 @@ import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDet
 
 public class BookSearchDtoTestData {
 
-    public static BookSearchResultServiceResponse createBookSearchDto() {
-        return BookSearchResultServiceResponse.builder()
+    public static BookSearchResultResponseElement createBookSearchDto() {
+        return BookSearchResultResponseElement.builder()
                 .title("자바의 정석")
                 .description("자바의 정석 3판")
                 .isbn13("9788980782970")
@@ -214,12 +215,19 @@ public class BookSearchDtoTestData {
     public static BookListByCategorySearchServiceRequest createBookListSearchServiceRequest() {
         return BookListByCategorySearchServiceRequest.builder()
                 .type("bestseller")
-                .categoryId(123L)
+                .categoryId(123)
                 .build();
     }
 
     public static BookListByCategorySearchResultResponse createBookListSearchResultResponse() {
         return BookListByCategorySearchResultResponse.builder()
+                .bookListByCategorySearchResultElement(List.of(createBookListByCategoryServiceResponse()))
+                .nextRequestUrl("test_next_request_url")
+                .build();
+    }
+
+    public static BookListByCategoryResponseElement createBookListByCategoryServiceResponse() {
+        return BookListByCategoryResponseElement.builder()
                 .thumbnailUrl("test_thumbnail_url")
                 .isbn13("test_isbn13")
                 .build();

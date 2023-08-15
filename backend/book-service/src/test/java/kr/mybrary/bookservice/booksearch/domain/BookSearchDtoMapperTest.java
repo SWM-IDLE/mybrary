@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
-import kr.mybrary.bookservice.booksearch.domain.dto.response.BookSearchResultServiceResponse;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponseElement;
 import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchDtoMapper;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
@@ -33,7 +33,7 @@ class BookSearchDtoMapperTest {
         KakaoBookSearchResponse kakaoBookSearchResponse = BookSearchDtoTestData.createKakaoBookSearchResponse();
         Document response = kakaoBookSearchResponse.getDocuments().get(0);
 
-        BookSearchResultServiceResponse dto = BookSearchDtoMapper.INSTANCE.kakaoSearchResponseToServiceResponse(
+        BookSearchResultResponseElement dto = BookSearchDtoMapper.INSTANCE.kakaoSearchResponseToServiceResponse(
                 response);
 
         assertAll(
@@ -54,7 +54,7 @@ class BookSearchDtoMapperTest {
         AladinBookSearchResponse aladinBookSearchResponse = BookSearchDtoTestData.createAladinBookSearchResponse();
 
         Item response = aladinBookSearchResponse.getItem().get(0);
-        BookSearchResultServiceResponse dto = BookSearchDtoMapper.INSTANCE.aladinSearchResponseToServiceResponse(
+        BookSearchResultResponseElement dto = BookSearchDtoMapper.INSTANCE.aladinSearchResponseToServiceResponse(
                 response);
 
         assertAll(
