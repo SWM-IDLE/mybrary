@@ -45,3 +45,12 @@ const Color myBookScanBackgroundColor = Color(0xFF1C1C1C);
 
 // Main Page Color
 const Color mainPageButtonColor = Color(0xFFEEEEEE);
+
+// My Book Color
+const List<String> meaningTagColors = [
+  '6F5DDE',
+  '2CCD80',
+  'FFB525',
+  'FA9993',
+  'EC6DD0',
+];

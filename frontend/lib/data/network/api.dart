@@ -38,7 +38,7 @@ enum API {
   createMyBook,
   createMyBookReview,
   createOrDeleteInterestBook,
-  updateMyBookDetailInfo,
+  updateMyBookRecord,
   deleteMyBook,
 }
 
@@ -73,7 +73,7 @@ Map<API, String> apiMap = {
   API.createMyBook: "/api/v1/mybooks",
   API.createMyBookReview: "/api/v1/mybooks", // '/{mybookId}/reviews'
   API.createOrDeleteInterestBook: "/api/v1/books", // '/{isbn13}/interest'
-  API.updateMyBookDetailInfo: "/api/v1/mybooks", // '/{mybookId}'
+  API.updateMyBookRecord: "/api/v1/mybooks", // '/{mybookId}'
   API.deleteMyBook: "/api/v1/mybooks", // '/{mybookId}'
 };
 

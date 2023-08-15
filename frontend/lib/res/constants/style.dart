@@ -52,6 +52,7 @@ const commonSubBoldStyle = TextStyle(
 );
 
 const commonButtonTextStyle = TextStyle(
+  color: grey262626,
   fontSize: 15.0,
   fontWeight: FontWeight.w700,
 );
@@ -112,6 +113,13 @@ const nameInputBorderStyle = UnderlineInputBorder(
 );
 
 const introInputBorderStyle = OutlineInputBorder(
+  borderSide: BorderSide(
+    color: circularBorderColor,
+    width: 1,
+  ),
+);
+
+const introInputBorderBottomStyle = UnderlineInputBorder(
   borderSide: BorderSide(
     color: circularBorderColor,
     width: 1,

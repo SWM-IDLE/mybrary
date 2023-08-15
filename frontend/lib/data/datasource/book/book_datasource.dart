@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/model/book/interest_book_response.dart';
 import 'package:mybrary/data/model/book/mybook_detail_response.dart';
+import 'package:mybrary/data/model/book/mybook_record_reponse.dart';
 import 'package:mybrary/data/model/book/mybook_review_response.dart';
 import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/data/model/common/common_response.dart';
@@ -149,6 +150,31 @@ class BookDataSource {
     );
 
     return result;
+  }
+
+  Future<MyBookRecordResponseData> updateMyBookRecord(String userId,
+      int myBookId, MyBookRecordResponseData myBookRecordData) async {
+    Dio dio = DioService().to();
+    final updateMyBookRecordResponse = await dio.put(
+      '${getBookServiceApi(API.updateMyBookRecord)}/$myBookId',
+      options: Options(headers: {'User-Id': userId}),
+      data: myBookRecordData.toJson(),
+    );
+
+    log('마이북 기록 수정 응답값: $updateMyBookRecordResponse');
+    final MyBookRecordResponse result = commonResponseResult(
+      updateMyBookRecordResponse,
+      () => MyBookRecordResponse(
+        status: updateMyBookRecordResponse.data['status'],
+        message: updateMyBookRecordResponse.data['message'],
+        data: updateMyBookRecordResponse.data['data'] != null
+            ? MyBookRecordResponseData.fromJson(
+                updateMyBookRecordResponse.data['data'])
+            : null,
+      ),
+    );
+
+    return result.data!;
   }
 
   Future<MyBookReviewResponseData?> getMyBookReview(int myBookId) async {
