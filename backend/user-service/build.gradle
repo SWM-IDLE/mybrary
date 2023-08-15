@@ -8,6 +8,7 @@ plugins {
 	id 'com.epages.restdocs-api-spec' version '0.17.1'
 	// swagger generator 플러그인 추가
 	id 'org.hidetake.swagger.generator' version '2.18.2'
+	id 'jacoco'
 
 }
 
