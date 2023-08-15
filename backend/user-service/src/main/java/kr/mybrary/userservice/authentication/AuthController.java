@@ -20,4 +20,11 @@ public class AuthController {
         );
     }
 
+    @GetMapping("/refresh")
+    public ResponseEntity<SuccessResponse> refreshToken() {
+        return ResponseEntity.status(200).body(
+                SuccessResponse.of(HttpStatus.CREATED.toString(), "토큰이 재발급되었습니다.", null)
+        );
+    }
+
 }
