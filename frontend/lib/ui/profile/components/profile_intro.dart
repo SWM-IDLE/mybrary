@@ -42,7 +42,7 @@ class ProfileIntro extends StatelessWidget {
             },
             child: Text(
               introduction == '' ? '한 줄 소개 작성하기' : introduction!,
-              style: profileEditContentStyle.copyWith(
+              style: commonEditContentStyle.copyWith(
                 decoration:
                     introduction == '' ? TextDecoration.underline : null,
               ),
@@ -75,7 +75,7 @@ class ProfileIntro extends StatelessWidget {
             userInterests.isEmpty
                 ? '나의 관심사를 표시해보세요!'
                 : userInterests.map((interest) => interest.name).join(', '),
-            style: profileEditContentStyle,
+            style: commonEditContentStyle,
           ),
           const SizedBox(height: 42.0),
           GestureDetector(

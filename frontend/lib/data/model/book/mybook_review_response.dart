@@ -65,3 +65,63 @@ class MyBookReviewResponseData {
     return data;
   }
 }
+
+class MyBookReviewUpdateResponse {
+  String status;
+  String message;
+  MyBookReviewUpdateResponseData? data;
+
+  MyBookReviewUpdateResponse({
+    required this.status,
+    required this.message,
+    required this.data,
+  });
+
+  factory MyBookReviewUpdateResponse.fromJson(Map<String, dynamic> json) {
+    return MyBookReviewUpdateResponse(
+      status: json['status'],
+      message: json['message'],
+      data: json['data'] != null
+          ? MyBookReviewUpdateResponseData.fromJson(json['data'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['message'] = message;
+    if (this.data != null) {
+      data['data'] = this.data!.toJson();
+    }
+    return data;
+  }
+}
+
+class MyBookReviewUpdateResponseData {
+  int? id;
+  String? content;
+  double? starRating;
+
+  MyBookReviewUpdateResponseData({
+    this.id,
+    this.content,
+    this.starRating,
+  });
+
+  factory MyBookReviewUpdateResponseData.fromJson(Map<String, dynamic> json) {
+    return MyBookReviewUpdateResponseData(
+      id: json['id'],
+      content: json['content'],
+      starRating: json['starRating'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['content'] = content;
+    data['starRating'] = starRating;
+    return data;
+  }
+}

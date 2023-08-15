@@ -70,4 +70,32 @@ class BookRepository {
   }) {
     return _bookDataSource.getMyBookReview(myBookId);
   }
+
+  Future<CommonResponse> createMyBookReview({
+    required String userId,
+    required int myBookId,
+    required String content,
+    required double starRating,
+  }) {
+    return _bookDataSource.createMyBookReview(
+      userId,
+      myBookId,
+      content,
+      starRating,
+    );
+  }
+
+  Future<MyBookReviewUpdateResponseData> updateMyBookReview({
+    required String userId,
+    required int reviewId,
+    required String content,
+    required double starRating,
+  }) {
+    return _bookDataSource.updateMyBookReview(
+      userId,
+      reviewId,
+      content,
+      starRating,
+    );
+  }
 }

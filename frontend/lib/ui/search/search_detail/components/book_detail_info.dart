@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
+import 'package:mybrary/utils/logics/book_utils.dart';
 
 class BookDetailInfo extends StatelessWidget {
   final String publicationDate;
@@ -48,7 +49,7 @@ class BookDetailInfo extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10.0),
-                  starRatingRow(),
+                  starRatingRow(starRating),
                 ],
               ),
               Text(
@@ -119,22 +120,6 @@ class BookDetailInfo extends StatelessWidget {
           const SizedBox(height: 20.0),
         ],
       ),
-    );
-  }
-
-  Row starRatingRow() {
-    return Row(
-      children: List.generate(5, (index) => index)
-          .map(
-            (e) => Image.asset(
-              'assets/img/icon/star.png',
-              // 별점 표시. 예로, 3.3은 3점이며 4.8은 4점으로 표시
-              color: e < starRating.floor()
-                  ? bookStarColor
-                  : bookStarDisabledColor,
-            ),
-          )
-          .toList(),
     );
   }
 

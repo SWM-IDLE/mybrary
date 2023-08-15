@@ -198,4 +198,59 @@ class BookDataSource {
 
     return result.data;
   }
+
+  Future<CommonResponse> createMyBookReview(
+    String userId,
+    int myBookId,
+    String content,
+    double starRating,
+  ) async {
+    Dio dio = DioService().to();
+    final createMyBookReviewResponse = await dio.post(
+      '${getBookServiceApi(API.createMyBookReview)}/$myBookId/reviews',
+      options: Options(headers: {'User-Id': userId}),
+      data: {'content': content, 'starRating': '$starRating'},
+    );
+
+    log('마이북 리뷰 작성 응답값: $createMyBookReviewResponse');
+    final CommonResponse result = commonResponseResult(
+      createMyBookReviewResponse,
+      () => CommonResponse(
+        status: createMyBookReviewResponse.data['status'],
+        message: createMyBookReviewResponse.data['message'],
+        data: null,
+      ),
+    );
+
+    return result;
+  }
+
+  Future<MyBookReviewUpdateResponseData> updateMyBookReview(
+    String userId,
+    int reviewId,
+    String content,
+    double starRating,
+  ) async {
+    Dio dio = DioService().to();
+    final updateMyBookReviewResponse = await dio.put(
+      '${getBookServiceApi(API.updateMyBookReview)}/$reviewId',
+      options: Options(headers: {'User-Id': userId}),
+      data: {'content': content, 'starRating': '$starRating'},
+    );
+
+    log('마이북 리뷰 수정 응답값: $updateMyBookReviewResponse');
+    final MyBookReviewUpdateResponse result = commonResponseResult(
+      updateMyBookReviewResponse,
+      () => MyBookReviewUpdateResponse(
+        status: updateMyBookReviewResponse.data['status'],
+        message: updateMyBookReviewResponse.data['message'],
+        data: updateMyBookReviewResponse.data['data'] != null
+            ? MyBookReviewUpdateResponseData.fromJson(
+                updateMyBookReviewResponse.data['data'])
+            : null,
+      ),
+    );
+
+    return result.data!;
+  }
 }

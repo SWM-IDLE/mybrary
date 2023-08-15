@@ -126,13 +126,13 @@ const introInputBorderBottomStyle = UnderlineInputBorder(
   ),
 );
 
-const profileEditTitleStyle = TextStyle(
+const commonEditTitleStyle = TextStyle(
   color: grey262626,
   fontSize: 14.0,
   fontWeight: FontWeight.w500,
 );
 
-const profileEditContentStyle = TextStyle(
+const commonEditContentStyle = TextStyle(
   color: grey777777,
   fontSize: 14.0,
   fontWeight: FontWeight.w400,
