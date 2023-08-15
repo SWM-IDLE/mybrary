@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/model/book/mybook_detail_response.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class MyBookRecord extends StatelessWidget {
-  final MeaningTag meaningTag;
   final String readStatus;
   final bool showable;
   final bool shareable;
   final bool exchangeable;
   final String startDateOfPossession;
+  final String meaningTagColorCode;
+  final String meaningTagQuote;
 
   const MyBookRecord({
-    required this.meaningTag,
     required this.readStatus,
     required this.showable,
     required this.shareable,
     required this.exchangeable,
     required this.startDateOfPossession,
+    required this.meaningTagColorCode,
+    required this.meaningTagQuote,
     super.key,
   });
 
@@ -55,12 +56,11 @@ class MyBookRecord extends StatelessWidget {
             detailItem(
               itemTitle: '나에게 이 책은',
               itemDescription:
-                  meaningTag.quote == '' ? '어떤 의미인가요?' : meaningTag.quote!,
-              colorCode: meaningTag.colorCode == ''
+                  meaningTagQuote == '' ? '어떤 의미인가요?' : meaningTagQuote,
+              colorCode: meaningTagColorCode == ''
                   ? grey777777
                   : Color(
-                      int.parse(
-                          '0xFF${meaningTag.colorCode!.replaceFirst('#', 'to')}'),
+                      int.parse('0xFF$meaningTagColorCode'),
                     ),
             ),
             const SizedBox(height: 15.0),
@@ -72,6 +72,11 @@ class MyBookRecord extends StatelessWidget {
             detailItem(
               itemTitle: '교환/나눔',
               itemDescription: shareOrExchange,
+            ),
+            const SizedBox(height: 15.0),
+            detailItem(
+              itemTitle: '공개 여부',
+              itemDescription: showable ? '공개' : '비공개',
             ),
             const SizedBox(height: 15.0),
             detailItem(

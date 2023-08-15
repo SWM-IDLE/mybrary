@@ -1,8 +1,12 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/book/mybook_common_data.dart';
 import 'package:mybrary/data/model/book/mybook_detail_response.dart';
+import 'package:mybrary/data/model/book/mybook_record_reponse.dart';
 import 'package:mybrary/data/model/book/mybook_review_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
 import 'package:mybrary/res/constants/color.dart';
@@ -15,6 +19,7 @@ import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/mybook/mybook_detail/components/mybook_detail_header.dart';
 import 'package:mybrary/ui/mybook/mybook_detail/components/mybook_record.dart';
 import 'package:mybrary/ui/mybook/mybook_detail/components/mybook_review.dart';
+import 'package:mybrary/utils/logics/book_utils.dart';
 
 class MyBookDetailScreen extends StatefulWidget {
   final int myBookId;
@@ -31,14 +36,31 @@ class MyBookDetailScreen extends StatefulWidget {
 class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
   final _bookRepository = BookRepository();
 
-  final ScrollController _myBookDetailScrollController = ScrollController();
   late Future<MyBookDetailResponseData> _myBookDetail;
   late Future<MyBookReviewResponseData?> _myBookReview;
+
+  final GlobalKey _myBookDetailHeaderKey = GlobalKey();
+  final ScrollController _myBookDetailScrollController = ScrollController();
+  final TextEditingController _meaningTagQuoteController =
+      TextEditingController();
 
   late String _myBookAppBarTitle = '';
   late bool _isScrollingDown = true;
   late bool _isOverflowMyBookDetailHeader = false;
-  final GlobalKey _myBookDetailHeaderKey = GlobalKey();
+
+  late bool _originalShowable;
+  late bool _originalShareable;
+  late bool _originalExchangeable;
+  late String _originalReadStatus;
+  late String _originalMeaningTagColorCode;
+
+  bool? _newShowable;
+  bool? _newShareable;
+  bool? _newExchangeable;
+  String? _newReadStatus;
+  String? _newMeaningTagColorCode;
+  String? _newMeaningTagQuote;
+  String? _newStartDateOfPossession;
 
   @override
   void initState() {
@@ -51,6 +73,22 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
     _myBookReview = _bookRepository.getMyBookReview(
       myBookId: widget.myBookId,
     );
+
+    _bookRepository
+        .getMyBookDetail(
+          userId: 'testId',
+          myBookId: widget.myBookId,
+        )
+        .then(
+          (data) => {
+            _meaningTagQuoteController.text = data.meaningTag!.quote!,
+            _originalMeaningTagColorCode = data.meaningTag!.colorCode!,
+            _originalReadStatus = data.readStatus!,
+            _originalShowable = data.showable!,
+            _originalShareable = data.shareable!,
+            _originalExchangeable = data.exchangeable!,
+          },
+        );
 
     _myBookDetailScrollController.addListener(_bookDetailScrollListener);
   }
@@ -119,12 +157,32 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
 
           if (snapshot.hasData) {
             MyBookDetailCommonData? data = snapshot.data;
-            final MyBookDetailResponseData myBookDetailData =
+            MyBookDetailResponseData myBookDetailData =
                 data!.myBooksResponseData;
-            final MyBookReviewResponseData? myBookReviewData =
+            MyBookReviewResponseData? myBookReviewData =
                 data.myBookReviewResponseData;
 
             _myBookAppBarTitle = myBookDetailData.book!.title!;
+
+            List<String>? newDate;
+            DateTime? newDateTime;
+            if (_newStartDateOfPossession != null) {
+              newDate = _newStartDateOfPossession!.split('.');
+              final [year, month, day] = newDate;
+
+              newDateTime =
+                  DateTime(int.parse(year), int.parse(month), int.parse(day));
+            }
+
+            DateTime dateTime = _newStartDateOfPossession == null
+                ? DateTime.parse(myBookDetailData.startDateOfPossession!
+                    .replaceAll('.', '-'))
+                : DateTime.parse(
+                    newDateTime.toString(),
+                  );
+
+            String colorCode = _newMeaningTagColorCode ??
+                _originalMeaningTagColorCode.replaceAll('#', '');
 
             return Stack(
               children: [
@@ -149,13 +207,17 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                     ),
                     _myBookDetailDivider(),
                     MyBookRecord(
-                      meaningTag: myBookDetailData.meaningTag!,
-                      readStatus: myBookDetailData.readStatus!,
-                      showable: myBookDetailData.showable!,
-                      shareable: myBookDetailData.shareable!,
-                      exchangeable: myBookDetailData.exchangeable!,
-                      startDateOfPossession:
+                      readStatus:
+                          _newReadStatus ?? myBookDetailData.readStatus!,
+                      showable: _newShowable ?? myBookDetailData.showable!,
+                      shareable: _newShareable ?? myBookDetailData.shareable!,
+                      exchangeable:
+                          _newExchangeable ?? myBookDetailData.exchangeable!,
+                      startDateOfPossession: _newStartDateOfPossession ??
                           myBookDetailData.startDateOfPossession!,
+                      meaningTagColorCode: _newMeaningTagColorCode ?? colorCode,
+                      meaningTagQuote: _newMeaningTagQuote ??
+                          myBookDetailData.meaningTag!.quote!,
                     ),
                     _myBookDetailDivider(),
                     if (myBookReviewData == null) _hasNoReview(),
@@ -173,12 +235,463 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                 BottomButton(
                   isScrollingDown: _isScrollingDown,
                   buttonText: '마이북 기록 열기',
-                )
+                  onTap: () {
+                    showMenuBottomSheet(
+                      context,
+                      StatefulBuilder(
+                        builder:
+                            (BuildContext context, StateSetter bottomState) {
+                          return SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 16.0,
+                                    right: 16.0,
+                                    top: 24.0,
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8.0,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: greyF1F2F5,
+                                      borderRadius: BorderRadius.circular(50.0),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        _readStatusButtonItem(
+                                          buttonText: '읽기전',
+                                          currentReadStatus:
+                                              _originalReadStatus == 'TO_READ',
+                                          onTapReadStatus: () {
+                                            bottomState(
+                                              () => _originalReadStatus =
+                                                  'TO_READ',
+                                            );
+                                          },
+                                        ),
+                                        _readStatusButtonItem(
+                                          buttonText: '읽는중',
+                                          currentReadStatus:
+                                              _originalReadStatus == 'READING',
+                                          onTapReadStatus: () {
+                                            bottomState(
+                                              () => _originalReadStatus =
+                                                  'READING',
+                                            );
+                                          },
+                                        ),
+                                        _readStatusButtonItem(
+                                          buttonText: '완독함',
+                                          currentReadStatus:
+                                              _originalReadStatus ==
+                                                  'COMPLETED',
+                                          onTapReadStatus: () {
+                                            bottomState(
+                                              () => _originalReadStatus =
+                                                  'COMPLETED',
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 8.0,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        '나에게 이 책은',
+                                        style: myBookSortTextStyle,
+                                      ),
+                                      const SizedBox(height: 16.0),
+                                      Wrap(
+                                        spacing: 8.0,
+                                        runSpacing: 10.0,
+                                        children: meaningTagColors
+                                            .map(
+                                              (color) => InkWell(
+                                                onTap: () {
+                                                  bottomState(() {
+                                                    colorCode = color;
+                                                  });
+                                                },
+                                                child: renderColor(
+                                                  color,
+                                                  colorCode == color,
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                      ),
+                                      const SizedBox(height: 10.0),
+                                      _myBookRecordInput(
+                                        context: context,
+                                        controller: _meaningTagQuoteController,
+                                        hintText: '내 삶을 돌아보게 만든 책',
+                                      ),
+                                      const SizedBox(height: 16.0),
+                                      const Text(
+                                        '소장일',
+                                        style: myBookSortTextStyle,
+                                      ),
+                                      const SizedBox(height: 8.0),
+                                      CupertinoButton(
+                                        padding: const EdgeInsets.all(0.0),
+                                        onPressed: () => _showDatePicker(
+                                          CupertinoDatePicker(
+                                            initialDateTime: dateTime,
+                                            mode: CupertinoDatePickerMode.date,
+                                            use24hFormat: true,
+                                            maximumDate: DateTime.now(),
+                                            onDateTimeChanged:
+                                                (DateTime newDateTime) {
+                                              bottomState(
+                                                () => dateTime = newDateTime,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 12.0,
+                                          ),
+                                          decoration: const BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                color: inputBorderColor,
+                                                width: 1.0,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '${dateTime.year}.${dateTime.month}.${dateTime.day}',
+                                            style: commonSubMediumStyle,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 24.0),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  '교환/나눔',
+                                                  style: myBookSortTextStyle,
+                                                ),
+                                                const SizedBox(height: 18.0),
+                                                Row(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        InkWell(
+                                                          onTap: () {
+                                                            bottomState(
+                                                              () => _originalExchangeable =
+                                                                  !_originalExchangeable,
+                                                            );
+                                                          },
+                                                          child:
+                                                              SvgPicture.asset(
+                                                            'assets/svg/icon/small/checkbox_${_originalExchangeable ? 'green' : 'grey'}.svg',
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 8.0),
+                                                        const Text(
+                                                          '교환',
+                                                          style:
+                                                              myBookSortTextStyle,
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 24.0),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            bottomState(
+                                                              () => _originalShareable =
+                                                                  !_originalShareable,
+                                                            );
+                                                          },
+                                                          child:
+                                                              SvgPicture.asset(
+                                                            'assets/svg/icon/small/checkbox_${_originalShareable ? 'green' : 'grey'}.svg',
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 8.0),
+                                                        const Text(
+                                                          '나눔',
+                                                          style:
+                                                              myBookSortTextStyle,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 10.0),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              children: [
+                                                const Text(
+                                                  '비공개',
+                                                  style: myBookSortTextStyle,
+                                                ),
+                                                const SizedBox(height: 10.0),
+                                                CupertinoSwitch(
+                                                  value: !_originalShowable,
+                                                  onChanged: (value) {
+                                                    bottomState(() {
+                                                      _originalShowable =
+                                                          !value;
+                                                    });
+                                                  },
+                                                  activeColor: primaryColor,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                _myBookRecordButton(
+                                  context: context,
+                                  dateTime: dateTime,
+                                  colorCode: colorCode,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
               ],
             );
           }
           return const CircularLoading();
         },
+      ),
+    );
+  }
+
+  void _showDatePicker(Widget child) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 216,
+        padding: const EdgeInsets.only(top: 6.0),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        child: SafeArea(
+          top: false,
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _myBookRecordInput({
+    required BuildContext context,
+    required TextEditingController controller,
+    required String hintText,
+    TextInputType? keyboardType,
+  }) {
+    return TextFormField(
+      controller: controller,
+      maxLength: 20,
+      style: commonSubMediumStyle,
+      scrollPadding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      onEditingComplete: () {
+        FocusScope.of(context).unfocus();
+      },
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 4.0,
+          vertical: 16.0,
+        ),
+        hintText: hintText,
+        hintStyle: inputHintStyle,
+        counter: const SizedBox.shrink(),
+        border: introInputBorderBottomStyle,
+        enabledBorder: introInputBorderBottomStyle,
+        focusedBorder: introInputBorderBottomStyle,
+        errorStyle: const TextStyle(
+          decoration: TextDecoration.none,
+        ),
+      ),
+    );
+  }
+
+  Widget renderColor(String color, bool isSelected) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(
+          int.parse(
+            'FF$color',
+            radix: 16,
+          ),
+        ),
+        border: isSelected ? Border.all(color: Colors.black, width: 3.0) : null,
+        shape: BoxShape.circle,
+      ),
+      width: 36.0,
+      height: 36.0,
+    );
+  }
+
+  Widget _readStatusButtonItem({
+    required String buttonText,
+    required bool currentReadStatus,
+    required GestureTapCallback? onTapReadStatus,
+  }) {
+    return InkWell(
+      onTap: onTapReadStatus,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 32.0,
+          vertical: 8.0,
+        ),
+        decoration: BoxDecoration(
+          color: currentReadStatus ? commonWhiteColor : greyF1F2F5,
+          borderRadius: BorderRadius.circular(60.0),
+        ),
+        child: Text(
+          buttonText,
+          style: commonButtonTextStyle.copyWith(
+            color: currentReadStatus ? primaryColor : grey262626,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Padding _myBookRecordButton({
+    required BuildContext context,
+    required DateTime dateTime,
+    required String colorCode,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 16.0,
+        bottom: Platform.isIOS ? 32.0 : 0.0,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            flex: 1,
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+                _bookRepository
+                    .getMyBookDetail(
+                      userId: 'testId',
+                      myBookId: widget.myBookId,
+                    )
+                    .then(
+                      (data) => {
+                        setState(() {
+                          _meaningTagQuoteController.text =
+                              data.meaningTag!.quote!;
+                          _originalMeaningTagColorCode =
+                              data.meaningTag!.colorCode!;
+                          _originalReadStatus = data.readStatus!;
+                          _originalShowable = data.showable!;
+                          _originalShareable = data.shareable!;
+                          _originalExchangeable = data.exchangeable!;
+                        }),
+                      },
+                    );
+              },
+              child: Container(
+                color: greyDDDDDD,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12.0,
+                ),
+                child: const Text(
+                  '취소',
+                  style: commonSubMediumStyle,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: InkWell(
+              onTap: () async {
+                await _bookRepository.updateMyBookRecord(
+                  userId: 'testId',
+                  myBookId: widget.myBookId,
+                  myBookRecordData: MyBookRecordResponseData(
+                    meaningTag: MeaningTag(
+                      quote: _meaningTagQuoteController.text,
+                      colorCode: '#$colorCode',
+                    ),
+                    startDateOfPossession: dateTime.toIso8601String(),
+                    readStatus: _originalReadStatus,
+                    showable: _originalShowable,
+                    shareable: _originalShareable,
+                    exchangeable: _originalExchangeable,
+                  ),
+                );
+
+                setState(() {
+                  _newMeaningTagColorCode = colorCode;
+                  _newReadStatus = _originalReadStatus;
+                  _newShowable = _originalShowable;
+                  _newShareable = _originalShareable;
+                  _newExchangeable = _originalExchangeable;
+                  _newMeaningTagQuote = _meaningTagQuoteController.text;
+                  _newStartDateOfPossession =
+                      '${dateTime.year}.${dateTime.month}.${dateTime.day}';
+                });
+
+                if (!mounted) return;
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                color: primaryColor,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12.0,
+                ),
+                child: Text(
+                  '저장',
+                  style: commonSubMediumStyle.copyWith(
+                    color: commonWhiteColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -372,8 +885,8 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                       },
                     );
                   },
-                  icon: const Icon(
-                    Icons.bookmark_remove_outlined,
+                  icon: SvgPicture.asset(
+                    'assets/svg/icon/small/book_remove.svg',
                   ),
                 ),
               ),

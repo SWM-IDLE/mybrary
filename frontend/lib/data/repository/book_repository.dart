@@ -2,6 +2,7 @@ import 'package:mybrary/data/datasource/book/book_datasource.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/model/book/interest_book_response.dart';
 import 'package:mybrary/data/model/book/mybook_detail_response.dart';
+import 'package:mybrary/data/model/book/mybook_record_reponse.dart';
 import 'package:mybrary/data/model/book/mybook_review_response.dart';
 import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/data/model/common/common_response.dart';
@@ -50,6 +51,18 @@ class BookRepository {
     required int myBookId,
   }) {
     return _bookDataSource.getMyBookDetail(userId, myBookId);
+  }
+
+  Future<MyBookRecordResponseData> updateMyBookRecord({
+    required String userId,
+    required int myBookId,
+    required MyBookRecordResponseData myBookRecordData,
+  }) {
+    return _bookDataSource.updateMyBookRecord(
+      userId,
+      myBookId,
+      myBookRecordData,
+    );
   }
 
   Future<MyBookReviewResponseData?> getMyBookReview({

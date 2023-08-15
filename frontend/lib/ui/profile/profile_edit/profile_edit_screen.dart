@@ -24,8 +24,6 @@ class ProfileEditScreen extends StatefulWidget {
 
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late String _originProfileImageUrl;
-  late String _newNickname;
-  late String _newIntroduction;
   late TextEditingController _nicknameController = TextEditingController();
   late TextEditingController _introductionController = TextEditingController();
 

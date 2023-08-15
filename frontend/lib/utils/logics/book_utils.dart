@@ -21,6 +21,7 @@ Future<dynamic> showMenuBottomSheet(
   return showModalBottomSheet(
     shape: bottomSheetStyle,
     backgroundColor: Colors.white,
+    isScrollControlled: true,
     context: context,
     builder: (_) {
       return child;
