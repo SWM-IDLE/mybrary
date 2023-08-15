@@ -31,7 +31,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private static final String USER_SERVICE_API_URL = "/api/v1";
     private static final String OAUTH2_URL = "/oauth2/authorization";
     private static final String OAUTH2_REDIRECT_URL = "/login/oauth2/code";
-    private static final List<String> TOKEN_AUTH_WHITELIST = List.of(USER_SERVICE_API_URL, OAUTH2_URL, OAUTH2_REDIRECT_URL);
+    private static final String ACTUATOR_URL = "/actuator";
+    private static final List<String> TOKEN_AUTH_WHITELIST = List.of(USER_SERVICE_API_URL, OAUTH2_URL, OAUTH2_REDIRECT_URL, ACTUATOR_URL);
     private static final String TOKEN_LOGOUT = "로그아웃된 토큰입니다.";
     private static final String DIFFERENT_REFRESH_TOKEN = "저장된 리프레쉬 토큰과 다릅니다.";
     private static final String USER_NOT_FOUND_BY_LOGIN_ID = "존재하지 않는 유저입니다.";
@@ -52,24 +53,30 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         }
 
         String accessToken = jwtService.extractAccessToken(request).orElse(null);
-        checkIfTokenIsLogout(accessToken);
-        String loginId = jwtService.getLoginId(accessToken).orElse(null);
 
-        String refreshToken = jwtService.extractRefreshToken(request).orElse(null);
+        jwtService.extractRefreshToken(request).ifPresentOrElse(refreshToken -> {
+                    System.out.println("refreshToken = " + refreshToken);
+                    checkRefreshToken(jwtService.parseLoginId(accessToken), refreshToken);
+                    reIssueAccessTokenAndRefreshToken(response, jwtService.parseLoginId(accessToken));
+                },
+                () -> {
+                    checkIfTokenIsLogout(accessToken);
+                    String loginId = jwtService.getLoginIdFromValidAccessToken(accessToken).orElse(null);
+                    saveAuthentication(getUserWithAccessToken(accessToken));
+                    request.setAttribute("USER-ID", loginId);
+                    continueFilter(request, response, filterChain);
+                }
+        );
+    }
 
-        /* RefreshToken이 없거나 유효하지 않다면 AccessToken을 검사하고 인증 처리
-           AccessToken이 없거나 유효하지 않다면, 인증 객체가 담기지 않은 상태로 다음 필터로 넘어가기 때문에 403 에러 발생
-           AccessToken이 유효하다면, 인증 객체가 담긴 상태로 다음 필터로 넘어가기 때문에 인증 성공
-           RefreshToken이 존재하면 AccessToken 재발급 - 인증 처리는 하지 않음 */
-        if (refreshToken == null) {
-            saveAuthentication(getUserWithAccessToken(accessToken));
-            request.setAttribute("USER-ID", loginId);
+    private void continueFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
+        try { // TODO: 예외 처리 수정
             filterChain.doFilter(request, response);
-        } else {
-            checkRefreshToken(loginId, refreshToken);
-            reIssueAccessTokenAndRefreshToken(response, loginId);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
         }
-
     }
 
     private boolean tokenAuthenticationNotRequired(HttpServletRequest request) {
@@ -99,7 +106,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     private User getUserWithAccessToken(String accessToken) {
-        return userRepository.findByLoginId(jwtService.getLoginId(accessToken).orElse(null))
+        return userRepository.findByLoginId(jwtService.getLoginIdFromValidAccessToken(accessToken).orElse(null))
                 .orElseThrow(() -> new JwtException(USER_NOT_FOUND_BY_LOGIN_ID));
     }
 
