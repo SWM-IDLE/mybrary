@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchDtoMapper;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
-import kr.mybrary.bookservice.booksearch.domain.dto.response.BookSearchResultServiceResponse;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponseElement;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.kakaoapi.KakaoBookSearchResponse.Meta;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
@@ -47,19 +47,19 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
     @Override
     public BookSearchResultResponse searchWithKeyword(BookSearchServiceRequest request) {
 
-        KakaoBookSearchResponse response = requestBookSearch(API_URL_WITH_KEYWORD, request);
+        KakaoBookSearchResponse searchResponse = requestBookSearch(API_URL_WITH_KEYWORD, request);
 
-        List<BookSearchResultServiceResponse> bookSearchResultServiceResponses =
-                response.getDocuments().stream()
+        List<BookSearchResultResponseElement> response =
+                searchResponse.getDocuments().stream()
                 .map(BookSearchDtoMapper.INSTANCE::kakaoSearchResponseToServiceResponse)
                 .toList();
 
-        if (isLastPage(response.getMeta())) {
-            return BookSearchResultResponse.of(bookSearchResultServiceResponses, "");
+        if (isLastPage(searchResponse.getMeta())) {
+            return BookSearchResultResponse.of(response, "");
         }
 
         String nextRequestUrl = String.format(REQUEST_NEXT_URL, request.getKeyword(), request.getSort(), request.getPage() + 1);
-        return BookSearchResultResponse.of(bookSearchResultServiceResponses, nextRequestUrl);
+        return BookSearchResultResponse.of(response, nextRequestUrl);
     }
 
     @Override

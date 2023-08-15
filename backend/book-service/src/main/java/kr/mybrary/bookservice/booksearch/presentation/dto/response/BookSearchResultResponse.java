@@ -1,7 +1,6 @@
 package kr.mybrary.bookservice.booksearch.presentation.dto.response;
 
 import java.util.List;
-import kr.mybrary.bookservice.booksearch.domain.dto.response.BookSearchResultServiceResponse;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,10 +8,10 @@ import lombok.Getter;
 @Builder
 public class BookSearchResultResponse {
 
-    private List<BookSearchResultServiceResponse> bookSearchResult;
+    private List<BookSearchResultResponseElement> bookSearchResult;
     private String nextRequestUrl;
 
-    public static BookSearchResultResponse of(List<BookSearchResultServiceResponse> bookSearchResult, String nextRequestUrl) {
+    public static BookSearchResultResponse of(List<BookSearchResultResponseElement> bookSearchResult, String nextRequestUrl) {
         return BookSearchResultResponse.builder()
                 .bookSearchResult(bookSearchResult)
                 .nextRequestUrl(nextRequestUrl)
