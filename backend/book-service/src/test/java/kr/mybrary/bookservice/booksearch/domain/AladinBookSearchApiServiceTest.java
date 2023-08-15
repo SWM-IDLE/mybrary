@@ -8,10 +8,14 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategorySearchResultResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +38,9 @@ class AladinBookSearchApiServiceTest {
     @Value("${aladin.api.key}")
     private String API_KEY;
 
-    private static final String ITEM_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx";
-    private static final String ITEM_DETAIL_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx";
+    private static final String BOOK_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx";
+    private static final String BOOK_DETAIL_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx";
+    private static final String BOOK_LIST_BY_CATEGORY_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemList.aspx";
     private static final String JSON_FILE_PATH = "src/test/resources/aladinapi/";
 
     @Autowired
@@ -62,7 +67,7 @@ class AladinBookSearchApiServiceTest {
         String expectNextRequestUrl = "/books/search?keyword=Docker&page=2&sort=accuracy";
 
         mockServer
-                .expect(requestTo(ITEM_SEARCH_URL
+                .expect(requestTo(BOOK_SEARCH_URL
                         + "?query=Docker&MaxResults=20&start=1&output=js&Version=20131101&Sort=accuracy&TTBKey="
                         + API_KEY))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
@@ -87,7 +92,7 @@ class AladinBookSearchApiServiceTest {
         String expectNextRequestUrl = "";
 
         mockServer
-                .expect(requestTo(ITEM_SEARCH_URL
+                .expect(requestTo(BOOK_SEARCH_URL
                         + "?query=Docker&MaxResults=20&start=2&output=js&Version=20131101&Sort=accuracy&TTBKey="
                         + API_KEY))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
@@ -112,7 +117,7 @@ class AladinBookSearchApiServiceTest {
         String expectNextRequestUrl = "";
 
         mockServer
-                .expect(requestTo(ITEM_SEARCH_URL
+                .expect(requestTo(BOOK_SEARCH_URL
                         + "?query=알라&MaxResults=20&start=10&output=js&Version=20131101&Sort=accuracy&TTBKey="
                         + API_KEY))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
@@ -137,7 +142,7 @@ class AladinBookSearchApiServiceTest {
         String expectNextRequestUrl = "";
 
         mockServer
-                .expect(requestTo(ITEM_SEARCH_URL
+                .expect(requestTo(BOOK_SEARCH_URL
                         + "?query=알라&MaxResults=20&start=10&output=js&Version=20131101&Sort=accuracy&TTBKey="
                         + API_KEY))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
@@ -161,7 +166,7 @@ class AladinBookSearchApiServiceTest {
         String expectResult = readJsonFile("resultEmptyFromKeyword.json");
 
         mockServer
-                .expect(requestTo(ITEM_SEARCH_URL
+                .expect(requestTo(BOOK_SEARCH_URL
                         + "?query=JPA알라&MaxResults=20&start=1&output=js&Version=20131101&Sort=accuracy&TTBKey="
                         + API_KEY))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
@@ -180,7 +185,7 @@ class AladinBookSearchApiServiceTest {
         String expectResult = readJsonFile("bookDetailResultFromISBN.json");
 
         mockServer
-                .expect(requestTo(ITEM_DETAIL_SEARCH_URL
+                .expect(requestTo(BOOK_DETAIL_SEARCH_URL
                         + "?itemIdType=ISBN13&ItemId=9788965402602&output=js&Version=20131101&OptResult=packing,ratingInfo,authors,fulldescription,Toc&ttbkey="
                         + API_KEY))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
@@ -204,7 +209,7 @@ class AladinBookSearchApiServiceTest {
         String expectResult = readJsonFile("aladinBookNotFoundError.json");
 
         mockServer
-                .expect(requestTo(ITEM_DETAIL_SEARCH_URL
+                .expect(requestTo(BOOK_DETAIL_SEARCH_URL
                         + "?cover=big&itemIdType=ISBN13&ItemId=978898078297011&output=js&Version=20131101&OptResult=packing,ratingInfo,authors,fulldescription,Toc&ttbkey="
                         + API_KEY))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
@@ -213,6 +218,30 @@ class AladinBookSearchApiServiceTest {
         assertThatThrownBy(() -> aladinBookSearchApiService.searchBookDetailWithISBN(request))
                 .isInstanceOf(BookSearchResultNotFoundException.class);
 
+    }
+
+    @DisplayName("카테고리에 따른 알라딘 도서 리스트를 조회한다.")
+    @Test
+    void searchBookListByCategory() throws IOException {
+
+        // given
+        BookListByCategorySearchServiceRequest request = BookSearchDtoTestData.createBookListSearchServiceRequest();
+        String expectResult = readJsonFile("bookListByCategoryResult.json");
+
+        mockServer
+                .expect(requestTo(BOOK_LIST_BY_CATEGORY_SEARCH_URL
+                        + "?QueryType=bestseller&MaxResults=10&Start=1&Output=js&Version=20131101&Cover=Big&CategoryId=0&SearchTarget=BOOK&TTBKey="
+                        + API_KEY))
+                .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
+
+        // when
+        BookListByCategorySearchResultResponse response = aladinBookSearchApiService.searchBookListByCategory(request);
+
+        // then
+        assertAll(
+                () -> assertThat(response.getBookListByCategorySearchResultElement().size()).isEqualTo(10),
+                () -> assertThat(response.getNextRequestUrl()).isNotBlank()
+        );
     }
 
     private String readJsonFile(String fileName) throws IOException {
