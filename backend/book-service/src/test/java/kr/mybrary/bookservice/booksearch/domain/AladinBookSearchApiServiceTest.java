@@ -15,7 +15,6 @@ import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFou
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategorySearchResultResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -239,7 +238,7 @@ class AladinBookSearchApiServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getBookListByCategorySearchResultElement().size()).isEqualTo(10),
+                () -> assertThat(response.getBooks().size()).isEqualTo(10),
                 () -> assertThat(response.getNextRequestUrl()).isNotBlank()
         );
     }

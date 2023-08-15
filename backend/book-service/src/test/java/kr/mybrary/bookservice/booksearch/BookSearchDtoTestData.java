@@ -222,7 +222,7 @@ public class BookSearchDtoTestData {
 
     public static BookListByCategorySearchResultResponse createBookListSearchResultResponse() {
         return BookListByCategorySearchResultResponse.builder()
-                .bookListByCategorySearchResultElement(List.of(createBookListByCategoryServiceResponse()))
+                .books(List.of(createBookListByCategoryServiceResponse()))
                 .nextRequestUrl("test_next_request_url")
                 .build();
     }

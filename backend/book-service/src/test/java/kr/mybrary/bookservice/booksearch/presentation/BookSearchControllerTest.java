@@ -20,7 +20,9 @@ import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
 import java.util.List;
 import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
-import kr.mybrary.bookservice.booksearch.domain.KakaoBookSearchApiService;
+import kr.mybrary.bookservice.booksearch.domain.AladinBookSearchApiService;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategorySearchResultResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +47,7 @@ class BookSearchControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private KakaoBookSearchApiService kakaoBookSearchApiService;
+    private AladinBookSearchApiService aladinBookSearchApiService;
 
     @DisplayName("ISBN을 통해 도서의 상세 정보를 조회한다.")
     @Test
@@ -54,7 +56,7 @@ class BookSearchControllerTest {
         // given
         BookSearchDetailResponse response = BookSearchDtoTestData.createBookSearchDetailResponse();
 
-        given(kakaoBookSearchApiService.searchBookDetailWithISBN(any())).willReturn(response);
+        given(aladinBookSearchApiService.searchBookDetailWithISBN(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/books/search/detail")
@@ -154,7 +156,7 @@ class BookSearchControllerTest {
                 .nextRequestUrl("/books/search?keyword=자바&sort=accuracy&page=2")
                 .build();
 
-        given(kakaoBookSearchApiService.searchWithKeyword(any())).willReturn(response);
+        given(aladinBookSearchApiService.searchWithKeyword(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/books/search")
@@ -207,6 +209,52 @@ class BookSearchControllerTest {
                                                 fieldWithPath("data.bookSearchResult[].thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
                                                 fieldWithPath("data.bookSearchResult[].starRating").type(NUMBER).description("별점"),
                                                 fieldWithPath("data.bookSearchResult[].publicationDate").type(STRING).description("출판일"),
+                                                fieldWithPath("data.nextRequestUrl").type(STRING).description("다음 요청 URL")
+                                        ).build())));
+    }
+
+    @DisplayName("카테고리 ID와 추천 타입을 통해 도서 리스트를 조회한다.")
+    @Test
+    void searchBookListByCategory() throws Exception {
+
+        // given
+        BookListByCategorySearchResultResponse response = BookSearchDtoTestData.createBookListSearchResultResponse();
+        BookListByCategorySearchServiceRequest request = BookSearchDtoTestData.createBookListSearchServiceRequest();
+        given(aladinBookSearchApiService.searchBookListByCategory(any())).willReturn(response);
+
+        // when
+        ResultActions actions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/books/search/book-list-by-category")
+                .param("page", String.valueOf(request.getPage()))
+                .param("type", request.getType())
+                .param("categoryId", String.valueOf(request.getCategoryId())));
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("카테고리별 도서 리스트 조회에 성공했습니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // document
+        actions
+                .andDo(document("book-list-by-category",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("search")
+                                        .summary("카테고리 ID와 추천 타입을 통해 도서 리스트를 조회한다.")
+                                        .queryParameters(
+                                                parameterWithName("page").type(SimpleType.NUMBER).description("페이지 번호, 생략가능 default : 1").optional(),
+                                                parameterWithName("type").type(SimpleType.STRING).description("추천 타입 (Bestseller, ItemNewAll, ItemNewSpecial, ItemEditorChoice, BlogBest)"),
+                                                parameterWithName("categoryId").type(SimpleType.NUMBER).description("카테고리 ID 생략가능 default : 0 (전체)").optional()
+                                        )
+                                        .responseSchema(Schema.schema("book_list_by_category_response_body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data.books[].isbn13").type(STRING).description("도서 ISBN13"),
+                                                fieldWithPath("data.books[].thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
                                                 fieldWithPath("data.nextRequestUrl").type(STRING).description("다음 요청 URL")
                                         ).build())));
     }
