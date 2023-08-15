@@ -297,3 +297,16 @@ const bookShelfTitleStyle = TextStyle(
   fontSize: 13.0,
   fontWeight: FontWeight.w500,
 );
+
+// setting page style
+const settingTitleStyle = TextStyle(
+  color: grey777777,
+  fontSize: 14.0,
+  fontWeight: FontWeight.w500,
+);
+
+const settingSubTitleStyle = TextStyle(
+  color: grey262626,
+  fontSize: 15.0,
+  fontWeight: FontWeight.w400,
+);
