@@ -7,13 +7,13 @@ class MyBookDetailHeader extends StatelessWidget {
   final String thumbnail;
   final String title;
   final List<String> authors;
-  final GlobalKey headerKey;
+  final GlobalKey? headerKey;
 
   const MyBookDetailHeader({
     required this.thumbnail,
     required this.title,
     required this.authors,
-    required this.headerKey,
+    this.headerKey,
     super.key,
   });
 

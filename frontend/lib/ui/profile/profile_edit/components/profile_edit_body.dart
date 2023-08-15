@@ -25,7 +25,7 @@ class ProfileEditBody extends StatelessWidget {
           children: [
             Text(
               '닉네임',
-              style: profileEditTitleStyle,
+              style: commonEditTitleStyle,
             ),
             Text(
               '*',
@@ -72,7 +72,7 @@ class ProfileEditBody extends StatelessWidget {
         const SizedBox(height: 18.0),
         const Text(
           '한 줄 소개',
-          style: profileEditTitleStyle,
+          style: commonEditTitleStyle,
         ),
         const SizedBox(height: 8.0),
         TextFormField(

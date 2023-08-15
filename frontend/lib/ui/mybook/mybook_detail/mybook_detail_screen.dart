@@ -17,8 +17,9 @@ import 'package:mybrary/ui/common/components/data_error.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/mybook/mybook_detail/components/mybook_detail_header.dart';
-import 'package:mybrary/ui/mybook/mybook_detail/components/mybook_record.dart';
-import 'package:mybrary/ui/mybook/mybook_detail/components/mybook_review.dart';
+import 'package:mybrary/ui/mybook/mybook_detail/components/mybook_detail_record.dart';
+import 'package:mybrary/ui/mybook/mybook_detail/components/mybook_detail_review.dart';
+import 'package:mybrary/ui/mybook/mybook_detail/components/mybook_edit_review.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
 
 class MyBookDetailScreen extends StatefulWidget {
@@ -44,6 +45,8 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
   final TextEditingController _meaningTagQuoteController =
       TextEditingController();
 
+  late TextEditingController _myBookReviewContentController;
+
   late String _myBookAppBarTitle = '';
   late bool _isScrollingDown = true;
   late bool _isOverflowMyBookDetailHeader = false;
@@ -52,7 +55,6 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
   late bool _originalShareable;
   late bool _originalExchangeable;
   late String _originalReadStatus;
-  late String _originalMeaningTagColorCode;
 
   bool? _newShowable;
   bool? _newShareable;
@@ -66,14 +68,6 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
   void initState() {
     super.initState();
 
-    _myBookDetail = _bookRepository.getMyBookDetail(
-      userId: 'testId',
-      myBookId: widget.myBookId,
-    );
-    _myBookReview = _bookRepository.getMyBookReview(
-      myBookId: widget.myBookId,
-    );
-
     _bookRepository
         .getMyBookDetail(
           userId: 'testId',
@@ -82,13 +76,30 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
         .then(
           (data) => {
             _meaningTagQuoteController.text = data.meaningTag!.quote!,
-            _originalMeaningTagColorCode = data.meaningTag!.colorCode!,
             _originalReadStatus = data.readStatus!,
             _originalShowable = data.showable!,
             _originalShareable = data.shareable!,
             _originalExchangeable = data.exchangeable!,
           },
         );
+
+    _bookRepository
+        .getMyBookReview(
+      myBookId: widget.myBookId,
+    )
+        .then((data) {
+      _myBookReviewContentController = TextEditingController(
+        text: data == null ? '' : data.content,
+      );
+    });
+
+    _myBookDetail = _bookRepository.getMyBookDetail(
+      userId: 'testId',
+      myBookId: widget.myBookId,
+    );
+    _myBookReview = _bookRepository.getMyBookReview(
+      myBookId: widget.myBookId,
+    );
 
     _myBookDetailScrollController.addListener(_bookDetailScrollListener);
   }
@@ -128,6 +139,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
   void dispose() {
     _myBookDetailScrollController.removeListener(_bookDetailScrollListener);
     _myBookDetailScrollController.dispose();
+    _meaningTagQuoteController.dispose();
 
     super.dispose();
   }
@@ -162,7 +174,8 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
             MyBookReviewResponseData? myBookReviewData =
                 data.myBookReviewResponseData;
 
-            _myBookAppBarTitle = myBookDetailData.book!.title!;
+            Book myBookInfo = myBookDetailData.book!;
+            _myBookAppBarTitle = myBookInfo.title!;
 
             List<String>? newDate;
             DateTime? newDateTime;
@@ -182,7 +195,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                   );
 
             String colorCode = _newMeaningTagColorCode ??
-                _originalMeaningTagColorCode.replaceAll('#', '');
+                myBookDetailData.meaningTag!.colorCode!.replaceAll('#', '');
 
             return Stack(
               children: [
@@ -197,16 +210,16 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                           ? _myBookAppBarTitle
                           : '',
                       myBookId: widget.myBookId,
-                      myBookTitle: myBookDetailData.book!.title!,
+                      myBookTitle: myBookInfo.title!,
                     ),
                     MyBookDetailHeader(
                       headerKey: _myBookDetailHeaderKey,
-                      thumbnail: myBookDetailData.book!.thumbnailUrl!,
-                      title: myBookDetailData.book!.title!,
-                      authors: myBookDetailData.book!.authors!,
+                      thumbnail: myBookInfo.thumbnailUrl!,
+                      title: myBookInfo.title!,
+                      authors: myBookInfo.authors!,
                     ),
                     _myBookDetailDivider(),
-                    MyBookRecord(
+                    MyBookDetailRecord(
                       readStatus:
                           _newReadStatus ?? myBookDetailData.readStatus!,
                       showable: _newShowable ?? myBookDetailData.showable!,
@@ -220,12 +233,25 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                           myBookDetailData.meaningTag!.quote!,
                     ),
                     _myBookDetailDivider(),
-                    if (myBookReviewData == null) _hasNoReview(),
+                    if (myBookReviewData == null)
+                      _hasNoReview(
+                        thumbnailUrl: myBookInfo.thumbnailUrl!,
+                        title: myBookInfo.title!,
+                        authors: myBookInfo.authors!,
+                        starRating: myBookInfo.starRating!,
+                        contentController: _myBookReviewContentController,
+                      ),
                     if (myBookReviewData != null)
-                      MyBookReview(
+                      MyBookDetailReview(
                         content: myBookReviewData.content!,
                         starRating: myBookReviewData.starRating!,
                         createdAt: myBookReviewData.createdAt!,
+                        thumbnailUrl: myBookInfo.thumbnailUrl!,
+                        title: myBookInfo.title!,
+                        authors: myBookInfo.authors!,
+                        contentController: _myBookReviewContentController,
+                        nextToMyBookReview: _nextToMyBookReview,
+                        reviewId: myBookReviewData.id!,
                       ),
                     const SliverToBoxAdapter(
                       child: SizedBox(height: 70.0),
@@ -349,7 +375,8 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                                       const SizedBox(height: 8.0),
                                       CupertinoButton(
                                         padding: const EdgeInsets.all(0.0),
-                                        onPressed: () => _showDatePicker(
+                                        onPressed: () => showCupertinoPicker(
+                                          context,
                                           CupertinoDatePicker(
                                             initialDateTime: dateTime,
                                             mode: CupertinoDatePickerMode.date,
@@ -495,24 +522,6 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
     );
   }
 
-  void _showDatePicker(Widget child) {
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (BuildContext context) => Container(
-        height: 216,
-        padding: const EdgeInsets.only(top: 6.0),
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        color: CupertinoColors.systemBackground.resolveFrom(context),
-        child: SafeArea(
-          top: false,
-          child: child,
-        ),
-      ),
-    );
-  }
-
   Widget _myBookRecordInput({
     required BuildContext context,
     required TextEditingController controller,
@@ -619,8 +628,6 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                         setState(() {
                           _meaningTagQuoteController.text =
                               data.meaningTag!.quote!;
-                          _originalMeaningTagColorCode =
-                              data.meaningTag!.colorCode!;
                           _originalReadStatus = data.readStatus!;
                           _originalShowable = data.showable!;
                           _originalShareable = data.shareable!;
@@ -696,7 +703,13 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
     );
   }
 
-  SliverPadding _hasNoReview() {
+  SliverPadding _hasNoReview({
+    required String thumbnailUrl,
+    required String title,
+    required List<String> authors,
+    required double starRating,
+    required TextEditingController contentController,
+  }) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       sliver: SliverToBoxAdapter(
@@ -711,10 +724,23 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                   '마이 리뷰',
                   style: commonSubBoldStyle,
                 ),
-                Text(
-                  '작성하기',
-                  style: bookDetailDescriptionStyle.copyWith(
-                    decoration: TextDecoration.underline,
+                InkWell(
+                  onTap: () async {
+                    _nextToMyBookReview(
+                      thumbnailUrl: thumbnailUrl,
+                      title: title,
+                      authors: authors,
+                      starRating: starRating,
+                      contentController: contentController,
+                      isCreateReview: true,
+                      myBookId: widget.myBookId,
+                    );
+                  },
+                  child: Text(
+                    '작성하기',
+                    style: bookDetailDescriptionStyle.copyWith(
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ],
@@ -751,6 +777,45 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _nextToMyBookReview({
+    required bool isCreateReview,
+    required String thumbnailUrl,
+    required String title,
+    required List<String> authors,
+    required double? starRating,
+    required TextEditingController contentController,
+    int? myBookId,
+    int? reviewId,
+  }) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MyBookEditReview(
+          isCreateReview: isCreateReview,
+          thumbnailUrl: thumbnailUrl,
+          title: title,
+          authors: authors,
+          starRating: starRating ?? 0.0,
+          contentController: _myBookReviewContentController,
+          myBookId: myBookId,
+          reviewId: reviewId,
+        ),
+      ),
+    ).then(
+      (value) => setState(() {
+        _myBookReview = _bookRepository.getMyBookReview(
+          myBookId: widget.myBookId,
+        );
+        _bookRepository
+            .getMyBookReview(
+              myBookId: widget.myBookId,
+            )
+            .then((data) => _myBookReviewContentController.text =
+                data == null ? '' : data.content!);
+      }),
     );
   }
 

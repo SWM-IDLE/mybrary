@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 
-class MyBookRecord extends StatelessWidget {
+class MyBookDetailRecord extends StatelessWidget {
   final String readStatus;
   final bool showable;
   final bool shareable;
@@ -11,7 +11,7 @@ class MyBookRecord extends StatelessWidget {
   final String meaningTagColorCode;
   final String meaningTagQuote;
 
-  const MyBookRecord({
+  const MyBookDetailRecord({
     required this.readStatus,
     required this.showable,
     required this.shareable,
