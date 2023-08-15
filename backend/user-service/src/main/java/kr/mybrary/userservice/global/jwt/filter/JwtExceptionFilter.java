@@ -19,7 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
-    private final String JWT_EXCEPTION_MESSAGE = "인증에 실패했습니다. 유효하지 않은 JWT 토큰입니다";
+    private final String JWT_EXCEPTION_MESSAGE = "JWT 인증 과정 중 예외가 발생했습니다.";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
