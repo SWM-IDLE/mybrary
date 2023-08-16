@@ -54,7 +54,7 @@ public class BookInterestService {
     }
 
     @Transactional(readOnly = true)
-    public BookInterestStatusResponse isLoginUserRegisterInterestThisBook(BookInterestStatusServiceRequest request) {
+    public BookInterestStatusResponse getInterestStatus(BookInterestStatusServiceRequest request) {
         return bookReadService.findOptionalBookByISBN13(request.getIsbn13())
                 .map(book -> BookInterestStatusResponse.of(
                         bookInterestRepository.existsByBookAndUserId(book, request.getLoginId())))

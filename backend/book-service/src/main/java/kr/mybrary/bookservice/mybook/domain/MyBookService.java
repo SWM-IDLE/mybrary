@@ -127,7 +127,7 @@ public class MyBookService {
     }
 
     @Transactional(readOnly = true)
-    public MyBookRegisteredStatusResponse isLoginUserRegisterThisBookAsMyBook(
+    public MyBookRegisteredStatusResponse getMyBookRegisteredStatus(
             MyBookRegisteredStatusServiceRequest request) {
 
         return bookReadService.findOptionalBookByISBN13(request.getIsbn13())
@@ -136,7 +136,7 @@ public class MyBookService {
     }
 
     @Transactional(readOnly = true)
-    public MyBookReadCompletedStatusResponse isLoginUserReadCompleteThisBook(
+    public MyBookReadCompletedStatusResponse getMyBookReadCompletedStatus(
             MyBookReadCompletedStatusServiceRequest request) {
 
         return bookReadService.findOptionalBookByISBN13(request.getIsbn13())

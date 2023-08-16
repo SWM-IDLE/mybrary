@@ -137,7 +137,7 @@ class BookInterestServiceTest {
         given(bookInterestRepository.existsByBookAndUserId(book, request.getLoginId())).willReturn(true);
 
         // when
-        BookInterestStatusResponse response = bookInterestService.isLoginUserRegisterInterestThisBook(request);
+        BookInterestStatusResponse response = bookInterestService.getInterestStatus(request);
 
         // then
         assertAll(
@@ -157,7 +157,7 @@ class BookInterestServiceTest {
         given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.empty());
 
         // when
-        BookInterestStatusResponse response = bookInterestService.isLoginUserRegisterInterestThisBook(request);
+        BookInterestStatusResponse response = bookInterestService.getInterestStatus(request);
 
         // then
         assertAll(
