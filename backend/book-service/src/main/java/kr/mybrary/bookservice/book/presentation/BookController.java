@@ -81,6 +81,6 @@ public class BookController {
         BookInterestStatusServiceRequest serviceRequest = BookInterestStatusServiceRequest.of(isbn13, loginId);
 
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "관심 도서 상태 조회에 성공했습니다.",
-                bookInterestService.isLoginUserRegisterInterestThisBook(serviceRequest)));
+                bookInterestService.getInterestStatus(serviceRequest)));
     }
 }

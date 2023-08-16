@@ -440,7 +440,7 @@ class MyBookControllerTest {
         MyBookRegisteredStatusResponse response = MybookDtoTestData.createMyBookRegisteredStatusResponse();
         String loginId = "LOGIN_USER_ID";
 
-        given(myBookService.isLoginUserRegisterThisBookAsMyBook(any())).willReturn(response);
+        given(myBookService.getMyBookRegisteredStatus(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/v1/books/{isbn13}/mybook-registered-status", "9788932917245")
@@ -484,7 +484,7 @@ class MyBookControllerTest {
         MyBookReadCompletedStatusResponse response = MybookDtoTestData.createMyBookReadCompletedStatusResponse();
         String loginId = "LOGIN_USER_ID";
 
-        given(myBookService.isLoginUserReadCompleteThisBook(any())).willReturn(response);
+        given(myBookService.getMyBookReadCompletedStatus(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/v1/books/{isbn13}/read-complete-status", "9788932917245")

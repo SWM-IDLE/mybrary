@@ -374,7 +374,7 @@ class BookControllerTest {
         BookInterestStatusResponse response = BookDtoTestData.createBookInterestStatusResponse();
         String loginId = "LOGIN_USER_ID";
 
-        given(bookInterestService.isLoginUserRegisterInterestThisBook(any())).willReturn(response);
+        given(bookInterestService.getInterestStatus(any())).willReturn(response);
 
         // when
         ResultActions actions = mockMvc.perform(get("/api/v1/books/{isbn13}/interest-status", "9788932917245")

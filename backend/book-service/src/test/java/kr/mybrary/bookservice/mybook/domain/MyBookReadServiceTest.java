@@ -420,7 +420,7 @@ class MyBookReadServiceTest {
         given(myBookRepository.existsByUserIdAndBook(request.getLoginId(), book)).willReturn(true);
 
         // when
-        MyBookRegisteredStatusResponse response = myBookService.isLoginUserRegisterThisBookAsMyBook(request);
+        MyBookRegisteredStatusResponse response = myBookService.getMyBookRegisteredStatus(request);
 
         // then
         assertAll(
@@ -440,7 +440,7 @@ class MyBookReadServiceTest {
         given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.empty());
 
         // when
-        MyBookRegisteredStatusResponse response = myBookService.isLoginUserRegisterThisBookAsMyBook(request);
+        MyBookRegisteredStatusResponse response = myBookService.getMyBookRegisteredStatus(request);
 
         // then
         assertAll(
@@ -464,7 +464,7 @@ class MyBookReadServiceTest {
         given(myBookRepository.findByIdWithBook(book.getId())).willReturn(Optional.of(myBook));
 
         // when
-        MyBookReadCompletedStatusResponse response = myBookService.isLoginUserReadCompleteThisBook(request);
+        MyBookReadCompletedStatusResponse response = myBookService.getMyBookReadCompletedStatus(request);
 
         // then
         assertAll(
@@ -483,7 +483,7 @@ class MyBookReadServiceTest {
         given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.empty());
 
         // when
-        MyBookReadCompletedStatusResponse response = myBookService.isLoginUserReadCompleteThisBook(request);
+        MyBookReadCompletedStatusResponse response = myBookService.getMyBookReadCompletedStatus(request);
 
         // then
         assertAll(
@@ -505,7 +505,7 @@ class MyBookReadServiceTest {
         given(myBookRepository.findByIdWithBook(book.getId())).willReturn(Optional.empty());
 
         // when
-        MyBookReadCompletedStatusResponse response = myBookService.isLoginUserReadCompleteThisBook(request);
+        MyBookReadCompletedStatusResponse response = myBookService.getMyBookReadCompletedStatus(request);
 
         // then
         assertAll(

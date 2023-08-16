@@ -112,7 +112,7 @@ public class MyBookController {
         MyBookRegisteredStatusServiceRequest serviceRequest = MyBookRegisteredStatusServiceRequest.of(loginId, isbn13);
 
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "해당 도서의 마이북 등록 상태 여부 입니다.",
-                        myBookService.isLoginUserRegisterThisBookAsMyBook(serviceRequest)));
+                        myBookService.getMyBookRegisteredStatus(serviceRequest)));
     }
 
     @GetMapping("/books/{isbn13}/read-complete-status")
@@ -122,6 +122,6 @@ public class MyBookController {
         MyBookReadCompletedStatusServiceRequest serviceRequest = MyBookReadCompletedStatusServiceRequest.of(loginId, isbn13);
 
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "해당 도서 완독 여부 입니다.",
-                        myBookService.isLoginUserReadCompleteThisBook(serviceRequest)));
+                        myBookService.getMyBookReadCompletedStatus(serviceRequest)));
     }
 }
