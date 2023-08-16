@@ -174,7 +174,7 @@ class KakaoBookSearchApiServiceTest {
         );
     }
 
-    @DisplayName("도서 분야별 리스트 조회시 예외가 발생한다.")
+    @DisplayName("지원되지 않는 플랫폼에서 도서 분야별 리스트 조회시 예외가 발생한다.")
     @Test
     void occurExceptionWhenSearchBookListByField() {
 
