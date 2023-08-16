@@ -40,8 +40,9 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         return (exchange, chain) -> {
             try {
                 jwtUtil.extractAccessToken(exchange.getRequest()).ifPresentOrElse(accessToken -> {
-                        if (isTokenRefreshRequested(exchange.getRequest())) return;
-
+                        if (isTokenRefreshRequested(exchange.getRequest())) {
+                            return;
+                        }
                         checkIfTokenIsLogout(accessToken);
                         jwtUtil.validateToken(accessToken);
 
