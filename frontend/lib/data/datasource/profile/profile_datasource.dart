@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:mybrary/data/model/common/common_response.dart';
 import 'package:mybrary/data/model/profile/profile_image_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/network/api.dart';
@@ -127,5 +128,25 @@ class ProfileDataSource {
     );
 
     return result.data!;
+  }
+
+  Future<CommonResponse> deleteAccount(String userId) async {
+    Dio dio = DioService().to();
+    final deleteAccountResponse = await dio.delete(
+      getApi(API.deleteUserAccount),
+      options: Options(headers: {'User-Id': 'testId'}),
+    );
+
+    log('계정 삭제 응답값: $deleteAccountResponse');
+    final CommonResponse result = commonResponseResult(
+      deleteAccountResponse,
+      () => CommonResponse(
+        status: deleteAccountResponse.data['status'],
+        message: deleteAccountResponse.data['message'],
+        data: null,
+      ),
+    );
+
+    return result;
   }
 }

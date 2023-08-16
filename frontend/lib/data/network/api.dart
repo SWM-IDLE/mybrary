@@ -26,6 +26,7 @@ enum API {
   deleteUserProfileImage,
   deleteUserFollower,
   deleteUserFollowing,
+  deleteUserAccount,
   // book-service search
   getBookService,
   getBookSearchKeyword,
@@ -62,6 +63,7 @@ Map<API, String> apiMap = {
   API.deleteUserProfileImage: "/api/v1/users", // /{userId}/profile/image",
   API.deleteUserFollower: "/api/v1/users/follower",
   API.deleteUserFollowing: "/api/v1/users/follow",
+  API.deleteUserAccount: "/api/v1/users/account",
   // book-service
   API.getBookService: "/api/v1",
   API.getBookSearchKeyword: "/api/v1/books/search",
