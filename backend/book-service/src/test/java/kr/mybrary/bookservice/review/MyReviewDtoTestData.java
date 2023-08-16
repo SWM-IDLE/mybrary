@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse;
-import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse.UserInfoElement;
+import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse.UserInfo;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewDeleteServiceRequest;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewOfMyBookGetServiceRequest;
@@ -58,8 +58,8 @@ public class MyReviewDtoTestData {
 
     public static UserInfoServiceResponse createUserInfoResponseList() {
 
-        List<UserInfoElement> list = IntStream.range(1, 6)
-                .mapToObj(i -> UserInfoElement.builder()
+        List<UserInfo> list = IntStream.range(1, 6)
+                .mapToObj(i -> UserInfo.builder()
                         .userId("USER_ID_" + i)
                         .nickname("USER_NICKNAME_" + i)
                         .profileImageUrl("USER_PICTURE_URL_" + i)
@@ -67,7 +67,11 @@ public class MyReviewDtoTestData {
                 .toList();
 
         return UserInfoServiceResponse.builder()
-                .userInfoElements(list)
+                .status("200 OK")
+                .message("Success")
+                .data(UserInfoServiceResponse.UserInfoList.builder()
+                        .userInfoElements(list)
+                        .build())
                 .build();
     }
 

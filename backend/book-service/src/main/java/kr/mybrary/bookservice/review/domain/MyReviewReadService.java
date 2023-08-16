@@ -8,7 +8,7 @@ import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.client.user.api.UserServiceClient;
 import kr.mybrary.bookservice.client.user.dto.request.UserInfoRequest;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse;
-import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse.UserInfoElement;
+import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse.UserInfo;
 import kr.mybrary.bookservice.global.util.DateUtils;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
@@ -43,8 +43,8 @@ public class MyReviewReadService {
         UserInfoServiceResponse usersInfo = userServiceClient.getUsersInfo(
                 UserInfoRequest.of(getUserIdFromMyBookReview(reviewElements)));
 
-        Map<String, UserInfoServiceResponse.UserInfoElement> userInfoMap = createUserInfoMapFromResponse(
-                usersInfo.getUserInfoElements());
+        Map<String, UserInfo> userInfoMap = createUserInfoMapFromResponse(
+                usersInfo.getData().getUserInfoElements());
 
         List<ReviewElement> myBookReviewElements = createMyBookReviewElements(reviewElements, userInfoMap);
         double starRatingAverage = getReviewStarRatingAverage(reviewElements);
@@ -70,7 +70,7 @@ public class MyReviewReadService {
     @NotNull
     private static List<ReviewElement> createMyBookReviewElements(
             List<MyReviewElementModel> reviewElements,
-            Map<String, UserInfoElement> userInfoMap) {
+            Map<String, UserInfo> userInfoMap) {
 
         return reviewElements.stream()
                 .map(reviewElement -> ReviewElement.builder()
@@ -86,12 +86,12 @@ public class MyReviewReadService {
     }
 
     @NotNull
-    private static Map<String, UserInfoServiceResponse.UserInfoElement> createUserInfoMapFromResponse(
-            List<UserInfoServiceResponse.UserInfoElement> userInfoServiceResponses) {
+    private static Map<String, UserInfo> createUserInfoMapFromResponse(
+            List<UserInfo> userInfoServiceResponses) {
 
         return userInfoServiceResponses.stream()
-                .collect(Collectors.toMap(
-                        UserInfoElement::getUserId,
+                .collect(Collectors.toConcurrentMap(
+                        UserInfo::getUserId,
                         userInfoServiceResponse -> userInfoServiceResponse)
                 );
     }

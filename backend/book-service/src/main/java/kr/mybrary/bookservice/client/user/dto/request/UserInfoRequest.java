@@ -8,11 +8,11 @@ import lombok.Getter;
 @Builder
 public class UserInfoRequest {
 
-    List<String> usersIds;
+    List<String> userIds;
 
     public static UserInfoRequest of(List<String> usersIds) {
         return UserInfoRequest.builder()
-            .usersIds(usersIds)
+            .userIds(usersIds)
             .build();
     }
 }
