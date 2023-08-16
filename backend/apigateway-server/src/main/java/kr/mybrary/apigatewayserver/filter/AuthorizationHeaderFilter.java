@@ -1,5 +1,8 @@
 package kr.mybrary.apigatewayserver.filter;
 
+import kr.mybrary.apigatewayserver.exception.AccessTokenNotFoundException;
+import kr.mybrary.apigatewayserver.exception.ApplicationException;
+import kr.mybrary.apigatewayserver.exception.LoggedOutAccessTokenException;
 import kr.mybrary.apigatewayserver.util.JwtUtil;
 import kr.mybrary.apigatewayserver.util.RedisUtil;
 import lombok.Data;
@@ -8,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -30,6 +33,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     private static final String AUTHENTICATION_PATH = "/auth";
     private static final String OAUTH2_PATH = "/oauth2/authorization";
     private static final List<String> TOKEN_AUTH_WHITELIST = List.of(SIGN_UP_PATH, AUTHENTICATION_PATH, OAUTH2_PATH);
+    private static final String ERROR_MESSAGE_FORMAT = "{\"errorCode\": \"%s\", \"errorMessage\": \"%s\"}";
 
     public AuthorizationHeaderFilter() {
         super(Config.class);
@@ -51,12 +55,12 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
                     },
                     () -> {
                         if(tokenAuthenticationRequired(exchange.getRequest())) {
-                            throw new IllegalArgumentException("access token required");
+                            throw new AccessTokenNotFoundException();
                         }
                     }
                 );
-            } catch (Exception e) {
-                return onError(exchange.getResponse(), e.getMessage(), HttpStatus.UNAUTHORIZED);
+            } catch (ApplicationException e) {
+                return onError(exchange.getResponse(), e);
             }
             return chain.filter(exchange);
         };
@@ -76,13 +80,15 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
     private void checkIfTokenIsLogout(String accessToken) {
         if (redisUtil.hasKey(accessToken)) {
-            throw new IllegalArgumentException("token is logout");
+            throw new LoggedOutAccessTokenException();
         }
     }
 
-    private Mono<Void> onError(ServerHttpResponse response, String message, HttpStatus status) {
-        response.setStatusCode(status);
-        DataBuffer buffer = response.bufferFactory().wrap(message.getBytes(StandardCharsets.UTF_8));
+    private Mono<Void> onError(ServerHttpResponse response, ApplicationException e) {
+        response.setRawStatusCode(e.getStatus());
+        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        String responseBody = String.format(ERROR_MESSAGE_FORMAT, e.getErrorCode(), e.getErrorMessage());
+        DataBuffer buffer = response.bufferFactory().wrap(responseBody.getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(buffer));
     }
 
