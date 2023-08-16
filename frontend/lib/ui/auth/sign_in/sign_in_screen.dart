@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
@@ -7,12 +5,8 @@ import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/config.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
-import 'package:mybrary/ui/auth/components/sign_in_input.dart';
-import 'package:mybrary/ui/auth/components/sing_in_button.dart';
-import 'package:mybrary/utils/logics/validate_utils.dart';
-
-const LOGIN_TEST_ID = 'test123';
-const LOGIN_TEST_PASSWORD = 'test123!@';
+import 'package:mybrary/ui/auth/components/oauth_button.dart';
+import 'package:mybrary/ui/common/layout/default_layout.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -30,243 +24,65 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/img/logo/login_background.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: DefaultLayout(
+        backgroundColor: Colors.transparent,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Logo(
-                logoText: '마이브러리',
-              ),
-              Expanded(
-                child: Form(
-                  key: formKey,
-                  onChanged: () {
-                    final isValid = formKey.currentState!.validate();
-                    if (isValid != _isValid) {
-                      setState(() {
-                        _isValid = isValid;
-                      });
-                    }
-                  },
-                  child: Column(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text('아이디'),
-                          SignInInput(
-                            initialValue: loginId ?? '',
-                            onSaved: (String? val) {
-                              loginId = val;
-                            },
-                            hintText: '영문, 숫자 포함 6자 이상',
-                            validator: (String? val) {
-                              if (val == null || val.isEmpty) {
-                                return '아이디를 입력해 주세요.';
-                              }
-
-                              if (checkAuthValidator(
-                                  val, LoginRegExp.idRegExp, 6, 20)) {
-                                return '아이디는 영소문자/숫자 혼합 6자 이상으로 입력해 주세요.';
-                              }
-
-                              return null;
-                            },
-                          ),
-                          SizedBox(
-                            height: 20.0,
-                          ),
-                          Text('비밀번호'),
-                          SignInInput(
-                            initialValue: loginPassword ?? '',
-                            onSaved: (String? val) {
-                              loginPassword = val;
-                            },
-                            obscureText: true,
-                            hintText: '영문, 숫자, 특수문자 포함 8자 이상',
-                            validator: (String? val) {
-                              if (val == null || val.isEmpty) {
-                                return '비밀번호를 입력해 주세요.';
-                              }
-
-                              if (checkAuthValidator(
-                                  val, LoginRegExp.passwordRegExp, 8, 16)) {
-                                return '비밀번호는 영문/숫자/특수문자 혼합 8자 이상으로 입력해 주세요.';
-                              }
-
-                              return null;
-                            },
-                          ),
-                          SizedBox(
-                            height: 25.0,
-                          ),
-                          SingInButton(
-                            onPressed: onSavePressed,
-                            isOAuth: false,
-                            isEnabled: _isValid ?? false,
-                            btnText: '로그인',
-                            btnBackgroundColor: loginPrimaryColor,
-                            textColor: commonBlackColor,
-                          ),
-                          SizedBox(
-                            height: 25.0,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pushNamed('/signin/findpw');
-                            },
-                            child: Text(
-                              '비밀번호를 잊으셨나요?',
-                              style: TextStyle(
-                                color: commonBlackColor,
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: 130,
-                            child: Divider(
-                              color: commonLessBlackColor,
-                              thickness: 1.0,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 130,
-                            child: Divider(
-                              color: commonLessBlackColor,
-                              thickness: 1.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          SingInButton(
-                            onPressed: () => oAuthLoginPressed(API.googleLogin),
-                            isOAuth: true,
-                            isEnabled: true,
-                            btnIcon: Image.asset(
-                              'assets/img/logo/google.png',
-                              width: 30.0,
-                              height: 30.0,
-                            ),
-                            btnText: 'Google로 시작하기',
-                            btnBackgroundColor: googleLoginColor,
-                            textColor: commonWhiteColor,
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                          SingInButton(
-                            onPressed: () => oAuthLoginPressed(API.naverLogin),
-                            isOAuth: true,
-                            isEnabled: true,
-                            btnIcon: Image.asset(
-                              'assets/img/logo/naver.png',
-                              width: 30.0,
-                              height: 30.0,
-                            ),
-                            btnText: 'Naver로 시작하기',
-                            btnBackgroundColor: naverLoginColor,
-                            textColor: commonWhiteColor,
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                          SingInButton(
-                            onPressed: () => oAuthLoginPressed(API.kakaoLogin),
-                            isOAuth: true,
-                            isEnabled: true,
-                            btnIcon: Image.asset(
-                              'assets/img/logo/kakao.png',
-                              width: 30.0,
-                              height: 30.0,
-                            ),
-                            btnText: 'Kakao로 시작하기',
-                            btnBackgroundColor: kakaoLoginColor,
-                            textColor: commonBlackColor,
-                          ),
-                          SizedBox(
-                            height: 25.0,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                '계정이 없으신가요?',
-                                style: TextStyle(
-                                  color: commonBlackColor,
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(
-                                width: 5.0,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pushNamed('/signup');
-                                },
-                                child: Text(
-                                  '회원가입',
-                                  style: TextStyle(
-                                    color: commonBlackColor,
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+              const Align(
+                alignment: Alignment.topLeft,
+                child: Logo(
+                  logoText: '도서의 가치를 발견할\n당신만의 도서\n마이브러리',
                 ),
+              ),
+              Column(
+                children: [
+                  const SizedBox(height: 20.0),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        OAuthButton(
+                          btnText: 'Google로 시작하기',
+                          oauthType: 'google',
+                          btnBackgroundColor: greyF1F2F5,
+                          onTap: () => oAuthLoginPressed(API.googleLogin),
+                        ),
+                        const SizedBox(height: 10.0),
+                        OAuthButton(
+                          btnText: '네이버로 시작하기',
+                          oauthType: 'naver',
+                          btnBackgroundColor: naverLoginColor,
+                          onTap: () => oAuthLoginPressed(API.naverLogin),
+                        ),
+                        const SizedBox(height: 10.0),
+                        OAuthButton(
+                          btnText: '카카오로 시작하기',
+                          oauthType: 'kakao',
+                          btnBackgroundColor: kakaoLoginColor,
+                          onTap: () => oAuthLoginPressed(API.kakaoLogin),
+                        ),
+                        const SizedBox(height: 70.0),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  void onSavePressed() async {
-    // formKey는 생성을 했는데, Form 위젯과 결합을 안했을 때는 null
-    if (formKey.currentState == null) {
-      return;
-    }
-
-    if (formKey.currentState!.validate()) {
-      formKey.currentState!.save();
-      if (loginId == LOGIN_TEST_ID && loginPassword == LOGIN_TEST_PASSWORD) {
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil('/home', (route) => false);
-      } else {
-        log('DEBUG: 테스트 계정의 아이디 또는 비밀번호가 틀렸습니다.');
-      }
-    } else {
-      log('ERROR: 서버 에러가 발생했습니다.');
-    }
   }
 
   void oAuthLoginPressed(API api) {

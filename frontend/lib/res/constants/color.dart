@@ -33,6 +33,7 @@ const Color loginErrorColor = Color(0xFFE0351C);
 const Color googleLoginColor = Color(0xFFD0422A);
 const Color naverLoginColor = Color(0xFF0AC75A);
 const Color kakaoLoginColor = Color(0xFFFFE502);
+const Color loginBackgroundColor = Color(0xFF60E56D);
 
 // Book Search & Detail Color
 const Color bookBorderColor = Color(0xFFE7E7E7);
