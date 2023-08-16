@@ -10,9 +10,9 @@ public class MyBookRegisteredStatusServiceRequest {
     private String loginId;
     private String isbn13;
 
-    public static MyBookRegisteredStatusServiceRequest of(String userId, String isbn13) {
+    public static MyBookRegisteredStatusServiceRequest of(String loginId, String isbn13) {
         return MyBookRegisteredStatusServiceRequest.builder()
-                .loginId(userId)
+                .loginId(loginId)
                 .isbn13(isbn13)
                 .build();
     }
