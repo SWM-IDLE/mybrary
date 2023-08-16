@@ -5,6 +5,7 @@ import kr.mybrary.bookservice.book.domain.BookReadService;
 import kr.mybrary.bookservice.book.domain.BookWriteService;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.request.BookInterestStatusServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
 import kr.mybrary.bookservice.book.persistence.BookOrderType;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
@@ -70,5 +71,16 @@ public class BookController {
 
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "관심 도서 목록 조회에 성공했습니다.",
                 bookInterestService.getBookInterestList(serviceRequest)));
+    }
+
+    @GetMapping("/{isbn13}/interest-status")
+    public ResponseEntity getInterestStatus(
+            @PathVariable("isbn13") String isbn13,
+            @RequestHeader("USER-ID") String loginId) {
+
+        BookInterestStatusServiceRequest serviceRequest = BookInterestStatusServiceRequest.of(isbn13, loginId);
+
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "관심 도서 상태 조회에 성공했습니다.",
+                bookInterestService.isLoginUserRegisterInterestThisBook(serviceRequest)));
     }
 }
