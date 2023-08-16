@@ -74,7 +74,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
 
         AladinBookSearchResponse response = Objects.requireNonNull(searchResponse.getBody());
 
-        checkHasSearchResult(response.getTotalResults());
+        checkIfSearchResultExists(response.getTotalResults());
 
         List<BookSearchResultResponseElement> bookSearchResultResponseElement = response.getItem().stream()
                 .filter(book -> hasISBN13(book.getIsbn13()))
@@ -108,7 +108,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
 
         AladinBookSearchDetailResponse response = Objects.requireNonNull(searchResponse.getBody());
 
-        checkHasSearchResult(response.getTotalResults());
+        checkIfSearchResultExists(response.getTotalResults());
 
         return BookSearchDtoMapper.INSTANCE.aladinSearchResponseToDetailResponse(response.getItem().get(0));
     }
@@ -135,7 +135,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
 
         AladinBookListByCategorySearchResponse response = Objects.requireNonNull(searchResponse.getBody());
 
-        checkHasSearchResult(response.getTotalResults());
+        checkIfSearchResultExists(response.getTotalResults());
 
         List<BookListByCategoryResponseElement> bookSearchResultServiceResponses =
                 response.getItem().stream()
@@ -150,7 +150,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
         return BookListByCategorySearchResultResponse.of(bookSearchResultServiceResponses, getNextRequestUrl(request));
     }
 
-    private void checkHasSearchResult(int totalResults) {
+    private void checkIfSearchResultExists(int totalResults) {
         if (totalResults == 0) {
             throw new BookSearchResultNotFoundException();
         }
