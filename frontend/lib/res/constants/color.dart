@@ -43,8 +43,11 @@ const Color bookStarDisabledColor = Color(0xFFDDDEE3);
 const Color bookDetailColor = Color(0xFF535353);
 const Color myBookScanBackgroundColor = Color(0xFF1C1C1C);
 
-// Main Page Color
-const Color mainPageButtonColor = Color(0xFFEEEEEE);
+// Home Page Color
+const Color homeBarcodeButtonColor = Color(0xFFEEEEEE);
+const Color homeTodayRegisteredBookColorTop = Color(0xFF19C568);
+const Color homeTodayRegisteredBookColorCenter = Color(0xFF6ADE8D);
+const Color homeTodayRegisteredBookColorBottom = Color(0xFFABE8A1);
 
 // My Book Color
 const List<String> meaningTagColors = [

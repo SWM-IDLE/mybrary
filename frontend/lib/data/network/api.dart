@@ -36,6 +36,7 @@ enum API {
   getMyBookDetail,
   getMyBookReview,
   getInterestBooks,
+  getTodayRegisteredBookCount,
   createMyBook,
   createMyBookReview,
   createOrDeleteInterestBook,
@@ -73,6 +74,7 @@ Map<API, String> apiMap = {
   API.getMyBookDetail: "/api/v1/mybooks", // '/{mybookId}'
   API.getMyBookReview: "/api/v1/mybooks", // '/{mybookId}/review'
   API.getInterestBooks: "/api/v1/books/users", // '/{userId}/interest'
+  API.getTodayRegisteredBookCount: "/api/v1/mybooks/today-registration-count",
   API.createMyBook: "/api/v1/mybooks",
   API.createMyBookReview: "/api/v1/mybooks", // '/{mybookId}/reviews'
   API.createOrDeleteInterestBook: "/api/v1/books", // '/{isbn13}/interest'
