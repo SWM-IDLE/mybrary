@@ -34,7 +34,6 @@ public interface BookDtoMapper {
 
     @Mapping(target = "authors", source = "bookAuthors", qualifiedByName = "mappingAuthors")
     @Mapping(target = "translators", source = "bookTranslators", qualifiedByName = "mappingTranslators")
-    @Mapping(target = "interested", constant = "false")
     @Mapping(target = "thumbnail", source = "thumbnailUrl")
     @Mapping(target = "category", source = "bookCategory.name")
     @Mapping(target = "categoryId", source = "bookCategory.cid")
