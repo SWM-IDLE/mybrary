@@ -33,6 +33,12 @@ const commonSubThinStyle = TextStyle(
   fontWeight: FontWeight.w300,
 );
 
+const commonMainRegularStyle = TextStyle(
+  color: grey262626,
+  fontSize: 16.0,
+  fontWeight: FontWeight.w400,
+);
+
 const commonSubRegularStyle = TextStyle(
   color: grey262626,
   fontSize: 14.0,
