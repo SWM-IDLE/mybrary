@@ -9,11 +9,13 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -23,6 +25,11 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     private JwtUtil jwtUtil;
     @Autowired
     private RedisUtil redisUtil;
+
+    private static final String SIGN_UP_PATH = "/sign-up";
+    private static final String AUTHENTICATION_PATH = "/auth";
+    private static final String OAUTH2_PATH = "/oauth2/authorization";
+    private static final List<String> TOKEN_AUTH_WHITELIST = List.of(SIGN_UP_PATH, AUTHENTICATION_PATH, OAUTH2_PATH);
 
     public AuthorizationHeaderFilter() {
         super(Config.class);
@@ -44,7 +51,9 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
                                     .header("USER-ID", jwtUtil.getUserId(accessToken).get()).build();
                         },
                         () -> {
-                            chain.filter(exchange);
+                            if(tokenAuthenticationRequired(exchange.getRequest())) {
+                                throw new IllegalArgumentException("access token required");
+                            }
                         }
                 );
             } catch (Exception e) {
@@ -52,6 +61,11 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             }
             return chain.filter(exchange);
         };
+    }
+
+    private boolean tokenAuthenticationRequired(ServerHttpRequest request) {
+        return !TOKEN_AUTH_WHITELIST.stream()
+                .anyMatch(uri -> request.getURI().getPath().contains(uri));
     }
 
     private void checkIfTokenIsLogout(String accessToken) {
