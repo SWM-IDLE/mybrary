@@ -6,6 +6,7 @@ import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceReque
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindByMeaningTagQuoteServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookReadCompletedStatusServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookRegisteredStatusServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import kr.mybrary.bookservice.mybook.persistence.MyBookOrderType;
@@ -112,5 +113,15 @@ public class MyBookController {
 
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "해당 도서의 마이북 등록 상태 여부 입니다.",
                         myBookService.isLoginUserRegisterThisBookAsMyBook(serviceRequest)));
+    }
+
+    @GetMapping("/books/{isbn13}/read-complete-status")
+    public ResponseEntity getReadCompletedStatus(@RequestHeader("USER-ID") String loginId,
+            @PathVariable String isbn13) {
+
+        MyBookReadCompletedStatusServiceRequest serviceRequest = MyBookReadCompletedStatusServiceRequest.of(loginId, isbn13);
+
+        return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "해당 도서 완독 여부 입니다.",
+                        myBookService.isLoginUserReadCompleteThisBook(serviceRequest)));
     }
 }
