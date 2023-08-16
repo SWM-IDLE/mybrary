@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:mybrary/data/datasource/profile/profile_datasource.dart';
+import 'package:mybrary/data/model/common/common_response.dart';
 import 'package:mybrary/data/model/profile/profile_image_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 
@@ -44,5 +45,11 @@ class ProfileRepository {
     required String userId,
   }) {
     return profileDataSource.deleteProfileImage(userId);
+  }
+
+  Future<CommonResponse> deleteAccount({
+    required String userId,
+  }) {
+    return profileDataSource.deleteAccount(userId);
   }
 }
