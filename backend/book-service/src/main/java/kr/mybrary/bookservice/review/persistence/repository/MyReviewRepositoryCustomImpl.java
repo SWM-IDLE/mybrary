@@ -29,6 +29,7 @@ public class MyReviewRepositoryCustomImpl implements MyReviewRepositoryCustom {
                         myReview.starRating.as("starRating"),
                         myReview.createdAt.as("createdAt")))
                 .from(myReview)
+                .where(myReview.myBook.book.eq(book))
                 .fetch();
     }
 
