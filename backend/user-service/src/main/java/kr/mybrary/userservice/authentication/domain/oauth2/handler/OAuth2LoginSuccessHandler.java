@@ -3,8 +3,8 @@ package kr.mybrary.userservice.authentication.domain.oauth2.handler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.mybrary.userservice.authentication.domain.oauth2.CustomOAuth2User;
-import kr.mybrary.userservice.global.jwt.service.JwtService;
-import kr.mybrary.userservice.global.redis.RedisUtil;
+import kr.mybrary.userservice.global.util.JwtUtil;
+import kr.mybrary.userservice.global.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -26,7 +26,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     static final String REFRESH_TOKEN_PARAMETER = "Authorization-Refresh";
     static final int REFRESH_TOKEN_EXPIRATION = 14;
 
-    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
 
     @Override
@@ -35,8 +35,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("OAuth2 Login Success Handler 실행 - OAuth2 로그인 성공");
 
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        String accessToken = jwtService.createAccessToken(oAuth2User.getLoginId(), LocalDateTime.now());
-        String refreshToken = jwtService.createRefreshToken(LocalDateTime.now());
+        String accessToken = jwtUtil.createAccessToken(oAuth2User.getLoginId(), LocalDateTime.now());
+        String refreshToken = jwtUtil.createRefreshToken(LocalDateTime.now());
 
         redisUtil.set(oAuth2User.getLoginId(), refreshToken, Duration.ofDays(REFRESH_TOKEN_EXPIRATION));
 

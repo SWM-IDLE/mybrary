@@ -1,4 +1,4 @@
-package kr.mybrary.userservice.global.jwt.service;
+package kr.mybrary.userservice.global.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Getter
 @Slf4j
-public class JwtService {
+public class JwtUtil {
 
     @Value("${jwt.secretKey}")
     private String secretKey;
@@ -46,7 +46,6 @@ public class JwtService {
     private static final String BEARER = "Bearer ";
     private static final String INVALID_TOKEN_MESSAGE = "유효하지 않은 토큰입니다.";
 
-    // AccessToken 생성 - loginId을 payload로 넣어서 생성
     public String createAccessToken(String loginId, LocalDateTime now) {
         return JWT.create()
                 .withSubject(ACCESS_TOKEN_SUBJECT)
@@ -55,7 +54,6 @@ public class JwtService {
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
-    // RefreshToken 생성
     public String createRefreshToken(LocalDateTime now) {
         return JWT.create()
                 .withSubject(REFRESH_TOKEN_SUBJECT)
@@ -67,7 +65,6 @@ public class JwtService {
         return Date.from(now.atZone(ZoneId.systemDefault()).toInstant()).getTime();
     }
 
-    // AccessToken + RefreshToken 헤더에 추가
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader(accessHeader, accessToken);
@@ -76,21 +73,18 @@ public class JwtService {
         log.info("발급된 Refresh Token : {}", refreshToken);
     }
 
-    // 헤더에서 AccessToken 추출
     public Optional<String> extractAccessToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(accessHeader))
                 .filter(accessToken -> accessToken.startsWith(BEARER))
                 .map(accessToken -> accessToken.replace(BEARER, ""));
     }
 
-    // 헤더에서 RefreshToken 추출
     public Optional<String> extractRefreshToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(refreshHeader))
                 .filter(refreshToken -> refreshToken.startsWith(BEARER))
                 .map(refreshToken -> refreshToken.replace(BEARER, ""));
     }
 
-    // AccessToken에서 LoginId 추출
     public Optional<String> getLoginIdFromValidAccessToken(String accessToken) {
         validateToken(accessToken);
         return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))

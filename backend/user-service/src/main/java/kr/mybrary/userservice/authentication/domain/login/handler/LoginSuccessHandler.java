@@ -2,8 +2,8 @@ package kr.mybrary.userservice.authentication.domain.login.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.mybrary.userservice.global.jwt.service.JwtService;
-import kr.mybrary.userservice.global.redis.RedisUtil;
+import kr.mybrary.userservice.global.util.JwtUtil;
+import kr.mybrary.userservice.global.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
 
     @Value("${jwt.access.expiration}")
@@ -29,10 +29,10 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) {
         String loginId = extractUsername(authentication);
-        String accessToken = jwtService.createAccessToken(loginId, LocalDateTime.now());
-        String refreshToken = jwtService.createRefreshToken(LocalDateTime.now());
+        String accessToken = jwtUtil.createAccessToken(loginId, LocalDateTime.now());
+        String refreshToken = jwtUtil.createRefreshToken(LocalDateTime.now());
 
-        jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+        jwtUtil.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         redisUtil.set(loginId, refreshToken, Duration.ofDays(REFRESH_TOKEN_EXPIRATION));
 
         log.info("로그인에 성공하였습니다. 로그인 아이디 : {}", loginId);
