@@ -67,7 +67,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     }
 
     private boolean isTokenRefreshRequested(ServerHttpRequest request) {
-        if (jwtUtil.hasRefreshToken(request) && request.getURI().getPath().contains("/refresh")) {
+        if (request.getURI().getPath().contains("/refresh")) {
             return true;
         }
         return false;
