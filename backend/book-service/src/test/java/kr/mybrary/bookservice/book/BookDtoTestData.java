@@ -6,7 +6,7 @@ import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
-import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse;
 import kr.mybrary.bookservice.book.persistence.BookOrderType;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
@@ -108,8 +108,8 @@ public class BookDtoTestData {
                 .build();
     }
 
-    public static BookDetailServiceResponse createBookDetailServiceResponse() {
-        return BookDetailServiceResponse.builder()
+    public static BookDetailResponse createBookDetailServiceResponse() {
+        return BookDetailResponse.builder()
                 .title("어린 왕자")
                 .subTitle("어린 왕자 부제")
                 .author("앙투안 드 생텍쥐페리 지은이")
@@ -117,11 +117,11 @@ public class BookDtoTestData {
                 .link("http://www.aladin.co.kr/shop/wproduct.aspx?ItemId=68534943&amp;partner=openAPI&amp;start=api")
                 .isbn10("8932917248")
                 .isbn13("9788932917245")
-                .authors(List.of(BookDetailServiceResponse.Author.builder()
+                .authors(List.of(BookDetailResponse.Author.builder()
                         .name("앙투안 드 생텍쥐페리")
                         .authorId(20310)
                         .build()))
-                .translators(List.of(BookDetailServiceResponse.Translator.builder()
+                .translators(List.of(BookDetailResponse.Translator.builder()
                         .name("황현산")
                         .translatorId(139607)
                         .build()))

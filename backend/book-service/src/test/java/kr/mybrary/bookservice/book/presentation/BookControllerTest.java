@@ -30,7 +30,7 @@ import kr.mybrary.bookservice.book.domain.BookInterestService;
 import kr.mybrary.bookservice.book.domain.BookReadService;
 import kr.mybrary.bookservice.book.domain.BookWriteService;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
-import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse;
@@ -146,7 +146,7 @@ class BookControllerTest {
     void getBookDetail() throws Exception {
 
         // given
-        BookDetailServiceResponse response = BookDtoTestData.createBookDetailServiceResponse();
+        BookDetailResponse response = BookDtoTestData.createBookDetailServiceResponse();
 
         given(bookReadService.getBookDetailByISBN(any(BookDetailServiceRequest.class)))
                 .willReturn(response);

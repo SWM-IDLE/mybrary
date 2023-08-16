@@ -2,7 +2,7 @@ package kr.mybrary.bookservice.book.domain;
 
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
-import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse;
 import kr.mybrary.bookservice.book.domain.exception.BookNotFoundException;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
@@ -22,11 +22,11 @@ public class BookReadService {
     private final PlatformBookSearchApiService platformBookSearchApiService;
     private final BookWriteService bookWriteService;
 
-    public BookDetailServiceResponse getBookDetailByISBN(BookDetailServiceRequest request) {
+    public BookDetailResponse getBookDetailByISBN(BookDetailServiceRequest request) {
 
         return bookRepository.findByISBNWithAuthorAndCategoryUsingFetchJoin(request.getIsbn10(), request.getIsbn13())
                 .map(book -> {
-                    BookDetailServiceResponse response = BookDtoMapper.INSTANCE.bookToDetailServiceResponse(book);
+                    BookDetailResponse response = BookDtoMapper.INSTANCE.bookToDetailServiceResponse(book);
                     response.isInterestedBookByLoginUser(book.isInterestedByLoginUser(request.getLoginId()));
 
                     return response;
