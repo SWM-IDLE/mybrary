@@ -58,7 +58,7 @@ class MyBookDetailRecord extends StatelessWidget {
               itemDescription:
                   meaningTagQuote == '' ? '어떤 의미인가요?' : meaningTagQuote,
               colorCode: meaningTagColorCode == ''
-                  ? grey777777
+                  ? commonBlackColor
                   : Color(
                       int.parse('0xFF$meaningTagColorCode'),
                     ),

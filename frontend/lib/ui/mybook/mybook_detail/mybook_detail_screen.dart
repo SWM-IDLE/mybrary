@@ -41,6 +41,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
   late Future<MyBookReviewResponseData?> _myBookReview;
 
   final GlobalKey _myBookDetailHeaderKey = GlobalKey();
+
   final ScrollController _myBookDetailScrollController = ScrollController();
   final TextEditingController _meaningTagQuoteController =
       TextEditingController();
@@ -280,186 +281,194 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
       context,
       StatefulBuilder(
         builder: (BuildContext context, StateSetter bottomState) {
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    right: 16.0,
-                    top: 24.0,
+          final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
+          return Padding(
+            padding: EdgeInsets.only(bottom: bottomInset),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16.0,
+                      right: 16.0,
+                      top: 24.0,
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: greyF1F2F5,
+                        borderRadius: BorderRadius.circular(50.0),
+                      ),
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _readStatusButtonItem(
+                            buttonText: '읽기전',
+                            currentReadStatus: _originalReadStatus == 'TO_READ',
+                            onTapReadStatus: () {
+                              bottomState(
+                                () => _originalReadStatus = 'TO_READ',
+                              );
+                            },
+                          ),
+                          _readStatusButtonItem(
+                            buttonText: '읽는중',
+                            currentReadStatus: _originalReadStatus == 'READING',
+                            onTapReadStatus: () {
+                              bottomState(
+                                () => _originalReadStatus = 'READING',
+                              );
+                            },
+                          ),
+                          _readStatusButtonItem(
+                            buttonText: '완독함',
+                            currentReadStatus:
+                                _originalReadStatus == 'COMPLETED',
+                            onTapReadStatus: () {
+                              bottomState(
+                                () => _originalReadStatus = 'COMPLETED',
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                    ),
-                    decoration: BoxDecoration(
-                      color: greyF1F2F5,
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
-                    alignment: Alignment.center,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _readStatusButtonItem(
-                          buttonText: '읽기전',
-                          currentReadStatus: _originalReadStatus == 'TO_READ',
-                          onTapReadStatus: () {
-                            bottomState(
-                              () => _originalReadStatus = 'TO_READ',
-                            );
-                          },
+                        const Text(
+                          '나에게 이 책은',
+                          style: myBookSortTextStyle,
                         ),
-                        _readStatusButtonItem(
-                          buttonText: '읽는중',
-                          currentReadStatus: _originalReadStatus == 'READING',
-                          onTapReadStatus: () {
-                            bottomState(
-                              () => _originalReadStatus = 'READING',
-                            );
-                          },
+                        const SizedBox(height: 16.0),
+                        Wrap(
+                          spacing: 8.0,
+                          runSpacing: 10.0,
+                          children: meaningTagColors
+                              .map(
+                                (color) => InkWell(
+                                  onTap: () {
+                                    bottomState(() {
+                                      colorCode = color;
+                                    });
+                                  },
+                                  child: renderColor(
+                                    color,
+                                    colorCode == color,
+                                  ),
+                                ),
+                              )
+                              .toList(),
                         ),
-                        _readStatusButtonItem(
-                          buttonText: '완독함',
-                          currentReadStatus: _originalReadStatus == 'COMPLETED',
-                          onTapReadStatus: () {
-                            bottomState(
-                              () => _originalReadStatus = 'COMPLETED',
-                            );
-                          },
+                        const SizedBox(height: 10.0),
+                        _myBookRecordInput(
+                          context: context,
+                          controller: _meaningTagQuoteController,
+                          hintText: '내 삶을 돌아보게 만든 책',
+                        ),
+                        const SizedBox(height: 16.0),
+                        const Text(
+                          '소장일',
+                          style: myBookSortTextStyle,
+                        ),
+                        const SizedBox(height: 8.0),
+                        CupertinoButton(
+                          padding: const EdgeInsets.all(0.0),
+                          onPressed: () => showCupertinoPicker(
+                            context,
+                            CupertinoDatePicker(
+                              initialDateTime: dateTime,
+                              mode: CupertinoDatePickerMode.date,
+                              use24hFormat: true,
+                              maximumDate: DateTime.now(),
+                              onDateTimeChanged: (DateTime newDateTime) {
+                                bottomState(
+                                  () => dateTime = newDateTime,
+                                );
+                              },
+                            ),
+                          ),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12.0,
+                            ),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: inputBorderColor,
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              '${dateTime.year}.${dateTime.month}.${dateTime.day}',
+                              style: commonSubMediumStyle,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24.0),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    '교환/나눔',
+                                    style: myBookSortTextStyle,
+                                  ),
+                                  const SizedBox(height: 18.0),
+                                  _checkRecordItemRow(bottomState),
+                                  const SizedBox(height: 10.0),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  const Text(
+                                    '비공개',
+                                    style: myBookSortTextStyle,
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  CupertinoSwitch(
+                                    value: !_originalShowable,
+                                    onChanged: (value) {
+                                      bottomState(() {
+                                        _originalShowable = !value;
+                                      });
+                                    },
+                                    activeColor: primaryColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 8.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        '나에게 이 책은',
-                        style: myBookSortTextStyle,
-                      ),
-                      const SizedBox(height: 16.0),
-                      Wrap(
-                        spacing: 8.0,
-                        runSpacing: 10.0,
-                        children: meaningTagColors
-                            .map(
-                              (color) => InkWell(
-                                onTap: () {
-                                  bottomState(() {
-                                    colorCode = color;
-                                  });
-                                },
-                                child: renderColor(
-                                  color,
-                                  colorCode == color,
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                      const SizedBox(height: 10.0),
-                      _myBookRecordInput(
-                        context: context,
-                        controller: _meaningTagQuoteController,
-                        hintText: '내 삶을 돌아보게 만든 책',
-                      ),
-                      const SizedBox(height: 16.0),
-                      const Text(
-                        '소장일',
-                        style: myBookSortTextStyle,
-                      ),
-                      const SizedBox(height: 8.0),
-                      CupertinoButton(
-                        padding: const EdgeInsets.all(0.0),
-                        onPressed: () => showCupertinoPicker(
-                          context,
-                          CupertinoDatePicker(
-                            initialDateTime: dateTime,
-                            mode: CupertinoDatePickerMode.date,
-                            use24hFormat: true,
-                            maximumDate: DateTime.now(),
-                            onDateTimeChanged: (DateTime newDateTime) {
-                              bottomState(
-                                () => dateTime = newDateTime,
-                              );
-                            },
-                          ),
-                        ),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12.0,
-                          ),
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: inputBorderColor,
-                                width: 1.0,
-                              ),
-                            ),
-                          ),
-                          child: Text(
-                            '${dateTime.year}.${dateTime.month}.${dateTime.day}',
-                            style: commonSubMediumStyle,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24.0),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  '교환/나눔',
-                                  style: myBookSortTextStyle,
-                                ),
-                                const SizedBox(height: 18.0),
-                                _checkRecordItemRow(bottomState),
-                                const SizedBox(height: 10.0),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                const Text(
-                                  '비공개',
-                                  style: myBookSortTextStyle,
-                                ),
-                                const SizedBox(height: 10.0),
-                                CupertinoSwitch(
-                                  value: !_originalShowable,
-                                  onChanged: (value) {
-                                    bottomState(() {
-                                      _originalShowable = !value;
-                                    });
-                                  },
-                                  activeColor: primaryColor,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                  _myBookRecordButton(
+                    context: context,
+                    dateTime: dateTime,
+                    colorCode: colorCode,
                   ),
-                ),
-                _myBookRecordButton(
-                  context: context,
-                  dateTime: dateTime,
-                  colorCode: colorCode,
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

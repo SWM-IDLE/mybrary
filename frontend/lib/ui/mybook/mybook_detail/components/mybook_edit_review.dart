@@ -38,31 +38,83 @@ class _MyBookEditReviewState extends State<MyBookEditReview> {
   final _bookRepository = BookRepository();
 
   double? newStarRating;
+  String? newContent;
 
   @override
   Widget build(BuildContext context) {
-    return DefaultLayout(
-      child: CustomScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        slivers: [
-          _myBookEditAppBar(context),
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _reviewHeader(),
-                const SizedBox(height: 20.0),
-                _reviewBody(context),
-                const SizedBox(height: 20.0),
-              ],
-            ),
+    return WillPopScope(
+      onWillPop: () {
+        return _onBackKey(context);
+      },
+      child: DefaultLayout(
+        child: CustomScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
           ),
-        ],
+          slivers: [
+            _myBookEditAppBar(context),
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _reviewHeader(),
+                  const SizedBox(height: 20.0),
+                  _reviewBody(context),
+                  const SizedBox(height: 20.0),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<bool> _onBackKey(BuildContext context) async {
+    if (newStarRating != null || newContent != null) {
+      return await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text(
+              '저장 여부',
+              style: commonSubBoldStyle,
+              textAlign: TextAlign.center,
+            ),
+            content: const Text(
+              '작성 중인 리뷰가 존재합니다. 저장하지 않고 뒤로 가시겠습니까?',
+              style: confirmButtonTextStyle,
+            ),
+            contentPadding: const EdgeInsets.all(16.0),
+            actionsAlignment: MainAxisAlignment.center,
+            buttonPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+            actions: [
+              Row(
+                children: [
+                  _confirmButton(
+                    onTap: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    buttonText: '취소',
+                    isCancel: true,
+                  ),
+                  _confirmButton(
+                    onTap: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    buttonText: '저장없이 뒤로가기',
+                    isCancel: false,
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      return true;
+    }
   }
 
   Padding _reviewBody(BuildContext context) {
@@ -103,6 +155,11 @@ class _MyBookEditReviewState extends State<MyBookEditReview> {
       scrollPadding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
+      onChanged: (String value) {
+        setState(() {
+          newContent = value;
+        });
+      },
       onEditingComplete: () {
         FocusScope.of(context).unfocus();
       },
@@ -248,5 +305,36 @@ class _MyBookEditReviewState extends State<MyBookEditReview> {
       ),
     );
     Navigator.pop(context);
+  }
+
+  Widget _confirmButton({
+    required GestureTapCallback? onTap,
+    required String buttonText,
+    required bool isCancel,
+  }) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            height: 46.0,
+            decoration: BoxDecoration(
+              color: isCancel ? greyF1F2F5 : primaryColor,
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: Center(
+              child: Text(
+                buttonText,
+                style: commonSubBoldStyle.copyWith(
+                  color: isCancel ? commonBlackColor : commonWhiteColor,
+                  fontSize: 14.0,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

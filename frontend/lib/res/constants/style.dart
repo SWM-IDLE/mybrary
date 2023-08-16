@@ -221,7 +221,7 @@ const bookDetailSubStyle = TextStyle(
 
 const bookDetailInfoStyle = TextStyle(
   height: 1.5,
-  color: grey777777,
+  color: commonBlackColor,
   fontSize: 16.0,
   fontWeight: FontWeight.w300,
 );
