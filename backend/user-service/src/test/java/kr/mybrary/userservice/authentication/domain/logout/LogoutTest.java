@@ -1,15 +1,12 @@
 package kr.mybrary.userservice.authentication.domain.logout;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.mybrary.userservice.global.jwt.service.JwtService;
-import kr.mybrary.userservice.global.redis.RedisUtil;
+import kr.mybrary.userservice.global.util.JwtUtil;
+import kr.mybrary.userservice.global.util.RedisUtil;
 import kr.mybrary.userservice.user.persistence.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
@@ -30,7 +27,7 @@ public class LogoutTest {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    JwtService jwtService;
+    JwtUtil jwtUtil;
     @Autowired
     RedisUtil redisUtil;
     ObjectMapper objectMapper = new ObjectMapper();
