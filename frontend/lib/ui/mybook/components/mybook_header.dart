@@ -47,7 +47,8 @@ class MyBookHeader extends StatelessWidget {
               _headerButton(
                 context: context,
                 status: '완독북',
-                iconUrl: 'read.svg',
+                iconUrl:
+                    completedBooksData.isEmpty ? 'read.svg' : 'read_green.svg',
                 count: '${completedBooksData.length}',
                 onTap: () => onTapMyBook!(
                   status: '완독북',
