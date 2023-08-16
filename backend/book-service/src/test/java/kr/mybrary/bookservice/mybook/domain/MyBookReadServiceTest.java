@@ -26,6 +26,7 @@ import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceReque
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindByMeaningTagQuoteServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookRegisteredStatusServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
@@ -35,6 +36,7 @@ import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegisteredStatusResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegistrationCountResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import kr.mybrary.bookservice.tag.domain.MeaningTagService;
@@ -400,6 +402,48 @@ class MyBookReadServiceTest {
         assertAll(
                 () -> verify(myBookRepository, times(1)).getBookRegistrationCountOfDay(any()),
                 () -> assertThat(response.getCount()).isEqualTo(1L)
+        );
+    }
+
+    @DisplayName("로그인 유저가 해당 도서를 마이북으로 등록했는지 확인한다.")
+    @Test
+    void isLoginUserRegisterThisBookAsMyBook() {
+
+        // given
+        MyBookRegisteredStatusServiceRequest request = MybookDtoTestData.createMyBookRegisteredStatusServiceRequest();
+        Book book = BookFixture.COMMON_BOOK.getBook();
+
+        given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.of(book));
+        given(myBookRepository.existsByUserIdAndBook(request.getLoginId(), book)).willReturn(true);
+
+        // when
+        MyBookRegisteredStatusResponse response = myBookService.isLoginUserRegisterThisBookAsMyBook(request);
+
+        // then
+        assertAll(
+                () -> verify(bookReadService, times(1)).findOptionalBookByISBN13(anyString()),
+                () -> verify(myBookRepository, times(1)).existsByUserIdAndBook(anyString(), any()),
+                () -> assertThat(response.isRegistered()).isTrue()
+        );
+    }
+
+    @DisplayName("로그인 유저가 해당 도서를 마이북으로 등록했는지 확인시, 도서가 존재하지 않으면 false를 반환한다.")
+    @Test
+    void returnFalseResponseWhenBookIsNotExisted() {
+
+        // given
+        MyBookRegisteredStatusServiceRequest request = MybookDtoTestData.createMyBookRegisteredStatusServiceRequest();
+
+        given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.empty());
+
+        // when
+        MyBookRegisteredStatusResponse response = myBookService.isLoginUserRegisterThisBookAsMyBook(request);
+
+        // then
+        assertAll(
+                () -> verify(bookReadService, times(1)).findOptionalBookByISBN13(anyString()),
+                () -> verify(myBookRepository, never()).existsByUserIdAndBook(anyString(), any()),
+                () -> assertThat(response.isRegistered()).isFalse()
         );
     }
 }
