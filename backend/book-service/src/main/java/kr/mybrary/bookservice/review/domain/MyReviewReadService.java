@@ -73,14 +73,15 @@ public class MyReviewReadService {
             Map<String, UserInfo> userInfoMap) {
 
         return reviewElements.stream()
-                .map(reviewElement -> ReviewElement.builder()
-                        .id(reviewElement.getId())
-                        .starRating(reviewElement.getStarRating())
-                        .createdAt(DateUtils.toHyphenFormatYYYMMddHHmm(reviewElement.getCreatedAt()))
-                        .content(reviewElement.getContent())
-                        .userId(reviewElement.getUserId())
-                        .userNickname(userInfoMap.get(reviewElement.getUserId()).getNickname())
-                        .userPictureUrl(userInfoMap.get(reviewElement.getUserId()).getProfileImageUrl())
+                .filter(review -> userInfoMap.containsKey(review.getUserId()))
+                .map(review -> ReviewElement.builder()
+                        .id(review.getId())
+                        .starRating(review.getStarRating())
+                        .createdAt(DateUtils.toHyphenFormatYYYMMddHHmm(review.getCreatedAt()))
+                        .content(review.getContent())
+                        .userId(review.getUserId())
+                        .userNickname(userInfoMap.get(review.getUserId()).getNickname())
+                        .userPictureUrl(userInfoMap.get(review.getUserId()).getProfileImageUrl())
                         .build())
                 .toList();
     }
