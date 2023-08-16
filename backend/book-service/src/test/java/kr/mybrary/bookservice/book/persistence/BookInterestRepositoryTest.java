@@ -216,4 +216,28 @@ class BookInterestRepositoryTest {
         );
     }
 
+    @DisplayName("도서와 로그인 유저 ID로 해당 도서의 관심 도서 여부를 조회한다.")
+    @Test
+    void existsByBookAndUserId() {
+
+        // given
+        Book book = entityManager.persist(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().build());
+
+        BookInterest bookInterest = BookInterestFixture.BOOK_INTEREST_WITHOUT_RELATION.getBookInterestBuilder()
+                .book(book)
+                .build();
+
+        entityManager.persist(bookInterest);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        boolean result = bookInterestRepository.existsByBookAndUserId(book, "LOGIN_USER_ID");
+
+        // then
+        assertAll(
+                () -> assertThat(result).isTrue()
+        );
+    }
 }
