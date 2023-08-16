@@ -2,6 +2,7 @@ package kr.mybrary.apigatewayserver.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import kr.mybrary.apigatewayserver.exception.InvalidTokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,7 @@ public class JwtUtil {
                     .build()
                     .verify(token);
         } catch (Exception e) {
-            throw new IllegalArgumentException(INVALID_TOKEN_MESSAGE);
+            throw new InvalidTokenException();
         }
     }
 
