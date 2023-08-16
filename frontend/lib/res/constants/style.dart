@@ -192,6 +192,13 @@ const bottomButtonTextStyle = TextStyle(
   fontWeight: FontWeight.w700,
 );
 
+// home page style
+const todayRegisteredBookTextStyle = TextStyle(
+  color: grey262626,
+  fontSize: 12.0,
+  fontWeight: FontWeight.w500,
+);
+
 // book search page style
 const searchBookTitleStyle = TextStyle(
   color: grey262626,

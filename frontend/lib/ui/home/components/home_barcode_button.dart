@@ -19,7 +19,7 @@ class HomeBarcodeButton extends StatelessWidget {
           vertical: 4.0,
         ),
         decoration: BoxDecoration(
-          color: mainPageButtonColor,
+          color: homeBarcodeButtonColor,
           borderRadius: BorderRadius.circular(4.0),
         ),
         child: InkWell(

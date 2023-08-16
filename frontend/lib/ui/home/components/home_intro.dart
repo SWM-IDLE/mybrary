@@ -12,7 +12,7 @@ class HomeIntro extends StatelessWidget {
           horizontal: 16.0,
           vertical: 8.0,
         ),
-        child: Text(
+        child: const Text(
           '안녕하세요, IDLE님\n마이북을 등록하고 나만의 도서관을 만들어보세요 📚',
           style: mainIntroTextStyle,
         ),
