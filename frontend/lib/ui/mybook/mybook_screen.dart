@@ -92,6 +92,8 @@ class _MyBookScreenState extends State<MyBookScreen> {
                 data.interestBooksResponseData;
 
             final myBooksBookShelfData = _limitedBookShelfData(myBooksData);
+            final completedBooksBookShelfData =
+                _limitedBookShelfData(completedBooksData);
             final interestBooksBookShelfData =
                 _limitedBookShelfData(interestBooksData);
 
@@ -131,7 +133,7 @@ class _MyBookScreenState extends State<MyBookScreen> {
                           readStatus: '',
                         ),
                         _myBookShelfItem(
-                          myBooksBookShelfData: completedBooksData,
+                          myBooksBookShelfData: completedBooksBookShelfData,
                           status: '완독북',
                           order: '',
                           readStatus: 'COMPLETED',
@@ -374,12 +376,28 @@ class _MyBookScreenState extends State<MyBookScreen> {
             order: order,
             readStatus: readStatus,
           );
+          _myBooksResponseData = _bookRepository.getMyBooks(
+            userId: 'testId',
+            order: '',
+            readStatus: '',
+          );
+          _interestBooksResponseData = _bookRepository.getInterestBooks(
+            userId: 'testId',
+          );
         }
         if (readStatus == '') {
           _myBooksResponseData = _bookRepository.getMyBooks(
             userId: 'testId',
             order: order,
             readStatus: readStatus,
+          );
+          _completedBooksResponseData = _bookRepository.getMyBooks(
+            userId: 'testId',
+            order: '',
+            readStatus: 'COMPLETED',
+          );
+          _interestBooksResponseData = _bookRepository.getInterestBooks(
+            userId: 'testId',
           );
         }
       }),
