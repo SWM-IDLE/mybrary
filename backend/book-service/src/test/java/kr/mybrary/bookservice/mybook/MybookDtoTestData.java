@@ -19,6 +19,7 @@ import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailRespo
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse.BookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegisteredStatusResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegistrationCountResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 
@@ -187,6 +188,12 @@ public class MybookDtoTestData {
         return MyBookRegisteredStatusServiceRequest.builder()
                 .loginId("LOGIN_USER_ID")
                 .isbn13("1111111111111")
+                .build();
+    }
+
+    public static MyBookRegisteredStatusResponse createMyBookRegisteredStatusResponse() {
+        return MyBookRegisteredStatusResponse.builder()
+                .registered(true)
                 .build();
     }
 }
