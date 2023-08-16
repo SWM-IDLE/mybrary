@@ -1,4 +1,4 @@
-package kr.mybrary.bookservice.book.domain.dto.response;
+package kr.mybrary.bookservice.book.presentation.dto.response;
 
 import java.util.List;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class BookDetailServiceResponse {
+public class BookDetailResponse {
 
     private String title;
     private String subTitle;

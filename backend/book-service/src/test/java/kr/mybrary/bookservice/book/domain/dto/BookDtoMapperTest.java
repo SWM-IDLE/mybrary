@@ -9,9 +9,9 @@ import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.BookInterestFixture;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
-import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
-import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse.Author;
-import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse.Translator;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse.Author;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse.Translator;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookInterest;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
@@ -114,23 +114,23 @@ class BookDtoMapperTest {
         Book book = BookFixture.COMMON_BOOK.getBook();
 
         // when
-        BookDetailServiceResponse bookDetailServiceResponse = BookDtoMapper.INSTANCE.bookToDetailServiceResponse(book);
+        BookDetailResponse bookDetailResponse = BookDtoMapper.INSTANCE.bookToDetailServiceResponse(book);
 
         // then
         assertAll(
-                () -> assertThat(bookDetailServiceResponse.getTitle()).isEqualTo(book.getTitle()),
-                () -> assertThat(bookDetailServiceResponse.getThumbnail()).isEqualTo(book.getThumbnailUrl()),
-                () -> assertThat(bookDetailServiceResponse.getStarRating()).isEqualTo(book.getStarRating()),
-                () -> assertThat(bookDetailServiceResponse.getReviewCount()).isEqualTo(book.getReviewCount()),
-                () -> assertThat(bookDetailServiceResponse.getAladinStarRating()).isEqualTo(book.getAladinStarRating()),
-                () -> assertThat(bookDetailServiceResponse.getAladinReviewCount()).isEqualTo(book.getAladinReviewCount()),
-                () -> assertThat(bookDetailServiceResponse.getAuthors().size()).isEqualTo(book.getBookAuthors().size()),
-                () -> assertThat(bookDetailServiceResponse.getTranslators().size()).isEqualTo(book.getBookTranslators().size()),
-                () -> assertThat(bookDetailServiceResponse.getIsbn10()).isEqualTo(book.getIsbn10()),
-                () -> assertThat(bookDetailServiceResponse.getIsbn13()).isEqualTo(book.getIsbn13()),
-                () -> assertThat(bookDetailServiceResponse.getCategory()).isEqualTo(book.getBookCategory().getName()),
-                () -> assertThat(bookDetailServiceResponse.getCategoryId()).isEqualTo(book.getBookCategory().getCid()),
-                () -> assertThat(bookDetailServiceResponse.getPublicationDate()).isEqualTo(BookDtoMapper.localDateTimeToString(book.getPublicationDate()))
+                () -> assertThat(bookDetailResponse.getTitle()).isEqualTo(book.getTitle()),
+                () -> assertThat(bookDetailResponse.getThumbnail()).isEqualTo(book.getThumbnailUrl()),
+                () -> assertThat(bookDetailResponse.getStarRating()).isEqualTo(book.getStarRating()),
+                () -> assertThat(bookDetailResponse.getReviewCount()).isEqualTo(book.getReviewCount()),
+                () -> assertThat(bookDetailResponse.getAladinStarRating()).isEqualTo(book.getAladinStarRating()),
+                () -> assertThat(bookDetailResponse.getAladinReviewCount()).isEqualTo(book.getAladinReviewCount()),
+                () -> assertThat(bookDetailResponse.getAuthors().size()).isEqualTo(book.getBookAuthors().size()),
+                () -> assertThat(bookDetailResponse.getTranslators().size()).isEqualTo(book.getBookTranslators().size()),
+                () -> assertThat(bookDetailResponse.getIsbn10()).isEqualTo(book.getIsbn10()),
+                () -> assertThat(bookDetailResponse.getIsbn13()).isEqualTo(book.getIsbn13()),
+                () -> assertThat(bookDetailResponse.getCategory()).isEqualTo(book.getBookCategory().getName()),
+                () -> assertThat(bookDetailResponse.getCategoryId()).isEqualTo(book.getBookCategory().getCid()),
+                () -> assertThat(bookDetailResponse.getPublicationDate()).isEqualTo(BookDtoMapper.localDateTimeToString(book.getPublicationDate()))
         );
     }
 
@@ -142,7 +142,7 @@ class BookDtoMapperTest {
         BookSearchDetailResponse source = BookSearchDtoTestData.createBookSearchDetailResponse();
 
         // when
-        BookDetailServiceResponse target = BookDtoMapper.INSTANCE.bookSearchDetailToDetailServiceResponse(source);
+        BookDetailResponse target = BookDtoMapper.INSTANCE.bookSearchDetailToDetailServiceResponse(source);
 
         // then
         assertAll(

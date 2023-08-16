@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.dto.request.BookCreateServiceRequest;
-import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookInterest;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
@@ -39,13 +39,13 @@ public interface BookDtoMapper {
     @Mapping(target = "category", source = "bookCategory.name")
     @Mapping(target = "categoryId", source = "bookCategory.cid")
     @Mapping(target = "publicationDate", source = "publicationDate", qualifiedByName = "localDateTimeToString")
-    BookDetailServiceResponse bookToDetailServiceResponse(Book book);
+    BookDetailResponse bookToDetailServiceResponse(Book book);
 
     @Mapping(target = "aladinStarRating", source = "starRating")
     @Mapping(target = "aladinReviewCount", source = "reviewCount")
     @Mapping(target = "starRating", constant = "0")
     @Mapping(target = "reviewCount", constant = "0")
-    BookDetailServiceResponse bookSearchDetailToDetailServiceResponse(BookSearchDetailResponse bookSearchDetailResponse);
+    BookDetailResponse bookSearchDetailToDetailServiceResponse(BookSearchDetailResponse bookSearchDetailResponse);
 
     @Mapping(target = "publicationDate", source = "publicationDate", qualifiedByName = "stringToLocalDateTime")
     @Mapping(target = "thumbnailUrl", source = "thumbnail")
@@ -59,10 +59,10 @@ public interface BookDtoMapper {
     BookInterestElementResponse bookInterestToBookInterestElementResponse(BookInterest bookInterest);
 
     @Named("mappingAuthors")
-    static List<BookDetailServiceResponse.Author> mappingAuthors(List<BookAuthor> bookAuthors) {
+    static List<BookDetailResponse.Author> mappingAuthors(List<BookAuthor> bookAuthors) {
         return bookAuthors.stream()
                 .map(BookAuthor::getAuthor)
-                .map(author -> BookDetailServiceResponse.Author.builder()
+                .map(author -> BookDetailResponse.Author.builder()
                         .name(author.getName())
                         .authorId(author.getAid())
                         .build()
@@ -70,10 +70,10 @@ public interface BookDtoMapper {
     }
 
     @Named("mappingTranslators")
-    static List<BookDetailServiceResponse.Translator> mappingTranslators(List<BookTranslator> bookTranslators) {
+    static List<BookDetailResponse.Translator> mappingTranslators(List<BookTranslator> bookTranslators) {
         return bookTranslators.stream()
                 .map(BookTranslator::getTranslator)
-                .map(translator -> BookDetailServiceResponse.Translator.builder()
+                .map(translator -> BookDetailResponse.Translator.builder()
                         .name(translator.getName())
                         .translatorId(translator.getTid())
                         .build()

@@ -15,7 +15,7 @@ import java.util.Optional;
 import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
-import kr.mybrary.bookservice.book.domain.dto.response.BookDetailServiceResponse;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
 import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
@@ -58,7 +58,7 @@ class BookReadServiceTest {
                 .willReturn(Optional.of(book));
 
         // when
-        BookDetailServiceResponse response = bookReadService.getBookDetailByISBN(request);
+        BookDetailResponse response = bookReadService.getBookDetailByISBN(request);
 
         // then
         assertAll(
@@ -83,7 +83,7 @@ class BookReadServiceTest {
                 .willReturn(Optional.of(book));
 
         // when
-        BookDetailServiceResponse response = bookReadService.getBookDetailByISBN(request);
+        BookDetailResponse response = bookReadService.getBookDetailByISBN(request);
 
         // then
         assertAll(
@@ -113,7 +113,7 @@ class BookReadServiceTest {
         doNothing().when(bookWriteService).create(any());
 
         // when
-        BookDetailServiceResponse response = bookReadService.getBookDetailByISBN(request);
+        BookDetailResponse response = bookReadService.getBookDetailByISBN(request);
 
         // then
         assertAll(
