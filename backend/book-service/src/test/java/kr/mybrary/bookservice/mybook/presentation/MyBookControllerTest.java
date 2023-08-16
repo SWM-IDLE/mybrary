@@ -34,6 +34,7 @@ import kr.mybrary.bookservice.mybook.presentation.dto.request.MyBookUpdateReques
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegisteredStatusResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegistrationCountResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -428,5 +429,49 @@ class MyBookControllerTest {
                                         fieldWithPath("message").type(STRING).description("응답 메시지"),
                                         fieldWithPath("data.count").type(NUMBER).description("오늘의 마이북 등록 수"))
                                 .build())));
+    }
+
+    @DisplayName("마이북 등록 상태를 조회한다.")
+    @Test
+    void getMyBookRegisteredStatus() throws Exception {
+
+        // given
+        MyBookRegisteredStatusResponse response = MybookDtoTestData.createMyBookRegisteredStatusResponse();
+        String loginId = "LOGIN_USER_ID";
+
+        given(myBookService.isLoginUserRegisterThisBookAsMyBook(any())).willReturn(response);
+
+        // when
+        ResultActions actions = mockMvc.perform(get("/api/v1/books/{isbn13}/mybook-registered-status", "9788932917245")
+                .header("USER-ID", loginId));
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("해당 도서의 마이북 등록 상태 여부 입니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // document
+        actions
+                .andDo(document("get-mybook-registered-status",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("mybook")
+                                        .summary("마이북 등록 여부 를 조회한다.")
+                                        .requestHeaders(
+                                                headerWithName("USER-ID").description("사용자 ID")
+                                        )
+                                        .pathParameters(
+                                                parameterWithName("isbn13").type(SimpleType.STRING).description("도서 ISBN13")
+                                        )
+                                        .responseSchema(Schema.schema("get_mybook_registered_status_response_body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data.registered").type(SimpleType.BOOLEAN).description("마이북 등록 여부")
+                                        ).build())));
     }
 }
