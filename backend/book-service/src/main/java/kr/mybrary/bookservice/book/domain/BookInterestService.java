@@ -55,10 +55,10 @@ public class BookInterestService {
 
     @Transactional(readOnly = true)
     public BookInterestStatusResponse isLoginUserRegisterInterestThisBook(BookInterestStatusServiceRequest request) {
-        Book book = bookReadService.getRegisteredBookByISBN13(request.getIsbn13());
-        boolean interestStatus = bookInterestRepository.existsByBookAndUserId(book, request.getLoginId());
-
-        return BookInterestStatusResponse.of(interestStatus);
+        return bookReadService.findOptionalBookByISBN13(request.getIsbn13())
+                .map(book -> BookInterestStatusResponse.of(
+                        bookInterestRepository.existsByBookAndUserId(book, request.getLoginId())))
+                .orElseGet(() -> BookInterestStatusResponse.of(false));
     }
 
     private BookInterestHandleResponseBuilder makeBookHandleResponse(String loginId, String isbn13) {

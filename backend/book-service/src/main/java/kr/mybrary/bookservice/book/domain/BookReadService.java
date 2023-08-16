@@ -1,11 +1,12 @@
 package kr.mybrary.bookservice.book.domain;
 
+import java.util.Optional;
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
-import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse;
 import kr.mybrary.bookservice.book.domain.exception.BookNotFoundException;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.PlatformBookSearchApiService;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
@@ -37,5 +38,9 @@ public class BookReadService {
 
     public Book getRegisteredBookByISBN13(String isbn13) {
         return bookRepository.findByIsbn13(isbn13).orElseThrow(BookNotFoundException::new);
+    }
+
+    public Optional<Book> findOptionalBookByISBN13(String isbn13) {
+        return bookRepository.findByIsbn13(isbn13);
     }
 }

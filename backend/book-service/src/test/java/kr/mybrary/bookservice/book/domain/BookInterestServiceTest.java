@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.doNothing;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.times;
 import static org.mockito.BDDMockito.verify;
+import static org.mockito.Mockito.never;
 
 import java.util.List;
 import java.util.Optional;
@@ -132,7 +133,7 @@ class BookInterestServiceTest {
         BookInterestStatusServiceRequest request = BookDtoTestData.createBookInterestStatusServiceRequest();
         Book book = BookFixture.COMMON_BOOK.getBook();
 
-        given(bookReadService.getRegisteredBookByISBN13(request.getIsbn13())).willReturn(book);
+        given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.of(book));
         given(bookInterestRepository.existsByBookAndUserId(book, request.getLoginId())).willReturn(true);
 
         // when
@@ -140,9 +141,29 @@ class BookInterestServiceTest {
 
         // then
         assertAll(
-                () -> verify(bookReadService, times(1)).getRegisteredBookByISBN13(anyString()),
+                () -> verify(bookReadService, times(1)).findOptionalBookByISBN13(anyString()),
                 () -> verify(bookInterestRepository, times(1)).existsByBookAndUserId(any(Book.class), anyString()),
                 () -> assertThat(response.isInterested()).isTrue()
+        );
+    }
+
+    @DisplayName("로그인 유저가 해당 도서를 관심 도서로 등록했는지 확인시, 도서가 존재하지 않으면 false를 반환한다.")
+    @Test
+    void returnFalseResponseWhenBookIsNotExisted() {
+
+        // given
+        BookInterestStatusServiceRequest request = BookDtoTestData.createBookInterestStatusServiceRequest();
+
+        given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.empty());
+
+        // when
+        BookInterestStatusResponse response = bookInterestService.isLoginUserRegisterInterestThisBook(request);
+
+        // then
+        assertAll(
+                () -> verify(bookReadService, times(1)).findOptionalBookByISBN13(anyString()),
+                () -> verify(bookInterestRepository, never()).existsByBookAndUserId(any(Book.class), anyString()),
+                () -> assertThat(response.isInterested()).isFalse()
         );
     }
 }
