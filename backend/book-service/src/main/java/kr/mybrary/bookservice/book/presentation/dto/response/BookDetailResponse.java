@@ -33,7 +33,6 @@ public class BookDetailResponse {
     private Integer sizeWidth;
     private Integer priceSales;
     private Integer priceStandard;
-    private boolean interested;
 
     private Double starRating;
     private Integer reviewCount;
@@ -55,7 +54,4 @@ public class BookDetailResponse {
         private Integer translatorId;
     }
 
-    public void isInterestedBookByLoginUser(boolean isInterested) {
-        this.interested = isInterested;
-    }
 }

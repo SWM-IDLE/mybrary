@@ -25,12 +25,7 @@ public class BookReadService {
     public BookDetailResponse getBookDetailByISBN(BookDetailServiceRequest request) {
 
         return bookRepository.findByISBNWithAuthorAndCategoryUsingFetchJoin(request.getIsbn10(), request.getIsbn13())
-                .map(book -> {
-                    BookDetailResponse response = BookDtoMapper.INSTANCE.bookToDetailServiceResponse(book);
-                    response.isInterestedBookByLoginUser(book.isInterestedByLoginUser(request.getLoginId()));
-
-                    return response;
-                })
+                .map(BookDtoMapper.INSTANCE::bookToDetailServiceResponse)
                 .orElseGet(() -> {
                     BookSearchDetailResponse bookSearchDetailResponse = platformBookSearchApiService.searchBookDetailWithISBN(
                             BookSearchServiceRequest.of(request.getIsbn13()));
