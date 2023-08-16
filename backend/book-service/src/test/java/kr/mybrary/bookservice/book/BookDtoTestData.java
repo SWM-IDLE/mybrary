@@ -12,6 +12,7 @@ import kr.mybrary.bookservice.book.persistence.BookOrderType;
 import kr.mybrary.bookservice.book.presentation.dto.request.BookCreateRequest;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestStatusResponse;
 
 public class BookDtoTestData {
 
@@ -194,6 +195,12 @@ public class BookDtoTestData {
         return BookInterestStatusServiceRequest.builder()
                 .loginId("LOGIN_USER_ID")
                 .isbn13("1111111111111")
+                .build();
+    }
+
+    public static BookInterestStatusResponse createBookInterestStatusResponse() {
+        return BookInterestStatusResponse.builder()
+                .interested(true)
                 .build();
     }
 }
