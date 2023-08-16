@@ -998,7 +998,8 @@ class UserControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL + "/info")
+                RestDocumentationRequestBuilders.post(BASE_URL + "/info")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userInfoRequest)));
 

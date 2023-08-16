@@ -174,7 +174,7 @@ public class UserController {
         );
     }
 
-    @GetMapping("/info")
+    @PostMapping("/info")
     public ResponseEntity<SuccessResponse> getUserInfo(@RequestBody UserInfoRequest userInfoRequest) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "사용자 정보를 모두 조회했습니다.",
