@@ -10,6 +10,7 @@ import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceReque
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindByMeaningTagQuoteServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookRegisteredStatusServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
@@ -20,6 +21,7 @@ import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegisteredStatusResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegistrationCountResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
 import kr.mybrary.bookservice.tag.domain.MeaningTagService;
@@ -119,6 +121,15 @@ public class MyBookService {
     public MyBookRegistrationCountResponse getBookRegistrationCountOfToday() {
 
         return MyBookRegistrationCountResponse.of(myBookRepository.getBookRegistrationCountOfDay(LocalDate.now()));
+    }
+
+    @Transactional(readOnly = true)
+    public MyBookRegisteredStatusResponse isLoginUserRegisterThisBookAsMyBook(
+            MyBookRegisteredStatusServiceRequest request) {
+
+        return bookReadService.findOptionalBookByISBN13(request.getIsbn13())
+                .map(book -> MyBookRegisteredStatusResponse.of(myBookRepository.existsByUserIdAndBook(request.getLoginId(), book)))
+                .orElseGet(() -> MyBookRegisteredStatusResponse.of(false));
     }
 
     private void checkBookAlreadyRegisteredAsMyBook(String userId, Book book) {

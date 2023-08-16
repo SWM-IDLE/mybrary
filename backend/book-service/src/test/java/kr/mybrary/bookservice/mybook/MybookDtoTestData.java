@@ -6,6 +6,7 @@ import kr.mybrary.bookservice.book.persistence.bookInfo.Author;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookCreateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookRegisteredStatusServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import kr.mybrary.bookservice.mybook.persistence.MyBookOrderType;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
@@ -174,12 +175,18 @@ public class MybookDtoTestData {
                         BookAuthor.builder()
                                 .author(Author.builder().name("저자_2").build())
                                 .build()));
-
     }
 
     public static MyBookRegistrationCountResponse createMyBookRegistrationCountResponse() {
         return MyBookRegistrationCountResponse.builder()
                 .count(10L)
+                .build();
+    }
+
+    public static MyBookRegisteredStatusServiceRequest createMyBookRegisteredStatusServiceRequest() {
+        return MyBookRegisteredStatusServiceRequest.builder()
+                .loginId("LOGIN_USER_ID")
+                .isbn13("1111111111111")
                 .build();
     }
 }
