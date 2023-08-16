@@ -117,10 +117,12 @@ class Init {
     final accessToken = await secureStorage.read(key: accessTokenKey);
     final refreshToken = await secureStorage.read(key: refreshTokenKey);
 
-    if (accessToken == null || refreshToken == null) return const RootTab();
+    if (accessToken == null || refreshToken == null) {
+      return const SignInScreen();
+    }
 
     // TODO: 초반 앱 화면에서 카메라, 앨범 권한을 획득하는 로직 필요
 
-    return const HomeScreen();
+    return const RootTab();
   }
 }

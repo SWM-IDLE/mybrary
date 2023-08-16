@@ -26,16 +26,13 @@ class SingInButton extends StatelessWidget {
       btnText,
       style: TextStyle(
         color: textColor,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w400,
       ),
     );
 
     final elevatedButtonStyle = ElevatedButton.styleFrom(
-      textStyle: const TextStyle(
-        fontSize: 16.0,
-      ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4.0),
       ),
       backgroundColor: btnBackgroundColor,
       minimumSize: const Size(100, 55),
@@ -44,7 +41,7 @@ class SingInButton extends StatelessWidget {
 
     return isOAuth
         ? ElevatedButton.icon(
-            icon: isOAuth ? btnIcon! : Icon(null),
+            icon: isOAuth ? btnIcon! : const Icon(null),
             label: textContent,
             onPressed: isEnabled ? onPressed : null,
             style: elevatedButtonStyle,
