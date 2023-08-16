@@ -40,27 +40,32 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         return (exchange, chain) -> {
             try {
                 jwtUtil.extractAccessToken(exchange.getRequest()).ifPresentOrElse(accessToken -> {
-                            if (jwtUtil.hasRefreshToken(exchange.getRequest())) {
-                                return;
-                            }
+                        if (isTokenRefreshRequested(exchange.getRequest())) return;
 
-                            checkIfTokenIsLogout(accessToken);
-                            jwtUtil.validateToken(accessToken);
+                        checkIfTokenIsLogout(accessToken);
+                        jwtUtil.validateToken(accessToken);
 
-                            exchange.getRequest().mutate()
-                                    .header("USER-ID", jwtUtil.getUserId(accessToken).get()).build();
-                        },
-                        () -> {
-                            if(tokenAuthenticationRequired(exchange.getRequest())) {
-                                throw new IllegalArgumentException("access token required");
-                            }
+                        exchange.getRequest().mutate()
+                                .header("USER-ID", jwtUtil.getUserId(accessToken).get()).build();
+                    },
+                    () -> {
+                        if(tokenAuthenticationRequired(exchange.getRequest())) {
+                            throw new IllegalArgumentException("access token required");
                         }
+                    }
                 );
             } catch (Exception e) {
                 return onError(exchange.getResponse(), e.getMessage(), HttpStatus.UNAUTHORIZED);
             }
             return chain.filter(exchange);
         };
+    }
+
+    private boolean isTokenRefreshRequested(ServerHttpRequest request) {
+        if (jwtUtil.hasRefreshToken(request) && request.getURI().getPath().contains("/refresh")) {
+            return true;
+        }
+        return false;
     }
 
     private boolean tokenAuthenticationRequired(ServerHttpRequest request) {
