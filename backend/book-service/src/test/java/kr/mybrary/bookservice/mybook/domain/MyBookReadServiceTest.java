@@ -26,16 +26,19 @@ import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceReque
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindByMeaningTagQuoteServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookReadCompletedStatusServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookRegisteredStatusServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookNotFoundException;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
+import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookReadCompletedStatusResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegisteredStatusResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegistrationCountResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
@@ -444,6 +447,71 @@ class MyBookReadServiceTest {
                 () -> verify(bookReadService, times(1)).findOptionalBookByISBN13(anyString()),
                 () -> verify(myBookRepository, never()).existsByUserIdAndBook(anyString(), any()),
                 () -> assertThat(response.isRegistered()).isFalse()
+        );
+    }
+
+    @DisplayName("로그인 유저가 해당 도서를 완독했는지 확인한다.")
+    @Test
+    void isLoginUserReadCompleteThisBook() {
+
+        // given
+        MyBookReadCompletedStatusServiceRequest request = MybookDtoTestData.createMyBookReadCompletedStatusServiceRequest();
+        Book book = BookFixture.COMMON_BOOK.getBook();
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .readStatus(ReadStatus.COMPLETED).build();
+
+        given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.of(book));
+        given(myBookRepository.findByIdWithBook(book.getId())).willReturn(Optional.of(myBook));
+
+        // when
+        MyBookReadCompletedStatusResponse response = myBookService.isLoginUserReadCompleteThisBook(request);
+
+        // then
+        assertAll(
+                () -> verify(bookReadService, times(1)).findOptionalBookByISBN13(anyString()),
+                () -> verify(myBookRepository, times(1)).findByIdWithBook(any()),
+                () -> assertThat(response.isCompleted()).isTrue()
+        );
+    }
+
+    @DisplayName("로그인 유저가 해당 도서를 완독했는지 확인시, 도서가 존재하지 않으면 false를 반환한다.")
+    @Test
+    void returnReadStatusFalseResponseWhenBookIsNotExisted() {
+
+        // given
+        MyBookReadCompletedStatusServiceRequest request = MybookDtoTestData.createMyBookReadCompletedStatusServiceRequest();
+        given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.empty());
+
+        // when
+        MyBookReadCompletedStatusResponse response = myBookService.isLoginUserReadCompleteThisBook(request);
+
+        // then
+        assertAll(
+                () -> verify(bookReadService, times(1)).findOptionalBookByISBN13(anyString()),
+                () -> verify(myBookRepository, never()).findByIdWithBook(any()),
+                () -> assertThat(response.isCompleted()).isFalse()
+        );
+    }
+
+    @DisplayName("로그인 유저가 해당 도서를 완독했는지 확인시, 마이북으로 등록되어 있지 않으면 false를 반환한다.")
+    @Test
+    void returnReadStatusFalseResponseWhenMyBookIsNotRegistered() {
+
+        // given
+        MyBookReadCompletedStatusServiceRequest request = MybookDtoTestData.createMyBookReadCompletedStatusServiceRequest();
+        Book book = BookFixture.COMMON_BOOK.getBook();
+
+        given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.of(book));
+        given(myBookRepository.findByIdWithBook(book.getId())).willReturn(Optional.empty());
+
+        // when
+        MyBookReadCompletedStatusResponse response = myBookService.isLoginUserReadCompleteThisBook(request);
+
+        // then
+        assertAll(
+                () -> verify(bookReadService, times(1)).findOptionalBookByISBN13(anyString()),
+                () -> verify(myBookRepository, times(1)).findByIdWithBook(any()),
+                () -> assertThat(response.isCompleted()).isFalse()
         );
     }
 }

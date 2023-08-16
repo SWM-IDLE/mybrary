@@ -10,17 +10,20 @@ import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDeleteServiceReque
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookDetailServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindByMeaningTagQuoteServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookReadCompletedStatusServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookRegisteredStatusServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAccessDeniedException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookAlreadyExistsException;
 import kr.mybrary.bookservice.mybook.domain.exception.MyBookNotFoundException;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
+import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import kr.mybrary.bookservice.mybook.persistence.model.MyBookListDisplayElementModel;
 import kr.mybrary.bookservice.mybook.persistence.repository.MyBookRepository;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookDetailResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementFromMeaningTagResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookElementResponse;
+import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookReadCompletedStatusResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegisteredStatusResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookRegistrationCountResponse;
 import kr.mybrary.bookservice.mybook.presentation.dto.response.MyBookUpdateResponse;
@@ -130,6 +133,17 @@ public class MyBookService {
         return bookReadService.findOptionalBookByISBN13(request.getIsbn13())
                 .map(book -> MyBookRegisteredStatusResponse.of(myBookRepository.existsByUserIdAndBook(request.getLoginId(), book)))
                 .orElseGet(() -> MyBookRegisteredStatusResponse.of(false));
+    }
+
+    @Transactional(readOnly = true)
+    public MyBookReadCompletedStatusResponse isLoginUserReadCompleteThisBook(
+            MyBookReadCompletedStatusServiceRequest request) {
+
+        return bookReadService.findOptionalBookByISBN13(request.getIsbn13())
+                .map(book -> myBookRepository.findByIdWithBook(book.getId())
+                                .map(myBook -> MyBookReadCompletedStatusResponse.of(myBook.getReadStatus() == ReadStatus.COMPLETED))
+                                .orElseGet(() -> MyBookReadCompletedStatusResponse.of(false)))
+                .orElseGet(() -> MyBookReadCompletedStatusResponse.of(false));
     }
 
     private void checkBookAlreadyRegisteredAsMyBook(String userId, Book book) {
