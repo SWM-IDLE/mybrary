@@ -23,9 +23,7 @@ Future<Dio> authDio(BuildContext context) async {
     final int expiredTimeStamp = jwtPayload['exp'];
 
     if (expiredTimeStamp >= todayTimeStamp) {
-      final String loginId = jwtPayload['loginId'];
       options.headers[accessTokenHeaderKey] = '$jwtHeaderBearer$accessToken';
-      options.headers[loginIdHeaderKey] = loginId;
       return handler.next(options);
     }
 
@@ -49,8 +47,12 @@ Future<Dio> authDio(BuildContext context) async {
           log('ERROR: Refresh 토큰 만료에 대한 서버 에러가 발생했습니다.');
           await secureStorage.deleteAll();
 
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              '/signin', (Route<dynamic> route) => false);
+          if (context.mounted) {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/signin',
+              (Route<dynamic> route) => false,
+            );
+          }
         }
         return handler.next(error);
       }));

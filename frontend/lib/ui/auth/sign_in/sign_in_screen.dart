@@ -7,6 +7,7 @@ import 'package:mybrary/res/constants/config.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
 import 'package:mybrary/ui/auth/components/oauth_button.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
+import 'package:mybrary/ui/common/layout/root_tab.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -16,12 +17,6 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final GlobalKey<FormState> formKey = GlobalKey();
-
-  String? loginId;
-  String? loginPassword;
-  bool? _isValid;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -92,16 +87,11 @@ class _SignInScreenState extends State<SignInScreen> {
   Future<void> signInOAuth(String api) async {
     const secureStorage = FlutterSecureStorage();
     try {
-      // oAuth 로그인 페이지 요청과 동시에 redirect_url로 callback 데이터 전달
       final url = Uri.parse('$api?redirect_url=$mybraryUrlScheme');
 
-      // mybraryUrlScheme로 전달된 callback 데이터를 await
       final result = await FlutterWebAuth.authenticate(
           url: url.toString(), callbackUrlScheme: mybraryUrlScheme);
 
-      // AccessToken Parameter : "Authorization"
-      // RefreshToken Parameter : "Authorization-Refresh"
-      // callback 데이터로부터 accessToken & refreshToken 파싱
       final accessToken =
           Uri.parse(result).queryParameters[accessTokenHeaderKey];
       final refreshToken =
@@ -114,16 +104,20 @@ class _SignInScreenState extends State<SignInScreen> {
       showSignInFailDialog(e.toString());
     }
 
-    // 로그인 성공 시 홈 화면으로 이동
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (_) => const RootTab(),
+      ),
+      (route) => false,
+    );
   }
 
   void showSignInFailDialog(String errMessage) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Center(
+        title: const Center(
           child: Text(
             "마이브러리",
             style: TextStyle(
@@ -132,7 +126,7 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
           ),
         ),
-        content: IntrinsicHeight(
+        content: const IntrinsicHeight(
           child: Wrap(
             alignment: WrapAlignment.center,
             children: [
@@ -164,7 +158,7 @@ class _SignInScreenState extends State<SignInScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('확인'),
+              child: const Text('확인'),
             ),
           ),
         ],
