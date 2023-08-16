@@ -1,7 +1,7 @@
 package kr.mybrary.bookservice.book.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -10,14 +10,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.util.List;
 import java.util.Optional;
 import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.domain.dto.request.BookDetailServiceRequest;
-import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.repository.BookRepository;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookDetailResponse;
 import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
 import kr.mybrary.bookservice.booksearch.domain.PlatformBookSearchApiService;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
@@ -95,6 +94,24 @@ class BookReadServiceTest {
                 () -> verify(bookRepository, times(1)).findByISBNWithAuthorAndCategoryUsingFetchJoin(anyString(), anyString()),
                 () -> verify(platformBookSearchApiService, times(1)).searchBookDetailWithISBN(any()),
                 () -> verify(bookWriteService, times(1)).create(any())
+        );
+    }
+
+    @Test
+    @DisplayName("ISBN13을 통해서 조회시, 도서 DB에 존재하지 않으면 Optional.empty()를 반환한다.")
+    void getEmptyOptionalWhenBookNotExistInDB() {
+
+        // given
+        String isbn13 = "isbn13";
+        given(bookRepository.findByIsbn13(anyString())).willReturn(Optional.empty());
+
+        // when
+        Optional<Book> optionalBook = bookReadService.findOptionalBookByISBN13(isbn13);
+
+        // then
+        assertAll(
+                () -> assertThat(optionalBook).isEmpty(),
+                () -> verify(bookRepository, times(1)).findByIsbn13(anyString())
         );
     }
 }
