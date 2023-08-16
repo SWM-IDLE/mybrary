@@ -103,60 +103,63 @@ class _AccountWithdrawalState extends State<AccountWithdrawal> {
             const SizedBox(height: 12.0),
             InkWell(
               onTap: () async {
-                await showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text(
-                        '회원탈퇴',
-                        style: commonSubBoldStyle,
-                        textAlign: TextAlign.center,
-                      ),
-                      content: const Text(
-                        '정말 회원을 탈퇴하시겠습니까?',
-                        style: confirmButtonTextStyle,
-                        textAlign: TextAlign.center,
-                      ),
-                      contentPadding: const EdgeInsets.only(
-                        top: 24.0,
-                        bottom: 16.0,
-                      ),
-                      actionsAlignment: MainAxisAlignment.center,
-                      buttonPadding:
-                          const EdgeInsets.symmetric(horizontal: 8.0),
-                      actions: [
-                        Row(
-                          children: [
-                            _confirmButton(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              buttonText: '취소',
-                              isCancel: true,
-                            ),
-                            _confirmButton(
-                              onTap: () async {
-                                await _profileRepository.deleteAccount(
-                                  userId: 'testId',
-                                );
-
-                                Future.delayed(
-                                    const Duration(milliseconds: 500), () {
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                    '/signin',
-                                    (Route<dynamic> route) => false,
-                                  );
-                                });
-                              },
-                              buttonText: '탈퇴하기',
-                              isCancel: false,
-                            ),
-                          ],
+                if (_isChecked) {
+                  await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text(
+                          '회원탈퇴',
+                          style: commonSubBoldStyle,
+                          textAlign: TextAlign.center,
                         ),
-                      ],
-                    );
-                  },
-                );
+                        content: const Text(
+                          '정말 회원을 탈퇴하시겠습니까?',
+                          style: confirmButtonTextStyle,
+                          textAlign: TextAlign.center,
+                        ),
+                        contentPadding: const EdgeInsets.only(
+                          top: 24.0,
+                          bottom: 16.0,
+                        ),
+                        actionsAlignment: MainAxisAlignment.center,
+                        buttonPadding:
+                            const EdgeInsets.symmetric(horizontal: 8.0),
+                        actions: [
+                          Row(
+                            children: [
+                              _confirmButton(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                buttonText: '취소',
+                                isCancel: true,
+                              ),
+                              _confirmButton(
+                                onTap: () async {
+                                  await _profileRepository.deleteAccount(
+                                    userId: 'testId',
+                                  );
+
+                                  Future.delayed(
+                                      const Duration(milliseconds: 500), () {
+                                    Navigator.of(context)
+                                        .pushNamedAndRemoveUntil(
+                                      '/signin',
+                                      (Route<dynamic> route) => false,
+                                    );
+                                  });
+                                },
+                                buttonText: '탈퇴하기',
+                                isCancel: false,
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -164,7 +167,7 @@ class _AccountWithdrawalState extends State<AccountWithdrawal> {
                   vertical: 8.0,
                 ),
                 decoration: BoxDecoration(
-                  color: commonRedColor,
+                  color: _isChecked ? commonRedColor : greyACACAC,
                   borderRadius: BorderRadius.circular(4.0),
                 ),
                 child: Text(

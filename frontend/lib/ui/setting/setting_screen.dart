@@ -54,7 +54,7 @@ class SettingScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    const SizedBox(height: 30.0),
+                    const SizedBox(height: 24.0),
                     const Text(
                       '서비스 안내',
                       style: settingTitleStyle,
@@ -89,7 +89,7 @@ class SettingScreen extends StatelessWidget {
                         }
                       },
                     ),
-                    const SizedBox(height: 30.0),
+                    const SizedBox(height: 24.0),
                     const Text(
                       '법적 고지 및 정책',
                       style: settingTitleStyle,
@@ -119,7 +119,7 @@ class SettingScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    const SizedBox(height: 30.0),
+                    const SizedBox(height: 24.0),
                     const Text(
                       '기타',
                       style: settingTitleStyle,
@@ -156,13 +156,15 @@ class SettingScreen extends StatelessWidget {
                       child: Container(
                         width: double.infinity,
                         alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: 4.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 6.0),
                         child: const Text(
                           '탈퇴하기',
                           style: settingTitleStyle,
                         ),
                       ),
                     ),
+                    const SizedBox(height: 24.0),
                   ],
                 ),
               ),
@@ -248,7 +250,10 @@ class SettingScreen extends StatelessWidget {
     required GestureTapCallback onTap,
   }) {
     return Container(
-      padding: const EdgeInsets.all(14.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12.0,
+        vertical: 16.0,
+      ),
       child: InkWell(
         onTap: onTap,
         child: Row(
