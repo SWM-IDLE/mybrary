@@ -55,7 +55,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         String accessToken = jwtService.extractAccessToken(request).orElse(null);
 
         jwtService.extractRefreshToken(request).ifPresentOrElse(refreshToken -> {
-                    System.out.println("refreshToken = " + refreshToken);
                     checkRefreshToken(jwtService.parseLoginId(accessToken), refreshToken);
                     reIssueAccessTokenAndRefreshToken(response, jwtService.parseLoginId(accessToken));
                 },

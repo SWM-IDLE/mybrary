@@ -43,4 +43,4 @@ spring:
 # user-service와 동일한 secretKey를 사용해야 한다.
 # TODO: config server로 secretKey를 관리하도록 수정
 jwt:
-  secretKey: B5IfhI254Ls7MOt8QhgRrt0FNsb0JS7MoCdRJ0E9L2BwunUcWOCnvRHZyLTMijLyISS7FOZszaaA36O+rx0QA==
+  secretKey: ${JWT_SECRET_KEY}

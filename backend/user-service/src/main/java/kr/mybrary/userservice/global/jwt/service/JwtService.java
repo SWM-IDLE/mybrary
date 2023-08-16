@@ -101,9 +101,7 @@ public class JwtService {
     }
 
     public String parseLoginId(String accessToken) {
-        System.out.println("loginId parse");
         String loginId = JWT.decode(accessToken).getClaim(LOGIN_ID_CLAIM).asString();
-        System.out.println("loginId parse end");
         return loginId;
     }
 
