@@ -86,7 +86,7 @@ class _AccountWithdrawalState extends State<AccountWithdrawal> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SvgPicture.asset(
-                          'assets/svg/icon/small/heart${_isChecked ? '_green' : ''}.svg'),
+                          'assets/svg/icon/small/checkbox_${_isChecked ? 'green' : 'grey'}.svg'),
                       const SizedBox(width: 8.0),
                       Text(
                         '위 내용을 확인하였으며, 회원 탈퇴에 동의합니다.',
