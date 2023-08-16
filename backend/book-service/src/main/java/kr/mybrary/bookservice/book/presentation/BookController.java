@@ -52,7 +52,7 @@ public class BookController {
     }
 
     @PostMapping("/{isbn13}/interest")
-    public ResponseEntity registerInterestBookNon(
+    public ResponseEntity handleBookInterest(
             @PathVariable("isbn13") String isbn13,
             @RequestHeader("USER-ID") String loginId) {
 
@@ -78,7 +78,7 @@ public class BookController {
             @PathVariable("isbn13") String isbn13,
             @RequestHeader("USER-ID") String loginId) {
 
-        BookInterestStatusServiceRequest serviceRequest = BookInterestStatusServiceRequest.of(isbn13, loginId);
+        BookInterestStatusServiceRequest serviceRequest = BookInterestStatusServiceRequest.of(loginId, isbn13);
 
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "관심 도서 상태 조회에 성공했습니다.",
                 bookInterestService.getInterestStatus(serviceRequest)));

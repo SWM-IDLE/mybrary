@@ -7,13 +7,13 @@ import lombok.Getter;
 @Builder
 public class BookInterestStatusServiceRequest {
 
-    private String isbn13;
     private String loginId;
+    private String isbn13;
 
-    public static BookInterestStatusServiceRequest of(String isbn13, String loginId) {
+    public static BookInterestStatusServiceRequest of(String loginId, String isbn13) {
         return BookInterestStatusServiceRequest.builder()
-                .isbn13(isbn13)
                 .loginId(loginId)
+                .isbn13(isbn13)
                 .build();
     }
 
