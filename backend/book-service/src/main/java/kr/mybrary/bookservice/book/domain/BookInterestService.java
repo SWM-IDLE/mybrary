@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.book.domain;
 import java.util.List;
 import kr.mybrary.bookservice.book.domain.dto.BookDtoMapper;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.request.BookInterestStatusServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookInterest;
@@ -10,6 +11,7 @@ import kr.mybrary.bookservice.book.persistence.repository.BookInterestRepository
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse.BookInterestHandleResponseBuilder;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestStatusResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +51,14 @@ public class BookInterestService {
                 .stream()
                 .map(BookDtoMapper.INSTANCE::bookInterestToBookInterestElementResponse)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public BookInterestStatusResponse isLoginUserRegisterInterestThisBook(BookInterestStatusServiceRequest request) {
+        Book book = bookReadService.getRegisteredBookByISBN13(request.getIsbn13());
+        boolean interestStatus = bookInterestRepository.existsByBookAndUserId(book, request.getLoginId());
+
+        return BookInterestStatusResponse.of(interestStatus);
     }
 
     private BookInterestHandleResponseBuilder makeBookHandleResponse(String loginId, String isbn13) {

@@ -15,6 +15,7 @@ import kr.mybrary.bookservice.book.BookDtoTestData;
 import kr.mybrary.bookservice.book.BookFixture;
 import kr.mybrary.bookservice.book.BookInterestFixture;
 import kr.mybrary.bookservice.book.domain.dto.request.BookInterestServiceRequest;
+import kr.mybrary.bookservice.book.domain.dto.request.BookInterestStatusServiceRequest;
 import kr.mybrary.bookservice.book.domain.dto.request.BookMyInterestFindServiceRequest;
 import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.book.persistence.BookInterest;
@@ -22,6 +23,7 @@ import kr.mybrary.bookservice.book.persistence.BookOrderType;
 import kr.mybrary.bookservice.book.persistence.repository.BookInterestRepository;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestElementResponse;
 import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestHandleResponse;
+import kr.mybrary.bookservice.book.presentation.dto.response.BookInterestStatusResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -122,4 +124,25 @@ class BookInterestServiceTest {
         );
     }
 
+    @DisplayName("로그인 유저가 해당 도서를 관심 도서로 등록했는지 확인한다.")
+    @Test
+    void isLoginUserRegisterInterestThisBook() {
+
+        // given
+        BookInterestStatusServiceRequest request = BookDtoTestData.createBookInterestStatusServiceRequest();
+        Book book = BookFixture.COMMON_BOOK.getBook();
+
+        given(bookReadService.getRegisteredBookByISBN13(request.getIsbn13())).willReturn(book);
+        given(bookInterestRepository.existsByBookAndUserId(book, request.getLoginId())).willReturn(true);
+
+        // when
+        BookInterestStatusResponse response = bookInterestService.isLoginUserRegisterInterestThisBook(request);
+
+        // then
+        assertAll(
+                () -> verify(bookReadService, times(1)).getRegisteredBookByISBN13(anyString()),
+                () -> verify(bookInterestRepository, times(1)).existsByBookAndUserId(any(Book.class), anyString()),
+                () -> assertThat(response.isInterested()).isTrue()
+        );
+    }
 }
