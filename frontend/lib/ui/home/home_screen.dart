@@ -37,6 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late String _bookCategory = '장르소설';
   late List<Books> _bookListByCategory = [];
 
+  final ScrollController _categoryScrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +62,14 @@ class _HomeScreenState extends State<HomeScreen> {
     _bookListByTravelData = _homeRepository.getBookListByCategory(
       type: 'Bestseller',
       categoryId: 1196,
+    );
+  }
+
+  void _scrollToTop() {
+    _categoryScrollController.animateTo(
+      0,
+      duration: const Duration(microseconds: 500),
+      curve: Curves.easeInOut,
     );
   }
 
@@ -140,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: HomeRecommendBooks(
                             category: _bookCategory,
                             bookListByCategory: _bookListByCategory,
+                            categoryScrollController: _categoryScrollController,
                             onTapBook: (String isbn13) {
                               _nextToBookSearchDetailScreen(isbn13);
                             },
@@ -149,12 +160,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 switch (category) {
                                   case '심리학':
                                     _bookListByCategory = bookListByPsychology;
+                                    _scrollToTop();
                                     break;
                                   case '여행':
                                     _bookListByCategory = bookListByTravel;
+                                    _scrollToTop();
                                     break;
                                   default:
                                     _bookListByCategory = bookListByGenreNovel;
+                                    _scrollToTop();
                                 }
                               });
                             }),
