@@ -201,7 +201,7 @@ const bottomButtonTextStyle = TextStyle(
 // home page style
 const todayRegisteredBookTextStyle = TextStyle(
   color: grey262626,
-  fontSize: 12.0,
+  fontSize: 13.0,
   fontWeight: FontWeight.w500,
 );
 

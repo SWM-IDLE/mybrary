@@ -3,17 +3,18 @@ import 'package:mybrary/data/model/home/book_list_by_category_response.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/config.dart';
 import 'package:mybrary/res/constants/style.dart';
-import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 
 class HomeRecommendBooks extends StatelessWidget {
   final String category;
   final List<Books> bookListByCategory;
   final void Function(String) onTapCategory;
+  final void Function(String) onTapBook;
 
   const HomeRecommendBooks({
     required this.category,
     required this.bookListByCategory,
     required this.onTapCategory,
+    required this.onTapBook,
     super.key,
   });
 
@@ -25,7 +26,7 @@ class HomeRecommendBooks extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.only(
             left: 16.0,
-            bottom: 2.0,
+            bottom: 12.0,
           ),
           child: Row(
             children: [
@@ -41,7 +42,10 @@ class HomeRecommendBooks extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 8.0,
+          ),
           child: Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
@@ -86,6 +90,7 @@ class HomeRecommendBooks extends StatelessWidget {
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(
+                  top: 10.0,
                   right: 10.0,
                   bottom: 10.0,
                 ),
@@ -97,14 +102,7 @@ class HomeRecommendBooks extends StatelessWidget {
                       ),
                     InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => SearchDetailScreen(
-                              isbn13: bookListByCategory[index].isbn13!,
-                            ),
-                          ),
-                        );
+                        onTapBook(bookListByCategory[index].isbn13!);
                       },
                       child: Container(
                         width: 116,
