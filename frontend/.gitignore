@@ -43,9 +43,3 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-
-# Google Services (e.g. APIs or Firebase)
-google-services.json
-
-# Firebase Services
-firebase_app_id_file.json
