@@ -35,7 +35,7 @@ const commonSubThinStyle = TextStyle(
 
 const commonMainRegularStyle = TextStyle(
   color: grey262626,
-  fontSize: 16.0,
+  fontSize: 18.0,
   fontWeight: FontWeight.w400,
 );
 
@@ -203,6 +203,12 @@ const todayRegisteredBookTextStyle = TextStyle(
   color: grey262626,
   fontSize: 12.0,
   fontWeight: FontWeight.w500,
+);
+
+const categoryCircularTextStyle = TextStyle(
+  color: grey262626,
+  fontSize: 14.0,
+  fontWeight: FontWeight.w400,
 );
 
 // book search page style
