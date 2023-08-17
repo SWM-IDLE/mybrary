@@ -145,9 +145,7 @@ class _MyBookScreenState extends State<MyBookScreen> {
               ],
             );
           }
-          return const SliverToBoxAdapter(
-            child: CircularLoading(),
-          );
+          return const CircularLoading();
         },
       ),
     );
