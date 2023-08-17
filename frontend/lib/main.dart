@@ -1,5 +1,12 @@
+import 'dart:async';
+
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mybrary/res/constants/config.dart';
 import 'package:mybrary/ui/auth/find_pw/find_password_screen.dart';
@@ -12,20 +19,36 @@ import 'package:mybrary/ui/profile/profile_edit/profile_edit_screen.dart';
 import 'package:mybrary/ui/search/search_isbn_scan/search_isbn_scan_screen.dart';
 import 'package:mybrary/ui/search/search_screen.dart';
 
-void main() {
-  // System Interface 글자 색상 light, dark
-  // 현재는 전체 적용, 추후 일부 적용 예정
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.dark,
-    ),
-  );
-  runApp(const MyApp());
+void main() async {
+  runZonedGuarded<Future<void>>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await dotenv.load(fileName: ".env");
+
+    await Firebase.initializeApp();
+
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
+      ),
+    );
+    runApp(const MyApp());
+  }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
 }
 
 class MyApp extends StatelessWidget {
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   const MyApp({super.key});
 
   @override
@@ -36,7 +59,7 @@ class MyApp extends StatelessWidget {
         // snapshot 여부에 따른 앱 로딩 화면 또는 에러 화면
         // 추후 마이브러리 로고로 대체 될 예정
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return MaterialApp(
+          return const MaterialApp(
             home: Scaffold(
               body: Center(
                 child: CircularProgressIndicator(),
@@ -44,7 +67,7 @@ class MyApp extends StatelessWidget {
             ),
           );
         } else if (snapshot.hasError) {
-          return MaterialApp(
+          return const MaterialApp(
             home: Scaffold(
               body: Center(
                 child: Text('앱을 실행할 수 없습니다.\n네트워크 연결 상태를 확인해주세요.'),
@@ -59,18 +82,21 @@ class MyApp extends StatelessWidget {
               highlightColor: Colors.transparent,
             ),
             debugShowCheckedModeBanner: false,
+            navigatorObservers: [
+              FirebaseAnalyticsObserver(analytics: analytics)
+            ],
             title: 'Mybrary',
             home: snapshot.data,
             initialRoute: '/signin',
             routes: {
-              '/signin': (context) => SignInScreen(),
-              '/signin/findpw': (context) => FindPasswordScreen(),
-              '/signup': (context) => SignUpScreen(),
-              '/signup/verify': (context) => SignUpVerifyScreen(),
-              '/home': (context) => HomeScreen(),
-              '/search': (context) => SearchScreen(),
-              '/search/barcode': (context) => SearchIsbnScanScreen(),
-              '/profile/edit': (context) => ProfileEditScreen(),
+              '/signin': (context) => const SignInScreen(),
+              '/signin/findpw': (context) => const FindPasswordScreen(),
+              '/signup': (context) => const SignUpScreen(),
+              '/signup/verify': (context) => const SignUpVerifyScreen(),
+              '/home': (context) => const HomeScreen(),
+              '/search': (context) => const SearchScreen(),
+              '/search/barcode': (context) => const SearchIsbnScanScreen(),
+              '/profile/edit': (context) => const ProfileEditScreen(),
             },
           );
         }
@@ -84,19 +110,17 @@ class Init {
   static final instance = Init._();
 
   Future<Widget?> initialize(BuildContext context) async {
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     const secureStorage = FlutterSecureStorage();
 
     final accessToken = await secureStorage.read(key: accessTokenKey);
     final refreshToken = await secureStorage.read(key: refreshTokenKey);
 
-    // accessToken과 refreshToken이 없으면 로그인 화면으로 이동
-    if (accessToken == null || refreshToken == null) return RootTab();
+    if (accessToken == null || refreshToken == null) return const RootTab();
 
     // TODO: 초반 앱 화면에서 카메라, 앨범 권한을 획득하는 로직 필요
 
-    // 토큰이 존재하면, 홈 화면으로 바로 이동
-    return HomeScreen();
+    return const HomeScreen();
   }
 }
