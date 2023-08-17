@@ -9,12 +9,14 @@ class HomeRecommendBooks extends StatelessWidget {
   final List<Books> bookListByCategory;
   final void Function(String) onTapCategory;
   final void Function(String) onTapBook;
+  final ScrollController categoryScrollController;
 
   const HomeRecommendBooks({
     required this.category,
     required this.bookListByCategory,
     required this.onTapCategory,
     required this.onTapBook,
+    required this.categoryScrollController,
     super.key,
   });
 
@@ -84,6 +86,7 @@ class HomeRecommendBooks extends StatelessWidget {
         ),
         Expanded(
           child: ListView.builder(
+            controller: categoryScrollController,
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             itemCount: bookListByCategory.length,
