@@ -19,3 +19,10 @@ const String mybraryPrivacyLink =
     'https://ribbon-soil-e35.notion.site/6ff721bd27824f729b97417d769041ce?pvs=4';
 const String openSourceLicenseLink =
     'https://ribbon-soil-e35.notion.site/de54830fb0fc45c69794373ec8f83ef7?pvs=4';
+
+// 기타 상수
+const List<String> bookListByInterestedCategory = [
+  '장르소설',
+  '심리학',
+  '여행',
+];
