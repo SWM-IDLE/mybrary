@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/home/book_list_by_category_response.dart';
 import 'package:mybrary/res/constants/style.dart';
-import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 
 class HomeBestSeller extends StatelessWidget {
   final List<Books> bookListByBestSeller;
+  final void Function(String) onTapBook;
 
   const HomeBestSeller({
     required this.bookListByBestSeller,
+    required this.onTapBook,
     super.key,
   });
 
@@ -18,7 +19,7 @@ class HomeBestSeller extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.only(
             left: 16.0,
-            bottom: 16.0,
+            bottom: 12.0,
           ),
           child: Row(
             children: [
@@ -45,6 +46,7 @@ class HomeBestSeller extends StatelessWidget {
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(
+                  top: 10.0,
                   right: 10.0,
                   bottom: 10.0,
                 ),
@@ -56,14 +58,7 @@ class HomeBestSeller extends StatelessWidget {
                       ),
                     InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => SearchDetailScreen(
-                              isbn13: bookListByBestSeller[index].isbn13!,
-                            ),
-                          ),
-                        );
+                        onTapBook(bookListByBestSeller[index].isbn13!);
                       },
                       child: Container(
                         width: 116,

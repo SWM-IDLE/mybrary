@@ -14,6 +14,7 @@ import 'package:mybrary/ui/home/components/home_best_seller.dart';
 import 'package:mybrary/ui/home/components/home_book_count.dart';
 import 'package:mybrary/ui/home/components/home_intro.dart';
 import 'package:mybrary/ui/home/components/home_recommend_books.dart';
+import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<BookListByCategoryResponseData> _bookListByTravelData;
 
   late String _bookCategory = '장르소설';
-  late List<Books> _bookListByCategory;
+  late List<Books> _bookListByCategory = [];
 
   @override
   void initState() {
@@ -48,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     // 홈 화면 카테고리 별 추천 도서 임시 데이터
-    _fetchData();
     _bookListByGenreNovelData = _homeRepository.getBookListByCategory(
       type: 'Bestseller',
       categoryId: 112011,
@@ -61,14 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
       type: 'Bestseller',
       categoryId: 1196,
     );
-  }
-
-  void _fetchData() async {
-    final result = await _homeRepository.getBookListByCategory(
-      type: 'Bestseller',
-      categoryId: 112011,
-    );
-    _bookListByCategory = result.books!;
   }
 
   @override
@@ -118,6 +110,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     homeData.bookListByPsychologyData.books!;
                 final bookListByTravel = homeData.bookListByTravelData.books!;
 
+                if (_bookListByCategory.isEmpty) {
+                  _bookListByCategory.addAll([...bookListByGenreNovel]);
+                }
+
                 return SliverToBoxAdapter(
                   child: Column(
                     children: [
@@ -125,22 +121,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         todayRegisteredBookCount: todayRegisteredBookCount!,
                       ),
                       Container(
-                        height: 248,
+                        height: 258,
                         padding: const EdgeInsets.symmetric(
                           vertical: 16.0,
                         ),
                         child: HomeBestSeller(
                           bookListByBestSeller: bookListByBestSeller,
+                          onTapBook: (String isbn13) {
+                            _nextToBookSearchDetailScreen(isbn13);
+                          },
                         ),
                       ),
                       Container(
-                        height: 300,
+                        height: 310,
                         padding: const EdgeInsets.symmetric(
                           vertical: 16.0,
                         ),
                         child: HomeRecommendBooks(
                             category: _bookCategory,
                             bookListByCategory: _bookListByCategory,
+                            onTapBook: (String isbn13) {
+                              _nextToBookSearchDetailScreen(isbn13);
+                            },
                             onTapCategory: (String category) {
                               setState(() {
                                 _bookCategory = category;
@@ -215,5 +217,21 @@ class _HomeScreenState extends State<HomeScreen> {
       bookListByTravelData:
           bookListByTravelData as BookListByCategoryResponseData,
     );
+  }
+
+  void _nextToBookSearchDetailScreen(String isbn13) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SearchDetailScreen(
+          isbn13: isbn13,
+        ),
+      ),
+    ).then((value) => {
+          setState(() {
+            _todayRegisteredBookCountData =
+                _homeRepository.getTodayRegisteredBookCount();
+          })
+        });
   }
 }
