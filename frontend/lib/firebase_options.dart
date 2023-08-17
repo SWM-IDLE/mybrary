@@ -52,20 +52,19 @@ class DefaultFirebaseOptions {
 
   static FirebaseOptions android = FirebaseOptions(
     apiKey: dotenv.env['firebaseAndroidApiKey']!,
-    appId: '1:1039840737053:android:f27cbd54c1b59cb5e1d3f4',
-    messagingSenderId: '1039840737053',
-    projectId: 'mybrary-35502',
-    storageBucket: 'mybrary-35502.appspot.com',
+    appId: dotenv.env['firebaseAndroidAppId']!,
+    messagingSenderId: dotenv.env['firebaseAndroidMessagingSenderId']!,
+    projectId: dotenv.env['firebaseAndroidProjectId']!,
+    storageBucket: dotenv.env['firebaseAndroidStorageBucket']!,
   );
 
   static FirebaseOptions ios = FirebaseOptions(
     apiKey: dotenv.env['firebaseIOSApiKey']!,
-    appId: '1:1039840737053:ios:f6cc3d2423a88830e1d3f4',
-    messagingSenderId: '1039840737053',
-    projectId: 'mybrary-35502',
-    storageBucket: 'mybrary-35502.appspot.com',
-    iosClientId:
-        '1039840737053-jrqjjkblc6ro59fjeoc8s8ei50636v3b.apps.googleusercontent.com',
-    iosBundleId: 'kr.mybrary.mybrary',
+    appId: dotenv.env['firebaseIOSAppId']!,
+    messagingSenderId: dotenv.env['firebaseIOSMessagingSenderId']!,
+    projectId: dotenv.env['firebaseIOSProjectId']!,
+    storageBucket: dotenv.env['firebaseIOSStorageBucket']!,
+    iosClientId: dotenv.env['firebaseIOSClientId']!,
+    iosBundleId: dotenv.env['firebaseIOSBundleId']!,
   );
 }
