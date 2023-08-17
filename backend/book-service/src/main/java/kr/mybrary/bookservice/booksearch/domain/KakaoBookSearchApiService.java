@@ -32,17 +32,22 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
     @Value("${kakao.api.key}")
     private String API_KEY;
 
-    private final RestTemplate restTemplate;
-
-    public KakaoBookSearchApiService(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
-    }
-
     private static final String API_URL_WITH_KEYWORD = "https://dapi.kakao.com/v3/search/book?query=%s&sort=%s&page=%d";
     private static final String API_URL_WITH_ISBN = "https://dapi.kakao.com/v3/search/book?target=isbn&query=%s&sort=%s&page=%d";
     private static final String REQUEST_NEXT_URL = "/books/search?keyword=%s&sort=%s&page=%d";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String KAKAO_AUTHORIZATION_HEADER_PREFIX = "KakaoAK ";
+
+    private final RestTemplate restTemplate;
+    private final BookSearchRankingService bookSearchRankingService;
+
+    public KakaoBookSearchApiService(
+            RestTemplateBuilder restTemplateBuilder,
+            BookSearchRankingService bookSearchRankingService) {
+
+        this.restTemplate = restTemplateBuilder.build();
+        this.bookSearchRankingService = bookSearchRankingService;
+    }
 
     @Override
     public BookSearchResultResponse searchWithKeyword(BookSearchServiceRequest request) {
@@ -53,6 +58,8 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
                 searchResponse.getDocuments().stream()
                 .map(BookSearchDtoMapper.INSTANCE::kakaoSearchResponseToServiceResponse)
                 .toList();
+
+        bookSearchRankingService.increaseSearchRankingScore(request.getKeyword());
 
         if (isLastPage(searchResponse.getMeta())) {
             return BookSearchResultResponse.of(response, "");
