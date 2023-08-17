@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1039840737053",
+    "project_id": "mybrary-35502",
+    "storage_bucket": "mybrary-35502.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1039840737053:android:f27cbd54c1b59cb5e1d3f4",
+        "android_client_info": {
+          "package_name": "kr.mybrary.mybrary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1039840737053-hgkm2cji1lujvecsppkf8p1lmnr7ab54.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRwSAXqFs4IzOgr0YpgEGJn6dDa0w5czE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1039840737053-hgkm2cji1lujvecsppkf8p1lmnr7ab54.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1039840737053-jrqjjkblc6ro59fjeoc8s8ei50636v3b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "kr.mybrary.mybrary"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
