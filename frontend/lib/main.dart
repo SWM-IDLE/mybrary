@@ -7,12 +7,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/config.dart';
+import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/auth/find_pw/find_password_screen.dart';
 import 'package:mybrary/ui/auth/sign_in/sign_in_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_screen.dart';
 import 'package:mybrary/ui/auth/sign_up/sign_up_verify_screen.dart';
+import 'package:mybrary/ui/common/components/spalsh_screen.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/home/home_screen.dart';
 import 'package:mybrary/ui/profile/profile_edit/profile_edit_screen.dart';
@@ -36,11 +40,7 @@ void main() async {
     };
 
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.dark,
-      ),
+      systemLightUiOverlayStyle,
     );
     runApp(const MyApp());
   }, (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack));
@@ -56,15 +56,9 @@ class MyApp extends StatelessWidget {
     return FutureBuilder(
       future: Init.instance.initialize(context),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        // snapshot 여부에 따른 앱 로딩 화면 또는 에러 화면
-        // 추후 마이브러리 로고로 대체 될 예정
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const MaterialApp(
-            home: Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
+            home: SplashScreen(),
           );
         } else if (snapshot.hasError) {
           return const MaterialApp(
@@ -75,29 +69,30 @@ class MyApp extends StatelessWidget {
             ),
           );
         } else {
-          return MaterialApp(
-            theme: ThemeData(
-              fontFamily: 'NotoSansKR',
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
+          return ProviderScope(
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                fontFamily: 'NotoSansKR',
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+              ),
+              navigatorObservers: [
+                FirebaseAnalyticsObserver(analytics: analytics)
+              ],
+              title: 'Mybrary',
+              home: snapshot.data,
+              routes: {
+                '/signin': (context) => const SignInScreen(),
+                '/signin/findpw': (context) => const FindPasswordScreen(),
+                '/signup': (context) => const SignUpScreen(),
+                '/signup/verify': (context) => const SignUpVerifyScreen(),
+                '/home': (context) => const HomeScreen(),
+                '/search': (context) => const SearchScreen(),
+                '/search/barcode': (context) => const SearchIsbnScanScreen(),
+                '/profile/edit': (context) => const ProfileEditScreen(),
+              },
             ),
-            debugShowCheckedModeBanner: false,
-            navigatorObservers: [
-              FirebaseAnalyticsObserver(analytics: analytics)
-            ],
-            title: 'Mybrary',
-            home: snapshot.data,
-            initialRoute: '/signin',
-            routes: {
-              '/signin': (context) => const SignInScreen(),
-              '/signin/findpw': (context) => const FindPasswordScreen(),
-              '/signup': (context) => const SignUpScreen(),
-              '/signup/verify': (context) => const SignUpVerifyScreen(),
-              '/home': (context) => const HomeScreen(),
-              '/search': (context) => const SearchScreen(),
-              '/search/barcode': (context) => const SearchIsbnScanScreen(),
-              '/profile/edit': (context) => const ProfileEditScreen(),
-            },
           );
         }
       },
@@ -113,6 +108,7 @@ class Init {
     await Future.delayed(const Duration(milliseconds: 1000));
 
     const secureStorage = FlutterSecureStorage();
+    await UserState.init();
 
     final accessToken = await secureStorage.read(key: accessTokenKey);
     final refreshToken = await secureStorage.read(key: refreshTokenKey);
@@ -122,7 +118,6 @@ class Init {
     }
 
     // TODO: 초반 앱 화면에서 카메라, 앨범 권한을 획득하는 로직 필요
-
     return const RootTab();
   }
 }

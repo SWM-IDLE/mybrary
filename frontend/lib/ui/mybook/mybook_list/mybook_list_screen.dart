@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/enum.dart';
 import 'package:mybrary/res/constants/style.dart';
@@ -36,12 +37,14 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
   late String _sortTitle = '전체';
   late String _order = 'all';
 
+  final _userId = UserState.userId;
+
   @override
   void initState() {
     super.initState();
 
     _bookList = _bookRepository.getMyBooks(
-      userId: 'testId',
+      userId: _userId,
       order: widget.order,
       readStatus: widget.readStatus,
     );
@@ -155,7 +158,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
     ).then(
       (value) => setState(() {
         _bookList = _bookRepository.getMyBooks(
-          userId: 'testId',
+          userId: _userId,
           order: _order,
           readStatus: readStatus,
         );
@@ -280,7 +283,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                   switch (_sortType) {
                     case SortType.title:
                       _bookList = _bookRepository.getMyBooks(
-                        userId: 'testId',
+                        userId: _userId,
                         order: 'title',
                         readStatus: widget.readStatus,
                       );
@@ -289,7 +292,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                       break;
                     case SortType.registration:
                       _bookList = _bookRepository.getMyBooks(
-                        userId: 'testId',
+                        userId: _userId,
                         order: 'registration',
                         readStatus: widget.readStatus,
                       );
@@ -298,7 +301,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                       break;
                     case SortType.publication:
                       _bookList = _bookRepository.getMyBooks(
-                        userId: 'testId',
+                        userId: _userId,
                         order: 'publication',
                         readStatus: widget.readStatus,
                       );
@@ -307,7 +310,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                       break;
                     default:
                       _bookList = _bookRepository.getMyBooks(
-                        userId: 'testId',
+                        userId: _userId,
                         order: 'all',
                         readStatus: widget.readStatus,
                       );

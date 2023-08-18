@@ -43,8 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    _todayRegisteredBookCountData =
-        _homeRepository.getTodayRegisteredBookCount();
+    _todayRegisteredBookCountData = _homeRepository.getTodayRegisteredBookCount(
+      context: context,
+    );
 
     _bookListByCategoryData = _homeRepository.getBookListByCategory(
       type: 'Bestseller',
@@ -89,22 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 .then((data) => _buildHomeData(data)),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return const CustomScrollView(
-                  physics: BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics(),
+                print(snapshot.error);
+                return const SliverToBoxAdapter(
+                  child: DataError(
+                    errorMessage: '메인 화면을 불러오는데 실패했습니다.',
                   ),
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 80.0,
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: DataError(
-                        errorMessage: '메인 화면을 불러오는데 실패했습니다.',
-                      ),
-                    )
-                  ],
                 );
               }
 
@@ -244,7 +234,9 @@ class _HomeScreenState extends State<HomeScreen> {
     ).then((value) => {
           setState(() {
             _todayRegisteredBookCountData =
-                _homeRepository.getTodayRegisteredBookCount();
+                _homeRepository.getTodayRegisteredBookCount(
+              context: context,
+            );
           })
         });
   }

@@ -6,6 +6,7 @@ import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
@@ -32,25 +33,27 @@ class _MyBookScreenState extends State<MyBookScreen> {
   late Future<List<MyBooksResponseData>> _completedBooksResponseData;
   late Future<List<BookListResponseData>> _interestBooksResponseData;
 
+  final _userId = UserState.userId;
+
   @override
   void initState() {
     super.initState();
 
     _profileResponseData = _profileRepository.getProfileData(
-      userId: 'testId',
+      userId: _userId,
     );
     _myBooksResponseData = _bookRepository.getMyBooks(
-      userId: 'testId',
+      userId: _userId,
       order: '',
       readStatus: '',
     );
     _completedBooksResponseData = _bookRepository.getMyBooks(
-      userId: 'testId',
+      userId: _userId,
       order: '',
       readStatus: 'COMPLETED',
     );
     _interestBooksResponseData = _bookRepository.getInterestBooks(
-      userId: 'testId',
+      userId: _userId,
     );
   }
 
@@ -343,10 +346,10 @@ class _MyBookScreenState extends State<MyBookScreen> {
     ).then(
       (value) => setState(() {
         _interestBooksResponseData = _bookRepository.getInterestBooks(
-          userId: 'testId',
+          userId: _userId,
         );
         _myBooksResponseData = _bookRepository.getMyBooks(
-          userId: 'testId',
+          userId: _userId,
           order: '',
           readStatus: '',
         );
@@ -372,32 +375,32 @@ class _MyBookScreenState extends State<MyBookScreen> {
       (value) => setState(() {
         if (readStatus == 'COMPLETED') {
           _completedBooksResponseData = _bookRepository.getMyBooks(
-            userId: 'testId',
+            userId: _userId,
             order: order,
             readStatus: readStatus,
           );
           _myBooksResponseData = _bookRepository.getMyBooks(
-            userId: 'testId',
+            userId: _userId,
             order: '',
             readStatus: '',
           );
           _interestBooksResponseData = _bookRepository.getInterestBooks(
-            userId: 'testId',
+            userId: _userId,
           );
         }
         if (readStatus == '') {
           _myBooksResponseData = _bookRepository.getMyBooks(
-            userId: 'testId',
+            userId: _userId,
             order: order,
             readStatus: readStatus,
           );
           _completedBooksResponseData = _bookRepository.getMyBooks(
-            userId: 'testId',
+            userId: _userId,
             order: '',
             readStatus: 'COMPLETED',
           );
           _interestBooksResponseData = _bookRepository.getInterestBooks(
-            userId: 'testId',
+            userId: _userId,
           );
         }
       }),

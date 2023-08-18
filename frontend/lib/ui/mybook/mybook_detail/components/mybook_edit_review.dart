@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
@@ -36,6 +37,7 @@ class MyBookEditReview extends StatefulWidget {
 
 class _MyBookEditReviewState extends State<MyBookEditReview> {
   final _bookRepository = BookRepository();
+  final _userId = UserState.userId;
 
   double? newStarRating;
   String? newContent;
@@ -267,7 +269,7 @@ class _MyBookEditReviewState extends State<MyBookEditReview> {
           onPressed: widget.isCreateReview
               ? () async {
                   await _bookRepository.createMyBookReview(
-                    userId: 'testId',
+                    userId: _userId,
                     myBookId: widget.myBookId!,
                     content: widget.contentController.text,
                     starRating: newStarRating ?? widget.starRating,
@@ -277,7 +279,7 @@ class _MyBookEditReviewState extends State<MyBookEditReview> {
                 }
               : () async {
                   await _bookRepository.updateMyBookReview(
-                    userId: 'testId',
+                    userId: _userId,
                     reviewId: widget.reviewId!,
                     content: widget.contentController.text,
                     starRating: newStarRating ?? widget.starRating,

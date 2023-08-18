@@ -7,3 +7,26 @@ Widget loadingIndicator() {
     valueColor: const AlwaysStoppedAnimation<Color>(primaryColor),
   );
 }
+
+Widget buildErrorPage({String? message}) {
+  return Center(
+    child: SizedBox(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.wifi_off_rounded,
+            color: grey777777,
+          ),
+          const SizedBox(height: 16.0),
+          Text(
+            message ?? '정보를 가져올 수 없습니다.\n인터넷 연결 상태를 확인해주세요.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(height: 1.2, color: grey777777),
+          ),
+        ],
+      ),
+    ),
+  );
+}

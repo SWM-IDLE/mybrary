@@ -6,6 +6,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
@@ -30,10 +31,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final _profileRepository = ProfileRepository();
   late Future<ProfileResponseData> _profileResponseData;
 
+  final _userId = UserState.userId;
+
   Future<void> _refreshProfileData() async {
     setState(() {
       _profileResponseData = _profileRepository.getProfileData(
-        userId: 'testId',
+        userId: _userId,
       );
     });
   }
@@ -61,7 +64,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _refreshProfileData();
     _profileRepository
         .getProfileData(
-      userId: 'testId',
+      userId: _userId,
     )
         .then((data) {
       _nicknameController = TextEditingController(
@@ -176,7 +179,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   void _onTapChangeToDefaultImage() async {
     await _profileRepository.deleteProfileImage(
-      userId: 'testId',
+      userId: _userId,
     );
 
     _refreshProfileData();
@@ -292,7 +295,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       return _showValidationFailedMessage(context);
     } else {
       await _profileRepository.updateProfileData(
-        userId: 'testId',
+        userId: _userId,
         newNickname: _nicknameController.text,
         introduction: _introductionController.text,
       );
@@ -311,7 +314,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         );
 
         await _profileRepository.updateProfileImage(
-          userId: 'testId',
+          userId: _userId,
           newProfileImage: _profileImageFormData,
         );
       }

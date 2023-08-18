@@ -1,15 +1,17 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:mybrary/data/model/home/book_list_by_category_response.dart';
 import 'package:mybrary/data/model/home/today_registered_book_count_response.dart';
 import 'package:mybrary/data/network/api.dart';
+import 'package:mybrary/utils/dios/auth_dio.dart';
 import 'package:mybrary/utils/dios/dio_service.dart';
 
 class HomeDataSource {
-  Future<TodayRegisteredBookCountResponseData>
-      getTodayRegisteredBookCount() async {
-    Dio dio = DioService().to();
+  Future<TodayRegisteredBookCountResponseData> getTodayRegisteredBookCount(
+      BuildContext context) async {
+    final dio = await authDio(context);
     final getTodayRegisteredBookCountResponse = await dio.get(
       getBookServiceApi(API.getTodayRegisteredBookCount),
     );
