@@ -3,6 +3,8 @@ package kr.mybrary.bookservice.booksearch.domain;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -45,6 +47,9 @@ class KakaoBookSearchApiServiceTest {
     @Autowired
     private RestTemplateBuilder restTemplateBuilder;
 
+    @MockBean
+    private BookSearchRankingService bookSearchRankingService;
+
     private MockRestServiceServer mockServer;
 
     @BeforeEach
@@ -72,7 +77,8 @@ class KakaoBookSearchApiServiceTest {
         // then
         assertAll(
                 () -> assertThat(kakaoBookSearchResultResponse.getBookSearchResult().size()).isEqualTo(10),
-                () -> assertThat(kakaoBookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
+                () -> assertThat(kakaoBookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl),
+                () -> verify(bookSearchRankingService, times(1)).increaseSearchRankingScore(request.getKeyword())
         );
     }
 
@@ -97,7 +103,8 @@ class KakaoBookSearchApiServiceTest {
         // then
         assertAll(
                 () -> assertThat(kakaoBookSearchResultResponse.getBookSearchResult().size()).isLessThan(10),
-                () -> assertThat(kakaoBookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
+                () -> assertThat(kakaoBookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl),
+                () -> verify(bookSearchRankingService, times(1)).increaseSearchRankingScore(request.getKeyword())
         );
     }
 

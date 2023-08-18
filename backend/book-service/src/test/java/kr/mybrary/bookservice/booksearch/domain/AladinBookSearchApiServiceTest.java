@@ -2,6 +2,7 @@ package kr.mybrary.bookservice.booksearch.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -48,6 +49,9 @@ class AladinBookSearchApiServiceTest {
     @Autowired
     private RestTemplateBuilder restTemplateBuilder;
 
+    @MockBean
+    private BookSearchRankingService bookSearchRankingService;
+
     private MockRestServiceServer mockServer;
 
     @BeforeEach
@@ -77,7 +81,8 @@ class AladinBookSearchApiServiceTest {
         // then
         assertAll(
                 () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isEqualTo(20),
-                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
+                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl),
+                () -> verify(bookSearchRankingService, times(1)).increaseSearchRankingScore(request.getKeyword())
         );
     }
 
@@ -102,7 +107,8 @@ class AladinBookSearchApiServiceTest {
         // then
         assertAll(
                 () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isLessThan(20),
-                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
+                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl),
+                () -> verify(bookSearchRankingService, times(1)).increaseSearchRankingScore(request.getKeyword())
         );
     }
 
@@ -127,7 +133,8 @@ class AladinBookSearchApiServiceTest {
         // then
         assertAll(
                 () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isLessThan(10),
-                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
+                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl),
+                () -> verify(bookSearchRankingService, times(1)).increaseSearchRankingScore(request.getKeyword())
         );
     }
 
@@ -152,7 +159,8 @@ class AladinBookSearchApiServiceTest {
         // then
         assertAll(
                 () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isLessThan(20),
-                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl)
+                () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl),
+                () -> verify(bookSearchRankingService, times(1)).increaseSearchRankingScore(request.getKeyword())
         );
     }
 
@@ -171,8 +179,11 @@ class AladinBookSearchApiServiceTest {
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when, then
-        assertThatThrownBy(() -> aladinBookSearchApiService.searchWithKeyword(request))
-                .isInstanceOf(BookSearchResultNotFoundException.class);
+        assertAll(
+                () -> assertThatThrownBy(() -> aladinBookSearchApiService.searchWithKeyword(request))
+                .isInstanceOf(BookSearchResultNotFoundException.class),
+                () -> verify(bookSearchRankingService, never()).increaseSearchRankingScore(request.getKeyword())
+        );
     }
 
     @DisplayName("알라딘 도서 상세 조회 한다.")
