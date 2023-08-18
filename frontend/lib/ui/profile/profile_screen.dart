@@ -9,6 +9,7 @@ import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/repository/follow_repository.dart';
 import 'package:mybrary/data/repository/interests_repository.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/enum.dart';
 import 'package:mybrary/res/constants/style.dart';
@@ -40,24 +41,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late Future<FollowingResponseData> _followingResponseData;
   late Future<ProfileImageResponseData> _profileImageResponseData;
   late List<UserInterests> userInterests;
+  late String _userId;
 
   @override
   void initState() {
     super.initState();
+
+    _userId = UserState.userId;
+
     _profileResponseData = _profileRepository.getProfileData(
-      userId: 'testId',
+      userId: _userId,
     );
     _profileImageResponseData = _profileRepository.getProfileImage(
-      userId: 'testId',
+      userId: _userId,
     );
     _myInterestsResponseData = _myInterestsRepository.getMyInterestsCategories(
-      userId: 'testId',
+      userId: _userId,
     );
     _followerResponseData = _followRepository.getFollower(
-      userId: 'testId',
+      userId: _userId,
     );
     _followingResponseData = _followRepository.getFollowings(
-      userId: 'testId',
+      userId: _userId,
     );
   }
 
@@ -246,10 +251,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ).then(
       (value) => setState(() {
         _profileResponseData = _profileRepository.getProfileData(
-          userId: 'testId',
+          userId: _userId,
         );
         _profileImageResponseData = _profileRepository.getProfileImage(
-          userId: 'testId',
+          userId: _userId,
         );
       }),
     );
@@ -263,7 +268,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       (value) => setState(() {
         _myInterestsResponseData =
             _myInterestsRepository.getMyInterestsCategories(
-          userId: 'testId',
+          userId: _userId,
         );
       }),
     );
@@ -281,10 +286,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ).then(
       (value) => setState(() {
         _followerResponseData = _followRepository.getFollower(
-          userId: 'testId',
+          userId: _userId,
         );
         _followingResponseData = _followRepository.getFollowings(
-          userId: 'testId',
+          userId: _userId,
         );
       }),
     );
@@ -302,10 +307,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ).then(
       (value) => setState(() {
         _followerResponseData = _followRepository.getFollower(
-          userId: 'testId',
+          userId: _userId,
         );
         _followingResponseData = _followRepository.getFollowings(
-          userId: 'testId',
+          userId: _userId,
         );
       }),
     );

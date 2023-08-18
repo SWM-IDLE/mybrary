@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/profile/interest_categories_response.dart';
 import 'package:mybrary/data/model/profile/my_interests_response.dart';
 import 'package:mybrary/data/repository/interests_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/components/single_data_error.dart';
@@ -27,6 +28,8 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
 
   final InterestsRepository _interestsRepository = InterestsRepository();
   late Future<InterestCategoriesResponseData> _interestCategoriesResponseData;
+
+  final _userId = UserState.userId;
 
   @override
   void initState() {
@@ -65,7 +68,7 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
         TextButton(
           onPressed: () async {
             await _interestsRepository.editMyInterests(
-              userId: 'testId',
+              userId: _userId,
               categoriesResponses: selectedInterests,
             );
 

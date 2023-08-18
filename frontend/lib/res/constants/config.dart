@@ -4,7 +4,7 @@ const String accessTokenKey = 'ACCESS_TOKEN';
 const String refreshTokenKey = 'REFRESH_TOKEN';
 const String accessTokenHeaderKey = 'Authorization';
 const String refreshTokenHeaderKey = 'Authorization-Refresh';
-const String loginIdHeaderKey = 'User-Id';
+const String loginIdHeaderKey = 'loginId';
 const String expiredKey = 'isExpired';
 
 // 설정 페이지 내 링크 관련 상수

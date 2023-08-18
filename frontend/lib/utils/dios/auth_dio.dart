@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/res/constants/config.dart';
 import 'package:mybrary/utils/dios/dio_service.dart';
 import 'package:mybrary/utils/logics/parse_utils.dart';
@@ -22,16 +23,18 @@ Future<Dio> authDio(BuildContext context) async {
     final int todayTimeStamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final int expiredTimeStamp = jwtPayload['exp'];
 
-    if (expiredTimeStamp >= todayTimeStamp) {
-      options.headers[accessTokenHeaderKey] = '$jwtHeaderBearer$accessToken';
-      return handler.next(options);
+    if (expiredTimeStamp < todayTimeStamp) {
+      options.data = {expiredKey: true};
+      return handler.reject(
+        DioException(requestOptions: options),
+        true,
+      );
     }
 
-    options.data = {expiredKey: true};
-    return handler.reject(DioException(requestOptions: options), true);
+    options.headers[accessTokenHeaderKey] = '$jwtHeaderBearer$accessToken';
+    return handler.next(options);
   }, onError: (error, handler) async {
     bool isExpired = error.requestOptions.data[expiredKey];
-
     if (isExpired || error.response?.statusCode == 401) {
       log('ERROR: Access 토큰 만료에 대한 클라이언트 및 서버 에러가 발생했습니다.');
 
@@ -62,7 +65,9 @@ Future<Dio> authDio(BuildContext context) async {
       refreshDio.options.headers[refreshTokenHeaderKey] =
           '$jwtHeaderBearer$refreshToken';
 
-      final refreshResponse = await refreshDio.get(error.requestOptions.path);
+      final refreshResponse = await refreshDio.get(
+        getApi(API.getRefreshToken),
+      );
 
       final newAccessToken = refreshResponse.headers[accessTokenHeaderKey]![0];
       final newRefreshToken =

@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
 import 'package:mybrary/data/repository/search_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/book_detail_divider.dart';
@@ -46,7 +47,9 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
   late bool _isOnTapInterestBook = false;
   late bool _registeredMyBook = false;
   late bool _isOverflowBookDetailHeader = false;
+
   final GlobalKey _bookDetailHeaderKey = GlobalKey();
+  final _userId = UserState.userId;
 
   @override
   void initState() {
@@ -54,13 +57,13 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
 
     _bookSearchDetailResponse =
         _searchRepository.getBookSearchDetailAndSaveBookResponse(
-      userId: 'testId',
+      userId: _userId,
       isbn13: widget.isbn13,
     );
 
     _searchRepository
         .getBookSearchDetailAndSaveBookResponse(
-      userId: 'testId',
+      userId: _userId,
       isbn13: widget.isbn13,
     )
         .then(
@@ -163,7 +166,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                           onTapInterestBook: () async {
                             final result = await _bookRepository
                                 .createOrDeleteInterestBook(
-                              userId: 'testId',
+                              userId: _userId,
                               isbn13: bookSearchDetail.isbn13!,
                             );
 
@@ -371,7 +374,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
 
   void _onTapSaveMyBook(String isbn13) async {
     await _bookRepository.createMyBook(
-      userId: 'testId',
+      userId: _userId,
       isbn13: isbn13,
     );
 

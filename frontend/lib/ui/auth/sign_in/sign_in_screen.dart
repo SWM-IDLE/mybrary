@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:mybrary/data/network/api.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/config.dart';
+import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/auth/components/logo.dart';
 import 'package:mybrary/ui/auth/components/oauth_button.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
+import 'package:mybrary/utils/logics/parse_utils.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -17,6 +21,15 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    SystemChrome.setSystemUIOverlayStyle(
+      systemDarkUiOverlayStyle,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -86,6 +99,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Future<void> signInOAuth(String api) async {
     const secureStorage = FlutterSecureStorage();
+
     try {
       final url = Uri.parse('$api?redirect_url=$mybraryUrlScheme');
 
@@ -97,20 +111,26 @@ class _SignInScreenState extends State<SignInScreen> {
       final refreshToken =
           Uri.parse(result).queryParameters[refreshTokenHeaderKey];
 
-      // secureStorage에 accessToken & refreshToken 저장
+      final jwtPayload = parseJwt(accessToken!);
+
       await secureStorage.write(key: accessTokenKey, value: accessToken);
       await secureStorage.write(key: refreshTokenKey, value: refreshToken);
+
+      if (accessToken.isNotEmpty && refreshToken != null) {
+        UserState.localStorage.setString('userId', jwtPayload['loginId']);
+
+        if (!mounted) return;
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => const RootTab(),
+          ),
+          (route) => false,
+        );
+      }
     } catch (e) {
+      print(e);
       showSignInFailDialog(e.toString());
     }
-
-    if (!mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (_) => const RootTab(),
-      ),
-      (route) => false,
-    );
   }
 
   void showSignInFailDialog(String errMessage) {
@@ -127,28 +147,26 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
         content: const IntrinsicHeight(
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            children: [
-              Text(
-                "잠시 후 다시 시도해주세요.",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              runSpacing: 8.0,
+              children: [
+                Text(
+                  "잠시 후 다시 시도해주세요.",
+                  style: commonSubMediumStyle,
                 ),
-              ),
-              SizedBox(
-                height: 5.0,
-              ),
-              Text(
-                "로그인 중에 오류가 발생하였습니다.",
-                style: TextStyle(fontSize: 14),
-              ),
-              Text(
-                "지속적으로 발생할 경우, 고객센터로 문의해주세요.",
-                style: TextStyle(fontSize: 14),
-              ),
-            ],
+                SizedBox(
+                  height: 8.0,
+                ),
+                Text(
+                  "로그인 중에 오류가 발생하였습니다.\n지속적으로 발생할 경우,\n고객센터로 문의해주세요.",
+                  style: commonSubRegularStyle,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ),
         contentPadding: const EdgeInsets.all(10),
@@ -158,7 +176,15 @@ class _SignInScreenState extends State<SignInScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('확인'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+              ),
+              child: const Text(
+                '확인',
+                style: TextStyle(
+                  color: commonWhiteColor,
+                ),
+              ),
             ),
           ),
         ],

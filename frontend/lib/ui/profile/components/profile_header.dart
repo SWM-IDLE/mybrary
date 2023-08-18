@@ -46,7 +46,7 @@ class ProfileHeader extends StatelessWidget {
                 ),
                 image: DecorationImage(
                   image: NetworkImage(
-                    '$profileImageUrl?time=${DateTime.now().millisecondsSinceEpoch}',
+                    '$profileImageUrl',
                   ),
                   fit: BoxFit.cover,
                 ),

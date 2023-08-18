@@ -31,7 +31,7 @@ class ProfileEditImage extends StatelessWidget {
             image: DecorationImage(
               image: profileImage == null
                   ? NetworkImage(
-                      '$originProfileImageUrl?time=${DateTime.now().millisecondsSinceEpoch}',
+                      originProfileImageUrl,
                     )
                   : Image.file(
                       File(profileImage!.path),

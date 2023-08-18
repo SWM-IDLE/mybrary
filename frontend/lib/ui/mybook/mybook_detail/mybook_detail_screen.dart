@@ -9,6 +9,7 @@ import 'package:mybrary/data/model/book/mybook_detail_response.dart';
 import 'package:mybrary/data/model/book/mybook_record_reponse.dart';
 import 'package:mybrary/data/model/book/mybook_review_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/bottom_button.dart';
@@ -65,13 +66,15 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
   String? _newMeaningTagQuote;
   String? _newStartDateOfPossession;
 
+  final _userId = UserState.userId;
+
   @override
   void initState() {
     super.initState();
 
     _bookRepository
         .getMyBookDetail(
-          userId: 'testId',
+          userId: _userId,
           myBookId: widget.myBookId,
         )
         .then(
@@ -95,7 +98,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
     });
 
     _myBookDetail = _bookRepository.getMyBookDetail(
-      userId: 'testId',
+      userId: _userId,
       myBookId: widget.myBookId,
     );
     _myBookReview = _bookRepository.getMyBookReview(
@@ -616,7 +619,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                 Navigator.pop(context);
                 _bookRepository
                     .getMyBookDetail(
-                      userId: 'testId',
+                      userId: _userId,
                       myBookId: widget.myBookId,
                     )
                     .then(
@@ -650,7 +653,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
             child: InkWell(
               onTap: () async {
                 await _bookRepository.updateMyBookRecord(
-                  userId: 'testId',
+                  userId: _userId,
                   myBookId: widget.myBookId,
                   myBookRecordData: MyBookRecordResponseData(
                     meaningTag: MeaningTag(
@@ -914,7 +917,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                                 _confirmButton(
                                   onTap: () {
                                     _bookRepository.deleteMyBook(
-                                      userId: 'testId',
+                                      userId: _userId,
                                       myBookId: myBookId!,
                                     );
 

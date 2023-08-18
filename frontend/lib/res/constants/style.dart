@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mybrary/res/constants/color.dart';
 
 // common style
+const systemDarkUiOverlayStyle = SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent,
+  statusBarIconBrightness: Brightness.light, // android
+  statusBarBrightness: Brightness.dark, // ios
+);
+
+const systemLightUiOverlayStyle = SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent,
+  statusBarIconBrightness: Brightness.dark,
+  statusBarBrightness: Brightness.light,
+);
+
 const appBarTitleStyle = TextStyle(
   color: commonBlackColor,
   fontSize: 22.0,

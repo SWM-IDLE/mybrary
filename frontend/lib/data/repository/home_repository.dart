@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:mybrary/data/datasource/home/home_datasource.dart';
 import 'package:mybrary/data/model/home/book_list_by_category_response.dart';
 import 'package:mybrary/data/model/home/today_registered_book_count_response.dart';
@@ -5,8 +6,10 @@ import 'package:mybrary/data/model/home/today_registered_book_count_response.dar
 class HomeRepository {
   final HomeDataSource _homeDataSource = HomeDataSource();
 
-  Future<TodayRegisteredBookCountResponseData> getTodayRegisteredBookCount() {
-    return _homeDataSource.getTodayRegisteredBookCount();
+  Future<TodayRegisteredBookCountResponseData> getTodayRegisteredBookCount({
+    required BuildContext context,
+  }) {
+    return _homeDataSource.getTodayRegisteredBookCount(context);
   }
 
   Future<BookListByCategoryResponseData> getBookListByCategory({

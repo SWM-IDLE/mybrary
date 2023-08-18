@@ -3,6 +3,7 @@ import 'package:mybrary/data/model/profile/follower_response.dart';
 import 'package:mybrary/data/model/profile/following_response.dart';
 import 'package:mybrary/data/model/profile/profile_common_response.dart';
 import 'package:mybrary/data/repository/follow_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/enum.dart';
 import 'package:mybrary/res/constants/style.dart';
@@ -66,15 +67,17 @@ class _FollowScreenState extends State<FollowScreen>
   late Future<FollowerResponseData> _followerResponseData;
   late Future<FollowingResponseData> _followingResponseData;
 
+  final _userId = UserState.userId;
+
   @override
   void initState() {
     super.initState();
 
     _followerResponseData = _followRepository.getFollower(
-      userId: 'testId',
+      userId: _userId,
     );
     _followingResponseData = _followRepository.getFollowings(
-      userId: 'testId',
+      userId: _userId,
     );
 
     if (widget.pageType == FollowPageType.follower) {
@@ -246,7 +249,7 @@ class _FollowScreenState extends State<FollowScreen>
     required int index,
   }) async {
     await _followRepository.deleteFollower(
-      userId: 'testId',
+      userId: _userId,
       sourceId: follower.userId!,
     );
 
@@ -270,13 +273,13 @@ class _FollowScreenState extends State<FollowScreen>
     if (isFollowing(followingUserId)) {
       onPressedDeleteFollowingUser(followingUserId);
       await _followRepository.deleteFollowing(
-        userId: 'testId',
+        userId: _userId,
         targetId: followingUserId,
       );
     } else {
       onPressedAddFollowingUser(followingUserId);
       await _followRepository.updateFollowing(
-        userId: 'testId',
+        userId: _userId,
         targetId: followingUserId,
       );
     }
