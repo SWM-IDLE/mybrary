@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:mybrary/data/datasource/home/home_datasource.dart';
 import 'package:mybrary/data/model/home/book_list_by_category_response.dart';
 import 'package:mybrary/data/model/home/today_registered_book_count_response.dart';
@@ -13,10 +13,16 @@ class HomeRepository {
   }
 
   Future<BookListByCategoryResponseData> getBookListByCategory({
+    required BuildContext context,
     required String type,
     int? page,
     int? categoryId,
   }) async {
-    return _homeDataSource.getBookListByCategory(type, page, categoryId);
+    return _homeDataSource.getBookListByCategory(
+      context,
+      type,
+      page,
+      categoryId,
+    );
   }
 }

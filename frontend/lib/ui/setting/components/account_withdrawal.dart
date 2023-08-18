@@ -141,6 +141,7 @@ class _AccountWithdrawalState extends State<AccountWithdrawal> {
                               _confirmButton(
                                 onTap: () async {
                                   await _profileRepository.deleteAccount(
+                                    context: context,
                                     userId: _userId,
                                   );
 

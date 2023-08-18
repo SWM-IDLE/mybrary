@@ -46,6 +46,7 @@ class _SearchBookListState extends State<SearchBookList> {
     _bookSearchKeywordController.text = widget.bookSearchKeyword;
     _isClearButtonVisible = true;
     _bookSearchResponse = _searchRepository.getBookSearchResponse(
+      context: context,
       requestUrl:
           '$_bookSearchKeywordRequestUrl?keyword=${widget.bookSearchKeyword}',
     );
@@ -105,6 +106,7 @@ class _SearchBookListState extends State<SearchBookList> {
               if (_bookSearchNextUrl != "" && _isScrollLoading) {
                 _searchRepository
                     .getBookSearchResponse(
+                      context: context,
                       requestUrl:
                           '${getBookServiceApi(API.getBookService)}$_bookSearchNextUrl',
                     )
@@ -163,6 +165,7 @@ class _SearchBookListState extends State<SearchBookList> {
 
           _searchRepository
               .getBookSearchResponse(
+                context: context,
                 requestUrl:
                     '$_bookSearchKeywordRequestUrl?keyword=${_bookSearchKeywordController.text}',
               )
@@ -170,6 +173,7 @@ class _SearchBookListState extends State<SearchBookList> {
                 (value) => setState(() {
                   _isError = false;
                   _bookSearchResponse = _searchRepository.getBookSearchResponse(
+                    context: context,
                     requestUrl:
                         '$_bookSearchKeywordRequestUrl?keyword=${_bookSearchKeywordController.text}',
                   );

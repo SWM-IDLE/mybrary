@@ -1,15 +1,19 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/common/common_response.dart';
 import 'package:mybrary/data/model/profile/profile_image_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/network/api.dart';
-import 'package:mybrary/utils/dios/dio_service.dart';
+import 'package:mybrary/utils/dios/auth_dio.dart';
 
 class ProfileDataSource {
-  Future<ProfileResponseData> getProfileData(String userId) async {
-    Dio dio = DioService().to();
+  Future<ProfileResponseData> getProfileData(
+    BuildContext context,
+    String userId,
+  ) async {
+    final dio = await authDio(context);
     final profileResponse = await dio.get(
         '${getApi(API.getUserProfile)}/$userId/profile',
         options: Options(headers: {'User-Id': 'testId'}));
@@ -30,11 +34,12 @@ class ProfileDataSource {
   }
 
   Future<ProfileResponseData> updateProfileData(
+    BuildContext context,
     String userId,
     String newNickname,
     String introduction,
   ) async {
-    Dio dio = DioService().to();
+    final dio = await authDio(context);
     final profileUpdateResponse = await dio.put(
       '${getApi(API.updateUserProfile)}/$userId/profile',
       options: Options(
@@ -60,9 +65,10 @@ class ProfileDataSource {
   }
 
   Future<ProfileImageResponseData> getProfileImage(
+    BuildContext context,
     String userId,
   ) async {
-    Dio dio = DioService().to();
+    final dio = await authDio(context);
     final profileImageResponse = await dio.get(
         '${getApi(API.getUserProfileImage)}/$userId/profile/image',
         options: Options(headers: {'User-Id': 'testId'}));
@@ -83,8 +89,11 @@ class ProfileDataSource {
   }
 
   Future<ProfileImageResponseData> updateProfileImage(
-      String userId, FormData newProfileImage) async {
-    Dio dio = DioService().to();
+    BuildContext context,
+    String userId,
+    FormData newProfileImage,
+  ) async {
+    final dio = await authDio(context);
     final profileImageUpdateResponse = await dio.put(
       '${getApi(API.updateUserProfileImage)}/$userId/profile/image',
       options: Options(
@@ -109,8 +118,11 @@ class ProfileDataSource {
     return result.data!;
   }
 
-  Future<ProfileImageResponseData> deleteProfileImage(String userId) async {
-    Dio dio = DioService().to();
+  Future<ProfileImageResponseData> deleteProfileImage(
+    BuildContext context,
+    String userId,
+  ) async {
+    final dio = await authDio(context);
     final profileImageDeleteResponse = await dio.delete(
       '${getApi(API.updateUserProfileImage)}/$userId/profile/image',
       options: Options(headers: {'User-Id': 'testId'}),
@@ -131,8 +143,11 @@ class ProfileDataSource {
     return result.data!;
   }
 
-  Future<CommonResponse> deleteAccount(String userId) async {
-    Dio dio = DioService().to();
+  Future<CommonResponse> deleteAccount(
+    BuildContext context,
+    String userId,
+  ) async {
+    final dio = await authDio(context);
     final deleteAccountResponse = await dio.delete(
       getApi(API.deleteUserAccount),
       options: Options(headers: {'User-Id': 'testId'}),

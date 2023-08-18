@@ -74,6 +74,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
 
     _bookRepository
         .getMyBookDetail(
+          context: context,
           userId: _userId,
           myBookId: widget.myBookId,
         )
@@ -89,6 +90,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
 
     _bookRepository
         .getMyBookReview(
+      context: context,
       myBookId: widget.myBookId,
     )
         .then((data) {
@@ -98,10 +100,12 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
     });
 
     _myBookDetail = _bookRepository.getMyBookDetail(
+      context: context,
       userId: _userId,
       myBookId: widget.myBookId,
     );
     _myBookReview = _bookRepository.getMyBookReview(
+      context: context,
       myBookId: widget.myBookId,
     );
 
@@ -619,6 +623,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                 Navigator.pop(context);
                 _bookRepository
                     .getMyBookDetail(
+                      context: context,
                       userId: _userId,
                       myBookId: widget.myBookId,
                     )
@@ -653,6 +658,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
             child: InkWell(
               onTap: () async {
                 await _bookRepository.updateMyBookRecord(
+                  context: context,
                   userId: _userId,
                   myBookId: widget.myBookId,
                   myBookRecordData: MyBookRecordResponseData(
@@ -806,10 +812,12 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
     ).then(
       (value) => setState(() {
         _myBookReview = _bookRepository.getMyBookReview(
+          context: context,
           myBookId: widget.myBookId,
         );
         _bookRepository
             .getMyBookReview(
+              context: context,
               myBookId: widget.myBookId,
             )
             .then((data) => _myBookReviewContentController.text =
@@ -917,6 +925,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                                 _confirmButton(
                                   onTap: () {
                                     _bookRepository.deleteMyBook(
+                                      context: context,
                                       userId: _userId,
                                       myBookId: myBookId!,
                                     );

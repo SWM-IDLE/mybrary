@@ -36,6 +36,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   Future<void> _refreshProfileData() async {
     setState(() {
       _profileResponseData = _profileRepository.getProfileData(
+        context: context,
         userId: _userId,
       );
     });
@@ -64,6 +65,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _refreshProfileData();
     _profileRepository
         .getProfileData(
+      context: context,
       userId: _userId,
     )
         .then((data) {
@@ -179,6 +181,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   void _onTapChangeToDefaultImage() async {
     await _profileRepository.deleteProfileImage(
+      context: context,
       userId: _userId,
     );
 
@@ -295,6 +298,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       return _showValidationFailedMessage(context);
     } else {
       await _profileRepository.updateProfileData(
+        context: context,
         userId: _userId,
         newNickname: _nicknameController.text,
         introduction: _introductionController.text,
@@ -314,6 +318,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         );
 
         await _profileRepository.updateProfileImage(
+          context: context,
           userId: _userId,
           newProfileImage: _profileImageFormData,
         );

@@ -34,7 +34,10 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
   void initState() {
     super.initState();
 
-    _bookList = _bookRepository.getInterestBooks(userId: _userId);
+    _bookList = _bookRepository.getInterestBooks(
+      context: context,
+      userId: _userId,
+    );
     _sortType = SortType.all;
   }
 
@@ -233,6 +236,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                   switch (_sortType) {
                     case SortType.title:
                       _bookList = _bookRepository.getInterestBooks(
+                        context: context,
                         userId: _userId,
                         order: 'title',
                       );
@@ -241,6 +245,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                       break;
                     case SortType.registration:
                       _bookList = _bookRepository.getInterestBooks(
+                        context: context,
                         userId: _userId,
                         order: 'registration',
                       );
@@ -249,6 +254,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                       break;
                     case SortType.publication:
                       _bookList = _bookRepository.getInterestBooks(
+                        context: context,
                         userId: _userId,
                         order: 'publication',
                       );
@@ -257,6 +263,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                       break;
                     default:
                       _bookList = _bookRepository.getInterestBooks(
+                        context: context,
                         userId: _userId,
                       );
                       _sortTitle = '전체';
@@ -368,6 +375,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
     ).then(
       (value) => setState(() {
         _bookList = _bookRepository.getInterestBooks(
+          context: context,
           userId: _userId,
           order: _order,
         );

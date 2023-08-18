@@ -40,19 +40,23 @@ class _MyBookScreenState extends State<MyBookScreen> {
     super.initState();
 
     _profileResponseData = _profileRepository.getProfileData(
+      context: context,
       userId: _userId,
     );
     _myBooksResponseData = _bookRepository.getMyBooks(
+      context: context,
       userId: _userId,
       order: '',
       readStatus: '',
     );
     _completedBooksResponseData = _bookRepository.getMyBooks(
+      context: context,
       userId: _userId,
       order: '',
       readStatus: 'COMPLETED',
     );
     _interestBooksResponseData = _bookRepository.getInterestBooks(
+      context: context,
       userId: _userId,
     );
   }
@@ -346,9 +350,11 @@ class _MyBookScreenState extends State<MyBookScreen> {
     ).then(
       (value) => setState(() {
         _interestBooksResponseData = _bookRepository.getInterestBooks(
+          context: context,
           userId: _userId,
         );
         _myBooksResponseData = _bookRepository.getMyBooks(
+          context: context,
           userId: _userId,
           order: '',
           readStatus: '',
@@ -375,31 +381,37 @@ class _MyBookScreenState extends State<MyBookScreen> {
       (value) => setState(() {
         if (readStatus == 'COMPLETED') {
           _completedBooksResponseData = _bookRepository.getMyBooks(
+            context: context,
             userId: _userId,
             order: order,
             readStatus: readStatus,
           );
           _myBooksResponseData = _bookRepository.getMyBooks(
+            context: context,
             userId: _userId,
             order: '',
             readStatus: '',
           );
           _interestBooksResponseData = _bookRepository.getInterestBooks(
+            context: context,
             userId: _userId,
           );
         }
         if (readStatus == '') {
           _myBooksResponseData = _bookRepository.getMyBooks(
+            context: context,
             userId: _userId,
             order: order,
             readStatus: readStatus,
           );
           _completedBooksResponseData = _bookRepository.getMyBooks(
+            context: context,
             userId: _userId,
             order: '',
             readStatus: 'COMPLETED',
           );
           _interestBooksResponseData = _bookRepository.getInterestBooks(
+            context: context,
             userId: _userId,
           );
         }

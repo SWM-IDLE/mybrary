@@ -49,7 +49,6 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
 
   late String _bookTitle = '';
   late bool _isScrollingDown = true;
-  late bool _completedMyBook = false;
   late bool _registeredMyBook = false;
   late bool _isOverflowBookDetailHeader = false;
 
@@ -62,20 +61,24 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
 
     _bookSearchDetailResponse =
         _searchRepository.getBookSearchDetailAndSaveBookResponse(
+      context: context,
       userId: _userId,
       isbn13: widget.isbn13,
     );
 
     _bookInterestStatusResponseData =
         _searchRepository.getBookInterestStatusResponse(
+      context: context,
       isbn13: widget.isbn13,
     );
     _bookRegisteredStatusResponseData =
         _searchRepository.getBookRegisteredStatusResponse(
+      context: context,
       isbn13: widget.isbn13,
     );
     _bookCompletedStatusResponseData =
         _searchRepository.getBookCompletedStatusResponse(
+      context: context,
       isbn13: widget.isbn13,
     );
 
