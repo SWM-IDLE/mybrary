@@ -73,7 +73,7 @@ class BookSearchRankingServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getBooks().size()).isEqualTo(6),
+                () -> assertThat(response.getBookSearchKeywords().size()).isEqualTo(6),
                 () -> verify(zSetOperations, times(1)).reverseRangeWithScores(RANKING_KEY, 0, 9)
         );
     }
@@ -92,7 +92,7 @@ class BookSearchRankingServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getBooks()).isEmpty(),
+                () -> assertThat(response.getBookSearchKeywords()).isEmpty(),
                 () -> verify(zSetOperations, times(1)).reverseRangeWithScores(RANKING_KEY, 0, 9)
         );
     }

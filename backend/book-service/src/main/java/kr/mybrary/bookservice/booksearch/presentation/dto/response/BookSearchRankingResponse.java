@@ -8,18 +8,18 @@ import lombok.Getter;
 @Builder
 public class BookSearchRankingResponse {
 
-    private List<BookSearchRanking> books;
+    private List<BookSearchRanking> bookSearchKeywords;
 
     @Getter
     @Builder
     public static class BookSearchRanking {
 
-        private String title;
+        private String keyword;
         private double score;
 
-        public static BookSearchRanking of(String title, double score) {
+        public static BookSearchRanking of(String keyword, double score) {
             return BookSearchRanking.builder()
-                    .title(title)
+                    .keyword(keyword)
                     .score(score)
                     .build();
         }
@@ -27,7 +27,7 @@ public class BookSearchRankingResponse {
 
     public static BookSearchRankingResponse of(List<BookSearchRanking> bookSearchRankings) {
         return BookSearchRankingResponse.builder()
-                .books(bookSearchRankings)
+                .bookSearchKeywords(bookSearchRankings)
                 .build();
     }
 }

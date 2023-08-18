@@ -1,5 +1,6 @@
 package kr.mybrary.bookservice.booksearch.presentation;
 
+import kr.mybrary.bookservice.booksearch.domain.BookSearchRankingService;
 import kr.mybrary.bookservice.booksearch.domain.PlatformBookSearchApiService;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookSearchController {
 
     private final PlatformBookSearchApiService bookService;
+    private final BookSearchRankingService bookSearchRankingService;
 
     @GetMapping("/search")
     public ResponseEntity searchWithKeyword(
@@ -50,5 +52,13 @@ public class BookSearchController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(SuccessResponse.of(HttpStatus.OK.toString(), "카테고리별 도서 리스트 조회에 성공했습니다.", bookService.searchBookListByCategory(request)));
+    }
+
+    @GetMapping("/search/ranking")
+    public ResponseEntity searchRanking() {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(SuccessResponse.of(HttpStatus.OK.toString(), "도서 검색 랭킹 조회에 성공했습니다.",
+                        bookSearchRankingService.getBookSearchKeywordRankingList()));
     }
 }

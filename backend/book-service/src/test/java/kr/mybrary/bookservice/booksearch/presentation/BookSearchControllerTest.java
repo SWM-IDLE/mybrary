@@ -5,6 +5,7 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithNam
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -21,9 +22,11 @@ import com.epages.restdocs.apispec.SimpleType;
 import java.util.List;
 import kr.mybrary.bookservice.booksearch.BookSearchDtoTestData;
 import kr.mybrary.bookservice.booksearch.domain.AladinBookSearchApiService;
+import kr.mybrary.bookservice.booksearch.domain.BookSearchRankingService;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategorySearchResultResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchRankingResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +35,6 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -49,6 +51,9 @@ class BookSearchControllerTest {
     @MockBean
     private AladinBookSearchApiService aladinBookSearchApiService;
 
+    @MockBean
+    private BookSearchRankingService bookSearchRankingService;
+
     @DisplayName("ISBN을 통해 도서의 상세 정보를 조회한다.")
     @Test
     void searchWithISBNBarcodeScan() throws Exception {
@@ -59,7 +64,7 @@ class BookSearchControllerTest {
         given(aladinBookSearchApiService.searchBookDetailWithISBN(any())).willReturn(response);
 
         // when
-        ResultActions actions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/books/search/detail")
+        ResultActions actions = mockMvc.perform(get("/api/v1/books/search/detail")
                 .param("isbn", "9788932917245"));
 
         // then
@@ -159,7 +164,7 @@ class BookSearchControllerTest {
         given(aladinBookSearchApiService.searchWithKeyword(any())).willReturn(response);
 
         // when
-        ResultActions actions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/books/search")
+        ResultActions actions = mockMvc.perform(get("/api/v1/books/search")
                 .param("keyword", "자바")
                 .param("sort", "accuracy")
                 .param("page", "1"));
@@ -223,7 +228,7 @@ class BookSearchControllerTest {
         given(aladinBookSearchApiService.searchBookListByCategory(any())).willReturn(response);
 
         // when
-        ResultActions actions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/books/search/book-list-by-category")
+        ResultActions actions = mockMvc.perform(get("/api/v1/books/search/book-list-by-category")
                 .param("page", String.valueOf(request.getPage()))
                 .param("type", request.getType())
                 .param("categoryId", String.valueOf(request.getCategoryId())));
@@ -256,6 +261,42 @@ class BookSearchControllerTest {
                                                 fieldWithPath("data.books[].isbn13").type(STRING).description("도서 ISBN13"),
                                                 fieldWithPath("data.books[].thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
                                                 fieldWithPath("data.nextRequestUrl").type(STRING).description("다음 요청 URL")
+                                        ).build())));
+    }
+
+    @DisplayName("검색 키워드 랭킹 리스트를 조회한다.")
+    @Test
+    void getBookSearchKeywordRankingList() throws Exception {
+
+        // given
+        BookSearchRankingResponse response = BookSearchDtoTestData.createBookSearchRankingResponse();
+        given(bookSearchRankingService.getBookSearchKeywordRankingList()).willReturn(response);
+
+        // when
+        ResultActions actions = mockMvc.perform(get("/api/v1/books/search/ranking"));
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("도서 검색 랭킹 조회에 성공했습니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // document
+        actions
+                .andDo(document("book-search-keyword-ranking-list",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("search")
+                                        .summary("도서 인기 검색 키워드 리스트를 10개 조회한다.")
+                                        .responseSchema(Schema.schema("book_search_keyword_ranking_list_response_body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data.bookSearchKeywords[].keyword").type(STRING).description("도서 검색 키워드"),
+                                                fieldWithPath("data.bookSearchKeywords[].score").type(NUMBER).description("도서 검색 조회 횟수")
                                         ).build())));
     }
 }
