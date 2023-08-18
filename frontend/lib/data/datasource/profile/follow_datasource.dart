@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/profile/follower_response.dart';
 import 'package:mybrary/data/model/profile/following_response.dart';
 import 'package:mybrary/data/network/api.dart';
+import 'package:mybrary/res/constants/config.dart';
 import 'package:mybrary/utils/dios/auth_dio.dart';
 
 class FollowDataSource {
@@ -71,8 +72,7 @@ class FollowDataSource {
     final updateFollowingResponse = await dio.post(
       getApi(API.updateUserFollowing),
       options: Options(
-        headers: {'User-Id': userId},
-        contentType: Headers.jsonContentType,
+        headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),
       data: {'targetId': targetId},
     );
@@ -99,8 +99,7 @@ class FollowDataSource {
     final deleteFollowerResponse = await dio.delete(
       getApi(API.deleteUserFollower),
       options: Options(
-        headers: {'User-Id': userId},
-        contentType: Headers.jsonContentType,
+        headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),
       data: {'sourceId': sourceId},
     );
@@ -127,8 +126,7 @@ class FollowDataSource {
     final deleteFollowingResponse = await dio.delete(
       getApi(API.deleteUserFollowing),
       options: Options(
-        headers: {'User-Id': userId},
-        contentType: Headers.jsonContentType,
+        headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),
       data: {'targetId': targetId},
     );

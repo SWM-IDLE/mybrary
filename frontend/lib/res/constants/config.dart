@@ -6,6 +6,7 @@ const String accessTokenHeaderKey = 'Authorization';
 const String refreshTokenHeaderKey = 'Authorization-Refresh';
 const String loginIdHeaderKey = 'loginId';
 const String expiredKey = 'isExpired';
+const String headerJsonValue = "application/json";
 
 // 설정 페이지 내 링크 관련 상수
 const String noticeAndUpdateLink =

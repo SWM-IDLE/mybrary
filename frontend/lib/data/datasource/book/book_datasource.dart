@@ -10,6 +10,7 @@ import 'package:mybrary/data/model/book/mybook_review_response.dart';
 import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/data/model/common/common_response.dart';
 import 'package:mybrary/data/network/api.dart';
+import 'package:mybrary/res/constants/config.dart';
 import 'package:mybrary/utils/dios/auth_dio.dart';
 
 class BookDataSource {
@@ -131,8 +132,7 @@ class BookDataSource {
     final createMyBookResponse = await dio.post(
       getBookServiceApi(API.createMyBook),
       options: Options(
-        headers: {'User-Id': userId},
-        contentType: Headers.jsonContentType,
+        headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),
       data: {'isbn13': isbn13},
     );
@@ -184,8 +184,7 @@ class BookDataSource {
     final updateMyBookRecordResponse = await dio.put(
       '${getBookServiceApi(API.updateMyBookRecord)}/$myBookId',
       options: Options(
-        headers: {'User-Id': userId},
-        contentType: Headers.jsonContentType,
+        headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),
       data: myBookRecordData.toJson(),
     );
@@ -242,8 +241,7 @@ class BookDataSource {
     final createMyBookReviewResponse = await dio.post(
       '${getBookServiceApi(API.createMyBookReview)}/$myBookId/reviews',
       options: Options(
-        headers: {'User-Id': userId},
-        contentType: Headers.jsonContentType,
+        headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),
       data: {'content': content, 'starRating': '$starRating'},
     );
@@ -272,8 +270,7 @@ class BookDataSource {
     final updateMyBookReviewResponse = await dio.put(
       '${getBookServiceApi(API.updateMyBookReview)}/$reviewId',
       options: Options(
-        headers: {'User-Id': userId},
-        contentType: Headers.jsonContentType,
+        headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),
       data: {'content': content, 'starRating': '$starRating'},
     );

@@ -6,6 +6,7 @@ import 'package:mybrary/data/model/common/common_response.dart';
 import 'package:mybrary/data/model/profile/profile_image_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/network/api.dart';
+import 'package:mybrary/res/constants/config.dart';
 import 'package:mybrary/utils/dios/auth_dio.dart';
 
 class ProfileDataSource {
@@ -43,8 +44,7 @@ class ProfileDataSource {
     final profileUpdateResponse = await dio.put(
       '${getApi(API.updateUserProfile)}/$userId/profile',
       options: Options(
-        headers: {'User-Id': 'testId'},
-        contentType: Headers.jsonContentType,
+        headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),
       data: {'nickname': newNickname, 'introduction': introduction},
     );
