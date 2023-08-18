@@ -34,8 +34,8 @@ class _SplashScreenState extends State<SplashScreen> {
             curve: Curves.fastOutSlowIn,
             child: SvgPicture.asset(
               'assets/svg/icon/mybrary_logo.svg',
-              width: size.width * 0.15,
-              height: size.width * 0.15,
+              width: size.width * 0.13,
+              height: size.width * 0.13,
             ),
           ),
         ),
