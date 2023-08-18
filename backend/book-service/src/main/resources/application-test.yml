@@ -27,7 +27,7 @@ eureka:
 
 logging:
   level:
-    root: info
+    root: debug
     org:
       hibernate:
         type:

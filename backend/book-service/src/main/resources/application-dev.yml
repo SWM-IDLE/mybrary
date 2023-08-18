@@ -13,6 +13,11 @@ spring:
         show_sql: true
         default_batch_fetch_size: 1000
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
   cloud:
     config:
       server:
