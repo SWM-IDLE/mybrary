@@ -1,14 +1,16 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/profile/interest_categories_response.dart';
 import 'package:mybrary/data/model/profile/my_interests_response.dart';
 import 'package:mybrary/data/network/api.dart';
-import 'package:mybrary/utils/dios/dio_service.dart';
+import 'package:mybrary/utils/dios/auth_dio.dart';
 
 class InterestsDataSource {
-  Future<InterestCategoriesResponseData> getInterestCategories() async {
-    Dio dio = DioService().to();
+  Future<InterestCategoriesResponseData> getInterestCategories(
+      BuildContext context) async {
+    final dio = await authDio(context);
     final interestCategoriesResponse = await dio.get(
       getApi(API.getInterestCategories),
     );
@@ -29,9 +31,10 @@ class InterestsDataSource {
   }
 
   Future<MyInterestsResponseData> getMyInterestsCategories(
+    BuildContext context,
     String userId,
   ) async {
-    Dio dio = DioService().to();
+    final dio = await authDio(context);
     final myInterestsResponse = await dio.get(
       '${getApi(API.getUserInterests)}/$userId/interests',
     );
@@ -52,10 +55,11 @@ class InterestsDataSource {
   }
 
   Future<MyInterestsResponseData> updateMyInterests(
+    BuildContext context,
     String userId,
     List<CategoriesResponses> categoriesResponses,
   ) async {
-    Dio dio = DioService().to();
+    final dio = await authDio(context);
     final myInterestsUpdateResponse = await dio.put(
       '${getApi(API.updateUserInterests)}/$userId/interests',
       options: Options(

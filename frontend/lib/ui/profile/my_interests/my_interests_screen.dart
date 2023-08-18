@@ -36,7 +36,9 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
     super.initState();
 
     _interestCategoriesResponseData =
-        _interestsRepository.getInterestCategories();
+        _interestsRepository.getInterestCategories(
+      context: context,
+    );
 
     selectedInterests = widget.userInterests
         .map((e) => CategoriesResponses(id: e.id, name: e.name))
@@ -68,6 +70,7 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
         TextButton(
           onPressed: () async {
             await _interestsRepository.editMyInterests(
+              context: context,
               userId: _userId,
               categoriesResponses: selectedInterests,
             );

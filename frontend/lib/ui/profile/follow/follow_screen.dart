@@ -74,9 +74,11 @@ class _FollowScreenState extends State<FollowScreen>
     super.initState();
 
     _followerResponseData = _followRepository.getFollower(
+      context: context,
       userId: _userId,
     );
     _followingResponseData = _followRepository.getFollowings(
+      context: context,
       userId: _userId,
     );
 
@@ -249,6 +251,7 @@ class _FollowScreenState extends State<FollowScreen>
     required int index,
   }) async {
     await _followRepository.deleteFollower(
+      context: context,
       userId: _userId,
       sourceId: follower.userId!,
     );
@@ -273,12 +276,14 @@ class _FollowScreenState extends State<FollowScreen>
     if (isFollowing(followingUserId)) {
       onPressedDeleteFollowingUser(followingUserId);
       await _followRepository.deleteFollowing(
+        context: context,
         userId: _userId,
         targetId: followingUserId,
       );
     } else {
       onPressedAddFollowingUser(followingUserId);
       await _followRepository.updateFollowing(
+        context: context,
         userId: _userId,
         targetId: followingUserId,
       );

@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:mybrary/data/datasource/book/book_datasource.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/model/book/interest_book_response.dart';
@@ -12,25 +12,28 @@ class BookRepository {
   final BookDataSource _bookDataSource = BookDataSource();
 
   Future<List<BookListResponseData>> getInterestBooks({
+    required BuildContext context,
     required String userId,
     String? order,
   }) {
-    return _bookDataSource.getInterestBooks(userId, order);
+    return _bookDataSource.getInterestBooks(context, userId, order);
   }
 
   Future<InterestBookResponseData> createOrDeleteInterestBook({
+    required BuildContext context,
     required String userId,
     required String isbn13,
   }) {
-    return _bookDataSource.createOrDeleteInterestBook(userId, isbn13);
+    return _bookDataSource.createOrDeleteInterestBook(context, userId, isbn13);
   }
 
   Future<List<MyBooksResponseData>> getMyBooks({
+    required BuildContext context,
     required String userId,
     required String order,
     required String readStatus,
   }) {
-    return _bookDataSource.getMyBooks(userId, order, readStatus);
+    return _bookDataSource.getMyBooks(context, userId, order, readStatus);
   }
 
   Future<CommonResponse> createMyBook({
@@ -42,25 +45,29 @@ class BookRepository {
   }
 
   Future<CommonResponse> deleteMyBook({
+    required BuildContext context,
     required String userId,
     required int myBookId,
   }) {
-    return _bookDataSource.deleteMyBook(userId, myBookId);
+    return _bookDataSource.deleteMyBook(context, userId, myBookId);
   }
 
   Future<MyBookDetailResponseData> getMyBookDetail({
+    required BuildContext context,
     required String userId,
     required int myBookId,
   }) {
-    return _bookDataSource.getMyBookDetail(userId, myBookId);
+    return _bookDataSource.getMyBookDetail(context, userId, myBookId);
   }
 
   Future<MyBookRecordResponseData> updateMyBookRecord({
+    required BuildContext context,
     required String userId,
     required int myBookId,
     required MyBookRecordResponseData myBookRecordData,
   }) {
     return _bookDataSource.updateMyBookRecord(
+      context,
       userId,
       myBookId,
       myBookRecordData,
@@ -68,18 +75,21 @@ class BookRepository {
   }
 
   Future<MyBookReviewResponseData?> getMyBookReview({
+    required BuildContext context,
     required int myBookId,
   }) {
-    return _bookDataSource.getMyBookReview(myBookId);
+    return _bookDataSource.getMyBookReview(context, myBookId);
   }
 
   Future<CommonResponse> createMyBookReview({
+    required BuildContext context,
     required String userId,
     required int myBookId,
     required String content,
     required double starRating,
   }) {
     return _bookDataSource.createMyBookReview(
+      context,
       userId,
       myBookId,
       content,
@@ -88,12 +98,14 @@ class BookRepository {
   }
 
   Future<MyBookReviewUpdateResponseData> updateMyBookReview({
+    required BuildContext context,
     required String userId,
     required int reviewId,
     required String content,
     required double starRating,
   }) {
     return _bookDataSource.updateMyBookReview(
+      context,
       userId,
       reviewId,
       content,

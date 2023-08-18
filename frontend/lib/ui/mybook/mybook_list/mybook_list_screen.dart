@@ -44,6 +44,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
     super.initState();
 
     _bookList = _bookRepository.getMyBooks(
+      context: context,
       userId: _userId,
       order: widget.order,
       readStatus: widget.readStatus,
@@ -158,6 +159,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
     ).then(
       (value) => setState(() {
         _bookList = _bookRepository.getMyBooks(
+          context: context,
           userId: _userId,
           order: _order,
           readStatus: readStatus,
@@ -283,6 +285,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                   switch (_sortType) {
                     case SortType.title:
                       _bookList = _bookRepository.getMyBooks(
+                        context: context,
                         userId: _userId,
                         order: 'title',
                         readStatus: widget.readStatus,
@@ -292,6 +295,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                       break;
                     case SortType.registration:
                       _bookList = _bookRepository.getMyBooks(
+                        context: context,
                         userId: _userId,
                         order: 'registration',
                         readStatus: widget.readStatus,
@@ -301,6 +305,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                       break;
                     case SortType.publication:
                       _bookList = _bookRepository.getMyBooks(
+                        context: context,
                         userId: _userId,
                         order: 'publication',
                         readStatus: widget.readStatus,
@@ -310,6 +315,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                       break;
                     default:
                       _bookList = _bookRepository.getMyBooks(
+                        context: context,
                         userId: _userId,
                         order: 'all',
                         readStatus: widget.readStatus,

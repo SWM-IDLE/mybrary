@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/model/book/interest_book_response.dart';
 import 'package:mybrary/data/model/book/mybook_detail_response.dart';
@@ -11,12 +11,14 @@ import 'package:mybrary/data/model/book/mybooks_response.dart';
 import 'package:mybrary/data/model/common/common_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/utils/dios/auth_dio.dart';
-import 'package:mybrary/utils/dios/dio_service.dart';
 
 class BookDataSource {
   Future<List<BookListResponseData>> getInterestBooks(
-      String userId, String? order) async {
-    Dio dio = DioService().to();
+    BuildContext context,
+    String userId,
+    String? order,
+  ) async {
+    final dio = await authDio(context);
     final getInterestBooksResponse = await dio.get(
       '${getBookServiceApi(API.getInterestBooks)}/$userId/interest?order=$order',
       options: Options(headers: {'User-Id': userId}),
@@ -40,8 +42,11 @@ class BookDataSource {
   }
 
   Future<InterestBookResponseData> createOrDeleteInterestBook(
-      String userId, String isbn13) async {
-    Dio dio = DioService().to();
+    BuildContext context,
+    String userId,
+    String isbn13,
+  ) async {
+    final dio = await authDio(context);
     final createOrDeleteInterestBookResponse = await dio.post(
       '${getBookServiceApi(API.createOrDeleteInterestBook)}/$isbn13/interest',
       options: Options(headers: {'User-Id': userId}),
@@ -63,11 +68,12 @@ class BookDataSource {
   }
 
   Future<List<MyBooksResponseData>> getMyBooks(
+    BuildContext context,
     String userId,
     String order,
     String readStatus,
   ) async {
-    Dio dio = DioService().to();
+    final dio = await authDio(context);
     final getMyBooksResponse = await dio.get(
       '${getBookServiceApi(API.getMyBooks)}/$userId/mybooks?order=$order&readStatus=$readStatus',
       options: Options(headers: {'User-Id': userId}),
@@ -91,8 +97,11 @@ class BookDataSource {
   }
 
   Future<MyBookDetailResponseData> getMyBookDetail(
-      String userId, int myBookId) async {
-    Dio dio = DioService().to();
+    BuildContext context,
+    String userId,
+    int myBookId,
+  ) async {
+    final dio = await authDio(context);
     final getMyBookDetailResponse = await dio.get(
       '${getBookServiceApi(API.getMyBookDetail)}/$myBookId',
       options: Options(headers: {'User-Id': userId}),
@@ -114,7 +123,10 @@ class BookDataSource {
   }
 
   Future<CommonResponse> createMyBook(
-      BuildContext context, String userId, String isbn13) async {
+    BuildContext context,
+    String userId,
+    String isbn13,
+  ) async {
     final dio = await authDio(context);
     final createMyBookResponse = await dio.post(
       getBookServiceApi(API.createMyBook),
@@ -138,8 +150,12 @@ class BookDataSource {
     return result;
   }
 
-  Future<CommonResponse> deleteMyBook(String userId, int myBookId) async {
-    Dio dio = DioService().to();
+  Future<CommonResponse> deleteMyBook(
+    BuildContext context,
+    String userId,
+    int myBookId,
+  ) async {
+    final dio = await authDio(context);
     final deleteMyBookResponse = await dio.delete(
       '${getBookServiceApi(API.deleteMyBook)}/$myBookId',
       options: Options(headers: {'User-Id': userId}),
@@ -158,9 +174,13 @@ class BookDataSource {
     return result;
   }
 
-  Future<MyBookRecordResponseData> updateMyBookRecord(String userId,
-      int myBookId, MyBookRecordResponseData myBookRecordData) async {
-    Dio dio = DioService().to();
+  Future<MyBookRecordResponseData> updateMyBookRecord(
+    BuildContext context,
+    String userId,
+    int myBookId,
+    MyBookRecordResponseData myBookRecordData,
+  ) async {
+    final dio = await authDio(context);
     final updateMyBookRecordResponse = await dio.put(
       '${getBookServiceApi(API.updateMyBookRecord)}/$myBookId',
       options: Options(
@@ -186,8 +206,11 @@ class BookDataSource {
     return result.data!;
   }
 
-  Future<MyBookReviewResponseData?> getMyBookReview(int myBookId) async {
-    Dio dio = DioService().to();
+  Future<MyBookReviewResponseData?> getMyBookReview(
+    BuildContext context,
+    int myBookId,
+  ) async {
+    final dio = await authDio(context);
     final getMyBookReviewResponse = await dio.get(
       '${getBookServiceApi(API.getMyBookReview)}/$myBookId/review',
     );
@@ -209,12 +232,13 @@ class BookDataSource {
   }
 
   Future<CommonResponse> createMyBookReview(
+    BuildContext context,
     String userId,
     int myBookId,
     String content,
     double starRating,
   ) async {
-    Dio dio = DioService().to();
+    final dio = await authDio(context);
     final createMyBookReviewResponse = await dio.post(
       '${getBookServiceApi(API.createMyBookReview)}/$myBookId/reviews',
       options: Options(
@@ -238,12 +262,13 @@ class BookDataSource {
   }
 
   Future<MyBookReviewUpdateResponseData> updateMyBookReview(
+    BuildContext context,
     String userId,
     int reviewId,
     String content,
     double starRating,
   ) async {
-    Dio dio = DioService().to();
+    final dio = await authDio(context);
     final updateMyBookReviewResponse = await dio.put(
       '${getBookServiceApi(API.updateMyBookReview)}/$reviewId',
       options: Options(

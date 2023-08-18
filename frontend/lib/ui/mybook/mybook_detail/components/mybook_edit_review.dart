@@ -269,6 +269,7 @@ class _MyBookEditReviewState extends State<MyBookEditReview> {
           onPressed: widget.isCreateReview
               ? () async {
                   await _bookRepository.createMyBookReview(
+                    context: context,
                     userId: _userId,
                     myBookId: widget.myBookId!,
                     content: widget.contentController.text,
@@ -279,6 +280,7 @@ class _MyBookEditReviewState extends State<MyBookEditReview> {
                 }
               : () async {
                   await _bookRepository.updateMyBookReview(
+                    context: context,
                     userId: _userId,
                     reviewId: widget.reviewId!,
                     content: widget.contentController.text,

@@ -1,18 +1,21 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/search/book_completed_status_response.dart';
 import 'package:mybrary/data/model/search/book_interest_status_response.dart';
 import 'package:mybrary/data/model/search/book_registered_status_response.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/data/network/api.dart';
-import 'package:mybrary/utils/dios/dio_service.dart';
+import 'package:mybrary/utils/dios/auth_dio.dart';
 
 class SearchDataSource {
   Future<BookSearchResponseData> getBookSearchResponse(
-      String requestUrl) async {
-    Dio dio = DioService().to();
+    BuildContext context,
+    String requestUrl,
+  ) async {
+    final dio = await authDio(context);
     final bookSearchResponse = await dio.get(requestUrl);
 
     log('도서 조회 응답값: $bookSearchResponse');
@@ -31,8 +34,10 @@ class SearchDataSource {
   }
 
   Future<BookSearchDetailResponseData> getBookSearchDetailResponse(
-      String isbn13) async {
-    Dio dio = DioService().to();
+    BuildContext context,
+    String isbn13,
+  ) async {
+    final dio = await authDio(context);
     final bookSearchDetailResponse = await dio
         .get('${getBookServiceApi(API.getBookSearchDetail)}?isbn13=$isbn13');
 
@@ -52,11 +57,12 @@ class SearchDataSource {
   }
 
   Future<BookSearchDetailResponseData> getBookSearchDetailAndSaveBookResponse(
+    BuildContext context,
     String userId,
     String isbn13,
     String? isbn10,
   ) async {
-    Dio dio = DioService().to();
+    final dio = await authDio(context);
     final bookSearchDetailAndSaveBookResponse = await dio.get(
       '${getBookServiceApi(API.getBookSearchDetail)}?isbn13=$isbn13${isbn10 != null ? '&isbn10=$isbn10' : ''}',
       options: Options(headers: {'User-Id': userId}),
@@ -78,8 +84,10 @@ class SearchDataSource {
   }
 
   Future<BookInterestStatusResponseData> getBookInterestStatusResponse(
-      String isbn13) async {
-    Dio dio = DioService().to();
+    BuildContext context,
+    String isbn13,
+  ) async {
+    final dio = await authDio(context);
     final bookInterestStatusResponse = await dio.get(
         '${getBookServiceApi(API.getBookInterestStatus)}/$isbn13/interest-status');
 
@@ -99,8 +107,10 @@ class SearchDataSource {
   }
 
   Future<BookRegisteredStatusResponseData> getBookRegisteredStatusResponse(
-      String isbn13) async {
-    Dio dio = DioService().to();
+    BuildContext context,
+    String isbn13,
+  ) async {
+    final dio = await authDio(context);
     final bookRegisteredStatusResponseData = await dio.get(
         '${getBookServiceApi(API.getBookMyBookRegisteredStatus)}/$isbn13/mybook-registered-status');
 
@@ -120,8 +130,10 @@ class SearchDataSource {
   }
 
   Future<BookCompletedStatusResponseData> getBookCompletedStatusResponse(
-      String isbn13) async {
-    Dio dio = DioService().to();
+    BuildContext context,
+    String isbn13,
+  ) async {
+    final dio = await authDio(context);
     final bookCompletedStatusResponse = await dio.get(
         '${getBookServiceApi(API.getBookInterestStatus)}/$isbn13/read-complete-status');
 

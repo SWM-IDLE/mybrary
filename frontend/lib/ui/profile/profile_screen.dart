@@ -50,18 +50,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _userId = UserState.userId;
 
     _profileResponseData = _profileRepository.getProfileData(
+      context: context,
       userId: _userId,
     );
     _profileImageResponseData = _profileRepository.getProfileImage(
+      context: context,
       userId: _userId,
     );
     _myInterestsResponseData = _myInterestsRepository.getMyInterestsCategories(
+      context: context,
       userId: _userId,
     );
     _followerResponseData = _followRepository.getFollower(
+      context: context,
       userId: _userId,
     );
     _followingResponseData = _followRepository.getFollowings(
+      context: context,
       userId: _userId,
     );
   }
@@ -251,9 +256,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ).then(
       (value) => setState(() {
         _profileResponseData = _profileRepository.getProfileData(
+          context: context,
           userId: _userId,
         );
         _profileImageResponseData = _profileRepository.getProfileImage(
+          context: context,
           userId: _userId,
         );
       }),
@@ -268,6 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       (value) => setState(() {
         _myInterestsResponseData =
             _myInterestsRepository.getMyInterestsCategories(
+          context: context,
           userId: _userId,
         );
       }),
@@ -286,9 +294,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ).then(
       (value) => setState(() {
         _followerResponseData = _followRepository.getFollower(
+          context: context,
           userId: _userId,
         );
         _followingResponseData = _followRepository.getFollowings(
+          context: context,
           userId: _userId,
         );
       }),
@@ -307,9 +317,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ).then(
       (value) => setState(() {
         _followerResponseData = _followRepository.getFollower(
+          context: context,
           userId: _userId,
         );
         _followingResponseData = _followRepository.getFollowings(
+          context: context,
           userId: _userId,
         );
       }),

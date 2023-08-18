@@ -1,14 +1,18 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/profile/follower_response.dart';
 import 'package:mybrary/data/model/profile/following_response.dart';
 import 'package:mybrary/data/network/api.dart';
-import 'package:mybrary/utils/dios/dio_service.dart';
+import 'package:mybrary/utils/dios/auth_dio.dart';
 
 class FollowDataSource {
-  Future<FollowerResponseData> getFollower(String userId) async {
-    Dio dio = DioService().to();
+  Future<FollowerResponseData> getFollower(
+    BuildContext context,
+    String userId,
+  ) async {
+    final dio = await authDio(context);
     final userFollowerResponse = await dio.get(
       '${getApi(API.getUserFollowers)}/$userId/followers',
       options: Options(
@@ -31,8 +35,11 @@ class FollowDataSource {
     return result.data!;
   }
 
-  Future<FollowingResponseData> getFollowings(String userId) async {
-    Dio dio = DioService().to();
+  Future<FollowingResponseData> getFollowings(
+    BuildContext context,
+    String userId,
+  ) async {
+    final dio = await authDio(context);
     final userFollowingResponse = await dio.get(
       '${getApi(API.getUserFollowings)}/$userId/followings',
       options: Options(
@@ -56,10 +63,11 @@ class FollowDataSource {
   }
 
   Future<FollowingResponseData?> updateFollowing(
+    BuildContext context,
     String userId,
     String targetId,
   ) async {
-    Dio dio = DioService().to();
+    final dio = await authDio(context);
     final updateFollowingResponse = await dio.post(
       getApi(API.updateUserFollowing),
       options: Options(
@@ -83,10 +91,11 @@ class FollowDataSource {
   }
 
   Future<FollowerResponseData?> deleteFollower(
+    BuildContext context,
     String userId,
     String sourceId,
   ) async {
-    Dio dio = DioService().to();
+    final dio = await authDio(context);
     final deleteFollowerResponse = await dio.delete(
       getApi(API.deleteUserFollower),
       options: Options(
@@ -110,10 +119,11 @@ class FollowDataSource {
   }
 
   Future<FollowingResponseData?> deleteFollowing(
+    BuildContext context,
     String userId,
     String targetId,
   ) async {
-    Dio dio = DioService().to();
+    final dio = await authDio(context);
     final deleteFollowingResponse = await dio.delete(
       getApi(API.deleteUserFollowing),
       options: Options(
