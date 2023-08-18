@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.booksearch;
 import java.util.List;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategoryResponseElement;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchRankingResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponseElement;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
@@ -231,6 +232,24 @@ public class BookSearchDtoTestData {
         return BookListByCategoryResponseElement.builder()
                 .thumbnailUrl("test_thumbnail_url")
                 .isbn13("test_isbn13")
+                .build();
+    }
+
+    public static BookSearchRankingResponse createBookSearchRankingResponse() {
+        return BookSearchRankingResponse.builder()
+                .bookSearchKeywords(List.of(
+                        BookSearchRankingResponse.BookSearchRanking.builder()
+                                .keyword("사랑")
+                                .score(10.0)
+                                .build(),
+                        BookSearchRankingResponse.BookSearchRanking.builder()
+                                .keyword("미움")
+                                .score(5.0)
+                                .build(),
+                        BookSearchRankingResponse.BookSearchRanking.builder()
+                                .keyword("감동")
+                                .score(3.0)
+                                .build()))
                 .build();
     }
 }
