@@ -64,6 +64,7 @@ class FollowDataSource {
       getApi(API.updateUserFollowing),
       options: Options(
         headers: {'User-Id': userId},
+        contentType: Headers.jsonContentType,
       ),
       data: {'targetId': targetId},
     );
@@ -90,6 +91,7 @@ class FollowDataSource {
       getApi(API.deleteUserFollower),
       options: Options(
         headers: {'User-Id': userId},
+        contentType: Headers.jsonContentType,
       ),
       data: {'sourceId': sourceId},
     );
@@ -116,6 +118,7 @@ class FollowDataSource {
       getApi(API.deleteUserFollowing),
       options: Options(
         headers: {'User-Id': userId},
+        contentType: Headers.jsonContentType,
       ),
       data: {'targetId': targetId},
     );

@@ -1,8 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mybrary/data/model/search/book_completed_status_response.dart';
+import 'package:mybrary/data/model/search/book_interest_status_response.dart';
+import 'package:mybrary/data/model/search/book_registered_status_response.dart';
+import 'package:mybrary/data/model/search/book_search_common_response.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
 import 'package:mybrary/data/repository/search_repository.dart';
@@ -15,7 +17,6 @@ import 'package:mybrary/ui/common/components/circular_loading.dart';
 import 'package:mybrary/ui/common/components/single_data_error.dart';
 import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
-import 'package:mybrary/ui/mybook/interest_book_list/interest_book_list_screen.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_contents.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_description.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_detail_header.dart';
@@ -41,10 +42,14 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
   final ScrollController _bookDetailScrollController = ScrollController();
   late Future<BookSearchDetailResponseData> _bookSearchDetailResponse;
 
+  late Future<BookInterestStatusResponseData> _bookInterestStatusResponseData;
+  late Future<BookRegisteredStatusResponseData>
+      _bookRegisteredStatusResponseData;
+  late Future<BookCompletedStatusResponseData> _bookCompletedStatusResponseData;
+
   late String _bookTitle = '';
-  late int _newInterestCount = 0;
   late bool _isScrollingDown = true;
-  late bool _isOnTapInterestBook = false;
+  late bool _completedMyBook = false;
   late bool _registeredMyBook = false;
   late bool _isOverflowBookDetailHeader = false;
 
@@ -61,18 +66,17 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       isbn13: widget.isbn13,
     );
 
-    _searchRepository
-        .getBookSearchDetailAndSaveBookResponse(
-      userId: _userId,
+    _bookInterestStatusResponseData =
+        _searchRepository.getBookInterestStatusResponse(
       isbn13: widget.isbn13,
-    )
-        .then(
-      (response) {
-        setState(() {
-          _isOnTapInterestBook = response.interested!;
-          _newInterestCount = response.interestCount!;
-        });
-      },
+    );
+    _bookRegisteredStatusResponseData =
+        _searchRepository.getBookRegisteredStatusResponse(
+      isbn13: widget.isbn13,
+    );
+    _bookCompletedStatusResponseData =
+        _searchRepository.getBookCompletedStatusResponse(
+      isbn13: widget.isbn13,
     );
 
     _bookDetailScrollController.addListener(_bookDetailScrollListener);
@@ -137,8 +141,10 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
       ],
       child: SafeArea(
         bottom: false,
-        child: FutureBuilder<BookSearchDetailResponseData>(
-          future: _bookSearchDetailResponse,
+        child: FutureBuilder<BookSearchCommonResponse>(
+          future: Future.wait(_futureBookSearchDetailData()).then(
+            (data) => _buildBookSearchDetailData(data),
+          ),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return const SingleDataError(
@@ -147,9 +153,15 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
             }
 
             if (snapshot.hasData) {
-              final bookSearchDetail = snapshot.data!;
-              bool interested = bookSearchDetail.interested!;
-              int interestCount = bookSearchDetail.interestCount!;
+              BookSearchCommonResponse data = snapshot.data!;
+              final BookSearchDetailResponseData bookSearchDetail =
+                  data.bookSearchDetailResponseData;
+              final BookInterestStatusResponseData bookInterestStatus =
+                  data.bookInterestStatusResponseData;
+              final BookRegisteredStatusResponseData bookRegisteredStatus =
+                  data.bookRegisteredStatusResponseData;
+              final BookCompletedStatusResponseData bookCompletedStatus =
+                  data.bookCompletedStatusResponseData;
 
               _bookTitle = bookSearchDetail.title!;
 
@@ -163,32 +175,17 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                       children: [
                         BookDetailHeader(
                           key: _bookDetailHeaderKey,
-                          onTapInterestBook: () async {
-                            final result = await _bookRepository
-                                .createOrDeleteInterestBook(
-                              userId: _userId,
-                              isbn13: bookSearchDetail.isbn13!,
-                            );
-
-                            setState(() {
-                              _isOnTapInterestBook = result.interested!;
-
-                              _isInterestBook(
-                                interested,
-                                interestCount,
-                                context,
-                              );
-                            });
-                          },
-                          interested: interested,
-                          isOnTapHeart: _isOnTapInterestBook,
+                          interested: bookInterestStatus.interested!,
+                          registered: bookRegisteredStatus.registered!,
+                          newRegistered: _registeredMyBook,
+                          completed: bookCompletedStatus.completed!,
                           thumbnail: bookSearchDetail.thumbnail!,
                           title: bookSearchDetail.title!,
                           authors: bookSearchDetail.authors!,
-                          interestCount: interestCount,
-                          newInterestCount: _newInterestCount,
+                          interestCount: bookSearchDetail.interestCount!,
                           readCount: bookSearchDetail.readCount!,
                           holderCount: bookSearchDetail.holderCount!,
+                          isbn13: bookSearchDetail.isbn13!,
                         ),
                         const BookDetailDivider(),
                         BookDetailInfo(
@@ -234,7 +231,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                       ],
                     ),
                   ),
-                  if (_registeredMyBook)
+                  if (bookRegisteredStatus.registered! || _registeredMyBook)
                     BottomButton(
                       isScrollingDown: _isScrollingDown,
                       buttonText: '마이북으로 이동하기',
@@ -264,38 +261,32 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
     );
   }
 
-  void _isInterestBook(
-    bool interested,
-    int interestCount,
-    BuildContext context,
-  ) {
-    if (!interested && _isOnTapInterestBook) {
-      _newInterestCount = interestCount + 1;
-      _showInterestBookMessage(
-        context: context,
-        snackBarText: '관심 도서에 담겼습니다.',
-        snackBarAction: _moveNextToInterestBookListScreen(),
-      );
-    } else if (interested && _isOnTapInterestBook == false) {
-      _newInterestCount = interestCount - 1;
-      _showInterestBookMessage(
-        context: context,
-        snackBarText: '관심 도서가 삭제되었습니다.',
-      );
-    } else if (interested && _isOnTapInterestBook) {
-      _newInterestCount = interestCount;
-      _showInterestBookMessage(
-        context: context,
-        snackBarText: '관심 도서에 담겼습니다.',
-        snackBarAction: _moveNextToInterestBookListScreen(),
-      );
-    } else {
-      _newInterestCount = interestCount;
-      _showInterestBookMessage(
-        context: context,
-        snackBarText: '관심 도서가 삭제되었습니다.',
-      );
-    }
+  List<Future<Object>> _futureBookSearchDetailData() {
+    return [
+      _bookSearchDetailResponse,
+      _bookInterestStatusResponseData,
+      _bookRegisteredStatusResponseData,
+      _bookCompletedStatusResponseData,
+    ];
+  }
+
+  BookSearchCommonResponse _buildBookSearchDetailData(List<Object> data) {
+    final [
+      bookSearchDetailResponseData,
+      bookInterestStatusResponseData,
+      bookRegisteredStatusResponseData,
+      bookCompletedStatusResponseData,
+    ] = data;
+    return BookSearchCommonResponse(
+      bookSearchDetailResponseData:
+          bookSearchDetailResponseData as BookSearchDetailResponseData,
+      bookInterestStatusResponseData:
+          bookInterestStatusResponseData as BookInterestStatusResponseData,
+      bookRegisteredStatusResponseData:
+          bookRegisteredStatusResponseData as BookRegisteredStatusResponseData,
+      bookCompletedStatusResponseData:
+          bookCompletedStatusResponseData as BookCompletedStatusResponseData,
+    );
   }
 
   ExpansionTile bookDetailExpansion({
@@ -324,56 +315,9 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
     );
   }
 
-  void _showInterestBookMessage({
-    required BuildContext context,
-    required String snackBarText,
-    Widget? snackBarAction,
-  }) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          padding: EdgeInsets.symmetric(
-            horizontal: 24.0,
-            vertical: Platform.isAndroid ? 22.0 : 16.0,
-          ),
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                snackBarText,
-                style: commonSnackBarMessageStyle.copyWith(fontSize: 14.0),
-              ),
-              snackBarAction ?? const SizedBox(),
-            ],
-          ),
-          duration: Duration(
-            seconds: snackBarAction == null ? 1 : 2,
-          ),
-        ),
-      );
-    }
-  }
-
-  Widget _moveNextToInterestBookListScreen() {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const InterestBookListScreen(),
-          ),
-        );
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      },
-      child: const Text(
-        '관심북으로 이동',
-        style: commonSnackBarButtonStyle,
-      ),
-    );
-  }
-
   void _onTapSaveMyBook(String isbn13) async {
     await _bookRepository.createMyBook(
+      context: context,
       userId: _userId,
       isbn13: isbn13,
     );

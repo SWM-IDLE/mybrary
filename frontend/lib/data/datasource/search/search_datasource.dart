@@ -1,6 +1,9 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:mybrary/data/model/search/book_completed_status_response.dart';
+import 'package:mybrary/data/model/search/book_interest_status_response.dart';
+import 'package:mybrary/data/model/search/book_registered_status_response.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/data/network/api.dart';
@@ -72,5 +75,68 @@ class SearchDataSource {
     );
 
     return result.data;
+  }
+
+  Future<BookInterestStatusResponseData> getBookInterestStatusResponse(
+      String isbn13) async {
+    Dio dio = DioService().to();
+    final bookInterestStatusResponse = await dio.get(
+        '${getBookServiceApi(API.getBookInterestStatus)}/$isbn13/interest-status');
+
+    log('관심 도서 여부 응답값: $bookInterestStatusResponse');
+    final BookInterestStatusResponse result = commonResponseResult(
+      bookInterestStatusResponse,
+      () => BookInterestStatusResponse(
+        status: bookInterestStatusResponse.data['status'],
+        message: bookInterestStatusResponse.data['message'],
+        data: BookInterestStatusResponseData.fromJson(
+          bookInterestStatusResponse.data['data'],
+        ),
+      ),
+    );
+
+    return result.data!;
+  }
+
+  Future<BookRegisteredStatusResponseData> getBookRegisteredStatusResponse(
+      String isbn13) async {
+    Dio dio = DioService().to();
+    final bookRegisteredStatusResponseData = await dio.get(
+        '${getBookServiceApi(API.getBookMyBookRegisteredStatus)}/$isbn13/mybook-registered-status');
+
+    log('등록 도서 여부 응답값: $bookRegisteredStatusResponseData');
+    final BookRegisteredStatusResponse result = commonResponseResult(
+      bookRegisteredStatusResponseData,
+      () => BookRegisteredStatusResponse(
+        status: bookRegisteredStatusResponseData.data['status'],
+        message: bookRegisteredStatusResponseData.data['message'],
+        data: BookRegisteredStatusResponseData.fromJson(
+          bookRegisteredStatusResponseData.data['data'],
+        ),
+      ),
+    );
+
+    return result.data!;
+  }
+
+  Future<BookCompletedStatusResponseData> getBookCompletedStatusResponse(
+      String isbn13) async {
+    Dio dio = DioService().to();
+    final bookCompletedStatusResponse = await dio.get(
+        '${getBookServiceApi(API.getBookInterestStatus)}/$isbn13/read-complete-status');
+
+    log('완독 도서 여부 응답값: $bookCompletedStatusResponse');
+    final BookCompletedStatusResponse result = commonResponseResult(
+      bookCompletedStatusResponse,
+      () => BookCompletedStatusResponse(
+        status: bookCompletedStatusResponse.data['status'],
+        message: bookCompletedStatusResponse.data['message'],
+        data: BookCompletedStatusResponseData.fromJson(
+          bookCompletedStatusResponse.data['data'],
+        ),
+      ),
+    );
+
+    return result.data!;
   }
 }

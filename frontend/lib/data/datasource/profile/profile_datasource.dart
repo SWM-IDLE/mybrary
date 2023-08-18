@@ -37,7 +37,10 @@ class ProfileDataSource {
     Dio dio = DioService().to();
     final profileUpdateResponse = await dio.put(
       '${getApi(API.updateUserProfile)}/$userId/profile',
-      options: Options(headers: {'User-Id': 'testId'}),
+      options: Options(
+        headers: {'User-Id': 'testId'},
+        contentType: Headers.jsonContentType,
+      ),
       data: {'nickname': newNickname, 'introduction': introduction},
     );
 
@@ -110,9 +113,7 @@ class ProfileDataSource {
     Dio dio = DioService().to();
     final profileImageDeleteResponse = await dio.delete(
       '${getApi(API.updateUserProfileImage)}/$userId/profile/image',
-      options: Options(
-        headers: {'User-Id': 'testId'},
-      ),
+      options: Options(headers: {'User-Id': 'testId'}),
     );
 
     log('프로필 이미지 삭제 응답값: $profileImageDeleteResponse');
