@@ -35,8 +35,8 @@ public class BookSearchRankingService {
     }
 
     public BookSearchRankingResponse getBookSearchKeywordRankingList() {
-        ZSetOperations<String, String> ZSetOperations = redisTemplate.opsForZSet();
-        Set<TypedTuple<String>> rankingSet = ZSetOperations.reverseRangeWithScores(RANKING_KEY, RANKING_START, RANKING_END);
+        Set<TypedTuple<String>> rankingSet = redisTemplate.opsForZSet()
+                .reverseRangeWithScores(RANKING_KEY, RANKING_START, RANKING_END);
 
         List<BookSearchRanking> bookSearchKeywordRanking = Optional.ofNullable(rankingSet)
                 .map(keywords -> keywords.stream()
