@@ -61,6 +61,10 @@ public class User extends BaseEntity {
 
     private String profileImageUrl;
 
+    private String profileImageThumbnailTinyUrl;
+
+    private String profileImageThumbnailSmallUrl;
+
     @OneToMany(mappedBy = "target", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Follow> followers;
 
