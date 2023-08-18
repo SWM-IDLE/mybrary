@@ -34,8 +34,7 @@ Future<Dio> authDio(BuildContext context) async {
     options.headers[accessTokenHeaderKey] = '$jwtHeaderBearer$accessToken';
     return handler.next(options);
   }, onError: (error, handler) async {
-    bool isExpired = error.requestOptions.data[expiredKey];
-    if (isExpired || error.response?.statusCode == 401) {
+    if (error.response?.statusCode == 401) {
       log('ERROR: Access 토큰 만료에 대한 클라이언트 및 서버 에러가 발생했습니다.');
 
       final accessToken = await secureStorage.read(key: accessTokenKey);

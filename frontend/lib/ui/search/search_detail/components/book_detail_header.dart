@@ -1,41 +1,68 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:html/parser.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
+import 'package:mybrary/data/repository/book_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
+import 'package:mybrary/ui/mybook/interest_book_list/interest_book_list_screen.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
 
-class BookDetailHeader extends StatelessWidget {
+class BookDetailHeader extends StatefulWidget {
   final String thumbnail;
   final String title;
   final List<Authors> authors;
   final int interestCount;
-  final int newInterestCount;
   final int readCount;
   final int holderCount;
   final bool interested;
-  final bool isOnTapHeart;
-  final GestureTapCallback? onTapInterestBook;
+  final bool completed;
+  final bool registered;
+  final bool newRegistered;
+
+  final String isbn13;
 
   const BookDetailHeader({
     required this.thumbnail,
     required this.title,
     required this.authors,
     required this.interestCount,
-    required this.newInterestCount,
     required this.readCount,
     required this.holderCount,
     required this.interested,
-    required this.isOnTapHeart,
-    required this.onTapInterestBook,
+    required this.completed,
+    required this.registered,
+    required this.newRegistered,
+    required this.isbn13,
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    String heartUrl = isOnTapHeart ? 'heart_green.svg' : 'heart.svg';
+  State<BookDetailHeader> createState() => _BookDetailHeaderState();
+}
 
+class _BookDetailHeaderState extends State<BookDetailHeader> {
+  final _bookRepository = BookRepository();
+
+  bool onTapInterestBook = false;
+  late bool _newInterested;
+  late int _newInterestCount;
+
+  final _userId = UserState.userId;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _newInterested = widget.interested;
+    _newInterestCount = widget.interestCount;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -56,7 +83,7 @@ class BookDetailHeader extends StatelessWidget {
               )
             ],
             image: DecorationImage(
-              image: NetworkImage(thumbnail),
+              image: NetworkImage(widget.thumbnail),
               fit: BoxFit.fill,
             ),
           ),
@@ -69,13 +96,13 @@ class BookDetailHeader extends StatelessWidget {
             children: [
               const SizedBox(height: 2.0),
               Text(
-                parse(title).documentElement!.text,
+                parse(widget.title).documentElement!.text,
                 style: bookDetailTitleStyle,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 6.0),
               Text(
-                bookAuthorsOrTranslators(authors),
+                bookAuthorsOrTranslators(widget.authors),
                 style: commonSubRegularStyle.copyWith(
                   color: bookDescriptionColor,
                 ),
@@ -91,11 +118,27 @@ class BookDetailHeader extends StatelessWidget {
               padding: 32.0,
               children: [
                 InkWell(
-                  onTap: () => onTapInterestBook!(),
+                  onTap: () async {
+                    final result =
+                        await _bookRepository.createOrDeleteInterestBook(
+                      userId: _userId,
+                      isbn13: widget.isbn13,
+                    );
+
+                    setState(() {
+                      onTapInterestBook = result.interested!;
+
+                      _isInterestBook(
+                        _newInterested,
+                        _newInterestCount,
+                        context,
+                      );
+                    });
+                  },
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/svg/icon/small/$heartUrl',
+                        'assets/svg/icon/small/${_newInterested ? 'heart_green.svg' : 'heart.svg'}',
                       ),
                       const SizedBox(height: 4.0),
                       const Text('읽고싶어요', style: bookStatusStyle),
@@ -104,7 +147,7 @@ class BookDetailHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  '${newInterestCount} 명',
+                  '$_newInterestCount 명',
                   style: bookStatusCountStyle,
                 ),
               ],
@@ -112,22 +155,46 @@ class BookDetailHeader extends StatelessWidget {
             bookStatusColumn(
               padding: 36.0,
               children: [
-                SvgPicture.asset('assets/svg/icon/small/read.svg'),
-                const SizedBox(height: 4.0),
-                const Text('완독했어요', style: bookStatusStyle),
+                InkWell(
+                  onTap: () async {},
+                  child: Column(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/svg/icon/small/${widget.completed ? 'heart_green.svg' : 'heart.svg'}',
+                      ),
+                      const SizedBox(height: 4.0),
+                      const Text('완독했어요', style: bookStatusStyle),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 8.0),
-                Text('$readCount 명', style: bookStatusCountStyle),
+                Text(
+                  '${widget.readCount} 명',
+                  style: bookStatusCountStyle,
+                ),
               ],
             ),
             bookStatusColumn(
               padding: 24.0,
               lastBox: true,
               children: [
-                SvgPicture.asset('assets/svg/icon/small/holder.svg'),
-                const SizedBox(height: 4.0),
-                const Text('소장하고있어요', style: bookStatusStyle),
+                InkWell(
+                  onTap: () async {},
+                  child: Column(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/svg/icon/small/${widget.newRegistered || widget.registered ? 'holder_green.svg' : 'holder.svg'}',
+                      ),
+                      const SizedBox(height: 4.0),
+                      const Text('소장하고있어요', style: bookStatusStyle),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 8.0),
-                Text('$holderCount 명', style: bookStatusCountStyle),
+                Text(
+                  '${widget.newRegistered == true ? widget.holderCount + 1 : widget.holderCount} 명',
+                  style: bookStatusCountStyle,
+                ),
               ],
             ),
           ],
@@ -158,6 +225,92 @@ class BookDetailHeader extends StatelessWidget {
         child: Column(
           children: children,
         ),
+      ),
+    );
+  }
+
+  void _isInterestBook(
+    bool interested,
+    int interestCount,
+    BuildContext context,
+  ) {
+    if (!interested && onTapInterestBook) {
+      _newInterested = true;
+      _newInterestCount = interestCount + 1;
+      _showInterestBookMessage(
+        context: context,
+        snackBarText: '관심 도서에 담겼습니다.',
+        snackBarAction: _moveNextToInterestBookListScreen(),
+      );
+    } else if (interested && onTapInterestBook == false) {
+      _newInterested = false;
+      _newInterestCount = interestCount - 1;
+      _showInterestBookMessage(
+        context: context,
+        snackBarText: '관심 도서가 삭제되었습니다.',
+      );
+    } else if (interested && onTapInterestBook) {
+      _newInterested = true;
+      _newInterestCount = interestCount;
+      _showInterestBookMessage(
+        context: context,
+        snackBarText: '관심 도서에 담겼습니다.',
+        snackBarAction: _moveNextToInterestBookListScreen(),
+      );
+    } else {
+      _newInterested = false;
+      _newInterestCount = interestCount;
+      _showInterestBookMessage(
+        context: context,
+        snackBarText: '관심 도서가 삭제되었습니다.',
+      );
+    }
+  }
+
+  void _showInterestBookMessage({
+    required BuildContext context,
+    required String snackBarText,
+    Widget? snackBarAction,
+  }) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          padding: EdgeInsets.symmetric(
+            horizontal: 24.0,
+            vertical: Platform.isAndroid ? 22.0 : 16.0,
+          ),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                snackBarText,
+                style: commonSnackBarMessageStyle.copyWith(fontSize: 14.0),
+              ),
+              snackBarAction ?? const SizedBox(),
+            ],
+          ),
+          duration: Duration(
+            seconds: snackBarAction == null ? 1 : 2,
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _moveNextToInterestBookListScreen() {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const InterestBookListScreen(),
+          ),
+        );
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      },
+      child: const Text(
+        '관심북으로 이동',
+        style: commonSnackBarButtonStyle,
       ),
     );
   }

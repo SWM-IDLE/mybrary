@@ -34,7 +34,6 @@ class BookSearchDetailResponseData {
   String? author;
   List<Authors>? authors;
   List<Translators>? translators;
-  bool? interested;
   double? starRating;
   int? reviewCount;
   String? publicationDate;
@@ -66,7 +65,6 @@ class BookSearchDetailResponseData {
     this.author,
     this.authors,
     this.translators,
-    this.interested,
     this.starRating,
     this.reviewCount,
     this.publicationDate,
@@ -109,7 +107,6 @@ class BookSearchDetailResponseData {
         translators!.add(Translators.fromJson(v));
       });
     }
-    interested = json['interested'] ?? false;
     starRating = json['starRating'] ?? 0.0;
     reviewCount = json['reviewCount'] ?? 0.0;
     publicationDate = json['publicationDate'] ?? '';
@@ -147,7 +144,6 @@ class BookSearchDetailResponseData {
     if (translators != null) {
       data['translators'] = translators!.map((v) => v.toJson()).toList();
     }
-    data['interested'] = interested;
     data['starRating'] = starRating;
     data['reviewCount'] = reviewCount;
     data['publicationDate'] = publicationDate;

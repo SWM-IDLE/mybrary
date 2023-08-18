@@ -33,6 +33,9 @@ enum API {
   getBookSearchKeyword,
   getBookSearchDetail,
   getBookSearchDetailReviews,
+  getBookInterestStatus,
+  getBookMyBookRegisteredStatus,
+  getBookReadCompleteStatus,
   getMyBooks,
   getMyBookDetail,
   getMyBookReview,
@@ -78,6 +81,12 @@ Map<API, String> apiMap = {
   API.getBookSearchDetail: "/book-service/api/v1/books/detail",
   API.getBookSearchDetailReviews:
       "/book-service/api/v1/books", // '/{isbn13}/reviews'
+  API.getBookInterestStatus:
+      "/book-service/api/v1/books", // '/{isbn13}/interest-status'
+  API.getBookMyBookRegisteredStatus:
+      "/book-service/api/v1/books", // '/{isbn13}/mybook-registered-status'
+  API.getBookReadCompleteStatus:
+      "/book-service/api/v1/books", // '/{isbn13}/read-complete-status'
   API.getMyBooks: "/book-service/api/v1/users", // '/{userId}/mybooks'
   API.getMyBookDetail: "/book-service/api/v1/mybooks", // '/{mybookId}'
   API.getMyBookReview: "/book-service/api/v1/mybooks", // '/{mybookId}/review'
