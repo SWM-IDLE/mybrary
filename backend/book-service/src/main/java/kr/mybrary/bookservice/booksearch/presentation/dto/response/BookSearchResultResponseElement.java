@@ -1,11 +1,12 @@
 package kr.mybrary.bookservice.booksearch.presentation.dto.response;
 
+import java.io.Serializable;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class BookSearchResultResponseElement {
+public class BookSearchResultResponseElement implements Serializable {
 
     private String title;
     private String description;

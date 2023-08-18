@@ -60,6 +60,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
     private static final String BOOK_LIST_BY_CATEGORY_NEXT_URL = "/books/search/book-list-by-category?type=%s&categoryId=%d&page=%d";
 
     @Override
+    @Cacheable(cacheNames = "bookListBySearchKeyword", key = "#request.keyword + '_' + #request.sort + '_' + #request.page", cacheManager = "cacheManager")
     public BookSearchResultResponse searchWithKeyword(BookSearchServiceRequest request) {
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(BOOK_SEARCH_URL)
