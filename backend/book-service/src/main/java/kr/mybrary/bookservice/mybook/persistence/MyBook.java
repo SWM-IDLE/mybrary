@@ -77,10 +77,14 @@ public class MyBook extends BaseEntity {
     }
 
     public void updateFromUpdateRequest(MybookUpdateServiceRequest updateRequest) {
+
+        ReadStatus previousReadStatus = this.readStatus;
         this.readStatus = updateRequest.getReadStatus();
         this.startDateOfPossession = updateRequest.getStartDateOfPossession();
         this.showable = updateRequest.isShowable();
         this.exchangeable = updateRequest.isExchangeable();
         this.shareable = updateRequest.isShareable();
+
+        this.book.adjustReadCount(previousReadStatus, updateRequest.getReadStatus());
     }
 }

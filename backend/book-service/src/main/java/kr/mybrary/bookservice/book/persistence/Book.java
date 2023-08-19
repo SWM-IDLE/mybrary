@@ -15,6 +15,7 @@ import kr.mybrary.bookservice.book.persistence.bookInfo.BookAuthor;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookCategory;
 import kr.mybrary.bookservice.book.persistence.bookInfo.BookTranslator;
 import kr.mybrary.bookservice.global.BaseEntity;
+import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -124,8 +125,20 @@ public class Book extends BaseEntity {
         this.interestCount--;
     }
 
-    public boolean isInterestedByLoginUser(String loginId) {
-        return this.bookInterests.stream()
-                .anyMatch(bookInterest -> bookInterest.getUserId().equals(loginId));
+    private void increaseReadCount() {
+        this.readCount++;
+    }
+
+    private void decreaseReadCount() {
+        this.readCount--;
+    }
+
+    public void adjustReadCount(ReadStatus previousReadStatus, ReadStatus currentReadStatus) {
+
+        if (previousReadStatus == ReadStatus.COMPLETED && currentReadStatus != ReadStatus.COMPLETED) {
+            this.decreaseReadCount();
+        } else if (previousReadStatus != ReadStatus.COMPLETED && currentReadStatus == ReadStatus.COMPLETED) {
+            this.increaseReadCount();
+        }
     }
 }
