@@ -164,7 +164,7 @@ class AladinBookSearchApiServiceTest {
         );
     }
 
-    @DisplayName("도서 검색 결과가 없으면 예외가 발생한다.")
+    @DisplayName("도서 검색 결과가 없으면 빈 응답을 반환한다.")
     @Test
     void searchWithKeywordAndResultEmpty() throws IOException {
 
@@ -178,10 +178,13 @@ class AladinBookSearchApiServiceTest {
                         + API_KEY))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
-        // when, then
+        // when
+        BookSearchResultResponse response = aladinBookSearchApiService.searchWithKeyword(request);
+
+        // then
         assertAll(
-                () -> assertThatThrownBy(() -> aladinBookSearchApiService.searchWithKeyword(request))
-                .isInstanceOf(BookSearchResultNotFoundException.class),
+                () -> assertThat(response.getBookSearchResult()).isEmpty(),
+                () -> assertThat(response.getNextRequestUrl()).isEqualTo(""),
                 () -> verify(bookSearchRankingService, never()).increaseSearchRankingScore(request.getKeyword())
         );
     }
