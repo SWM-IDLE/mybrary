@@ -3,9 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/res/constants/config.dart';
-import 'package:mybrary/utils/logics/parse_utils.dart';
 
 Future<Dio> authDio(BuildContext context) async {
   var dio = Dio();
@@ -17,30 +15,37 @@ Future<Dio> authDio(BuildContext context) async {
   dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
     final accessToken = await secureStorage.read(key: accessTokenKey);
 
-    final jwtPayload = parseJwt(accessToken!);
-    final int expiredTime = jwtPayload['exp'];
+    options.headers[accessTokenHeaderKey] = '$jwtHeaderBearer$accessToken';
+    return handler.next(options);
+  }, onError: (error, handler) async {
+    if (error.response?.statusCode == 401) {
+      log('ERROR: Access 토큰 만료에 대한 클라이언트 및 서버 에러가 발생했습니다.');
 
-    DateTime expiredDateTime =
-        DateTime.fromMillisecondsSinceEpoch(expiredTime * 1000);
-    final int expiredTimeStamp = expiredDateTime.millisecondsSinceEpoch;
-
-    DateTime todayDateTime = DateTime.now();
-    final int todayTimeStamp = todayDateTime.millisecondsSinceEpoch;
-
-    if (expiredTimeStamp < todayTimeStamp) {
       final accessToken = await secureStorage.read(key: accessTokenKey);
       final refreshToken = await secureStorage.read(key: refreshTokenKey);
 
       var refreshDio = Dio();
+
+      refreshDio.interceptors.clear();
+      refreshDio.interceptors
+          .add(InterceptorsWrapper(onError: (error, handler) async {
+        if (error.response?.statusCode == 401) {
+          log('ERROR: Refresh 토큰 만료에 대한 서버 에러가 발생했습니다.');
+          await secureStorage.deleteAll();
+
+          if (!context.mounted) return;
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              '/signin', (Route<dynamic> route) => false);
+        }
+        return handler.next(error);
+      }));
 
       refreshDio.options.headers[accessTokenHeaderKey] =
           '$jwtHeaderBearer$accessToken';
       refreshDio.options.headers[refreshTokenHeaderKey] =
           '$jwtHeaderBearer$refreshToken';
 
-      final refreshResponse = await refreshDio.get(
-        getApi(API.getRefreshToken),
-      );
+      final refreshResponse = await refreshDio.get(error.requestOptions.path);
 
       final newAccessToken = refreshResponse.headers[accessTokenHeaderKey]![0];
       final newRefreshToken =
@@ -49,38 +54,21 @@ Future<Dio> authDio(BuildContext context) async {
       await secureStorage.write(key: accessTokenKey, value: newAccessToken);
       await secureStorage.write(key: refreshTokenKey, value: newRefreshToken);
 
-      options.headers[accessTokenHeaderKey] = '$jwtHeaderBearer$newAccessToken';
+      error.requestOptions.headers[accessTokenHeaderKey] =
+          '$jwtHeaderBearer$newAccessToken';
 
       final clonedRequest = await dio.request(
-        options.path,
+        error.requestOptions.path,
         options: Options(
-          method: options.method,
-          headers: options.headers,
+          method: error.requestOptions.method,
+          headers: error.requestOptions.headers,
         ),
-        data: options.data,
-        queryParameters: options.queryParameters,
+        data: error.requestOptions.data,
+        queryParameters: error.requestOptions.queryParameters,
       );
 
       return handler.resolve(clonedRequest);
     }
-
-    options.headers[accessTokenHeaderKey] = '$jwtHeaderBearer$accessToken';
-    return handler.next(options);
-  }, onResponse: (Response response, ResponseInterceptorHandler handler) {
-    return handler.next(response);
-  }, onError: (error, handler) async {
-    if (error.response?.statusCode == 400) {
-      log('ERROR: Refresh 토큰 만료에 대한 서버 에러가 발생했습니다.');
-      await secureStorage.deleteAll();
-
-      if (context.mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/signin',
-          (Route<dynamic> route) => false,
-        );
-      }
-    }
-    return handler.reject(error);
   }));
 
   return dio;

@@ -10,7 +10,6 @@ import 'package:mybrary/ui/common/components/error_page.dart';
 import 'package:mybrary/ui/common/components/single_data_error.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/search/components/search_loading.dart';
-import 'package:mybrary/ui/search/search_book_list/components/search_book_list_header.dart';
 import 'package:mybrary/ui/search/search_book_list/components/search_book_list_info.dart';
 import 'package:mybrary/ui/search/search_book_list/components/search_user_info.dart';
 import 'package:mybrary/ui/search/search_book_list/components/search_user_layout.dart';
@@ -46,6 +45,7 @@ class _SearchBookListState extends State<SearchBookList>
 
   late String _bookSearchNextUrl;
   late List<BookSearchResult> _bookSearchResultData = [];
+  late List<SearchedUsers> _userSearchResultData = [];
   final String _bookSearchKeywordRequestUrl =
       getBookServiceApi(API.getBookSearchKeyword);
 
@@ -154,15 +154,16 @@ class _SearchBookListState extends State<SearchBookList>
                   }
                   return Column(
                     children: [
-                      searchInputBox(),
-                      if (_bookSearchResultData.isEmpty) ...[
+                      if (bookSearchResponse.bookSearchResult!.isEmpty) ...[
+                        const SizedBox(
+                          height: 290,
+                        ),
                         const SingleDataError(
                           errorMessage: '검색된 책이 없습니다.',
                         ),
                       ] else ...[
-                        SearchBookListHeader(
-                          keyword: _bookSearchKeywordController.text,
-                          bookSearchDataList: _bookSearchResultData,
+                        const SizedBox(
+                          height: 105.0,
                         ),
                         SearchBookListInfo(
                           bookSearchDataList: _bookSearchResultData,
@@ -200,8 +201,14 @@ class _SearchBookListState extends State<SearchBookList>
 
                 if (snapshot.hasData) {
                   UserSearchResponseData userSearchResponse = snapshot.data!;
+
+                  if (_userSearchResultData.isEmpty) {
+                    _userSearchResultData
+                        .addAll(userSearchResponse.searchedUsers!);
+                  }
+
                   return searchedUsersScreen(
-                    userSearchResponse.searchedUsers!,
+                    _userSearchResultData,
                   );
                 }
                 return const SingleDataError(
@@ -215,13 +222,12 @@ class _SearchBookListState extends State<SearchBookList>
     );
   }
 
-  Padding searchInputBox() {
+  Widget searchInputBox() {
     return Padding(
       padding: const EdgeInsets.only(
-        top: 0.0,
-        left: 18.0,
-        bottom: 12.0,
-        right: 18.0,
+        top: 12.0,
+        right: 8.0,
+        bottom: 4.0,
       ),
       child: TextField(
         textInputAction: TextInputAction.search,
@@ -234,6 +240,15 @@ class _SearchBookListState extends State<SearchBookList>
         },
         onSubmitted: (value) {
           _bookSearchKeywordController.text = value;
+
+          _searchRepository
+              .getUserSearchResponse(
+                context: context,
+                nickname: _bookSearchKeywordController.text,
+              )
+              .then((value) => setState(() {
+                    _userSearchResultData = value.searchedUsers!;
+                  }));
 
           _searchRepository
               .getBookSearchResponse(
@@ -314,13 +329,15 @@ class _SearchBookListState extends State<SearchBookList>
           elevation: 0,
           foregroundColor: commonBlackColor,
           backgroundColor: commonWhiteColor,
-          // expandedHeight: 120,
+          leadingWidth: 40,
           flexibleSpace: FlexibleSpaceBar(
             background: Container(
               color: commonWhiteColor,
             ),
           ),
-          title: const Text('검색'),
+          title: widget.searchKeyword.isEmpty
+              ? const Text('검색')
+              : searchInputBox(),
           titleTextStyle: appBarTitleStyle.copyWith(
             fontSize: 16.0,
           ),

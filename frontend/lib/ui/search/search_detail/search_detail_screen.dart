@@ -197,6 +197,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                           pages: bookSearchDetail.pages!,
                           publisher: bookSearchDetail.publisher!,
                           starRating: bookSearchDetail.starRating!,
+                          reviewCount: bookSearchDetail.reviewCount!,
                           link: bookSearchDetail.link!,
                           aladinStarRating: bookSearchDetail.aladinStarRating!,
                         ),
