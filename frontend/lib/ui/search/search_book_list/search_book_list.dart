@@ -359,6 +359,7 @@ class _SearchBookListState extends State<SearchBookList>
       return Padding(
         padding: EdgeInsets.only(top: paddingTopHeight),
         child: ListView.builder(
+          physics: const BouncingScrollPhysics(),
           itemCount: searchedUsers.length,
           itemBuilder: (context, index) {
             SearchedUsers searchedUser = searchedUsers[index];
