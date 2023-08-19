@@ -164,16 +164,21 @@ class MyReviewWriteServiceTest {
         );
     }
 
-    @DisplayName("마이 리뷰를 삭제한다.")
+    @DisplayName("마이 리뷰를 삭제한다. 삭제시 Book의 별점과 리뷰 수가 감소한다.")
     @Test
     void deleteMyReview() {
 
         // given
         MyReview myReview = MyReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
+                .book(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook().getBook())
                 .myBook(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()).build();
 
         MyReviewDeleteServiceRequest request = MyReviewDtoTestData.createMyReviewDeleteServiceRequest(
                 myReview.getMyBook().getUserId(), myReview.getId());
+
+        Double originBookStarRating = myReview.getBook().getStarRating();
+        Double originReviewStarRating = myReview.getStarRating();
+        Integer originReviewCount = myReview.getBook().getReviewCount();
 
         given(myBookReviewRepository.findByIdWithMyBookUsingFetchJoin(any())).willReturn(Optional.of(myReview));
 
@@ -183,6 +188,8 @@ class MyReviewWriteServiceTest {
         // then
         assertAll(
                 () -> assertThat(myReview.isDeleted()).isTrue(),
+                () -> assertThat(myReview.getBook().getStarRating()).isEqualTo(originBookStarRating - originReviewStarRating),
+                () -> assertThat(myReview.getBook().getReviewCount()).isEqualTo(originReviewCount - 1),
                 () -> verify(myBookReviewRepository, times(1)).findByIdWithMyBookUsingFetchJoin(any())
         );
     }

@@ -50,6 +50,7 @@ public class MyReviewWriteService {
         MyReview myReview = getMyReviewById(request.getMyReviewId());
         checkIsOwnerSameAsRequester(myReview.getMyBook().getUserId(), request.getLoginId());
 
+        myReview.getBook().removeReview(myReview.getStarRating());
         myReview.delete();
     }
 
