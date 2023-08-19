@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -29,7 +31,7 @@ public class UserController {
         );
     }
 
-     @GetMapping("/{userId}/profile")
+    @GetMapping("/{userId}/profile")
     public ResponseEntity<SuccessResponse> getProfile(@PathVariable("userId") String userId) {
         ProfileServiceResponse serviceResponse = userService.getProfile(userId);
 
@@ -54,28 +56,20 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/profile/image")
-    public ResponseEntity<SuccessResponse> getProfileImageUrl(@PathVariable("userId") String userId) {
-        ProfileImageUrlServiceResponse serviceResponse = userService.getProfileImageUrl(userId);
-
+    public ResponseEntity<SuccessResponse> getProfileImageUrl(@PathVariable("userId") String userId,
+                                                              @RequestParam(value = "size", required = false, defaultValue = "original") String size) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 프로필 이미지 URL입니다.",
-                        serviceResponse)
-        );
+                        userService.getProfileImageUrl(ProfileImageUrlServiceRequest.of(userId, size))));
     }
 
     @PutMapping("/{userId}/profile/image")
     public ResponseEntity<SuccessResponse> updateProfileImage(@PathVariable("userId") String userId,
                                                               @RequestHeader("USER-ID") String loginId,
                                                               @RequestParam("profileImage") MultipartFile profileImage) {
-        ProfileImageUpdateServiceRequest serviceRequest = ProfileImageUpdateServiceRequest.of(
-                profileImage, loginId, userId);
-        ProfileImageUrlServiceResponse serviceResponse = userService.updateProfileImage(
-                serviceRequest);
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 프로필 이미지를 등록했습니다.",
-                        serviceResponse)
-        );
+                        userService.updateProfileImage(ProfileImageUpdateServiceRequest.of(profileImage, loginId, userId, new Date()))));
     }
 
     @DeleteMapping("/{userId}/profile/image")
