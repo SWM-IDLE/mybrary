@@ -373,7 +373,7 @@ class MyBookRepositoryTest {
     @DisplayName("오늘 등록된 마이북의 갯수를 조회한다.")
     void getTodayBookRegistrationCount() {
 
-        // when
+        // given
         LocalDate today = LocalDate.now();
 
         Book savedBook_1 = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBookBuilder().isbn10("isbn10_1").isbn13("isbn13_1").build());
@@ -398,6 +398,33 @@ class MyBookRepositoryTest {
         assertAll(
                 () -> assertThat(todayBookRegistrationCount).isEqualTo(3L),
                 () -> assertThat(yesterdayBookRegistrationCount).isEqualTo(0L)
+        );
+    }
+
+    @DisplayName("유저 ID와 Book 엔티티를 통해 마이북을 조회한다.")
+    @Test
+    void findByUserIdAndBook() {
+
+        // given
+        Book savedBook = bookRepository.save(BookFixture.COMMON_BOOK_WITHOUT_RELATION.getBook());
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookWithBook(savedBook);
+        String userId = myBook.getUserId();
+
+        MyBook savedMyBook = myBookRepository.save(myBook);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Optional<MyBook> foundMyBook = myBookRepository.findByUserIdAndBook(userId, savedBook);
+
+        // then
+        assertAll(
+                () -> {
+                    assertThat(foundMyBook.isPresent()).isTrue();
+                    assertThat(foundMyBook.get().getId()).isEqualTo(savedMyBook.getId());
+                    assertThat(foundMyBook.get().getUserId()).isEqualTo(savedMyBook.getUserId());
+                }
         );
     }
 }
