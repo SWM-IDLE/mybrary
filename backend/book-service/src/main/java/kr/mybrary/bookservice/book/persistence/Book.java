@@ -150,4 +150,9 @@ public class Book extends BaseEntity {
     public void recalculateStarRating(Double originStarRating, Double starRating) {
         this.starRating = (this.starRating - originStarRating) + starRating;
     }
+
+    public void removeReview(Double originReviewStarRating) {
+        this.reviewCount--;
+        this.starRating -= originReviewStarRating;
+    }
 }
