@@ -112,15 +112,20 @@ class MyReviewWriteServiceTest {
         );
     }
 
-    @DisplayName("마이 리뷰를 수정한다.")
+    @DisplayName("마이 리뷰를 수정한다. 수정시 기존 Book의 별점도 수정된다.")
     @Test
     void updateMyReview() {
 
         // given
         MyReview myReview = MyReviewFixture.COMMON_MY_BOOK_REVIEW.getMyBookReviewBuilder()
+                .book(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook().getBook())
                 .myBook(MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook()).build();
         MyReviewUpdateServiceRequest request = MyReviewDtoTestData.createMyReviewUpdateServiceRequest(
                 myReview.getMyBook().getUserId(), myReview.getId());
+
+        Double originBookStarRating = myReview.getBook().getStarRating();
+        Double originReviewStarRating = myReview.getStarRating();
+        Double newReviewStarRating = request.getStarRating();
 
         given(myBookReviewRepository.findByIdWithMyBookUsingFetchJoin(any())).willReturn(Optional.of(myReview));
 
@@ -129,10 +134,12 @@ class MyReviewWriteServiceTest {
 
         // then
         assertAll(
-                () -> verify(myBookReviewRepository, times(1)).findByIdWithMyBookUsingFetchJoin(any()),
                 () -> assertThat(response.getId()).isEqualTo(myReview.getId()),
                 () -> assertThat(response.getContent()).isEqualTo(myReview.getContent()),
-                () -> assertThat(response.getStarRating()).isEqualTo(myReview.getStarRating())
+                () -> assertThat(response.getStarRating()).isEqualTo(myReview.getStarRating()),
+                () -> assertThat(myReview.getBook().getStarRating())
+                        .isEqualTo(originBookStarRating - originReviewStarRating + newReviewStarRating),
+                () -> verify(myBookReviewRepository, times(1)).findByIdWithMyBookUsingFetchJoin(any())
         );
     }
 
