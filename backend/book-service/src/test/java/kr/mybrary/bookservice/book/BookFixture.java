@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 public enum BookFixture {
 
     COMMON_BOOK(1L, "title", "subTitle", "author","thumbnailUrl", "link", "isbn10", "isbn13", 100, "publisher",
-            LocalDateTime.now(), "description", "toc", 10, 11, 12, 13, 10000, 11000, 1, 1, 1, 4.5, 1, 3.5, 10,
+            LocalDateTime.now(), "description", "toc", 10, 11, 12, 13, 10000, 11000, 1, 1, 1, 4.5, 2, 3.5, 10,
             createBookCategory(), createBookAuthors(), createBookTranslators(), createBookInterest()),
 
     COMMON_BOOK_WITHOUT_RELATION(null, "title", "author","subTitle", "thumbnailUrl", "link", "isbn10", "isbn13", 100, "publisher",
