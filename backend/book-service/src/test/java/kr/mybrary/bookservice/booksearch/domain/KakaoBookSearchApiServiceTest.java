@@ -132,7 +132,7 @@ class KakaoBookSearchApiServiceTest {
         );
     }
 
-    @DisplayName("도서 검색 결과가 존재하지 않으면, 예외가 발생한다.")
+    @DisplayName("도서 검색 결과가 존재하지 않으면, 빈 응답을 반환한다.")
     @Test
     void searchFromKakaoApiAndResultNotExist() throws IOException {
 
@@ -140,20 +140,18 @@ class KakaoBookSearchApiServiceTest {
         String expectResult = readJsonFile("resultEmpty.json");
 
         mockServer
-                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "/isbn?isbn=" + NOT_EXIST_ISBN))
+                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "?query=empty keywordr&sort=accuracy&page=1"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
-        BookSearchServiceRequest request = BookSearchServiceRequest.of(NOT_EXIST_ISBN);
+        BookSearchServiceRequest request = BookSearchServiceRequest.of("empty keyword", "accuracy", 1);
 
-        // when then
-        BookSearchResultNotFoundException exception = assertThrows(
-                BookSearchResultNotFoundException.class,
-                () -> kakaoBookSearchApiService.searchBookDetailWithISBN(request));
+        // when
+        BookSearchResultResponse response = kakaoBookSearchApiService.searchWithKeyword(request);
 
+        // then
         assertAll(
-                () -> assertThat(exception.getStatus()).isEqualTo(404),
-                () -> assertThat(exception.getErrorMessage()).isEqualTo("도서 검색 결과가 존재하지 않습니다."),
-                () -> assertThat(exception.getErrorCode()).isEqualTo("B-01")
+                () -> assertThat(response.getBookSearchResult()).isEmpty(),
+                () -> assertThat(response.getNextRequestUrl()).isEqualTo("")
         );
     }
 

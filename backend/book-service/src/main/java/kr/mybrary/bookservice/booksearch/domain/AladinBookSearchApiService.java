@@ -81,7 +81,9 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
 
         AladinBookSearchResponse response = Objects.requireNonNull(searchResponse.getBody());
 
-        checkIfSearchResultExists(response.getTotalResults());
+        if (response.getTotalResults() == 0) {
+            return BookSearchResultResponse.of(List.of(), "");
+        }
 
         List<BookSearchResultResponseElement> bookSearchResultResponseElement = response.getItem().stream()
                 .filter(book -> hasISBN13(book.getIsbn13()))

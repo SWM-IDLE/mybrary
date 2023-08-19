@@ -54,6 +54,10 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
 
         KakaoBookSearchResponse searchResponse = requestBookSearch(API_URL_WITH_KEYWORD, request);
 
+        if (searchResponse.getDocuments().isEmpty()) {
+            return BookSearchResultResponse.of(List.of(), "");
+        }
+
         List<BookSearchResultResponseElement> response =
                 searchResponse.getDocuments().stream()
                 .map(BookSearchDtoMapper.INSTANCE::kakaoSearchResponseToServiceResponse)
@@ -73,6 +77,10 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
     public BookSearchDetailResponse searchBookDetailWithISBN(BookSearchServiceRequest request) {
 
         KakaoBookSearchResponse response = requestBookSearch(API_URL_WITH_ISBN, request);
+
+        if (response.getDocuments().isEmpty()) {
+            throw new BookSearchResultNotFoundException();
+        }
 
         return BookSearchDtoMapper.INSTANCE.kakaoSearchResponseToDetailResponse(response.getDocuments().get(0));
     }
@@ -96,12 +104,24 @@ public class KakaoBookSearchApiService implements PlatformBookSearchApiService {
         List<KakaoBookSearchResponse.Document> documents = Objects.requireNonNull(response.getBody()).getDocuments();
 
         if (documents.isEmpty()) {
-            throw new BookSearchResultNotFoundException();
+            return emptyResponse();
         }
+
         return response.getBody();
     }
 
     private Boolean isLastPage(Meta metaData) {
         return metaData.getIs_end();
+    }
+
+    private KakaoBookSearchResponse emptyResponse() {
+        return KakaoBookSearchResponse.builder()
+                .documents(List.of())
+                .meta(Meta.builder()
+                        .is_end(true)
+                        .pageable_count(0)
+                        .total_count(0)
+                        .build())
+                .build();
     }
 }
