@@ -5,6 +5,7 @@ import 'package:mybrary/data/model/search/book_interest_status_response.dart';
 import 'package:mybrary/data/model/search/book_registered_status_response.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
+import 'package:mybrary/data/model/search/user_search_response.dart';
 
 class SearchRepository {
   final SearchDataSource _searchDataSource = SearchDataSource();
@@ -56,5 +57,12 @@ class SearchRepository {
     required String isbn13,
   }) {
     return _searchDataSource.getBookCompletedStatusResponse(context, isbn13);
+  }
+
+  Future<UserSearchResponseData> getUserSearchResponse({
+    required BuildContext context,
+    required String nickname,
+  }) {
+    return _searchDataSource.getUserSearchResponse(context, nickname);
   }
 }

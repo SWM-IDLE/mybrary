@@ -48,7 +48,7 @@ class SearchPopularKeyword extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (_) => SearchBookList(
-                        bookSearchKeyword: popularSearchKeyword[index],
+                        searchKeyword: popularSearchKeyword[index],
                       ),
                     ),
                   ).then(

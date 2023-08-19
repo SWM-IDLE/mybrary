@@ -7,6 +7,7 @@ import 'package:mybrary/data/model/search/book_interest_status_response.dart';
 import 'package:mybrary/data/model/search/book_registered_status_response.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
 import 'package:mybrary/data/model/search/book_search_response.dart';
+import 'package:mybrary/data/model/search/user_search_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/utils/dios/auth_dio.dart';
 
@@ -145,6 +146,29 @@ class SearchDataSource {
         message: bookCompletedStatusResponse.data['message'],
         data: BookCompletedStatusResponseData.fromJson(
           bookCompletedStatusResponse.data['data'],
+        ),
+      ),
+    );
+
+    return result.data!;
+  }
+
+  Future<UserSearchResponseData> getUserSearchResponse(
+    BuildContext context,
+    String nickname,
+  ) async {
+    final dio = await authDio(context);
+    final userSearchResponse =
+        await dio.get('${getApi(API.getUserSearch)}?nickname=$nickname');
+
+    log('사용자 검색 응답값: $userSearchResponse');
+    final UserSearchResponse result = commonResponseResult(
+      userSearchResponse,
+      () => UserSearchResponse(
+        status: userSearchResponse.data['status'],
+        message: userSearchResponse.data['message'],
+        data: UserSearchResponseData.fromJson(
+          userSearchResponse.data['data'],
         ),
       ),
     );

@@ -348,3 +348,7 @@ const settingInfoStyle = TextStyle(
   fontSize: 14.0,
   fontWeight: FontWeight.w400,
 );
+
+// padding
+final double paddingTopHeight =
+    Size.fromHeight(const SliverAppBar().toolbarHeight).height * 1.9;
