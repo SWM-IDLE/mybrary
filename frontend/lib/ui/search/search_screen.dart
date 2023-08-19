@@ -107,7 +107,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => SearchBookList(
-                                    bookSearchKeyword: value,
+                                    searchKeyword: value,
                                   ),
                                 ),
                               ).then(
