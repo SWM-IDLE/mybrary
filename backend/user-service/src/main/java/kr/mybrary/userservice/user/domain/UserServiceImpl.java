@@ -7,6 +7,7 @@ import kr.mybrary.userservice.user.domain.dto.request.*;
 import kr.mybrary.userservice.user.domain.dto.response.*;
 import kr.mybrary.userservice.user.domain.exception.follow.DuplicateFollowException;
 import kr.mybrary.userservice.user.domain.exception.follow.SameSourceTargetUserException;
+import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageSizeOptionNotSupportedException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileUpdateRequestNotAuthenticated;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateNicknameException;
@@ -172,7 +173,7 @@ public class UserServiceImpl implements UserService {
         if(size.equals("small")) {
             return user.getProfileImageThumbnailSmallUrl();
         }
-        throw  new IllegalArgumentException("size 값이 잘못되었습니다.");
+        throw new ProfileImageSizeOptionNotSupportedException();
     }
 
     private void updateProfileImageThumbnailUrl(User user, String size) {
@@ -184,7 +185,7 @@ public class UserServiceImpl implements UserService {
             user.updateProfileImageThumbnailSmallUrl(storageService.getResizedUrl(user.getProfileImageUrl(), size));
             return;
         }
-        throw  new IllegalArgumentException("size 값이 잘못되었습니다.");
+        throw new ProfileImageSizeOptionNotSupportedException();
     }
 
     @Override
