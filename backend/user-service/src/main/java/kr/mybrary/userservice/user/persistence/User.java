@@ -90,6 +90,14 @@ public class User extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public void updateProfileImageThumbnailTinyUrl(String profileImageThumbnailTinyUrl) {
+        this.profileImageThumbnailTinyUrl = profileImageThumbnailTinyUrl;
+    }
+
+    public void updateProfileImageThumbnailSmallUrl(String profileImageThumbnailSmallUrl) {
+        this.profileImageThumbnailSmallUrl = profileImageThumbnailSmallUrl;
+    }
+
     public void follow(User target) {
         Follow follow = Follow.builder()
             .source(this)
