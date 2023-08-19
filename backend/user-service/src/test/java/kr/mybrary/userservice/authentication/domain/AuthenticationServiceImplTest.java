@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.mybrary.userservice.authentication.domain.exception.AccessTokenNotFoundException;
 import kr.mybrary.userservice.authentication.domain.exception.InvalidRefreshTokenException;
+import kr.mybrary.userservice.authentication.domain.exception.RefreshTokenExpiredException;
 import kr.mybrary.userservice.authentication.domain.exception.RefreshTokenNotFoundException;
 import kr.mybrary.userservice.global.util.JwtUtil;
 import kr.mybrary.userservice.global.util.RedisUtil;
@@ -116,6 +117,34 @@ class AuthenticationServiceImplTest {
                 () -> verify(jwtUtil, times(1)).extractRefreshToken(request),
                 () -> verify(jwtUtil, never()).parseLoginId(ORIGINAL_ACCESS_TOKEN),
                 () -> verify(redisUtil, never()).get(LOGIN_ID),
+                () -> verify(jwtUtil, never()).createRefreshToken(any(LocalDateTime.class)),
+                () -> verify(jwtUtil, never()).createAccessToken(anyString(), any(LocalDateTime.class)),
+                () -> verify(redisUtil, never()).set(anyString(), anyString(), any(Duration.class)),
+                () -> verify(jwtUtil, never()).sendAccessAndRefreshToken(response, RE_ISSUED_ACCESS_TOKEN, RE_ISSUED_REFRESH_TOKEN)
+        );
+    }
+
+    @Test
+    @DisplayName("액세스 토큰과 리프레쉬 토큰을 재발급할 때 리프레쉬 토큰이 만료되었으면 예외가 발생한다.")
+    void reIssueTokenWithExpiredRefreshToken() {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        given(jwtUtil.extractAccessToken(request)).willReturn(Optional.of(ORIGINAL_ACCESS_TOKEN));
+        given(jwtUtil.extractRefreshToken(request)).willReturn(Optional.of(ORIGINAL_REFRESH_TOKEN));
+        given(jwtUtil.parseLoginId(ORIGINAL_ACCESS_TOKEN)).willReturn(LOGIN_ID);
+        given(redisUtil.get(LOGIN_ID)).willReturn(null);
+
+        // when
+        assertThrows(RefreshTokenExpiredException.class, () -> authenticationService.reIssueToken(request, response));
+
+        // then
+        assertAll(
+                () -> verify(jwtUtil, times(1)).extractAccessToken(request),
+                () -> verify(jwtUtil, times(1)).extractRefreshToken(request),
+                () -> verify(jwtUtil, times(1)).parseLoginId(ORIGINAL_ACCESS_TOKEN),
+                () -> verify(redisUtil, times(1)).get(LOGIN_ID),
                 () -> verify(jwtUtil, never()).createRefreshToken(any(LocalDateTime.class)),
                 () -> verify(jwtUtil, never()).createAccessToken(anyString(), any(LocalDateTime.class)),
                 () -> verify(redisUtil, never()).set(anyString(), anyString(), any(Duration.class)),
