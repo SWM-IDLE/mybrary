@@ -215,7 +215,7 @@ class UserControllerTest {
 
         ProfileServiceResponse profileServiceResponse = ProfileServiceResponse.builder()
                 .nickname(profileUpdateRequest.getNickname())
-                .profileImageUrl("profileImageUrl_1")
+                .profileImageUrl("profileImageUrl")
                 .introduction(profileUpdateRequest.getIntroduction())
                 .build();
 
@@ -288,16 +288,16 @@ class UserControllerTest {
     void getProfileImageUrl() throws Exception {
         // given
         ProfileImageUrlServiceResponse profileImageUrlServiceResponse = ProfileImageUrlServiceResponse.builder()
-                .profileImageUrl("profileImageUrl_1")
+                .profileImageUrl("tiny_profileImageUrl")
                 .build();
 
-        given(userService.getProfileImageUrl(anyString())).willReturn(
+        given(userService.getProfileImageUrl(any(ProfileImageUrlServiceRequest.class))).willReturn(
                 profileImageUrlServiceResponse);
 
         // when
         ResultActions actions = mockMvc.perform(
                 RestDocumentationRequestBuilders.get(BASE_URL+"/{userId}/profile/image", USER_ID)
-                        .with(csrf()));
+                        .param("size", "tiny"));
 
         // then
         actions
@@ -307,7 +307,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.data.profileImageUrl").value(
                         profileImageUrlServiceResponse.getProfileImageUrl()));
 
-        verify(userService).getProfileImageUrl(anyString());
+        verify(userService).getProfileImageUrl(any(ProfileImageUrlServiceRequest.class));
 
         // docs
         actions.andDo(document("get-user-profile-image",
@@ -317,9 +317,13 @@ class UserControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("user-profile")
                                 .summary("사용자의 프로필 이미지 URL을 조회한다.")
+                                .description("size는 tiny, small, original이 가능하다. 기본값은 original이다. 리사이징 된 이미지가 없으면 original 이미지 url을 반환한다.")
                                 .requestSchema(Schema.schema("get_user_profile_image_request_body"))
                                 .pathParameters(
                                         parameterWithName("userId").description("사용자의 아이디")
+                                )
+                                .queryParameters(
+                                        parameterWithName("size").type(SimpleType.STRING).description("프로필 이미지의 크기")
                                 )
                                 .responseSchema(
                                         Schema.schema("get_user_profile_image_response_body"))
@@ -341,10 +345,10 @@ class UserControllerTest {
     void updateProfileImage() throws Exception {
         // given
         MockMultipartFile profileImage = new MockMultipartFile("profileImage", "user1.png", "image/jpg",
-                "profileImage".getBytes());
+                "new_profileImage".getBytes());
 
         ProfileImageUrlServiceResponse profileImageUrlServiceResponse = ProfileImageUrlServiceResponse.builder()
-                .profileImageUrl("profileImageUrl")
+                .profileImageUrl("new_profileImageUrl")
                 .build();
 
         given(userService.updateProfileImage(any(ProfileImageUpdateServiceRequest.class))).willReturn(
@@ -408,7 +412,7 @@ class UserControllerTest {
     void deleteProfileImage() throws Exception {
         // given
         ProfileImageUrlServiceResponse profileImageUrlServiceResponse = ProfileImageUrlServiceResponse.builder()
-                .profileImageUrl("profileImageUrl_1")
+                .profileImageUrl("default_profileImageUrl")
                 .build();
 
         given(userService.deleteProfileImage(any(ProfileImageUpdateServiceRequest.class))).willReturn(
