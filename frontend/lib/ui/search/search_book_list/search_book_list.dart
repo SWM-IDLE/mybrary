@@ -35,20 +35,20 @@ class _SearchBookListState extends State<SearchBookList>
     vsync: this,
   );
 
-  final TextEditingController _bookSearchKeywordController =
-      TextEditingController();
   final ScrollController _searchScrollController = ScrollController();
   final ScrollController _tabScrollController = ScrollController();
+  final TextEditingController _bookSearchKeywordController =
+      TextEditingController();
 
   final _searchRepository = SearchRepository();
   late Future<BookSearchResponseData> _bookSearchResponse;
   late Future<UserSearchResponseData> _userSearchResponse;
 
   late String _bookSearchNextUrl;
+  late List<BookSearchResult> _bookSearchResultData = [];
   final String _bookSearchKeywordRequestUrl =
       getBookServiceApi(API.getBookSearchKeyword);
 
-  late List<BookSearchResult> _bookSearchResultData = [];
   late bool _isError = false;
   late bool _isScrollLoading = false;
   late bool _isClearButtonVisible = false;
@@ -155,14 +155,20 @@ class _SearchBookListState extends State<SearchBookList>
                   return Column(
                     children: [
                       searchInputBox(),
-                      SearchBookListHeader(
-                        keyword: _bookSearchKeywordController.text,
-                        bookSearchDataList: _bookSearchResultData,
-                      ),
-                      SearchBookListInfo(
-                        bookSearchDataList: _bookSearchResultData,
-                        scrollController: _searchScrollController,
-                      ),
+                      if (_bookSearchResultData.isEmpty) ...[
+                        const SingleDataError(
+                          errorMessage: '검색된 책이 없습니다.',
+                        ),
+                      ] else ...[
+                        SearchBookListHeader(
+                          keyword: _bookSearchKeywordController.text,
+                          bookSearchDataList: _bookSearchResultData,
+                        ),
+                        SearchBookListInfo(
+                          bookSearchDataList: _bookSearchResultData,
+                          scrollController: _searchScrollController,
+                        ),
+                      ],
                     ],
                   );
                 }
@@ -344,11 +350,7 @@ class _SearchBookListState extends State<SearchBookList>
       unselectedLabelStyle: commonButtonTextStyle.copyWith(
         fontWeight: FontWeight.w400,
       ),
-      tabs: searchTabs
-          .map(
-            (String name) => Tab(text: name),
-          )
-          .toList(),
+      tabs: searchTabs.map((String name) => Tab(text: name)).toList(),
     );
   }
 
@@ -360,7 +362,6 @@ class _SearchBookListState extends State<SearchBookList>
           itemCount: searchedUsers.length,
           itemBuilder: (context, index) {
             SearchedUsers searchedUser = searchedUsers[index];
-            String searchedUserId = searchedUser.userId!;
 
             return SearchUserLayout(
               children: [
