@@ -120,7 +120,7 @@ class BookDtoMapperTest {
         assertAll(
                 () -> assertThat(bookDetailResponse.getTitle()).isEqualTo(book.getTitle()),
                 () -> assertThat(bookDetailResponse.getThumbnail()).isEqualTo(book.getThumbnailUrl()),
-                () -> assertThat(bookDetailResponse.getStarRating()).isEqualTo(book.getStarRating()),
+                () -> assertThat(bookDetailResponse.getStarRating()).isEqualTo(getAverageStarRating(book)),
                 () -> assertThat(bookDetailResponse.getReviewCount()).isEqualTo(book.getReviewCount()),
                 () -> assertThat(bookDetailResponse.getAladinStarRating()).isEqualTo(book.getAladinStarRating()),
                 () -> assertThat(bookDetailResponse.getAladinReviewCount()).isEqualTo(book.getAladinReviewCount()),
@@ -264,5 +264,13 @@ class BookDtoMapperTest {
                 () -> assertThat(target.getThumbnailUrl()).isEqualTo(source.getBook().getThumbnailUrl()),
                 () -> assertThat(target.getAuthor()).isEqualTo(source.getBook().getAuthor())
         );
+    }
+
+    private double getAverageStarRating(Book book) {
+        if (book.getReviewCount() == 0) {
+            return 0.0;
+        }
+        double averageRating = (double) book.getStarRating() / book.getReviewCount();
+        return Math.round(averageRating * 10.0) / 10.0;
     }
 }
