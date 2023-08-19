@@ -461,7 +461,7 @@ class MyBookReadServiceTest {
                 .readStatus(ReadStatus.COMPLETED).build();
 
         given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.of(book));
-        given(myBookRepository.findByIdWithBook(book.getId())).willReturn(Optional.of(myBook));
+        given(myBookRepository.findByUserIdAndBook(request.getLoginId(), book)).willReturn(Optional.of(myBook));
 
         // when
         MyBookReadCompletedStatusResponse response = myBookService.getMyBookReadCompletedStatus(request);
@@ -469,7 +469,7 @@ class MyBookReadServiceTest {
         // then
         assertAll(
                 () -> verify(bookReadService, times(1)).findOptionalBookByISBN13(anyString()),
-                () -> verify(myBookRepository, times(1)).findByIdWithBook(any()),
+                () -> verify(myBookRepository, times(1)).findByUserIdAndBook(any(), any()),
                 () -> assertThat(response.isCompleted()).isTrue()
         );
     }
@@ -488,7 +488,7 @@ class MyBookReadServiceTest {
         // then
         assertAll(
                 () -> verify(bookReadService, times(1)).findOptionalBookByISBN13(anyString()),
-                () -> verify(myBookRepository, never()).findByIdWithBook(any()),
+                () -> verify(myBookRepository, never()).findByUserIdAndBook(any(), any()),
                 () -> assertThat(response.isCompleted()).isFalse()
         );
     }
@@ -500,9 +500,10 @@ class MyBookReadServiceTest {
         // given
         MyBookReadCompletedStatusServiceRequest request = MybookDtoTestData.createMyBookReadCompletedStatusServiceRequest();
         Book book = BookFixture.COMMON_BOOK.getBook();
+        String userId = "LOGIN_USER_ID";
 
         given(bookReadService.findOptionalBookByISBN13(request.getIsbn13())).willReturn(Optional.of(book));
-        given(myBookRepository.findByIdWithBook(book.getId())).willReturn(Optional.empty());
+        given(myBookRepository.findByUserIdAndBook(userId, book)).willReturn(Optional.empty());
 
         // when
         MyBookReadCompletedStatusResponse response = myBookService.getMyBookReadCompletedStatus(request);
@@ -510,7 +511,7 @@ class MyBookReadServiceTest {
         // then
         assertAll(
                 () -> verify(bookReadService, times(1)).findOptionalBookByISBN13(anyString()),
-                () -> verify(myBookRepository, times(1)).findByIdWithBook(any()),
+                () -> verify(myBookRepository, times(1)).findByUserIdAndBook(any(), any()),
                 () -> assertThat(response.isCompleted()).isFalse()
         );
     }

@@ -140,7 +140,7 @@ public class MyBookService {
             MyBookReadCompletedStatusServiceRequest request) {
 
         return bookReadService.findOptionalBookByISBN13(request.getIsbn13())
-                .map(book -> myBookRepository.findByIdWithBook(book.getId())
+                .map(book -> myBookRepository.findByUserIdAndBook(request.getLoginId(), book)
                                 .map(myBook -> MyBookReadCompletedStatusResponse.of(myBook.getReadStatus() == ReadStatus.COMPLETED))
                                 .orElseGet(() -> MyBookReadCompletedStatusResponse.of(false)))
                 .orElseGet(() -> MyBookReadCompletedStatusResponse.of(false));
