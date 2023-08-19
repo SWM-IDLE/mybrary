@@ -9,6 +9,7 @@ import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookFindAllServiceRequ
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookReadCompletedStatusServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MyBookRegisteredStatusServiceRequest;
 import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest;
+import kr.mybrary.bookservice.mybook.domain.dto.request.MybookUpdateServiceRequest.MybookUpdateServiceRequestBuilder;
 import kr.mybrary.bookservice.mybook.persistence.MyBookOrderType;
 import kr.mybrary.bookservice.mybook.persistence.ReadStatus;
 import kr.mybrary.bookservice.mybook.persistence.model.MyBookListDisplayElementModel;
@@ -141,7 +142,7 @@ public class MybookDtoTestData {
                 .build();
     }
 
-    public static MybookUpdateServiceRequest createMyBookUpdateServiceRequest(String loginId, Long myBookId) {
+    public static MybookUpdateServiceRequestBuilder createMyBookUpdateServiceRequest(String loginId, Long myBookId) {
         return MybookUpdateServiceRequest.builder()
                 .loginId(loginId)
                 .myBookId(myBookId)
@@ -153,8 +154,7 @@ public class MybookDtoTestData {
                 .meaningTag(MybookUpdateServiceRequest.MeaningTag.builder()
                         .quote("the book that help me dream")
                         .colorCode("#FFFFFF")
-                        .build())
-                .build();
+                        .build());
     }
 
     public static MyBookListDisplayElementModelBuilder createMyBookListDisplayElementModelBuilder() {

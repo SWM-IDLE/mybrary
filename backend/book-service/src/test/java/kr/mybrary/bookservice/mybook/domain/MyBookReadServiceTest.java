@@ -103,8 +103,7 @@ class MyBookReadServiceTest {
         // given
         MyBookCreateServiceRequest request = MybookDtoTestData.createMyBookCreateServiceRequest();
 
-        given(bookReadService.getRegisteredBookByISBN13(anyString()))
-                .willReturn(Book.builder().id(1L).build());
+        given(bookReadService.getRegisteredBookByISBN13(anyString())).willReturn(Book.builder().id(1L).build());
         given(myBookRepository.existsByUserIdAndBook(any(), any())).willReturn(true);
 
         // when, then
@@ -122,8 +121,7 @@ class MyBookReadServiceTest {
     void findAllMyBooks() {
 
         //given
-        MyBookFindAllServiceRequest request = MybookDtoTestData.createMyBookFindAllServiceRequest(
-                LOGIN_ID, LOGIN_ID);
+        MyBookFindAllServiceRequest request = MybookDtoTestData.createMyBookFindAllServiceRequest(LOGIN_ID, LOGIN_ID);
 
         given(myBookRepository.findMyBookListDisplayElementModelsByUserId(any(), any(), any())).willReturn(
                 List.of(MybookDtoTestData.createMyBookListDisplayElementModelBuilder().build(),
@@ -144,8 +142,7 @@ class MyBookReadServiceTest {
     void findOtherUserAllMyBooks() {
 
         //given
-        MyBookFindAllServiceRequest request = MybookDtoTestData.createMyBookFindAllServiceRequest(
-                OTHER_USER_ID, LOGIN_ID);
+        MyBookFindAllServiceRequest request = MybookDtoTestData.createMyBookFindAllServiceRequest(OTHER_USER_ID, LOGIN_ID);
 
         given(myBookRepository.findMyBookListDisplayElementModelsByUserId(any(), any(), any())).willReturn(
                 List.of(MybookDtoTestData.createMyBookListDisplayElementModelBuilder().build(),
@@ -169,8 +166,7 @@ class MyBookReadServiceTest {
         MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findMyBookDetailUsingFetchJoin(any())).willReturn(
-                Optional.ofNullable(myBook));
+        given(myBookRepository.findMyBookDetailUsingFetchJoin(any())).willReturn(Optional.ofNullable(myBook));
 
         // when
         MyBookDetailResponse myBookDetail = myBookService.findMyBookDetail(request);
@@ -211,8 +207,7 @@ class MyBookReadServiceTest {
         MyBookDetailServiceRequest request = MyBookDetailServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MyBookFixture.NOT_SHOWABLE_OTHER_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findMyBookDetailUsingFetchJoin(any())).willReturn(
-                Optional.ofNullable(myBook));
+        given(myBookRepository.findMyBookDetailUsingFetchJoin(any())).willReturn(Optional.ofNullable(myBook));
 
         // when, then
         assertAll(
@@ -256,8 +251,7 @@ class MyBookReadServiceTest {
         MyBookDeleteServiceRequest request = MyBookDeleteServiceRequest.of(LOGIN_ID, 1L);
         MyBook myBook = MyBookFixture.COMMON_OTHER_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findById(any())).willReturn(
-                Optional.ofNullable(myBook));
+        given(myBookRepository.findById(any())).willReturn(Optional.ofNullable(myBook));
 
         // when, then
         assertAll(
@@ -276,12 +270,10 @@ class MyBookReadServiceTest {
     void updateMyBook() {
 
         //given
-        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(
-                LOGIN_ID, MYBOOK_ID);
+        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(LOGIN_ID, MYBOOK_ID).build();
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
 
-        given(myBookRepository.findById(any())).willReturn(
-                Optional.ofNullable(myBook));
+        given(myBookRepository.findById(any())).willReturn(Optional.ofNullable(myBook));
         willDoNothing().given(meaningTagService).assignMeaningTag(any());
 
         // when
@@ -292,16 +284,86 @@ class MyBookReadServiceTest {
                 () -> verify(myBookRepository).findById(request.getMyBookId()),
                 () -> {
                     assertThat(myBook).isNotNull();
-                    assertThat(response.getStartDateOfPossession()).isEqualTo(
-                            request.getStartDateOfPossession());
+                    assertThat(response.getStartDateOfPossession()).isEqualTo(request.getStartDateOfPossession());
                     assertThat(response.isExchangeable()).isEqualTo(request.isExchangeable());
                     assertThat(response.isShareable()).isEqualTo(request.isShareable());
                     assertThat(response.isShowable()).isEqualTo(request.isShowable());
                     assertThat(response.getReadStatus()).isEqualTo(request.getReadStatus());
-                    assertThat(response.getMeaningTag().getQuote()).isEqualTo(
-                            request.getMeaningTag().getQuote());
-                    assertThat(response.getMeaningTag().getColorCode()).isEqualTo(
-                            request.getMeaningTag().getColorCode());
+                    assertThat(response.getMeaningTag().getQuote()).isEqualTo(request.getMeaningTag().getQuote());
+                    assertThat(response.getMeaningTag().getColorCode()).isEqualTo(request.getMeaningTag().getColorCode());
+                }
+        );
+    }
+
+    @DisplayName("독서 상태를 완독으로 수정할 때, 도서의 readCount가 1 증가한다.")
+    @Test
+    void updateMyBookReadStatusToCompleted() {
+
+        //given
+        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(LOGIN_ID, MYBOOK_ID)
+                .readStatus(ReadStatus.COMPLETED)
+                .build();
+
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
+        Integer originReadCount = myBook.getBook().getReadCount();
+
+        given(myBookRepository.findById(any())).willReturn(Optional.ofNullable(myBook));
+        willDoNothing().given(meaningTagService).assignMeaningTag(any());
+
+        // when
+        MyBookUpdateResponse response = myBookService.updateMyBookProperties(request);
+
+        // then
+        assertAll(
+                () -> verify(myBookRepository).findById(request.getMyBookId()),
+                () -> {
+                    assertThat(myBook).isNotNull();
+                    assertThat(myBook.getBook().getReadCount()).isEqualTo(originReadCount + 1);
+                    assertThat(response.getStartDateOfPossession()).isEqualTo(request.getStartDateOfPossession());
+                    assertThat(response.isExchangeable()).isEqualTo(request.isExchangeable());
+                    assertThat(response.isShareable()).isEqualTo(request.isShareable());
+                    assertThat(response.isShowable()).isEqualTo(request.isShowable());
+                    assertThat(response.getReadStatus()).isEqualTo(request.getReadStatus());
+                    assertThat(response.getMeaningTag().getQuote()).isEqualTo(request.getMeaningTag().getQuote());
+                    assertThat(response.getMeaningTag().getColorCode()).isEqualTo(request.getMeaningTag().getColorCode());
+                }
+        );
+    }
+
+    @DisplayName("독서 상태를 완독에서 읽는 중으로 수정할 때, 도서의 readCount가 1 감소한다")
+    @Test
+    void updateMyBookReadStatusToReadingFromCompleted() {
+
+        //given
+        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(LOGIN_ID, MYBOOK_ID)
+                .readStatus(ReadStatus.READING)
+                .build();
+
+        MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBookBuilder()
+                .readStatus(ReadStatus.COMPLETED)
+                .build();
+
+        Integer originReadCount = myBook.getBook().getReadCount();
+
+        given(myBookRepository.findById(any())).willReturn(Optional.ofNullable(myBook));
+        willDoNothing().given(meaningTagService).assignMeaningTag(any());
+
+        // when
+        MyBookUpdateResponse response = myBookService.updateMyBookProperties(request);
+
+        // then
+        assertAll(
+                () -> verify(myBookRepository).findById(request.getMyBookId()),
+                () -> {
+                    assertThat(myBook).isNotNull();
+                    assertThat(myBook.getBook().getReadCount()).isEqualTo(originReadCount - 1);
+                    assertThat(response.getStartDateOfPossession()).isEqualTo(request.getStartDateOfPossession());
+                    assertThat(response.isExchangeable()).isEqualTo(request.isExchangeable());
+                    assertThat(response.isShareable()).isEqualTo(request.isShareable());
+                    assertThat(response.isShowable()).isEqualTo(request.isShowable());
+                    assertThat(response.getReadStatus()).isEqualTo(request.getReadStatus());
+                    assertThat(response.getMeaningTag().getQuote()).isEqualTo(request.getMeaningTag().getQuote());
+                    assertThat(response.getMeaningTag().getColorCode()).isEqualTo(request.getMeaningTag().getColorCode());
                 }
         );
     }
@@ -311,8 +373,7 @@ class MyBookReadServiceTest {
     void occurExceptionWhenUpdateOtherUserMyBook() {
 
         //given
-        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(
-                LOGIN_ID, MYBOOK_ID);
+        MybookUpdateServiceRequest request = MybookDtoTestData.createMyBookUpdateServiceRequest(LOGIN_ID, MYBOOK_ID).build();
         MyBook myBook = MyBookFixture.COMMON_OTHER_USER_MYBOOK.getMyBook();
 
         given(myBookRepository.findById(any())).willReturn(
