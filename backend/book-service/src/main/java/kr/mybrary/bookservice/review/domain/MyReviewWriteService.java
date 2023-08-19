@@ -36,10 +36,12 @@ public class MyReviewWriteService {
     public MyReviewUpdateResponse update(MyReviewUpdateServiceRequest request) {
 
         MyReview myReview = getMyReviewById(request.getMyReviewId());
+        Double originStarRating = myReview.getStarRating();
 
         checkIsOwnerSameAsRequester(myReview.getMyBook().getUserId(), request.getLoginId());
 
         myReview.update(request);
+        myReview.getBook().recalculateStarRating(originStarRating, request.getStarRating());
         return MyReviewUpdateResponse.of(myReview);
     }
 
