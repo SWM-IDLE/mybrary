@@ -12,7 +12,6 @@ import kr.mybrary.userservice.user.domain.exception.profile.ProfileUpdateRequest
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateNicknameException;
 import kr.mybrary.userservice.user.domain.exception.user.UserNotFoundException;
-import kr.mybrary.userservice.user.domain.exception.user.UserNotSearchedException;
 import kr.mybrary.userservice.user.domain.storage.StorageService;
 import kr.mybrary.userservice.user.persistence.Role;
 import kr.mybrary.userservice.user.persistence.User;
@@ -562,19 +561,17 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("닉네임으로 사용자를 검색할 때 사용자가 검색되지 않으면 예외를 던진다")
-    void searchUsersByNicknameAndUserNotSearched() {
+    @DisplayName("닉네임으로 사용자를 검색할 때 검색된 사용자가 없으면 빈 목록을 반환한다")
+    void searchUsersByNicknameWithEmptyResult() {
         // Given
         given(userRepository.findByNicknameContaining("nickname")).willReturn(Collections.emptyList());
 
         // When
-        assertThatThrownBy(() -> userService.searchByNickname("nickname"))
-                .isInstanceOf(UserNotSearchedException.class)
-                .hasFieldOrPropertyWithValue("status", 404)
-                .hasFieldOrPropertyWithValue("errorCode", "U-07")
-                .hasFieldOrPropertyWithValue("errorMessage", "검색된 사용자가 없습니다.");
+        SearchServiceResponse searchServiceResponse = userService.searchByNickname("nickname");
 
         // Then
+        assertThat(searchServiceResponse.getSearchedUsers()).isEmpty();
+
         verify(userRepository).findByNicknameContaining("nickname");
     }
 
