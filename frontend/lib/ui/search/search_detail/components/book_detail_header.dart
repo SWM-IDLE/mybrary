@@ -161,7 +161,7 @@ class _BookDetailHeaderState extends State<BookDetailHeader> {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        'assets/svg/icon/small/${widget.completed ? 'heart_green.svg' : 'heart.svg'}',
+                        'assets/svg/icon/small/${widget.completed ? 'read_green.svg' : 'read.svg'}',
                       ),
                       const SizedBox(height: 4.0),
                       const Text('완독했어요', style: bookStatusStyle),

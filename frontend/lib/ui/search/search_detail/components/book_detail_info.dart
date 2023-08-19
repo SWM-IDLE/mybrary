@@ -10,6 +10,7 @@ class BookDetailInfo extends StatelessWidget {
   final int pages;
   final String publisher;
   final double starRating;
+  final int reviewCount;
   final String link;
   final double aladinStarRating;
 
@@ -19,6 +20,7 @@ class BookDetailInfo extends StatelessWidget {
     required this.pages,
     required this.publisher,
     required this.starRating,
+    required this.reviewCount,
     required this.link,
     required this.aladinStarRating,
     super.key,
@@ -53,7 +55,7 @@ class BookDetailInfo extends StatelessWidget {
                 ],
               ),
               Text(
-                '리뷰 0개',
+                '리뷰 $reviewCount개',
                 style: bookDetailSubStyle.copyWith(
                   decoration: TextDecoration.underline,
                 ),
