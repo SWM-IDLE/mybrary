@@ -4,11 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.mybrary.userservice.authentication.domain.exception.AccessTokenNotFoundException;
 import kr.mybrary.userservice.authentication.domain.exception.InvalidRefreshTokenException;
+import kr.mybrary.userservice.authentication.domain.exception.RefreshTokenExpiredException;
 import kr.mybrary.userservice.authentication.domain.exception.RefreshTokenNotFoundException;
 import kr.mybrary.userservice.global.util.JwtUtil;
 import kr.mybrary.userservice.global.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +36,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private void checkRefreshToken(String loginId, String refreshToken) {
         String redisRefreshToken = (String) redisUtil.get(loginId);
-        if (redisRefreshToken == null || !redisRefreshToken.equals(refreshToken)) {
+        if (redisRefreshToken == null) {
+            throw new RefreshTokenExpiredException();
+        }
+        if (!redisRefreshToken.equals(refreshToken)) {
             throw new InvalidRefreshTokenException();
         }
     }
