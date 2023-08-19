@@ -18,6 +18,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import static kr.mybrary.userservice.global.constant.ImageConstant.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -93,7 +95,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private User saveUser(OAuthAttributes attributes, SocialType socialType) {
         User createdUser = attributes.toEntity(socialType, attributes.getOAuth2UserInfo());
         createdUser.updatePassword(passwordEncoder.encode(createdUser.getPassword()));
+        setDefaultProfileImage(createdUser);
         return userRepository.save(createdUser);
+    }
+
+    private void setDefaultProfileImage(User createdUser) {
+        createdUser.updateProfileImageUrl(DEFAULT_PROFILE_IMAGE.getUrl());
+        createdUser.updateProfileImageThumbnailTinyUrl(DEFAULT_PROFILE_IMAGE_TINY.getUrl());
+        createdUser.updateProfileImageThumbnailSmallUrl(DEFAULT_PROFILE_IMAGE_SMALL.getUrl());
     }
 
 }
