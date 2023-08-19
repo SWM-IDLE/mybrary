@@ -28,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kr.mybrary.userservice.global.constant.ImageConstant.*;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -36,11 +38,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    // TODO: StorageService 결합도 낮추기
     private final StorageService storageService;
-
-    private static final String DEFAULT_PROFILE_IMAGE_URL = "https://mybrary-user-service.s3.ap-northeast-2.amazonaws.com/profile/profileImage/default.jpg";
-    private static final String PROFILE_IMAGE_PATH = "profile/profileImage/";
+    private static final String PROFILE_IMAGE_PATH_FORMAT = "profile/profileImage/%s/";
     private static final int MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024;
 
     @Override
@@ -52,11 +51,17 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.INSTANCE.toEntity(serviceRequest);
         user.updatePassword(passwordEncoder.encode(user.getPassword()));
         user.updateRole(Role.USER);
-        user.updateProfileImageUrl(DEFAULT_PROFILE_IMAGE_URL);
+        setDefaultProfileImage(user);
         SignUpServiceResponse serviceResponse = UserMapper.INSTANCE.toSignUpServiceResponse(
                 userRepository.save(user));
 
         return serviceResponse;
+    }
+
+    private void setDefaultProfileImage(User user) {
+        user.updateProfileImageUrl(DEFAULT_PROFILE_IMAGE.getUrl());
+        user.updateProfileImageThumbnailTinyUrl(DEFAULT_PROFILE_IMAGE_TINY.getUrl());
+        user.updateProfileImageThumbnailSmallUrl(DEFAULT_PROFILE_IMAGE_SMALL.getUrl());
     }
 
     private void validateDuplicateNickname(String nickname) {
@@ -119,22 +124,66 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProfileImageUrlServiceResponse getProfileImageUrl(String loginId) {
-        User user = getUser(loginId);
-
-        checkProfileImageUrlExistence(user);
-
-        ProfileImageUrlServiceResponse serviceResponse = ProfileImageUrlServiceResponse.builder()
-                .profileImageUrl(user.getProfileImageUrl())
+    public ProfileImageUrlServiceResponse getProfileImageUrl(ProfileImageUrlServiceRequest serviceRequest) {
+        return ProfileImageUrlServiceResponse.builder()
+                .profileImageUrl(getProfileImageUrlBy(getUser(serviceRequest.getUserId()), serviceRequest.getSize()))
                 .build();
+    }
 
-        return serviceResponse;
+    private String getProfileImageUrlBy(User user, String size) {
+        if(size.equals("original")) {
+            return getOriginalProfileImageUrl(user);
+        }
+        return getResizedProfileImageUrl(user, size);
+    }
+
+    private String getOriginalProfileImageUrl(User user) {
+        checkProfileImageUrlExistence(user);
+        return user.getProfileImageUrl();
     }
 
     private void checkProfileImageUrlExistence(User user) {
         if (user.getProfileImageUrl() == null) {
             throw new ProfileImageUrlNotFoundException();
         }
+    }
+
+    private String getResizedProfileImageUrl(User user, String size) {
+        if(isProfileImageThumbnailUrlUpdated(user, size)) {
+            return getProfileImageThumbnailUrl(user, size);
+        }
+        if(storageService.hasResizedFiles(storageService.getPathFromUrl(user.getProfileImageUrl()), size)) {
+            updateProfileImageThumbnailUrl(user, size);
+            return getProfileImageThumbnailUrl(user, size);
+        }
+        return getOriginalProfileImageUrl(user);
+    }
+
+    private boolean isProfileImageThumbnailUrlUpdated(User user, String size) {
+        return storageService.getPathFromUrl(getProfileImageThumbnailUrl(user, size))
+                .equals(size + "-" + storageService.getPathFromUrl(user.getProfileImageUrl()));
+    }
+
+    private String getProfileImageThumbnailUrl(User user, String size) {
+        if(size.equals("tiny")) {
+            return user.getProfileImageThumbnailTinyUrl();
+        }
+        if(size.equals("small")) {
+            return user.getProfileImageThumbnailSmallUrl();
+        }
+        throw  new IllegalArgumentException("size 값이 잘못되었습니다.");
+    }
+
+    private void updateProfileImageThumbnailUrl(User user, String size) {
+        if(size.equals("tiny")) {
+            user.updateProfileImageThumbnailTinyUrl(storageService.getResizedUrl(user.getProfileImageUrl(), size));
+            return;
+        }
+        if(size.equals("small")) {
+            user.updateProfileImageThumbnailSmallUrl(storageService.getResizedUrl(user.getProfileImageUrl(), size));
+            return;
+        }
+        throw  new IllegalArgumentException("size 값이 잘못되었습니다.");
     }
 
     @Override
@@ -146,7 +195,9 @@ public class UserServiceImpl implements UserService {
         User user = getUser(serviceRequest.getLoginId());
 
         String profileImageUrl = storageService.putFile(serviceRequest.getProfileImage(),
-                MultipartFileUtil.generateFilePath(PROFILE_IMAGE_PATH, serviceRequest.getLoginId(), serviceRequest.getProfileImage()));
+                MultipartFileUtil.generateFilePath(String.format(PROFILE_IMAGE_PATH_FORMAT, serviceRequest.getLoginId()),
+                        MultipartFileUtil.generateTimestampFileName(serviceRequest.getDate()),
+                        MultipartFileUtil.getFileExtension(serviceRequest.getProfileImage())));
 
         user.updateProfileImageUrl(profileImageUrl);
         ProfileImageUrlServiceResponse serviceResponse = ProfileImageUrlServiceResponse.builder()
@@ -179,8 +230,7 @@ public class UserServiceImpl implements UserService {
         checkProfileImageUpdateRequestAuthentication(serviceRequest);
 
         User user = getUser(serviceRequest.getLoginId());
-
-        user.updateProfileImageUrl(DEFAULT_PROFILE_IMAGE_URL);
+        setDefaultProfileImage(user);
         ProfileImageUrlServiceResponse serviceResponse = ProfileImageUrlServiceResponse.builder()
                 .profileImageUrl(user.getProfileImageUrl())
                 .build();

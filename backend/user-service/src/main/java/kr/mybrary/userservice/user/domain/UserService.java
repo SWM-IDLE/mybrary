@@ -13,7 +13,7 @@ public interface UserService {
 
     ProfileServiceResponse updateProfile(ProfileUpdateServiceRequest serviceRequest);
 
-    ProfileImageUrlServiceResponse getProfileImageUrl(String loginId);
+    ProfileImageUrlServiceResponse getProfileImageUrl(ProfileImageUrlServiceRequest serviceRequest);
 
     ProfileImageUrlServiceResponse updateProfileImage(ProfileImageUpdateServiceRequest serviceRequest);
 
