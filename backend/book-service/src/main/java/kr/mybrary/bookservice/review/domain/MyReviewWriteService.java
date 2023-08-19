@@ -30,6 +30,7 @@ public class MyReviewWriteService {
         checkMyBookReviewAlreadyRegistered(myBook);
 
         myReviewRepository.save(MyReview.of(myBook, request));
+        myBook.getBook().adjustReviewCountAndStarRating(request.getStarRating());
     }
 
     public MyReviewUpdateResponse update(MyReviewUpdateServiceRequest request) {
