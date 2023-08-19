@@ -142,17 +142,17 @@ public class Book extends BaseEntity {
         }
     }
 
-    public void adjustReviewCountAndStarRating(Double starRating) {
+    public void updateWhenCreateReview(Double newStartRating) {
         this.reviewCount++;
-        this.starRating += starRating;
+        this.starRating += newStartRating;
     }
 
-    public void recalculateStarRating(Double originStarRating, Double starRating) {
-        this.starRating = (this.starRating - originStarRating) + starRating;
+    public void updateWhenUpdateReview(Double originStarRating, Double newStarRating) {
+        this.starRating = (this.starRating - originStarRating) + newStarRating;
     }
 
-    public void removeReview(Double originReviewStarRating) {
+    public void updateWhenDeleteReview(Double originStarRating) {
         this.reviewCount--;
-        this.starRating -= originReviewStarRating;
+        this.starRating -= originStarRating;
     }
 }

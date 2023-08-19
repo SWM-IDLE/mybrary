@@ -1,5 +1,6 @@
 package kr.mybrary.bookservice.review.domain;
 
+import kr.mybrary.bookservice.book.persistence.Book;
 import kr.mybrary.bookservice.mybook.domain.MyBookService;
 import kr.mybrary.bookservice.mybook.persistence.MyBook;
 import kr.mybrary.bookservice.review.domain.dto.request.MyReviewCreateServiceRequest;
@@ -30,27 +31,31 @@ public class MyReviewWriteService {
         checkMyBookReviewAlreadyRegistered(myBook);
 
         myReviewRepository.save(MyReview.of(myBook, request));
-        myBook.getBook().adjustReviewCountAndStarRating(request.getStarRating());
+        Double newStarRating = request.getStarRating();
+        addBookReviewCountAndStarRating(myBook.getBook(), newStarRating);
     }
+
 
     public MyReviewUpdateResponse update(MyReviewUpdateServiceRequest request) {
 
         MyReview myReview = getMyReviewById(request.getMyReviewId());
         Double originStarRating = myReview.getStarRating();
+        Double newStarRating = request.getStarRating();
 
         checkIsOwnerSameAsRequester(myReview.getMyBook().getUserId(), request.getLoginId());
 
         myReview.update(request);
-        myReview.getBook().recalculateStarRating(originStarRating, request.getStarRating());
+        updateBookStarRating(myReview.getBook(), originStarRating, newStarRating);
         return MyReviewUpdateResponse.of(myReview);
     }
+
 
     public void delete(MyReviewDeleteServiceRequest request) {
 
         MyReview myReview = getMyReviewById(request.getMyReviewId());
         checkIsOwnerSameAsRequester(myReview.getMyBook().getUserId(), request.getLoginId());
 
-        myReview.getBook().removeReview(myReview.getStarRating());
+        removeBookReviewCountAndStarRating(myReview.getBook(), myReview.getStarRating());
         myReview.delete();
     }
 
@@ -69,5 +74,17 @@ public class MyReviewWriteService {
         if (myReviewRepository.existsByMyBook(myBook)) {
             throw new MyReviewAlreadyExistsException();
         }
+    }
+
+    private void addBookReviewCountAndStarRating(Book book, Double newStarRating) {
+        book.updateWhenCreateReview(newStarRating);
+    }
+
+    private void updateBookStarRating(Book book, Double originStarRating, Double newStarRating) {
+        book.updateWhenUpdateReview(originStarRating, newStarRating);
+    }
+
+    private static void removeBookReviewCountAndStarRating(Book book, Double originStarRating) {
+        book.updateWhenDeleteReview(originStarRating);
     }
 }
