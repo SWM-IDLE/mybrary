@@ -141,4 +141,9 @@ public class Book extends BaseEntity {
             this.increaseReadCount();
         }
     }
+
+    public void adjustReviewCountAndStarRating(Double starRating) {
+        this.reviewCount++;
+        this.starRating += starRating;
+    }
 }

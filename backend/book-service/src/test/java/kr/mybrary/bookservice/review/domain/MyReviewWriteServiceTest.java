@@ -44,13 +44,15 @@ class MyReviewWriteServiceTest {
     @Mock
     private MyBookService myBookService;
 
-    @DisplayName("마이북 리뷰를 등록한다.")
+    @DisplayName("마이북 리뷰를 등록한다. 리뷰 등록시 Book의 리뷰 수와 별점이 변경된다.")
     @Test
     void create() {
 
         // given
         MyReviewCreateServiceRequest request = MyReviewDtoTestData.createMyBookReviewCreateServiceRequest();
         MyBook myBook = MyBookFixture.COMMON_LOGIN_USER_MYBOOK.getMyBook();
+        Integer originReviewCount = myBook.getBook().getReviewCount();
+        Double originStarRating = myBook.getBook().getStarRating();
 
         given(myBookService.findMyBookByIdWithBook(request.getMyBookId())).willReturn(myBook);
         given(myBookReviewRepository.existsByMyBook(myBook)).willReturn(false);
@@ -61,6 +63,8 @@ class MyReviewWriteServiceTest {
 
         // then
         assertAll(
+                () -> assertThat(myBook.getBook().getReviewCount()).isEqualTo(originReviewCount + 1),
+                () -> assertThat(myBook.getBook().getStarRating()).isEqualTo(originStarRating + request.getStarRating()),
                 () -> verify(myBookService, times(1)).findMyBookByIdWithBook(request.getMyBookId()),
                 () -> verify(myBookReviewRepository, times(1)).existsByMyBook(myBook),
                 () -> verify(myBookReviewRepository, times(1)).save(any())
