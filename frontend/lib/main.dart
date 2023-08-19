@@ -112,6 +112,8 @@ class Init {
 
     final accessToken = await secureStorage.read(key: accessTokenKey);
     final refreshToken = await secureStorage.read(key: refreshTokenKey);
+    print('accessToken: $accessToken');
+    print('refreshToken: $refreshToken');
 
     if (accessToken == null || refreshToken == null) {
       return const SignInScreen();
