@@ -61,7 +61,7 @@ Future<Dio> authDio(BuildContext context) async {
         queryParameters: options.queryParameters,
       );
 
-      return handler.resolve(clonedRequest, true);
+      return handler.resolve(clonedRequest);
     }
 
     options.headers[accessTokenHeaderKey] = '$jwtHeaderBearer$accessToken';
@@ -80,7 +80,7 @@ Future<Dio> authDio(BuildContext context) async {
         );
       }
     }
-    return handler.next(error);
+    return handler.reject(error);
   }));
 
   return dio;
