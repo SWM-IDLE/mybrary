@@ -26,20 +26,6 @@ Future<Dio> authDio(BuildContext context) async {
 
       var refreshDio = Dio();
 
-      refreshDio.interceptors.clear();
-      refreshDio.interceptors
-          .add(InterceptorsWrapper(onError: (error, handler) async {
-        if (error.response?.statusCode == 401) {
-          log('ERROR: Refresh 토큰 만료에 대한 서버 에러가 발생했습니다.');
-          await secureStorage.deleteAll();
-
-          if (!context.mounted) return;
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              '/signin', (Route<dynamic> route) => false);
-        }
-        return handler.next(error);
-      }));
-
       refreshDio.options.headers[accessTokenHeaderKey] =
           '$jwtHeaderBearer$accessToken';
       refreshDio.options.headers[refreshTokenHeaderKey] =
@@ -69,6 +55,15 @@ Future<Dio> authDio(BuildContext context) async {
 
       return handler.resolve(clonedRequest);
     }
+    if (error.response?.statusCode == 401) {
+      log('ERROR: Refresh 토큰 만료에 대한 서버 에러가 발생했습니다.');
+      await secureStorage.deleteAll();
+
+      if (!context.mounted) return;
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/signin', (Route<dynamic> route) => false);
+    }
+    return handler.next(error);
   }));
 
   return dio;
