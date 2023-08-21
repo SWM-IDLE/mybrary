@@ -39,9 +39,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (redisRefreshToken == null) {
             throw new RefreshTokenExpiredException();
         }
-        if (!redisRefreshToken.equals(refreshToken)) {
+        if (isRefreshTokenDifferent(refreshToken, redisRefreshToken)) {
             throw new InvalidRefreshTokenException();
         }
+    }
+
+    private boolean isRefreshTokenDifferent(String refreshToken, String redisRefreshToken) {
+        return !redisRefreshToken.equals(refreshToken);
     }
 
     private void reIssueAccessTokenAndRefreshToken(HttpServletResponse response, String loginId) {
