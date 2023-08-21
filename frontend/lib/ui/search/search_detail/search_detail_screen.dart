@@ -192,6 +192,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                         ),
                         const BookDetailDivider(),
                         BookDetailInfo(
+                          isbn13: bookSearchDetail.isbn13!,
                           publicationDate: bookSearchDetail.publicationDate!,
                           category: bookSearchDetail.category!,
                           pages: bookSearchDetail.pages!,

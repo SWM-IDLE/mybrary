@@ -4,9 +4,11 @@ import 'package:mybrary/res/constants/style.dart';
 
 class DataError extends StatelessWidget {
   final String errorMessage;
+  final IconData? icon;
 
   const DataError({
     required this.errorMessage,
+    this.icon,
     super.key,
   });
 
@@ -17,8 +19,8 @@ class DataError extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.info,
+          Icon(
+            icon ?? Icons.info,
             size: 78.0,
             color: grey777777,
           ),

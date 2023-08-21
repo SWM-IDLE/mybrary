@@ -277,6 +277,19 @@ const aladinTextStyle = TextStyle(
   fontWeight: FontWeight.w400,
 );
 
+const starRatingTextStyle = TextStyle(
+  height: 1.25,
+  color: grey262626,
+  fontSize: 15.0,
+  fontWeight: FontWeight.w500,
+);
+
+const bookReviewTitleStyle = TextStyle(
+  color: grey777777,
+  fontSize: 14.0,
+  fontWeight: FontWeight.w400,
+);
+
 // main page style
 const mainIntroTextStyle = TextStyle(
   height: 1.2,

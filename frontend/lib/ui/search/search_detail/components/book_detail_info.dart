@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
+import 'package:mybrary/ui/search/search_detail_review/search_detail_review_screen.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
 
 class BookDetailInfo extends StatelessWidget {
+  final String isbn13;
   final String publicationDate;
   final String category;
   final int pages;
@@ -15,6 +17,7 @@ class BookDetailInfo extends StatelessWidget {
   final double aladinStarRating;
 
   const BookDetailInfo({
+    required this.isbn13,
     required this.publicationDate,
     required this.category,
     required this.pages,
@@ -51,13 +54,24 @@ class BookDetailInfo extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10.0),
-                  starRatingRow(starRating),
+                  starRatingRow(starRating: starRating),
                 ],
               ),
-              Text(
-                '리뷰 $reviewCount개',
-                style: bookDetailSubStyle.copyWith(
-                  decoration: TextDecoration.underline,
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => SearchDetailReviewScreen(
+                        isbn13: isbn13,
+                      ),
+                    ),
+                  );
+                },
+                child: Text(
+                  '리뷰 $reviewCount개',
+                  style: bookDetailSubStyle.copyWith(
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               )
             ],
