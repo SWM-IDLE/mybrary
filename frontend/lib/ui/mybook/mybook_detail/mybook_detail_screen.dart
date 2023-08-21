@@ -47,7 +47,8 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
   final TextEditingController _meaningTagQuoteController =
       TextEditingController();
 
-  late TextEditingController _myBookReviewContentController;
+  late TextEditingController _myBookReviewContentController =
+      TextEditingController();
 
   late String _myBookAppBarTitle = '';
   late bool _isScrollingDown = true;
