@@ -1,12 +1,12 @@
 package kr.mybrary.userservice.user.domain;
 
-import kr.mybrary.userservice.global.util.MultipartFileUtil;
 import kr.mybrary.userservice.user.UserFixture;
 import kr.mybrary.userservice.user.UserTestData;
 import kr.mybrary.userservice.user.domain.dto.request.*;
 import kr.mybrary.userservice.user.domain.dto.response.*;
 import kr.mybrary.userservice.user.domain.exception.io.EmptyFileException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageFileSizeExceededException;
+import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageSizeOptionNotSupportedException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileImageUrlNotFoundException;
 import kr.mybrary.userservice.user.domain.exception.profile.ProfileUpdateRequestNotAuthenticated;
 import kr.mybrary.userservice.user.domain.exception.user.DuplicateLoginIdException;
@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -33,9 +34,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,7 +54,6 @@ class UserServiceImplTest {
     static final String LOGIN_ID = "loginId";
     static final String FOLLOWING_ID = "followingId";
     static final String FOLLOWER_ID = "followerId";
-    static final String PROFILE_IMAGE_PATH = "profile/profileImage/";
     static final String PROFILE_IMAGE_BASE_URL = "https://mybrary-user-service.s3.ap-northeast-2.amazonaws.com/profile/profileImage/";
 
     @Test
@@ -204,14 +204,18 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("로그인 아이디로 사용자 프로필 이미지 URL을 조회한다")
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 원본 URL을 조회한다")
     void getProfileImageUrl() {
         // Given
-        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
-                Optional.of(UserFixture.COMMON_USER.getUser()));
+        ProfileImageUrlServiceRequest serviceRequest = ProfileImageUrlServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .size("original")
+                .build();
+
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(UserFixture.COMMON_USER.getUser()));
 
         // When
-        ProfileImageUrlServiceResponse profileImage = userService.getProfileImageUrl(LOGIN_ID);
+        ProfileImageUrlServiceResponse profileImage = userService.getProfileImageUrl(serviceRequest);
 
         // Then
         assertThat(profileImage.getProfileImageUrl()).isEqualTo(
@@ -221,13 +225,18 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("로그인 아이디로 사용자 프로필 이미지 URL을 조회할 때 사용자가 없으면 예외를 던진다")
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 원본 URL을 조회할 때 사용자가 없으면 예외를 던진다")
     void getProfileImageUrlWithNotExistUser() {
         // Given
+        ProfileImageUrlServiceRequest serviceRequest = ProfileImageUrlServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .size("original")
+                .build();
+
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.empty());
 
         // When
-        assertThatThrownBy(() -> userService.getProfileImageUrl(LOGIN_ID))
+        assertThatThrownBy(() -> userService.getProfileImageUrl(serviceRequest))
                 .isInstanceOf(UserNotFoundException.class)
                 .hasFieldOrPropertyWithValue("status", 404)
                 .hasFieldOrPropertyWithValue("errorCode", "U-05")
@@ -238,14 +247,19 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("로그인 아이디로 사용자 프로필 이미지 URL을 조회할 때 프로필 이미지 URL이 없으면 예외를 던진다")
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 원본 URL을 조회할 때 프로필 이미지 원본 URL이 없으면 예외를 던진다")
     void getProfileImageUrlWithNoProfileImageUrl() {
         // Given
+        ProfileImageUrlServiceRequest serviceRequest = ProfileImageUrlServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .size("original")
+                .build();
+
         given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
                 Optional.of(UserFixture.USER_WITHOUT_PROFILE_IMAGE_URL.getUser()));
 
         // When
-        assertThatThrownBy(() -> userService.getProfileImageUrl(LOGIN_ID))
+        assertThatThrownBy(() -> userService.getProfileImageUrl(serviceRequest))
                 .isInstanceOf(ProfileImageUrlNotFoundException.class)
                 .hasFieldOrPropertyWithValue("status", 404)
                 .hasFieldOrPropertyWithValue("errorCode", "P-01")
@@ -253,6 +267,187 @@ class UserServiceImplTest {
 
         // Then
         verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 썸네일 (tiny) URL을 조회한다. 썸네일 URL이 업데이트 되어 있다면 바로 반환한다.")
+    void getProfileImagThumbnailTinyUrl() {
+        // Given
+        ProfileImageUrlServiceRequest serviceRequest = ProfileImageUrlServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .size("tiny")
+                .build();
+
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(storageService.getPathFromUrl("profileImageThumbnailTinyUrl")).willReturn("tiny-profileImagePath");
+        given(storageService.getPathFromUrl("profileImageUrl")).willReturn("profileImagePath");
+
+        // When
+        ProfileImageUrlServiceResponse profileImage = userService.getProfileImageUrl(serviceRequest);
+
+        // Then
+        assertThat(profileImage.getProfileImageUrl()).isEqualTo(UserFixture.COMMON_USER.getUser().getProfileImageThumbnailTinyUrl());
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+        verify(storageService).getPathFromUrl("profileImageThumbnailTinyUrl");
+        verify(storageService).getPathFromUrl("profileImageUrl");
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 썸네일 (small) URL을 조회한다. 썸네일 URL이 업데이트 되어 있다면 바로 반환한다.")
+    void getProfileImagThumbnailSmallUrl() {
+        // Given
+        ProfileImageUrlServiceRequest serviceRequest = ProfileImageUrlServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .size("small")
+                .build();
+
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(storageService.getPathFromUrl("profileImageThumbnailSmallUrl")).willReturn("small-profileImagePath");
+        given(storageService.getPathFromUrl("profileImageUrl")).willReturn("profileImagePath");
+
+        // When
+        ProfileImageUrlServiceResponse profileImage = userService.getProfileImageUrl(serviceRequest);
+
+        // Then
+        assertThat(profileImage.getProfileImageUrl()).isEqualTo(UserFixture.COMMON_USER.getUser().getProfileImageThumbnailSmallUrl());
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+        verify(storageService).getPathFromUrl("profileImageThumbnailSmallUrl");
+        verify(storageService).getPathFromUrl("profileImageUrl");
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 썸네일 URL을 조회한다. 지원하지 않는 썸네일 사이즈 옵션이라면 예외를 던진다.")
+    void getProfileImagThumbnailNotSupportedSizeUrl() {
+        // Given
+        ProfileImageUrlServiceRequest serviceRequest = ProfileImageUrlServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .size("notSupportedSize")
+                .build();
+
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(UserFixture.COMMON_USER.getUser()));
+
+        // When
+        assertThatThrownBy(() -> userService.getProfileImageUrl(serviceRequest))
+                .isInstanceOf(ProfileImageSizeOptionNotSupportedException.class)
+                .hasFieldOrPropertyWithValue("status", 404)
+                .hasFieldOrPropertyWithValue("errorCode", "P-04")
+                .hasFieldOrPropertyWithValue("errorMessage", "지원되지 않는 프로필 이미지 크기 옵션입니다. 현재 지원하는 옵션은 tiny, small, original 입니다.");
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 썸네일 (tiny) URL을 조회한다." +
+            "썸네일 URL이 업데이트 되어 있지 않다면 스토리지에서 조회한 뒤, 썸네일 파일이 있다면 URL을 업데이트 하여 반환한다.")
+    void getProfileImagThumbnailTinyUrlNotUpdated() {
+        // Given
+        ProfileImageUrlServiceRequest serviceRequest = ProfileImageUrlServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .size("tiny")
+                .build();
+
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(storageService.getPathFromUrl("profileImageThumbnailTinyUrl")).willReturn("tiny-profileImagePath-notUpdated");
+        given(storageService.getPathFromUrl("profileImageUrl")).willReturn("profileImagePath");
+        given(storageService.hasResizedFiles("profileImagePath", "tiny")).willReturn(true);
+        given(storageService.getResizedUrl("profileImageUrl", "tiny")).willReturn("profileImageThumbnailTinyUrl");
+
+        // When
+        ProfileImageUrlServiceResponse profileImage = userService.getProfileImageUrl(serviceRequest);
+
+        // Then
+        assertThat(profileImage.getProfileImageUrl()).isEqualTo(UserFixture.COMMON_USER.getUser().getProfileImageThumbnailTinyUrl());
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+        verify(storageService).getPathFromUrl("profileImageThumbnailTinyUrl");
+        verify(storageService, times(2)).getPathFromUrl("profileImageUrl");
+        verify(storageService).hasResizedFiles("profileImagePath", "tiny");
+        verify(storageService).getResizedUrl("profileImageUrl", "tiny");
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 썸네일 (small) URL을 조회한다." +
+            "썸네일 URL이 업데이트 되어 있지 않다면 스토리지에서 조회한 뒤, 썸네일 파일이 있다면 URL을 업데이트 하여 반환한다.")
+    void getProfileImagThumbnailSmallUrlNotUpdated() {
+        // Given
+        ProfileImageUrlServiceRequest serviceRequest = ProfileImageUrlServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .size("small")
+                .build();
+
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(storageService.getPathFromUrl("profileImageThumbnailSmallUrl")).willReturn("small-profileImagePath-notUpdated");
+        given(storageService.getPathFromUrl("profileImageUrl")).willReturn("profileImagePath");
+        given(storageService.hasResizedFiles("profileImagePath", "small")).willReturn(true);
+        given(storageService.getResizedUrl("profileImageUrl", "small")).willReturn("profileImageThumbnailSmallUrl");
+
+        // When
+        ProfileImageUrlServiceResponse profileImage = userService.getProfileImageUrl(serviceRequest);
+
+        // Then
+        assertThat(profileImage.getProfileImageUrl()).isEqualTo(UserFixture.COMMON_USER.getUser().getProfileImageThumbnailSmallUrl());
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+        verify(storageService).getPathFromUrl("profileImageThumbnailSmallUrl");
+        verify(storageService, times(2)).getPathFromUrl("profileImageUrl");
+        verify(storageService).hasResizedFiles("profileImagePath", "small");
+        verify(storageService).getResizedUrl("profileImageUrl", "small");
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 썸네일 (tiny) URL을 조회한다." +
+            "썸네일 URL이 업데이트 되어 있지 않다면 스토리지에서 조회한 뒤, 썸네일 파일이 없다면 원본 URL을 반환한다.")
+    void getProfileImagThumbnailTinyUrlNotUpdatedNotStored() {
+        // Given
+        ProfileImageUrlServiceRequest serviceRequest = ProfileImageUrlServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .size("tiny")
+                .build();
+
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(storageService.getPathFromUrl("profileImageThumbnailTinyUrl")).willReturn("tiny-profileImagePath-notUpdated");
+        given(storageService.getPathFromUrl("profileImageUrl")).willReturn("profileImagePath");
+        given(storageService.hasResizedFiles("profileImagePath", "tiny")).willReturn(false);
+
+        // When
+        ProfileImageUrlServiceResponse profileImage = userService.getProfileImageUrl(serviceRequest);
+
+        // Then
+        assertThat(profileImage.getProfileImageUrl()).isEqualTo(UserFixture.COMMON_USER.getUser().getProfileImageUrl());
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+        verify(storageService).getPathFromUrl("profileImageThumbnailTinyUrl");
+        verify(storageService, times(2)).getPathFromUrl("profileImageUrl");
+        verify(storageService).hasResizedFiles("profileImagePath", "tiny");
+    }
+
+    @Test
+    @DisplayName("로그인 아이디로 사용자 프로필 이미지 썸네일 (small) URL을 조회한다." +
+            "썸네일 URL이 업데이트 되어 있지 않다면 스토리지에서 조회한 뒤, 썸네일 파일이 없다면 원본 URL을 반환한다.")
+    void getProfileImagThumbnailSmallUrlNotUpdatedNotStored() {
+        // Given
+        ProfileImageUrlServiceRequest serviceRequest = ProfileImageUrlServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .size("small")
+                .build();
+
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(storageService.getPathFromUrl("profileImageThumbnailSmallUrl")).willReturn("small-profileImagePath-notUpdated");
+        given(storageService.getPathFromUrl("profileImageUrl")).willReturn("profileImagePath");
+        given(storageService.hasResizedFiles("profileImagePath", "small")).willReturn(false);
+
+        // When
+        ProfileImageUrlServiceResponse profileImage = userService.getProfileImageUrl(serviceRequest);
+
+        // Then
+        assertThat(profileImage.getProfileImageUrl()).isEqualTo(UserFixture.COMMON_USER.getUser().getProfileImageUrl());
+
+        verify(userRepository).findByLoginId(LOGIN_ID);
+        verify(storageService).getPathFromUrl("profileImageThumbnailSmallUrl");
+        verify(storageService, times(2)).getPathFromUrl("profileImageUrl");
+        verify(storageService).hasResizedFiles("profileImagePath", "small");
     }
 
     @Test
@@ -315,26 +510,26 @@ class UserServiceImplTest {
     @DisplayName("로그인 아이디로 사용자 프로필 이미지를 수정한다")
     void updateProfileImage() throws Exception {
         // Given
-        ProfileImageUpdateServiceRequest serviceRequest = UserTestData.createProfileImageUpdateServiceRequest();
-        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(
-                Optional.of(UserFixture.COMMON_USER.getUser()));
-        given(storageService.putFile(serviceRequest.getProfileImage(),
-                MultipartFileUtil.generateFilePath(PROFILE_IMAGE_PATH, LOGIN_ID, serviceRequest.getProfileImage())))
+        ProfileImageUpdateServiceRequest serviceRequest = ProfileImageUpdateServiceRequest.builder()
+                .userId(LOGIN_ID)
+                .loginId(LOGIN_ID)
+                .profileImage(UserTestData.createMockMultipartFile())
+                .localDateTime(LocalDateTime.of(2023, 1, 1, 0, 0, 0, 123000000))
+                .build();
+        given(userRepository.findByLoginId(LOGIN_ID)).willReturn(Optional.of(UserFixture.COMMON_USER.getUser()));
+        given(storageService.putFile(serviceRequest.getProfileImage(), "profile/profileImage/loginId/2023-01-01_00-00-00-123.jpg"))
                 .willReturn(PROFILE_IMAGE_BASE_URL + LOGIN_ID);
 
         // When
-        ProfileImageUrlServiceResponse updatedProfileImage = userService.updateProfileImage(
-                serviceRequest);
+        ProfileImageUrlServiceResponse updatedProfileImage = userService.updateProfileImage(serviceRequest);
 
         // Then
         assertAll(
-                () -> assertThat(updatedProfileImage.getProfileImageUrl()).isEqualTo(
-                        PROFILE_IMAGE_BASE_URL + LOGIN_ID)
+                () -> assertThat(updatedProfileImage.getProfileImageUrl()).isEqualTo(PROFILE_IMAGE_BASE_URL + LOGIN_ID)
         );
 
         verify(userRepository).findByLoginId(LOGIN_ID);
-        verify(storageService).putFile(serviceRequest.getProfileImage(),
-                MultipartFileUtil.generateFilePath(PROFILE_IMAGE_PATH, LOGIN_ID, serviceRequest.getProfileImage()));
+        verify(storageService).putFile(serviceRequest.getProfileImage(), "profile/profileImage/loginId/2023-01-01_00-00-00-123.jpg");
     }
 
     @Test
@@ -547,6 +742,9 @@ class UserServiceImplTest {
         // Given
         given(userRepository.findByNicknameContaining("nickname")).willReturn(
                 Arrays.asList(UserFixture.COMMON_USER.getUser(), UserFixture.USER_WITH_SIMILAR_NICKNAME.getUser()));
+        given(storageService.getPathFromUrl("profileImageThumbnailTinyUrl")).willReturn("tiny-profileImagePath");
+        given(storageService.getPathFromUrl("profileImageUrl")).willReturn("profileImagePath");
+
 
         // When
         SearchServiceResponse searchServiceResponse = userService.searchByNickname("nickname");
@@ -558,6 +756,8 @@ class UserServiceImplTest {
         );
 
         verify(userRepository).findByNicknameContaining("nickname");
+        verify(storageService, times(2)).getPathFromUrl("profileImageThumbnailTinyUrl");
+        verify(storageService, times(2)).getPathFromUrl("profileImageUrl");
     }
 
     @Test
@@ -616,6 +816,34 @@ class UserServiceImplTest {
                         UserInfoModel.builder().loginId("userId2").nickname("nickname2").profileImageUrl("profileImageUrl2").build(),
                         UserInfoModel.builder().loginId("userId3").nickname("nickname3").profileImageUrl("profileImageUrl3").build()));
 
+        given(userRepository.findByLoginId("userId1")).willReturn(Optional.ofNullable(User.builder()
+                .loginId("userId1")
+                .nickname("nickname1")
+                .profileImageUrl("profileImageUrl1")
+                .profileImageThumbnailTinyUrl("profileImageThumbnailTinyUrl1")
+                .build()));
+        given(storageService.getPathFromUrl("profileImageThumbnailTinyUrl1")).willReturn("tiny-profileImagePath1");
+        given(storageService.getPathFromUrl("profileImageUrl1")).willReturn("profileImagePath1");
+
+        given(userRepository.findByLoginId("userId2")).willReturn(Optional.ofNullable(User.builder()
+                .loginId("userId2")
+                .nickname("nickname2")
+                .profileImageUrl("profileImageUrl2")
+                .profileImageThumbnailTinyUrl("profileImageThumbnailTinyUrl2")
+                .build()));
+        given(storageService.getPathFromUrl("profileImageThumbnailTinyUrl2")).willReturn("tiny-profileImagePath2");
+        given(storageService.getPathFromUrl("profileImageUrl2")).willReturn("profileImagePath2");
+
+        given(userRepository.findByLoginId("userId3")).willReturn(Optional.ofNullable(User.builder()
+                .loginId("userId3")
+                .nickname("nickname3")
+                .profileImageUrl("profileImageUrl3")
+                .profileImageThumbnailTinyUrl("profileImageThumbnailTinyUrl3")
+                .build()));
+        given(storageService.getPathFromUrl("profileImageThumbnailTinyUrl3")).willReturn("tiny-profileImagePath3");
+        given(storageService.getPathFromUrl("profileImageUrl3")).willReturn("profileImagePath3");
+
+
         // When
         UserInfoServiceResponse userInfoServiceResponse = userService.getUserInfo(
                 UserInfoServiceRequest.builder().userIds(Arrays.asList("userId1", "userId2", "userId3")).build());
@@ -625,10 +853,12 @@ class UserServiceImplTest {
                 () -> assertThat(userInfoServiceResponse.getUserInfoElements()).hasSize(3),
                 () -> assertThat(userInfoServiceResponse.getUserInfoElements()).extracting("userId").containsExactly("userId1", "userId2", "userId3"),
                 () -> assertThat(userInfoServiceResponse.getUserInfoElements()).extracting("nickname").containsExactly("nickname1", "nickname2", "nickname3"),
-                () -> assertThat(userInfoServiceResponse.getUserInfoElements()).extracting("profileImageUrl").containsExactly("profileImageUrl1", "profileImageUrl2", "profileImageUrl3")
+                () -> assertThat(userInfoServiceResponse.getUserInfoElements()).extracting("profileImageUrl").containsExactly("profileImageThumbnailTinyUrl1", "profileImageThumbnailTinyUrl2", "profileImageThumbnailTinyUrl3")
         );
 
         verify(userRepository).findAllUserInfoByLoginIds(Arrays.asList("userId1", "userId2", "userId3"));
+        verify(userRepository, times(3)).findByLoginId(anyString());
+        verify(storageService, times(6)).getPathFromUrl(anyString());
     }
 
 }
