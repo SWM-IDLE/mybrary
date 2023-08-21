@@ -20,14 +20,6 @@ public class UserInfoServiceResponse {
         private String nickname;
         private String profileImageUrl;
 
-        public static UserInfoElement of(UserInfoModel userInfoModel) {
-            return UserInfoElement.builder()
-                    .userId(userInfoModel.getLoginId())
-                    .nickname(userInfoModel.getNickname())
-                    .profileImageUrl(userInfoModel.getProfileImageUrl())
-                    .build();
-        }
-
     }
 
 }
