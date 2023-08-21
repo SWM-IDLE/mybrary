@@ -50,10 +50,12 @@ class InterestRepositoryTest {
         Interest savedInterest = interestRepository.save(Interest.builder()
                 .name("테스트 관심사")
                 .category(interestCategory)
+                .code(1010)
                 .build());
         Interest savedInterest2 = interestRepository.save(Interest.builder()
                 .name("테스트 관심사2")
                 .category(interestCategory)
+                .code(1011)
                 .build());
 
         // when

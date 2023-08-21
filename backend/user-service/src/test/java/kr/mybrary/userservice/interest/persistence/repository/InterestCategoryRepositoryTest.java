@@ -36,7 +36,9 @@ class InterestCategoryRepositoryTest {
 
         Interest interest1 = interestRepository.save(Interest.builder()
                 .name("interest1")
+                .code(1010)
                 .build());
+
         interest1.updateCategory(interestCategory);
 
         entityManager.flush();

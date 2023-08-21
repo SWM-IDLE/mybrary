@@ -75,10 +75,12 @@ class UserInterestRepositoryTest {
         Interest savedInterest2 =  interestRepository.save(InterestFixture.FOREIGN_NOVEL.getInterest());
 
         userInterestRepository.save(UserInterest.builder()
+                .id(1L)
                 .user(savedUser)
                 .interest(savedInterest1)
                 .build());
         userInterestRepository.save(UserInterest.builder()
+                .id(2L)
                 .user(savedUser)
                 .interest(savedInterest2)
                 .build());

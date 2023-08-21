@@ -24,6 +24,9 @@ public class Interest extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false, unique = true)
+    private int code;
+
     public void updateCategory(InterestCategory category) {
         this.category = category;
         category.getInterests().add(this);
