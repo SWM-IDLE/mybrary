@@ -75,7 +75,7 @@ class MyBookDetailReview extends StatelessWidget {
             const SizedBox(height: 20.0),
             Row(
               children: [
-                starRatingRow(starRating),
+                starRatingRow(starRating: starRating),
                 const SizedBox(width: 10.0),
                 Text(
                   '$starRating',

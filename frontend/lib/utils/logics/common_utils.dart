@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/res/constants/color.dart';
+import 'package:mybrary/res/constants/style.dart';
 
 Widget loadingIndicator() {
   return CircularProgressIndicator(
@@ -25,5 +26,23 @@ Widget buildErrorPage({String? message}) {
         ],
       ),
     ),
+  );
+}
+
+SliverAppBar commonSliverAppBar({
+  required String appBarTitle,
+  List<Widget>? appBarActions,
+}) {
+  return SliverAppBar(
+    elevation: 0,
+    title: Text(appBarTitle),
+    titleTextStyle: appBarTitleStyle.copyWith(
+      fontSize: 16.0,
+    ),
+    pinned: true,
+    centerTitle: true,
+    backgroundColor: commonWhiteColor,
+    foregroundColor: commonBlackColor,
+    actions: appBarActions,
   );
 }

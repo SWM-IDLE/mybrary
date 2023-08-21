@@ -11,7 +11,7 @@ class HomeDataSource {
       BuildContext context) async {
     final dio = await authDio(context);
     final getTodayRegisteredBookCountResponse = await dio.get(
-      getBookServiceApi(API.getTodayRegisteredBookCount),
+      getApi(API.getTodayRegisteredBookCount),
     );
 
     log('오늘의 마이북 등록수 조회 응답값: $getTodayRegisteredBookCountResponse');
@@ -37,7 +37,7 @@ class HomeDataSource {
   ) async {
     final dio = await authDio(context);
     final getBookListByCategoryResponse = await dio.get(
-      '${getBookServiceApi(API.getBookListByCategory)}?type=$type&page=${page ?? 1}&categoryId=${categoryId ?? 0}',
+      '${getApi(API.getBookListByCategory)}?type=$type&page=${page ?? 1}&categoryId=${categoryId ?? 0}',
     );
 
     log('카테고리 도서 목록 조회 응답값: $getBookListByCategoryResponse');

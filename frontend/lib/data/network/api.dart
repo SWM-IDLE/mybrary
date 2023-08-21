@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 const mybraryUrl = "http://mybrary.kr";
 const mybraryUrlScheme = "kr.mybrary";
 const baseUrl = "$mybraryUrl:8000";
-const bookServiceUrl = "$mybraryUrl:8000";
 
 enum API {
   // oauth
@@ -111,12 +110,6 @@ Map<API, String> apiMap = {
 
 String getApi(API apiType) {
   String api = baseUrl;
-  api += apiMap[apiType]!;
-  return api;
-}
-
-String getBookServiceApi(API apiType) {
-  String api = bookServiceUrl;
   api += apiMap[apiType]!;
   return api;
 }

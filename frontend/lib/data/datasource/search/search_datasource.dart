@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/search/book_completed_status_response.dart';
+import 'package:mybrary/data/model/search/book_detail_review_response.dart';
 import 'package:mybrary/data/model/search/book_interest_status_response.dart';
 import 'package:mybrary/data/model/search/book_registered_status_response.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
@@ -39,8 +40,8 @@ class SearchDataSource {
     String isbn13,
   ) async {
     final dio = await authDio(context);
-    final bookSearchDetailResponse = await dio
-        .get('${getBookServiceApi(API.getBookSearchDetail)}?isbn13=$isbn13');
+    final bookSearchDetailResponse =
+        await dio.get('${getApi(API.getBookSearchDetail)}?isbn13=$isbn13');
 
     log('도서 단순 상세 조회 응답값: $bookSearchDetailResponse');
     final BookSearchDetailResponse result = commonResponseResult(
@@ -65,7 +66,7 @@ class SearchDataSource {
   ) async {
     final dio = await authDio(context);
     final bookSearchDetailAndSaveBookResponse = await dio.get(
-      '${getBookServiceApi(API.getBookSearchDetail)}?isbn13=$isbn13${isbn10 != null ? '&isbn10=$isbn10' : ''}',
+      '${getApi(API.getBookSearchDetail)}?isbn13=$isbn13${isbn10 != null ? '&isbn10=$isbn10' : ''}',
       options: Options(headers: {'User-Id': userId}),
     );
 
@@ -84,13 +85,36 @@ class SearchDataSource {
     return result.data;
   }
 
+  Future<BookDetailReviewResponseData> getBookSearchDetailReviews(
+    BuildContext context,
+    String isbn13,
+  ) async {
+    final dio = await authDio(context);
+    final bookSearchDetailReviewsResponse = await dio
+        .get('${getApi(API.getBookSearchDetailReviews)}/$isbn13/reviews');
+
+    log('도서 상세 리뷰 응답값: $bookSearchDetailReviewsResponse');
+    final BookDetailReviewResponse result = commonResponseResult(
+      bookSearchDetailReviewsResponse,
+      () => BookDetailReviewResponse(
+        status: bookSearchDetailReviewsResponse.data['status'],
+        message: bookSearchDetailReviewsResponse.data['message'],
+        data: BookDetailReviewResponseData.fromJson(
+          bookSearchDetailReviewsResponse.data['data'],
+        ),
+      ),
+    );
+
+    return result.data!;
+  }
+
   Future<BookInterestStatusResponseData> getBookInterestStatusResponse(
     BuildContext context,
     String isbn13,
   ) async {
     final dio = await authDio(context);
-    final bookInterestStatusResponse = await dio.get(
-        '${getBookServiceApi(API.getBookInterestStatus)}/$isbn13/interest-status');
+    final bookInterestStatusResponse = await dio
+        .get('${getApi(API.getBookInterestStatus)}/$isbn13/interest-status');
 
     log('관심 도서 여부 응답값: $bookInterestStatusResponse');
     final BookInterestStatusResponse result = commonResponseResult(
@@ -113,7 +137,7 @@ class SearchDataSource {
   ) async {
     final dio = await authDio(context);
     final bookRegisteredStatusResponseData = await dio.get(
-        '${getBookServiceApi(API.getBookMyBookRegisteredStatus)}/$isbn13/mybook-registered-status');
+        '${getApi(API.getBookMyBookRegisteredStatus)}/$isbn13/mybook-registered-status');
 
     log('등록 도서 여부 응답값: $bookRegisteredStatusResponseData');
     final BookRegisteredStatusResponse result = commonResponseResult(
@@ -136,7 +160,7 @@ class SearchDataSource {
   ) async {
     final dio = await authDio(context);
     final bookCompletedStatusResponse = await dio.get(
-        '${getBookServiceApi(API.getBookInterestStatus)}/$isbn13/read-complete-status');
+        '${getApi(API.getBookInterestStatus)}/$isbn13/read-complete-status');
 
     log('완독 도서 여부 응답값: $bookCompletedStatusResponse');
     final BookCompletedStatusResponse result = commonResponseResult(

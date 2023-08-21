@@ -182,7 +182,7 @@ class _MyBookEditReviewState extends State<MyBookEditReview> {
     return Row(
       children: [
         starRatingRow(
-          newStarRating ?? widget.starRating,
+          starRating: newStarRating ?? widget.starRating,
         ),
         const SizedBox(width: 8.0),
         CupertinoButton(

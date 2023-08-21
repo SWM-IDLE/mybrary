@@ -21,7 +21,7 @@ class BookDataSource {
   ) async {
     final dio = await authDio(context);
     final getInterestBooksResponse = await dio.get(
-      '${getBookServiceApi(API.getInterestBooks)}/$userId/interest?order=$order',
+      '${getApi(API.getInterestBooks)}/$userId/interest?order=$order',
       options: Options(headers: {'User-Id': userId}),
     );
 
@@ -49,7 +49,7 @@ class BookDataSource {
   ) async {
     final dio = await authDio(context);
     final createOrDeleteInterestBookResponse = await dio.post(
-      '${getBookServiceApi(API.createOrDeleteInterestBook)}/$isbn13/interest',
+      '${getApi(API.createOrDeleteInterestBook)}/$isbn13/interest',
       options: Options(headers: {'User-Id': userId}),
     );
 
@@ -76,7 +76,7 @@ class BookDataSource {
   ) async {
     final dio = await authDio(context);
     final getMyBooksResponse = await dio.get(
-      '${getBookServiceApi(API.getMyBooks)}/$userId/mybooks?order=$order&readStatus=$readStatus',
+      '${getApi(API.getMyBooks)}/$userId/mybooks?order=$order&readStatus=$readStatus',
       options: Options(headers: {'User-Id': userId}),
     );
 
@@ -104,7 +104,7 @@ class BookDataSource {
   ) async {
     final dio = await authDio(context);
     final getMyBookDetailResponse = await dio.get(
-      '${getBookServiceApi(API.getMyBookDetail)}/$myBookId',
+      '${getApi(API.getMyBookDetail)}/$myBookId',
       options: Options(headers: {'User-Id': userId}),
     );
 
@@ -130,7 +130,7 @@ class BookDataSource {
   ) async {
     final dio = await authDio(context);
     final createMyBookResponse = await dio.post(
-      getBookServiceApi(API.createMyBook),
+      getApi(API.createMyBook),
       options: Options(
         headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),
@@ -157,7 +157,7 @@ class BookDataSource {
   ) async {
     final dio = await authDio(context);
     final deleteMyBookResponse = await dio.delete(
-      '${getBookServiceApi(API.deleteMyBook)}/$myBookId',
+      '${getApi(API.deleteMyBook)}/$myBookId',
       options: Options(headers: {'User-Id': userId}),
     );
 
@@ -182,7 +182,7 @@ class BookDataSource {
   ) async {
     final dio = await authDio(context);
     final updateMyBookRecordResponse = await dio.put(
-      '${getBookServiceApi(API.updateMyBookRecord)}/$myBookId',
+      '${getApi(API.updateMyBookRecord)}/$myBookId',
       options: Options(
         headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),
@@ -211,7 +211,7 @@ class BookDataSource {
   ) async {
     final dio = await authDio(context);
     final getMyBookReviewResponse = await dio.get(
-      '${getBookServiceApi(API.getMyBookReview)}/$myBookId/review',
+      '${getApi(API.getMyBookReview)}/$myBookId/review',
     );
 
     log('마이북 리뷰 조회 응답값: $getMyBookReviewResponse');
@@ -239,7 +239,7 @@ class BookDataSource {
   ) async {
     final dio = await authDio(context);
     final createMyBookReviewResponse = await dio.post(
-      '${getBookServiceApi(API.createMyBookReview)}/$myBookId/reviews',
+      '${getApi(API.createMyBookReview)}/$myBookId/reviews',
       options: Options(
         headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),
@@ -268,7 +268,7 @@ class BookDataSource {
   ) async {
     final dio = await authDio(context);
     final updateMyBookReviewResponse = await dio.put(
-      '${getBookServiceApi(API.updateMyBookReview)}/$reviewId',
+      '${getApi(API.updateMyBookReview)}/$reviewId',
       options: Options(
         headers: {'User-Id': userId, "Content-Type": headerJsonValue},
       ),

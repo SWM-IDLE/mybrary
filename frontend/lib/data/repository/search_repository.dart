@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/datasource/search/search_datasource.dart';
 import 'package:mybrary/data/model/search/book_completed_status_response.dart';
+import 'package:mybrary/data/model/search/book_detail_review_response.dart';
 import 'package:mybrary/data/model/search/book_interest_status_response.dart';
 import 'package:mybrary/data/model/search/book_registered_status_response.dart';
 import 'package:mybrary/data/model/search/book_search_detail_response.dart';
@@ -36,6 +37,13 @@ class SearchRepository {
       isbn13,
       isbn10,
     );
+  }
+
+  Future<BookDetailReviewResponseData> getBookSearchDetailReviews({
+    required BuildContext context,
+    required String isbn13,
+  }) {
+    return _searchDataSource.getBookSearchDetailReviews(context, isbn13);
   }
 
   Future<BookInterestStatusResponseData> getBookInterestStatusResponse({

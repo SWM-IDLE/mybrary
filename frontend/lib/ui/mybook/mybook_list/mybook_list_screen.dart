@@ -13,6 +13,7 @@ import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/mybook/mybook_detail/mybook_detail_screen.dart';
 import 'package:mybrary/ui/mybook/mybook_list/components/book_list.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
+import 'package:mybrary/utils/logics/common_utils.dart';
 
 class MyBookListScreen extends StatefulWidget {
   final String bookListTitle;
@@ -56,94 +57,77 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
   Widget build(BuildContext context) {
     return SubPageLayout(
       child: FutureBuilder<List<MyBooksResponseData>>(
-          future: _bookList,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return CustomScrollView(
-                physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics(),
+        future: _bookList,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return CustomScrollView(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              slivers: [
+                commonSliverAppBar(appBarTitle: widget.bookListTitle),
+                const SliverToBoxAdapter(
+                  child: DataError(
+                    errorMessage: '등록된 도서를 불러오는데 실패했습니다.',
+                  ),
                 ),
-                slivers: [
-                  _bookListAppBar(appBarTitle: widget.bookListTitle),
+              ],
+            );
+          }
+
+          if (snapshot.hasData) {
+            List<MyBooksResponseData> bookList = snapshot.data!;
+
+            return CustomScrollView(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              slivers: [
+                commonSliverAppBar(appBarTitle: widget.bookListTitle),
+                if (bookList.isEmpty)
                   const SliverToBoxAdapter(
                     child: DataError(
-                      errorMessage: '등록된 도서를 불러오는데 실패했습니다.',
+                      errorMessage: '등록된 도서가 없습니다.',
                     ),
-                  )
-                ],
-              );
-            }
-
-            if (snapshot.hasData) {
-              List<MyBooksResponseData> bookList = snapshot.data!;
-
-              return CustomScrollView(
-                physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics(),
-                ),
-                slivers: [
-                  _bookListAppBar(appBarTitle: widget.bookListTitle),
-                  if (bookList.isEmpty)
-                    const SliverToBoxAdapter(
-                      child: DataError(
-                        errorMessage: '등록된 도서가 없습니다.',
-                      ),
+                  ),
+                if (bookList.isNotEmpty)
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
                     ),
-                  if (bookList.isNotEmpty)
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 8.0,
-                      ),
-                      sliver: SliverToBoxAdapter(
-                        child: InkWell(
-                          onTap: () {
-                            _showSortBottomSheet(context);
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                '$_sortTitle ${bookList.length}권',
-                                style: myBookSortTextStyle,
-                              ),
-                              const SizedBox(width: 4.0),
-                              const Icon(
-                                Icons.arrow_drop_down_outlined,
-                              ),
-                            ],
-                          ),
+                    sliver: SliverToBoxAdapter(
+                      child: InkWell(
+                        onTap: () {
+                          _showSortBottomSheet(context);
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              '$_sortTitle ${bookList.length}권',
+                              style: myBookSortTextStyle,
+                            ),
+                            const SizedBox(width: 4.0),
+                            const Icon(
+                              Icons.arrow_drop_down_outlined,
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  if (bookList.isNotEmpty)
-                    BookList(
-                      bookList: bookList,
-                      readStatus: widget.readStatus,
-                      onTapMyBookDetail: _refreshMyBookScreen,
-                    ),
-                ],
-              );
-            }
-            return const CircularLoading();
-          }),
-    );
-  }
-
-  SliverAppBar _bookListAppBar({
-    required String appBarTitle,
-    List<Widget>? appBarActions,
-  }) {
-    return SliverAppBar(
-      elevation: 0,
-      title: Text(appBarTitle),
-      titleTextStyle: appBarTitleStyle.copyWith(
-        fontSize: 16.0,
+                  ),
+                if (bookList.isNotEmpty)
+                  BookList(
+                    bookList: bookList,
+                    readStatus: widget.readStatus,
+                    onTapMyBookDetail: _refreshMyBookScreen,
+                  ),
+              ],
+            );
+          }
+          return const CircularLoading();
+        },
       ),
-      pinned: true,
-      centerTitle: true,
-      backgroundColor: commonWhiteColor,
-      foregroundColor: commonBlackColor,
-      actions: appBarActions,
     );
   }
 

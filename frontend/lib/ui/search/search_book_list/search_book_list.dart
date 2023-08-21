@@ -47,8 +47,7 @@ class _SearchBookListState extends State<SearchBookList>
   late String _bookSearchNextUrl;
   late List<BookSearchResult> _bookSearchResultData = [];
   late List<SearchedUsers> _userSearchResultData = [];
-  final String _bookSearchKeywordRequestUrl =
-      getBookServiceApi(API.getBookSearchKeyword);
+  final String _bookSearchKeywordRequestUrl = getApi(API.getBookSearchKeyword);
 
   late bool _isError = false;
   late bool _isScrollLoading = false;
@@ -149,7 +148,7 @@ class _SearchBookListState extends State<SearchBookList>
                         .getBookSearchResponse(
                           context: context,
                           requestUrl:
-                              '${getBookServiceApi(API.getBookService)}$_bookSearchNextUrl',
+                              '${getApi(API.getBookService)}$_bookSearchNextUrl',
                         )
                         .then((value) => setState(() {
                               _bookSearchResultData
