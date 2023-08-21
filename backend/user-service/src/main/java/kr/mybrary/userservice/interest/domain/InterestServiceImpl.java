@@ -1,12 +1,17 @@
 package kr.mybrary.userservice.interest.domain;
 
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
+import kr.mybrary.userservice.client.book.api.BookServiceClient;
+import kr.mybrary.userservice.client.book.dto.response.BookRecommendationsServiceResponse;
 import kr.mybrary.userservice.interest.domain.dto.InterestCategoryMapper;
 import kr.mybrary.userservice.interest.domain.dto.UserInterestMapper;
+import kr.mybrary.userservice.interest.domain.dto.request.UserInterestAndBookRecommendationsServiceRequest;
 import kr.mybrary.userservice.interest.domain.dto.request.UserInterestUpdateServiceRequest;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestResponse;
+import kr.mybrary.userservice.interest.domain.dto.response.UserInterestAndBookRecommendationsResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.UserInterestServiceResponse;
 import kr.mybrary.userservice.interest.domain.exception.DuplicateUserInterestUpdateRequestException;
 import kr.mybrary.userservice.interest.domain.exception.InterestNotFoundException;
@@ -23,8 +28,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -34,6 +37,7 @@ public class InterestServiceImpl implements InterestService {
     private final UserInterestRepository userInterestRepository;
     private final InterestRepository interestRepository;
     private final UserService userService;
+    private final BookServiceClient bookServiceClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -82,6 +86,27 @@ public class InterestServiceImpl implements InterestService {
         deleteOriginalUserInterests(user);
         saveRequestedUserInterests(request.getInterestIds(), user);
         return getUserInterests(request.getLoginId());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserInterestAndBookRecommendationsResponse getInterestsAndBookRecommendations(
+            UserInterestAndBookRecommendationsServiceRequest request) {
+
+        User user = userService.getUserResponse(request.getLoginId()).getUser();
+
+        List<Interest> Interests = userInterestRepository.findAllByUserWithInterestUsingFetchJoin(user).stream()
+                .map(UserInterest::getInterest)
+                .toList();
+
+        if (Interests.isEmpty()) {
+            return UserInterestAndBookRecommendationsResponse.of(List.of(), List.of());
+        }
+
+        BookRecommendationsServiceResponse bookRecommendations = bookServiceClient.getBookListByCategoryId(
+                request.getType(), Interests.get(0).getCode(), request.getPage());
+
+        return UserInterestAndBookRecommendationsResponse.of(Interests, bookRecommendations.getData().getBooks());
     }
 
     private void checkUserInterestUpdateRequestAuthentication(UserInterestUpdateServiceRequest request) {

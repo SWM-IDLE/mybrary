@@ -1,10 +1,28 @@
 package kr.mybrary.userservice.interest.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.List;
+import java.util.Optional;
+import kr.mybrary.userservice.client.book.api.BookServiceClient;
 import kr.mybrary.userservice.interest.InterestCategoryFixture;
+import kr.mybrary.userservice.interest.InterestDtoTestData;
 import kr.mybrary.userservice.interest.InterestFixture;
 import kr.mybrary.userservice.interest.UserInterestFixture;
+import kr.mybrary.userservice.interest.domain.dto.request.UserInterestAndBookRecommendationsServiceRequest;
 import kr.mybrary.userservice.interest.domain.dto.request.UserInterestUpdateServiceRequest;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
+import kr.mybrary.userservice.interest.domain.dto.response.UserInterestAndBookRecommendationsResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.UserInterestServiceResponse;
 import kr.mybrary.userservice.interest.domain.exception.DuplicateUserInterestUpdateRequestException;
 import kr.mybrary.userservice.interest.domain.exception.InterestNotFoundException;
@@ -27,17 +45,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 class InterestServiceImplTest {
 
@@ -49,6 +56,8 @@ class InterestServiceImplTest {
     private InterestRepository interestRepository;
     @Mock
     private UserService userService;
+    @Mock
+    private BookServiceClient bookServiceClient;
 
     @InjectMocks
     private InterestServiceImpl interestService;
@@ -121,7 +130,7 @@ class InterestServiceImplTest {
     @DisplayName("사용자의 관심사를 모두 조회할 때 사용자가 존재하지 않으면 예외가 발생한다.")
     void getUserInterestsWithNotExistUser() {
         // given
-         given(userService.getUserResponse(LOGIN_ID)).willThrow(new UserNotFoundException());
+        given(userService.getUserResponse(LOGIN_ID)).willThrow(new UserNotFoundException());
 
         // when then
         assertThatThrownBy(() -> interestService.getUserInterests(LOGIN_ID))
@@ -256,7 +265,8 @@ class InterestServiceImplTest {
                 .isInstanceOf(UserInterestUpdateRequestNotAuthenticated.class)
                 .hasFieldOrPropertyWithValue("status", 403)
                 .hasFieldOrPropertyWithValue("errorCode", "I-04")
-                .hasFieldOrPropertyWithValue("errorMessage", "관심사를 수정할 수 있는 권한이 없습니다. 로그인한 사용자와 관심사 수정을 요청한 사용자가 일치하지 않습니다.");
+                .hasFieldOrPropertyWithValue("errorMessage",
+                        "관심사를 수정할 수 있는 권한이 없습니다. 로그인한 사용자와 관심사 수정을 요청한 사용자가 일치하지 않습니다.");
 
     }
 
@@ -294,6 +304,60 @@ class InterestServiceImplTest {
                 .hasFieldOrPropertyWithValue("status", 400)
                 .hasFieldOrPropertyWithValue("errorCode", "I-03")
                 .hasFieldOrPropertyWithValue("errorMessage", "관심사는 중복해서 설정할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("feignClient를 통해 사용자의 모든 관심사와 하나의 관심사의 도서 추천 목록을 조회한다.")
+    void getInterestsAndBookRecommendations() {
+
+        // given
+        UserInterestAndBookRecommendationsServiceRequest request = UserInterestAndBookRecommendationsServiceRequest.builder()
+                .loginId(LOGIN_ID)
+                .type("bestseller")
+                .page(1)
+                .build();
+
+        given(userService.getUserResponse(request.getLoginId())).willReturn(UserResponse.builder().user(
+                UserFixture.COMMON_USER.getUser()).build());
+        given(userInterestRepository.findAllByUserWithInterestUsingFetchJoin(any(User.class))).willReturn(
+                List.of(UserInterestFixture.COMMON_USER_INTEREST_1.getUserInterest(),
+                        UserInterestFixture.COMMON_USER_INTEREST_2.getUserInterest()));
+        given(bookServiceClient.getBookListByCategoryId(anyString(), anyInt(), anyInt())).willReturn(
+                InterestDtoTestData.createBookRecommendationsServiceResponse());
+
+        // when
+        UserInterestAndBookRecommendationsResponse response = interestService.getInterestsAndBookRecommendations(request);
+
+        // then
+        assertAll(
+                () -> assertThat(response.getUserInterests().size()).isEqualTo(2),
+                () -> assertThat(response.getBookRecommendations().size()).isEqualTo(10)
+        );
+    }
+
+    @Test
+    @DisplayName("feignClient를 통해 사용자의 모든 관심사와 하나의 관심사의 도서 추천 목록을 조회시, 관심사가 없으면 빈 목록을 반환한다.")
+    void getInterestsAndBookRecommendations2() {
+
+        // given
+        UserInterestAndBookRecommendationsServiceRequest request = UserInterestAndBookRecommendationsServiceRequest.builder()
+                .loginId(LOGIN_ID)
+                .type("bestseller")
+                .page(1)
+                .build();
+
+        given(userService.getUserResponse(request.getLoginId())).willReturn(UserResponse.builder().user(
+                UserFixture.COMMON_USER.getUser()).build());
+        given(userInterestRepository.findAllByUserWithInterestUsingFetchJoin(any(User.class))).willReturn(List.of());
+
+        // when
+        UserInterestAndBookRecommendationsResponse response = interestService.getInterestsAndBookRecommendations(request);
+
+        // then
+        assertAll(
+                () -> assertThat(response.getUserInterests().size()).isEqualTo(0),
+                () -> assertThat(response.getBookRecommendations().size()).isEqualTo(0)
+        );
     }
 
 }
