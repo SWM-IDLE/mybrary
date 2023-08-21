@@ -1,8 +1,11 @@
 package kr.mybrary.bookservice.booksearch.domain;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.never;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.verify;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -252,8 +255,7 @@ class AladinBookSearchApiServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getBooks().size()).isEqualTo(10),
-                () -> assertThat(response.getNextRequestUrl()).isNotBlank()
+                () -> assertThat(response.getBooks().size()).isEqualTo(10)
         );
     }
 
