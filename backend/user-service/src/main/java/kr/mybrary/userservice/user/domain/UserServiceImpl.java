@@ -42,6 +42,8 @@ public class UserServiceImpl implements UserService {
     private final StorageService storageService;
     private static final String PROFILE_IMAGE_PATH_FORMAT = "profile/profileImage/%s/";
     private static final int MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024;
+    private static final String PROFILE_IMAGE_SIZE_TINY = "tiny";
+    private static final String PROFILE_IMAGE_SIZE_SMALL = "small";
 
     @Override
     public SignUpServiceResponse signUp(SignUpServiceRequest serviceRequest) {
@@ -166,21 +168,21 @@ public class UserServiceImpl implements UserService {
     }
 
     private String getProfileImageThumbnailUrl(User user, String size) {
-        if(size.equals("tiny")) {
+        if(size.equals(PROFILE_IMAGE_SIZE_TINY)) {
             return user.getProfileImageThumbnailTinyUrl();
         }
-        if(size.equals("small")) {
+        if(size.equals(PROFILE_IMAGE_SIZE_SMALL)) {
             return user.getProfileImageThumbnailSmallUrl();
         }
         throw new ProfileImageSizeOptionNotSupportedException();
     }
 
     private void updateProfileImageThumbnailUrl(User user, String size) {
-        if(size.equals("tiny")) {
+        if(size.equals(PROFILE_IMAGE_SIZE_TINY)) {
             user.updateProfileImageThumbnailTinyUrl(storageService.getResizedUrl(user.getProfileImageUrl(), size));
             return;
         }
-        if(size.equals("small")) {
+        if(size.equals(PROFILE_IMAGE_SIZE_SMALL)) {
             user.updateProfileImageThumbnailSmallUrl(storageService.getResizedUrl(user.getProfileImageUrl(), size));
             return;
         }
@@ -330,7 +332,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public SearchServiceResponse searchByNickname(String nickname) {
         List<SearchServiceResponse.SearchedUser> searchedUsers = userRepository.findByNicknameContaining(nickname).stream()
-                .map(user -> UserMapper.INSTANCE.toSearchedUser(user))
+                .map(user -> SearchServiceResponse.SearchedUser.builder()
+                        .userId(user.getLoginId())
+                        .nickname(user.getNickname())
+                        .profileImageUrl(getResizedProfileImageUrl(user, PROFILE_IMAGE_SIZE_TINY))
+                        .build())
                 .collect(Collectors.toList());
 
         SearchServiceResponse serviceResponse = SearchServiceResponse.builder()
@@ -354,10 +360,15 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    // TODO: 논의 필요 - getUser 메서드에서 쿼리가 한 번 더 나가는 문제
     @NotNull
     private List<UserInfoServiceResponse.UserInfoElement> getUserInfoElements(UserInfoServiceRequest serviceRequest) {
         return userRepository.findAllUserInfoByLoginIds(serviceRequest.getUserIds()).stream()
-                .map(userInfoModel -> UserInfoServiceResponse.UserInfoElement.of(userInfoModel))
+                .map(userInfoModel -> UserInfoServiceResponse.UserInfoElement.builder()
+                        .userId(userInfoModel.getLoginId())
+                        .nickname(userInfoModel.getNickname())
+                        .profileImageUrl(getResizedProfileImageUrl(getUser(userInfoModel.getLoginId()), PROFILE_IMAGE_SIZE_TINY))
+                        .build())
                 .collect(Collectors.toList());
     }
 
