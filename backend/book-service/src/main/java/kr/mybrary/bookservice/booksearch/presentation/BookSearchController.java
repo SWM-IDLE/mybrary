@@ -4,6 +4,7 @@ import kr.mybrary.bookservice.booksearch.domain.BookSearchRankingService;
 import kr.mybrary.bookservice.booksearch.domain.PlatformBookSearchApiService;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
+import kr.mybrary.bookservice.global.dto.response.FeignClientResponse;
 import kr.mybrary.bookservice.global.dto.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,7 +52,7 @@ public class BookSearchController {
         BookListByCategorySearchServiceRequest request = BookListByCategorySearchServiceRequest.of(type, categoryId, page);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(SuccessResponse.of(HttpStatus.OK.toString(), "카테고리별 도서 리스트 조회에 성공했습니다.", bookService.searchBookListByCategory(request)));
+                .body(FeignClientResponse.of(bookService.searchBookListByCategory(request)));
     }
 
     @GetMapping("/search/ranking")

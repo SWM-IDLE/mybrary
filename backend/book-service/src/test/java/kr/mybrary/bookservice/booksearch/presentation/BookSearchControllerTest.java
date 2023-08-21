@@ -236,8 +236,6 @@ class BookSearchControllerTest {
         // then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("200 OK"))
-                .andExpect(jsonPath("$.message").value("카테고리별 도서 리스트 조회에 성공했습니다."))
                 .andExpect(jsonPath("$.data").isNotEmpty());
 
         // document
@@ -247,7 +245,7 @@ class BookSearchControllerTest {
                         preprocessResponse(prettyPrint()),
                         resource(
                                 ResourceSnippetParameters.builder()
-                                        .tag("search")
+                                        .tag("feignClient API for user-service")
                                         .summary("카테고리 ID와 추천 타입을 통해 도서 리스트를 조회한다.")
                                         .queryParameters(
                                                 parameterWithName("page").type(SimpleType.NUMBER).description("페이지 번호, 생략가능 default : 1").optional(),
@@ -256,8 +254,6 @@ class BookSearchControllerTest {
                                         )
                                         .responseSchema(Schema.schema("book_list_by_category_response_body"))
                                         .responseFields(
-                                                fieldWithPath("status").type(STRING).description("응답 상태"),
-                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
                                                 fieldWithPath("data.books[].isbn13").type(STRING).description("도서 ISBN13"),
                                                 fieldWithPath("data.books[].thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
                                                 fieldWithPath("data.nextRequestUrl").type(STRING).description("다음 요청 URL")
