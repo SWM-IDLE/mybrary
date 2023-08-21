@@ -31,9 +31,13 @@ public class UserTestData {
         return ProfileImageUpdateServiceRequest.builder()
                 .userId("loginId")
                 .loginId("loginId")
-                .profileImage(new MockMultipartFile("profileImage", "user1.png", "image/jpg",
-                        new FileInputStream("src/test/resources/images/Image1MB.jpg")))
+                .profileImage(createMockMultipartFile())
                 .build();
+    }
+
+    public static MockMultipartFile createMockMultipartFile() throws Exception {
+        return new MockMultipartFile("profileImage", "user1.png", "image/jpg",
+                new FileInputStream("src/test/resources/images/Image1MB.jpg"));
     }
 
     public static ProfileImageUpdateServiceRequest createProfileImageUpdateServiceRequestWithEmptyFile() {
@@ -49,8 +53,12 @@ public class UserTestData {
         return ProfileImageUpdateServiceRequest.builder()
                 .userId("loginId")
                 .loginId("loginId")
-                .profileImage(new MockMultipartFile("profileImage", "user1.png", "image/jpeg",
-                        new FileInputStream("src/test/resources/images/Image6MB.jpeg")))
+                .profileImage(createMockMultipartFileFileSizeExceeded())
                 .build();
+    }
+
+    public static MockMultipartFile createMockMultipartFileFileSizeExceeded() throws Exception {
+        return new MockMultipartFile("profileImage", "user1.png", "image/jpg",
+                new FileInputStream("src/test/resources/images/Image6MB.jpeg"));
     }
 }
