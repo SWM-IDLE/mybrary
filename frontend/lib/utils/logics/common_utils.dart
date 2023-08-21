@@ -15,10 +15,7 @@ Widget buildErrorPage({String? message}) {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.wifi_off_rounded,
-            color: grey777777,
-          ),
+          const Icon(Icons.wifi_off_rounded, color: grey777777),
           const SizedBox(height: 16.0),
           Text(
             message ?? '정보를 가져올 수 없습니다.\n인터넷 연결 상태를 확인해주세요.',
