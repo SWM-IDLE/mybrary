@@ -35,6 +35,7 @@ class _SearchBookListState extends State<SearchBookList>
   );
 
   final ScrollController _searchScrollController = ScrollController();
+  final ScrollController _searchUserScrollController = ScrollController();
   final ScrollController _tabScrollController = ScrollController();
   final TextEditingController _bookSearchKeywordController =
       TextEditingController();
@@ -86,6 +87,7 @@ class _SearchBookListState extends State<SearchBookList>
   void dispose() {
     _bookSearchKeywordController.dispose();
     _searchScrollController.dispose();
+    _searchUserScrollController.dispose();
     _tabScrollController.dispose();
     super.dispose();
   }
@@ -95,6 +97,9 @@ class _SearchBookListState extends State<SearchBookList>
     return SubPageLayout(
       child: NestedScrollView(
         controller: _tabScrollController,
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return searchPageSliverBuilder(
             context,
@@ -105,6 +110,9 @@ class _SearchBookListState extends State<SearchBookList>
         },
         body: TabBarView(
           controller: _tabController,
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
           children: [
             FutureBuilder<BookSearchResponseData>(
               future: _bookSearchResponse,
@@ -155,19 +163,15 @@ class _SearchBookListState extends State<SearchBookList>
                   return Column(
                     children: [
                       if (bookSearchResponse.bookSearchResult!.isEmpty) ...[
-                        const SizedBox(
-                          height: 290,
-                        ),
                         const SingleDataError(
                           errorMessage: '검색된 책이 없습니다.',
                         ),
                       ] else ...[
-                        const SizedBox(
-                          height: 105.0,
-                        ),
+                        const SizedBox(height: 8.0),
                         SearchBookListInfo(
                           bookSearchDataList: _bookSearchResultData,
                           scrollController: _searchScrollController,
+                          paddingTopHeight: paddingTopHeight,
                         ),
                       ],
                     ],
@@ -202,7 +206,8 @@ class _SearchBookListState extends State<SearchBookList>
                 if (snapshot.hasData) {
                   UserSearchResponseData userSearchResponse = snapshot.data!;
 
-                  if (_userSearchResultData.isEmpty) {
+                  if (userSearchResponse.searchedUsers!.isNotEmpty &&
+                      _userSearchResultData.isEmpty) {
                     _userSearchResultData
                         .addAll(userSearchResponse.searchedUsers!);
                   }
@@ -225,9 +230,10 @@ class _SearchBookListState extends State<SearchBookList>
   Widget searchInputBox() {
     return Padding(
       padding: const EdgeInsets.only(
-        top: 12.0,
-        right: 8.0,
+        top: 0.0,
+        left: 18.0,
         bottom: 4.0,
+        right: 18.0,
       ),
       child: TextField(
         textInputAction: TextInputAction.search,
@@ -246,8 +252,11 @@ class _SearchBookListState extends State<SearchBookList>
                 context: context,
                 nickname: _bookSearchKeywordController.text,
               )
-              .then((value) => setState(() {
-                    _userSearchResultData = value.searchedUsers!;
+              .then((data) => setState(() {
+                    if (data.searchedUsers!.isEmpty) {
+                      return _userSearchResultData.clear();
+                    }
+                    _userSearchResultData = data.searchedUsers!;
                   }));
 
           _searchRepository
@@ -257,15 +266,15 @@ class _SearchBookListState extends State<SearchBookList>
                     '$_bookSearchKeywordRequestUrl?keyword=${_bookSearchKeywordController.text}',
               )
               .then(
-                (value) => setState(() {
+                (data) => setState(() {
                   _isError = false;
                   _bookSearchResponse = _searchRepository.getBookSearchResponse(
                     context: context,
                     requestUrl:
                         '$_bookSearchKeywordRequestUrl?keyword=${_bookSearchKeywordController.text}',
                   );
-                  _bookSearchResultData = value.bookSearchResult!;
-                  _bookSearchNextUrl = value.nextRequestUrl!;
+                  _bookSearchResultData = data.bookSearchResult!;
+                  _bookSearchNextUrl = data.nextRequestUrl!;
                   if (_searchScrollController.hasClients) {
                     _searchScrollController.animateTo(
                       0,
@@ -327,29 +336,35 @@ class _SearchBookListState extends State<SearchBookList>
         handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
         sliver: SliverAppBar(
           elevation: 0,
+          toolbarHeight: 66.0,
           foregroundColor: commonBlackColor,
           backgroundColor: commonWhiteColor,
-          leadingWidth: 40,
           flexibleSpace: FlexibleSpaceBar(
             background: Container(
               color: commonWhiteColor,
             ),
           ),
-          title: widget.searchKeyword.isEmpty
-              ? const Text('검색')
-              : searchInputBox(),
-          titleTextStyle: appBarTitleStyle.copyWith(
-            fontSize: 16.0,
+          title: const Text('검색'),
+          titleTextStyle: commonSubTitleStyle.copyWith(
+            color: commonBlackColor,
           ),
           centerTitle: true,
           pinned: true,
-          expandedHeight: 104.01,
           forceElevated: innerBoxIsScrolled,
-          bottom: searchTabBar(
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(48.0),
+            child: searchInputBox(),
+          ),
+        ),
+      ),
+      SliverPersistentHeader(
+        delegate: _SliverAppBarDelegate(
+          searchTabBar(
             tabController,
             followerTabs,
           ),
         ),
+        pinned: true,
       ),
     ];
   }
@@ -363,6 +378,7 @@ class _SearchBookListState extends State<SearchBookList>
       indicatorColor: grey262626,
       labelColor: grey262626,
       labelStyle: commonButtonTextStyle,
+      physics: const BouncingScrollPhysics(),
       unselectedLabelColor: greyACACAC,
       unselectedLabelStyle: commonButtonTextStyle.copyWith(
         fontWeight: FontWeight.w400,
@@ -376,7 +392,10 @@ class _SearchBookListState extends State<SearchBookList>
       return Padding(
         padding: EdgeInsets.only(top: paddingTopHeight),
         child: ListView.builder(
-          physics: const BouncingScrollPhysics(),
+          controller: _searchUserScrollController,
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
           itemCount: searchedUsers.length,
           itemBuilder: (context, index) {
             SearchedUsers searchedUser = searchedUsers[index];
@@ -397,5 +416,31 @@ class _SearchBookListState extends State<SearchBookList>
         errorMessage: '검색된 사용자가 없습니다.',
       );
     }
+  }
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      height: _tabBar.preferredSize.height,
+      color: commonWhiteColor,
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
   }
 }

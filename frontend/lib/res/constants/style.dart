@@ -351,4 +351,4 @@ const settingInfoStyle = TextStyle(
 
 // padding
 final double paddingTopHeight =
-    Size.fromHeight(const SliverAppBar().toolbarHeight).height * 1.9;
+    Size.fromHeight(const SliverAppBar().toolbarHeight).height * 2;
