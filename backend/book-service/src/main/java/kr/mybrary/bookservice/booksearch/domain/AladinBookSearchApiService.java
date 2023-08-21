@@ -2,18 +2,18 @@ package kr.mybrary.bookservice.booksearch.domain;
 
 import java.util.List;
 import java.util.Objects;
-import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
-import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategoryResponseElement;
-import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponseElement;
 import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchDtoMapper;
+import kr.mybrary.bookservice.booksearch.domain.dto.request.BookListByCategorySearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceRequest;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookListByCategorySearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategoryResponseElement;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategorySearchResultResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponse;
+import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookSearchResultResponseElement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +57,6 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
     private static final String BOOK_DETAIL_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx";
     private static final String BOOK_LIST_BY_CATEGORY_SEARCH_URL = "http://www.aladin.co.kr/ttb/api/ItemList.aspx";
     private static final String BOOK_SEARCH_NEXT_URL = "/books/search?keyword=%s&page=%d&sort=%s";
-    private static final String BOOK_LIST_BY_CATEGORY_NEXT_URL = "/books/search/book-list-by-category?type=%s&categoryId=%d&page=%d";
 
     @Override
     @Cacheable(cacheNames = "bookListBySearchKeyword", key = "#request.keyword + '_' + #request.sort + '_' + #request.page", cacheManager = "cacheManager")
@@ -155,11 +154,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
                 .map(BookSearchDtoMapper.INSTANCE::aladinBookListByCategorySearchResponseToServiceResponse)
                 .toList();
 
-        if (isLastPage(response.getStartIndex(), response.getItemsPerPage(), response.getTotalResults())) {
-            return BookListByCategorySearchResultResponse.of(bookSearchResultServiceResponses, "");
-        }
-
-        return BookListByCategorySearchResultResponse.of(bookSearchResultServiceResponses, getNextRequestUrl(request));
+        return BookListByCategorySearchResultResponse.of(bookSearchResultServiceResponses);
     }
 
     private void checkIfSearchResultExists(int totalResults) {
@@ -174,10 +169,6 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
 
     private String getNextRequestUrl(BookSearchServiceRequest request) {
         return String.format(BOOK_SEARCH_NEXT_URL, request.getKeyword(), request.getPage() + 1, request.getSort());
-    }
-
-    private String getNextRequestUrl(BookListByCategorySearchServiceRequest request) {
-        return String.format(BOOK_LIST_BY_CATEGORY_NEXT_URL, request.getType(), request.getCategoryId(), request.getPage() + 1);
     }
 
     private boolean isLastPage(int startIndex, int itemsPerPage, int totalResults) {

@@ -218,9 +218,9 @@ class BookSearchControllerTest {
                                         ).build())));
     }
 
-    @DisplayName("카테고리 ID와 추천 타입을 통해 도서 리스트를 조회한다.")
+    @DisplayName("관심사와 추천 타입을 통해 도서 리스트를 조회한다. (for user-service)")
     @Test
-    void searchBookListByCategory() throws Exception {
+    void searchBookListByInterest() throws Exception {
 
         // given
         BookListByCategorySearchResultResponse response = BookSearchDtoTestData.createBookListSearchResultResponse();
@@ -228,10 +228,9 @@ class BookSearchControllerTest {
         given(aladinBookSearchApiService.searchBookListByCategory(any())).willReturn(response);
 
         // when
-        ResultActions actions = mockMvc.perform(get("/api/v1/books/search/book-list-by-category")
-                .param("page", String.valueOf(request.getPage()))
-                .param("type", request.getType())
-                .param("categoryId", String.valueOf(request.getCategoryId())));
+        ResultActions actions = mockMvc.perform(get("/api/v1/books/recommendations/{type}/categories/{categoryId}",
+                request.getType(), request.getCategoryId())
+                .param("page", String.valueOf(request.getPage())));
 
         // then
         actions
@@ -240,23 +239,24 @@ class BookSearchControllerTest {
 
         // document
         actions
-                .andDo(document("book-list-by-category",
+                .andDo(document("book-recommendations-by-interest",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(
                                 ResourceSnippetParameters.builder()
                                         .tag("feignClient API for user-service")
                                         .summary("카테고리 ID와 추천 타입을 통해 도서 리스트를 조회한다.")
-                                        .queryParameters(
-                                                parameterWithName("page").type(SimpleType.NUMBER).description("페이지 번호, 생략가능 default : 1").optional(),
+                                        .pathParameters(
                                                 parameterWithName("type").type(SimpleType.STRING).description("추천 타입 (Bestseller, ItemNewAll, ItemNewSpecial, ItemEditorChoice, BlogBest)"),
-                                                parameterWithName("categoryId").type(SimpleType.NUMBER).description("카테고리 ID 생략가능 default : 0 (전체)").optional()
+                                                parameterWithName("categoryId").type(SimpleType.NUMBER).description("카테고리 ID 생략가능 default : 0 (전체)")
                                         )
-                                        .responseSchema(Schema.schema("book_list_by_category_response_body"))
+                                        .queryParameters(
+                                                parameterWithName("page").type(SimpleType.NUMBER).description("페이지 번호, 생략가능 default : 1").optional()
+                                        )
+                                        .responseSchema(Schema.schema("book_list_by_interest_response_body"))
                                         .responseFields(
                                                 fieldWithPath("data.books[].isbn13").type(STRING).description("도서 ISBN13"),
-                                                fieldWithPath("data.books[].thumbnailUrl").type(STRING).description("도서 썸네일 URL"),
-                                                fieldWithPath("data.nextRequestUrl").type(STRING).description("다음 요청 URL")
+                                                fieldWithPath("data.books[].thumbnailUrl").type(STRING).description("도서 썸네일 URL")
                                         ).build())));
     }
 

@@ -224,7 +224,6 @@ public class BookSearchDtoTestData {
     public static BookListByCategorySearchResultResponse createBookListSearchResultResponse() {
         return BookListByCategorySearchResultResponse.builder()
                 .books(List.of(createBookListByCategoryServiceResponse()))
-                .nextRequestUrl("test_next_request_url")
                 .build();
     }
 
