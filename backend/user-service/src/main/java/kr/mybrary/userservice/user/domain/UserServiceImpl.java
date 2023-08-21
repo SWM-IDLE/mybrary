@@ -184,9 +184,7 @@ public class UserServiceImpl implements UserService {
         }
         if(size.equals(PROFILE_IMAGE_SIZE_SMALL)) {
             user.updateProfileImageThumbnailSmallUrl(storageService.getResizedUrl(user.getProfileImageUrl(), size));
-            return;
         }
-        throw new ProfileImageSizeOptionNotSupportedException();
     }
 
     @Override
@@ -199,7 +197,7 @@ public class UserServiceImpl implements UserService {
 
         String profileImageUrl = storageService.putFile(serviceRequest.getProfileImage(),
                 MultipartFileUtil.generateFilePath(String.format(PROFILE_IMAGE_PATH_FORMAT, serviceRequest.getLoginId()),
-                        MultipartFileUtil.generateTimestampFileName(serviceRequest.getDate()),
+                        MultipartFileUtil.generateTimestampFileName(serviceRequest.getLocalDateTime()),
                         MultipartFileUtil.getFileExtension(serviceRequest.getProfileImage())));
 
         user.updateProfileImageUrl(profileImageUrl);

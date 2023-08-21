@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -69,7 +69,7 @@ public class UserController {
                                                               @RequestParam("profileImage") MultipartFile profileImage) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "로그인 된 사용자의 프로필 이미지를 등록했습니다.",
-                        userService.updateProfileImage(ProfileImageUpdateServiceRequest.of(profileImage, loginId, userId, new Date()))));
+                        userService.updateProfileImage(ProfileImageUpdateServiceRequest.of(profileImage, loginId, userId, LocalDateTime.now()))));
     }
 
     @DeleteMapping("/{userId}/profile/image")

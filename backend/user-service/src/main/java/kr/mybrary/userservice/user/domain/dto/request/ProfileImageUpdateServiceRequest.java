@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -13,14 +13,14 @@ public class ProfileImageUpdateServiceRequest {
     private MultipartFile profileImage;
     private String loginId;
     private String userId;
-    private Date date;
+    private LocalDateTime localDateTime;
 
-    public static ProfileImageUpdateServiceRequest of(MultipartFile profileImage, String loginId, String userId, Date date) {
+    public static ProfileImageUpdateServiceRequest of(MultipartFile profileImage, String loginId, String userId, LocalDateTime localDateTime) {
         return ProfileImageUpdateServiceRequest.builder()
                 .profileImage(profileImage)
                 .loginId(loginId)
                 .userId(userId)
-                .date(date)
+                .localDateTime(localDateTime)
                 .build();
     }
 

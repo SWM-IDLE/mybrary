@@ -2,8 +2,8 @@ package kr.mybrary.userservice.global.util;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class MultipartFileUtil {
 
@@ -15,9 +15,9 @@ public class MultipartFileUtil {
         return multipartFile.getContentType().split("/")[1];
     }
 
-    public static String generateTimestampFileName(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS");
-        return dateFormat.format(date);
+    public static String generateTimestampFileName(LocalDateTime localDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
+        return localDateTime.format(formatter);
     }
 
 }
