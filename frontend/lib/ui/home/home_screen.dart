@@ -7,7 +7,6 @@ import 'package:mybrary/data/repository/home_repository.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
-import 'package:mybrary/ui/common/components/data_error.dart';
 import 'package:mybrary/ui/common/layout/default_layout.dart';
 import 'package:mybrary/ui/home/components/home_barcode_button.dart';
 import 'package:mybrary/ui/home/components/home_best_seller.dart';
@@ -15,6 +14,7 @@ import 'package:mybrary/ui/home/components/home_book_count.dart';
 import 'package:mybrary/ui/home/components/home_intro.dart';
 import 'package:mybrary/ui/home/components/home_recommend_books.dart';
 import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
+import 'package:mybrary/utils/logics/common_utils.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -89,93 +89,107 @@ class _HomeScreenState extends State<HomeScreen> {
           _homeAppBar(),
           const HomeIntro(),
           const HomeBarcodeButton(),
-          FutureBuilder<HomeCommonData>(
-            future: Future.wait(_futureHomeData())
-                .then((data) => _buildHomeData(data)),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const SliverToBoxAdapter(
-                  child: DataError(
-                    errorMessage: '메인 화면을 불러오는데 실패했습니다.',
-                  ),
-                );
-              }
+          SliverToBoxAdapter(
+            child: FutureBuilder<TodayRegisteredBookCountResponseData>(
+                future: _todayRegisteredBookCountData,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return buildErrorPage();
+                  }
 
-              if (snapshot.hasData) {
-                HomeCommonData homeData = snapshot.data!;
-                final todayRegisteredBookCount =
-                    homeData.todayRegisteredBookCountResponseData.count;
-                final bookListByBestSeller =
-                    homeData.bookListByCategoryResponseData.books!;
-                final bookListByGenreNovel =
-                    homeData.bookListByGenreNovelData.books!;
-                final bookListByPsychology =
-                    homeData.bookListByPsychologyData.books!;
-                final bookListByTravel = homeData.bookListByTravelData.books!;
-
-                if (_bookListByCategory.isEmpty) {
-                  _bookListByCategory.addAll([...bookListByGenreNovel]);
-                }
-
-                return SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      HomeBookCount(
-                        todayRegisteredBookCount: todayRegisteredBookCount!,
+                  if (snapshot.hasData) {
+                    return HomeBookCount(
+                      todayRegisteredBookCount: snapshot.data!.count!,
+                    );
+                  }
+                  return const CircularLoading();
+                }),
+          ),
+          SliverToBoxAdapter(
+            child: FutureBuilder<BookListByCategoryResponseData>(
+                future: _bookListByCategoryData,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return buildErrorPage();
+                  }
+                  if (snapshot.hasData) {
+                    return Container(
+                      height: 258,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
                       ),
-                      Container(
-                        height: 258,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16.0,
-                        ),
-                        child: HomeBestSeller(
-                          bookListByBestSeller: bookListByBestSeller,
+                      child: HomeBestSeller(
+                        bookListByBestSeller: snapshot.data!.books!,
+                        onTapBook: (String isbn13) {
+                          _nextToBookSearchDetailScreen(isbn13);
+                        },
+                      ),
+                    );
+                  }
+                  return Container();
+                }),
+          ),
+          SliverToBoxAdapter(
+            child: FutureBuilder<HomeCommonData>(
+                future: Future.wait(_futureHomeData())
+                    .then((data) => _buildHomeData(data)),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return buildErrorPage();
+                  }
+
+                  if (snapshot.hasData) {
+                    final data = snapshot.data!;
+                    final bookListByGenreNovel =
+                        data.bookListByGenreNovelData.books!;
+                    final bookListByPsychology =
+                        data.bookListByPsychologyData.books!;
+                    final bookListByTravel = data.bookListByTravelData.books!;
+
+                    if (_bookListByCategory.isEmpty) {
+                      _bookListByCategory.addAll([...bookListByGenreNovel]);
+                    }
+
+                    return Container(
+                      height: 310,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                      ),
+                      child: HomeRecommendBooks(
+                          category: _bookCategory,
+                          bookListByCategory: _bookListByCategory,
+                          categoryScrollController: _categoryScrollController,
                           onTapBook: (String isbn13) {
                             _nextToBookSearchDetailScreen(isbn13);
                           },
-                        ),
-                      ),
-                      Container(
-                        height: 310,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16.0,
-                        ),
-                        child: HomeRecommendBooks(
-                            category: _bookCategory,
-                            bookListByCategory: _bookListByCategory,
-                            categoryScrollController: _categoryScrollController,
-                            onTapBook: (String isbn13) {
-                              _nextToBookSearchDetailScreen(isbn13);
-                            },
-                            onTapCategory: (String category) {
-                              setState(() {
-                                _bookCategory = category;
-                                switch (category) {
-                                  case '심리학':
-                                    _bookListByCategory = bookListByPsychology;
-                                    _scrollToTop();
-                                    break;
-                                  case '여행':
-                                    _bookListByCategory = bookListByTravel;
-                                    _scrollToTop();
-                                    break;
-                                  default:
-                                    _bookListByCategory = bookListByGenreNovel;
-                                    _scrollToTop();
-                                }
-                              });
-                            }),
-                      ),
-                      const SizedBox(height: 30.0),
-                    ],
-                  ),
-                );
-              }
-              return const SliverToBoxAdapter(
-                child: CircularLoading(),
-              );
-            },
+                          onTapCategory: (String category) {
+                            setState(() {
+                              _bookCategory = category;
+                              switch (category) {
+                                case '심리학':
+                                  _bookListByCategory = bookListByPsychology;
+                                  _scrollToTop();
+                                  break;
+                                case '여행':
+                                  _bookListByCategory = bookListByTravel;
+                                  _scrollToTop();
+                                  break;
+                                default:
+                                  _bookListByCategory = bookListByGenreNovel;
+                                  _scrollToTop();
+                              }
+                            });
+                          }),
+                    );
+                  }
+                  return Container();
+                }),
           ),
+          const SliverToBoxAdapter(
+            child: SizedBox(
+              height: 30.0,
+            ),
+          )
         ],
       ),
     );
@@ -196,8 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Future<Object>> _futureHomeData() {
     return [
-      _todayRegisteredBookCountData,
-      _bookListByCategoryData,
       _bookListByGenreNovelData,
       _bookListByPsychologyData,
       _bookListByTravelData
@@ -206,17 +218,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   HomeCommonData _buildHomeData(List<Object> data) {
     final [
-      todayRegisteredBookCountResponseData,
-      bookListByCategoryResponseData,
       bookListByGenreNovelData,
       bookListByPsychologyData,
       bookListByTravelData,
     ] = data;
     return HomeCommonData(
-      todayRegisteredBookCountResponseData: todayRegisteredBookCountResponseData
-          as TodayRegisteredBookCountResponseData,
-      bookListByCategoryResponseData:
-          bookListByCategoryResponseData as BookListByCategoryResponseData,
       bookListByGenreNovelData:
           bookListByGenreNovelData as BookListByCategoryResponseData,
       bookListByPsychologyData:
