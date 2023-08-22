@@ -67,8 +67,6 @@ public class MyReviewDtoTestData {
                 .toList();
 
         return UserInfoServiceResponse.builder()
-                .status("200 OK")
-                .message("Success")
                 .data(UserInfoServiceResponse.UserInfoList.builder()
                         .userInfoElements(list)
                         .build())

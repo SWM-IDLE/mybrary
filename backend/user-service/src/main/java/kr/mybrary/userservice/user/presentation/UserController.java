@@ -1,6 +1,7 @@
 package kr.mybrary.userservice.user.presentation;
 
 import jakarta.validation.Valid;
+import kr.mybrary.userservice.global.dto.response.FeignClientResponse;
 import kr.mybrary.userservice.global.dto.response.SuccessResponse;
 import kr.mybrary.userservice.user.domain.UserService;
 import kr.mybrary.userservice.user.domain.dto.request.*;
@@ -169,10 +170,9 @@ public class UserController {
     }
 
     @PostMapping("/info")
-    public ResponseEntity<SuccessResponse> getUserInfo(@RequestBody UserInfoRequest userInfoRequest) {
+    public ResponseEntity<FeignClientResponse> getUserInfo(@RequestBody UserInfoRequest userInfoRequest) {
         return ResponseEntity.ok().body(
-                SuccessResponse.of(HttpStatus.OK.toString(), "사용자 정보를 모두 조회했습니다.",
-                        userService.getUserInfo(UserInfoServiceRequest.of(userInfoRequest)))
+                FeignClientResponse.of(userService.getUserInfo(UserInfoServiceRequest.of(userInfoRequest)))
         );
     }
 
