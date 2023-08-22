@@ -1,13 +1,33 @@
 package kr.mybrary.userservice.interest.presentation;
 
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import kr.mybrary.userservice.interest.InterestDtoTestData;
 import kr.mybrary.userservice.interest.domain.InterestService;
 import kr.mybrary.userservice.interest.domain.dto.request.UserInterestUpdateServiceRequest;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestCategoryServiceResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.InterestResponse;
+import kr.mybrary.userservice.interest.domain.dto.response.UserInterestAndBookRecommendationsResponse;
 import kr.mybrary.userservice.interest.domain.dto.response.UserInterestServiceResponse;
 import kr.mybrary.userservice.interest.presentation.dto.request.UserInterestUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -19,26 +39,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.List;
-
-import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
-import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
-import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(InterestController.class)
 @MockBean(JpaMetamodelMappingContext.class)
@@ -105,7 +109,7 @@ class InterestControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL + "/interest-categories")
+                get(BASE_URL + "/interest-categories")
                         .with(csrf()));
 
         // then
@@ -175,7 +179,7 @@ class InterestControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.get(BASE_URL + "/users/{userId}/interests", USER_ID)
+                get(BASE_URL + "/users/{userId}/interests", USER_ID)
                         .with(csrf()));
 
         // then
@@ -260,7 +264,7 @@ class InterestControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                RestDocumentationRequestBuilders.put(BASE_URL + "/users/{userId}/interests", USER_ID)
+                put(BASE_URL + "/users/{userId}/interests", USER_ID)
                         .with(csrf())
                         .header("USER-ID", USER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -312,4 +316,58 @@ class InterestControllerTest {
         );
     }
 
+    @DisplayName("관심사와 책 추천을 함께 조회한다.")
+    @Test
+    void getInterestsAndBookRecommendations() throws Exception {
+
+        // given
+        String type = "bestseller";
+        int page = 1;
+
+        UserInterestAndBookRecommendationsResponse response = InterestDtoTestData.createUserInterestAndBookRecommendationsResponse();
+        given(interestService.getInterestsAndBookRecommendations(any())).willReturn(response);
+
+        // when
+        ResultActions actions = mockMvc.perform(get(BASE_URL + "/interests/book-recommendations/{type}", type)
+                        .param("page", String.valueOf(page))
+                        .header("USER-ID", USER_ID));
+
+        // then
+        actions
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
+                .andExpect(jsonPath("$.message").value("사용자의 모든 관심사와 그 중 하나의 관심사에 대한 추천 도서를 조회했습니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // docs
+        actions.andDo(document("get-interests-and-book-recommendations",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                        ResourceSnippetParameters.builder()
+                                .tag("user-interest-and-book-recommendations")
+                                .summary("관심사와 책 추천을 함께 조회한다.")
+                                .description("사용자의 모든 관심사와 그 중 첫번쨰 관심사에 대한 추천 도서를 조회한다. 관심사가 없는 경우 빈 리스트를 반환한다.")
+                                .pathParameters(
+                                        parameterWithName("type").description("책 추천 타입")
+                                )
+                                .requestHeaders(
+                                        headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
+                                )
+                                .queryParameters(
+                                        parameterWithName("page").description("페이지 번호")
+                                )
+                                .responseSchema(Schema.schema("get_interests_and_book_recommendations_response_body"))
+                                .responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.STRING).description(STATUS_FIELD_DESCRIPTION),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description(MESSAGE_FIELD_DESCRIPTION),
+                                        fieldWithPath("data.userInterests[].name").type(JsonFieldType.STRING).description("관심사 이름"),
+                                        fieldWithPath("data.userInterests[].code").type(JsonFieldType.NUMBER).description("관심사 코드"),
+                                        fieldWithPath("data.bookRecommendations[].thumbnailUrl").type(JsonFieldType.STRING).description("추천 도서 썸네일 URL"),
+                                        fieldWithPath("data.bookRecommendations[].isbn13").type(JsonFieldType.STRING).description("추천 도서 ISBN13")
+                                )
+                                .build()
+                ))
+        );
+    }
 }
