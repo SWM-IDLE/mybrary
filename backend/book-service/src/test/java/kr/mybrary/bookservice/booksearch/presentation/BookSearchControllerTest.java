@@ -218,9 +218,55 @@ class BookSearchControllerTest {
                                         ).build())));
     }
 
+    @DisplayName("카테고리 ID와 추천 타입을 통해 도서 리스트를 조회한다.")
+    @Test
+    void getBookRecommendations() throws Exception {
+
+        // given
+        BookListByCategorySearchResultResponse response = BookSearchDtoTestData.createBookListSearchResultResponse();
+        BookListByCategorySearchServiceRequest request = BookSearchDtoTestData.createBookListSearchServiceRequest();
+        given(aladinBookSearchApiService.searchBookListByCategory(any())).willReturn(response);
+
+        // when
+        ResultActions actions = mockMvc.perform(get("/api/v1/books/recommendations")
+                .param("page", String.valueOf(request.getPage()))
+                .param("type", request.getType())
+                .param("categoryId", String.valueOf(request.getCategoryId())));
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("200 OK"))
+                .andExpect(jsonPath("$.message").value("카테고리별 도서 리스트 조회에 성공했습니다."))
+                .andExpect(jsonPath("$.data").isNotEmpty());
+
+        // document
+        actions
+                .andDo(document("book-list-by-category",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("search")
+                                        .summary("카테고리 ID와 추천 타입을 통해 도서 리스트를 조회한다.")
+                                        .queryParameters(
+                                                parameterWithName("page").type(SimpleType.NUMBER).description("페이지 번호, 생략가능 default : 1").optional(),
+                                                parameterWithName("type").type(SimpleType.STRING).description("추천 타입 (Bestseller, ItemNewAll, ItemNewSpecial, ItemEditorChoice, BlogBest)"),
+                                                parameterWithName("categoryId").type(SimpleType.NUMBER).description("카테고리 ID 생략가능 default : 0 (전체)").optional()
+                                        )
+                                        .responseSchema(Schema.schema("book_list_by_category_response_body"))
+                                        .responseFields(
+                                                fieldWithPath("status").type(STRING).description("응답 상태"),
+                                                fieldWithPath("message").type(STRING).description("응답 메시지"),
+                                                fieldWithPath("data.books[].isbn13").type(STRING).description("도서 ISBN13"),
+                                                fieldWithPath("data.books[].thumbnailUrl").type(STRING).description("도서 썸네일 URL")
+                                        ).build())));
+    }
+
+
     @DisplayName("관심사와 추천 타입을 통해 도서 리스트를 조회한다. (for user-service)")
     @Test
-    void searchBookListByInterest() throws Exception {
+    void getBookRecommendationsCalledByFeignClient() throws Exception {
 
         // given
         BookListByCategorySearchResultResponse response = BookSearchDtoTestData.createBookListSearchResultResponse();
