@@ -176,7 +176,7 @@ public class UserController {
     }
 
     @PostMapping("/info")
-    public ResponseEntity<FeignClientResponse> getUserInfo(@RequestBody UserInfoRequest userInfoRequest) {
+    public ResponseEntity<FeignClientResponse> getUserInfoCalledByFeignClient(@RequestBody UserInfoRequest userInfoRequest) {
         return ResponseEntity.ok().body(
                 FeignClientResponse.of(userService.getUserInfo(UserInfoServiceRequest.of(userInfoRequest)))
         );

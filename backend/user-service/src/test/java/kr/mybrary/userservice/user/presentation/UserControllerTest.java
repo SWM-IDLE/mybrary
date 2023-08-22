@@ -992,9 +992,9 @@ class UserControllerTest {
         );
     }
 
-    @DisplayName("사용자 정보를 조회한다.")
+    @DisplayName("사용자 정보를 조회한다. (for book-service)")
     @Test
-    void getUserInfo() throws Exception {
+    void getUserInfoCalledByFeignClient() throws Exception {
         // given
         UserInfoRequest userInfoRequest = UserInfoRequest.builder()
                 .userIds(List.of("userId_1", "userId_2"))
@@ -1042,7 +1042,7 @@ class UserControllerTest {
                 preprocessResponse(prettyPrint()),
                 resource(
                         ResourceSnippetParameters.builder()
-                                .tag("user-info (for book-service)")
+                                .tag("feignClient API for book-service")
                                 .summary("사용자 정보를 조회한다.")
                                 .requestFields(
                                         fieldWithPath("userIds").type(JsonFieldType.ARRAY).description("조회할 사용자 아이디 목록")
