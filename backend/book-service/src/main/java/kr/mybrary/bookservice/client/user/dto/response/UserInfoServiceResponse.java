@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserInfoServiceResponse {
 
-    private String status;
-    private String message;
     private UserInfoList data;
 
     @Builder

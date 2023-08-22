@@ -1,14 +1,50 @@
 package kr.mybrary.userservice.user.presentation;
 
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.headerWithName;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.List;
 import kr.mybrary.userservice.user.domain.UserService;
-import kr.mybrary.userservice.user.domain.dto.request.*;
-import kr.mybrary.userservice.user.domain.dto.response.*;
+import kr.mybrary.userservice.user.domain.dto.request.FollowServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.FollowerServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileImageUpdateServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.ProfileUpdateServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.SignUpServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.request.UserInfoServiceRequest;
+import kr.mybrary.userservice.user.domain.dto.response.FollowResponse;
+import kr.mybrary.userservice.user.domain.dto.response.FollowStatusServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.FollowerServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.FollowingServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileImageUrlServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.ProfileServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.SearchServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.SignUpServiceResponse;
+import kr.mybrary.userservice.user.domain.dto.response.UserInfoServiceResponse;
 import kr.mybrary.userservice.user.persistence.Role;
-import kr.mybrary.userservice.user.presentation.dto.request.*;
+import kr.mybrary.userservice.user.presentation.dto.request.FollowRequest;
+import kr.mybrary.userservice.user.presentation.dto.request.FollowerRequest;
+import kr.mybrary.userservice.user.presentation.dto.request.ProfileUpdateRequest;
+import kr.mybrary.userservice.user.presentation.dto.request.SignUpRequest;
+import kr.mybrary.userservice.user.presentation.dto.request.UserInfoRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +60,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
-import static com.epages.restdocs.apispec.ResourceDocumentation.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
 @MockBean(JpaMetamodelMappingContext.class)
@@ -1006,8 +1026,6 @@ class UserControllerTest {
         // then
         actions
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.status").value(HttpStatus.OK.toString()))
-                .andExpect(jsonPath("$.message").value("사용자 정보를 모두 조회했습니다."))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.userInfoElements[0].userId").value(userInfoServiceResponse.getUserInfoElements().get(0).getUserId()))
                 .andExpect(jsonPath("$.data.userInfoElements[0].nickname").value(userInfoServiceResponse.getUserInfoElements().get(0).getNickname()))
@@ -1031,10 +1049,6 @@ class UserControllerTest {
                                 )
                                 .responseSchema(Schema.schema("get_user_info_response_body"))
                                 .responseFields(
-                                        fieldWithPath("status").type(JsonFieldType.STRING)
-                                                .description(STATUS_FIELD_DESCRIPTION),
-                                        fieldWithPath("message").type(JsonFieldType.STRING)
-                                                .description(MESSAGE_FIELD_DESCRIPTION),
                                         fieldWithPath("data.userInfoElements").type(JsonFieldType.ARRAY).description("조회된 사용자 정보 목록"),
                                         fieldWithPath("data.userInfoElements[].userId").type(JsonFieldType.STRING).description("조회된 사용자의 아이디"),
                                         fieldWithPath("data.userInfoElements[].nickname").type(JsonFieldType.STRING).description("조회된 사용자의 닉네임"),

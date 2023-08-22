@@ -43,8 +43,7 @@ public class MyReviewReadService {
         UserInfoServiceResponse usersInfo = userServiceClient.getUsersInfo(
                 UserInfoRequest.of(getUserIdFromMyBookReview(reviewElements)));
 
-        Map<String, UserInfo> userInfoMap = createUserInfoMapFromResponse(
-                usersInfo.getData().getUserInfoElements());
+        Map<String, UserInfo> userInfoMap = createUserInfoMapFromResponse(usersInfo.getData().getUserInfoElements());
 
         List<ReviewElement> myBookReviewElements = createMyBookReviewElements(reviewElements, userInfoMap);
         double starRatingAverage = getReviewStarRatingAverage(reviewElements);
