@@ -25,9 +25,11 @@ import 'package:mybrary/utils/logics/book_utils.dart';
 
 class MyBookDetailScreen extends StatefulWidget {
   final int myBookId;
+  final String? userId;
 
   const MyBookDetailScreen({
     required this.myBookId,
+    this.userId,
     super.key,
   });
 
@@ -76,7 +78,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
     _bookRepository
         .getMyBookDetail(
           context: context,
-          userId: _userId,
+          userId: widget.userId ?? _userId,
           myBookId: widget.myBookId,
         )
         .then(
@@ -102,7 +104,7 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
 
     _myBookDetail = _bookRepository.getMyBookDetail(
       context: context,
-      userId: _userId,
+      userId: widget.userId ?? _userId,
       myBookId: widget.myBookId,
     );
     _myBookReview = _bookRepository.getMyBookReview(
@@ -261,19 +263,22 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                         contentController: _myBookReviewContentController,
                         nextToMyBookReview: _nextToMyBookReview,
                         reviewId: myBookReviewData.id!,
+                        userId: widget.userId,
                       ),
-                    const SliverToBoxAdapter(
-                      child: SizedBox(height: 70.0),
+                    SliverToBoxAdapter(
+                      child:
+                          SizedBox(height: widget.userId == null ? 30.0 : 70.0),
                     ),
                   ],
                 ),
-                BottomButton(
-                  isScrollingDown: _isScrollingDown,
-                  buttonText: '마이북 기록 열기',
-                  onTap: () {
-                    _showMyBookRecordEdit(context, colorCode, dateTime);
-                  },
-                ),
+                if (widget.userId == null)
+                  BottomButton(
+                    isScrollingDown: _isScrollingDown,
+                    buttonText: '마이북 기록 열기',
+                    onTap: () {
+                      _showMyBookRecordEdit(context, colorCode, dateTime);
+                    },
+                  ),
               ],
             );
           }
@@ -730,25 +735,26 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
                   '마이 리뷰',
                   style: commonSubBoldStyle,
                 ),
-                InkWell(
-                  onTap: () async {
-                    _nextToMyBookReview(
-                      thumbnailUrl: thumbnailUrl,
-                      title: title,
-                      authors: authors,
-                      starRating: starRating,
-                      contentController: contentController,
-                      isCreateReview: true,
-                      myBookId: widget.myBookId,
-                    );
-                  },
-                  child: Text(
-                    '작성하기',
-                    style: bookDetailDescriptionStyle.copyWith(
-                      decoration: TextDecoration.underline,
+                if (widget.userId == null)
+                  InkWell(
+                    onTap: () async {
+                      _nextToMyBookReview(
+                        thumbnailUrl: thumbnailUrl,
+                        title: title,
+                        authors: authors,
+                        starRating: starRating,
+                        contentController: contentController,
+                        isCreateReview: true,
+                        myBookId: widget.myBookId,
+                      );
+                    },
+                    child: Text(
+                      '작성하기',
+                      style: bookDetailDescriptionStyle.copyWith(
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
             const SizedBox(height: 20.0),
@@ -775,8 +781,8 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
               ],
             ),
             const SizedBox(height: 10.0),
-            const Text(
-              '마이 리뷰를 등록해보세요.',
+            Text(
+              widget.userId != null ? '마이 리뷰를 등록해보세요.' : '작성된 리뷰가 없습니다.',
               style: bookDetailDescriptionStyle,
             ),
             const SizedBox(height: 20.0),
@@ -857,114 +863,112 @@ class _MyBookDetailScreenState extends State<MyBookDetailScreen> {
       centerTitle: true,
       backgroundColor: commonWhiteColor,
       foregroundColor: commonBlackColor,
-      actions: myBookId == null && myBookTitle == null
-          ? []
-          : [
-              IconButton(
-                visualDensity: VisualDensity.compact,
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                    builder: (context) {
-                      return const RootTab();
-                    },
-                  ), (route) => false);
-                },
-                icon: SvgPicture.asset(
-                  'assets/svg/icon/home.svg',
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: IconButton(
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () async {
-                    await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          content: Wrap(
-                            alignment: WrapAlignment.center,
+      actions: [
+        IconButton(
+          visualDensity: VisualDensity.compact,
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+              builder: (context) {
+                return const RootTab();
+              },
+            ), (route) => false);
+          },
+          icon: SvgPicture.asset(
+            'assets/svg/icon/home.svg',
+          ),
+        ),
+        if (widget.userId == null)
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: IconButton(
+              visualDensity: VisualDensity.compact,
+              onPressed: () async {
+                await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Wrap(
+                        alignment: WrapAlignment.center,
+                        children: [
+                          const Text(
+                            '선택한 도서를 마이북에서',
+                            style: confirmButtonTextStyle,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
-                                '선택한 도서를 마이북에서',
-                                style: confirmButtonTextStyle,
+                              Text(
+                                '삭제',
+                                style: confirmButtonTextStyle.copyWith(
+                                  color: commonRedColor,
+                                ),
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    '삭제',
-                                    style: confirmButtonTextStyle.copyWith(
-                                      color: commonRedColor,
-                                    ),
-                                  ),
-                                  const Text(
-                                    '하시겠습니까?',
-                                    style: confirmButtonTextStyle,
-                                  ),
-                                ],
+                              const Text(
+                                '하시겠습니까?',
+                                style: confirmButtonTextStyle,
                               ),
                             ],
                           ),
-                          contentPadding: const EdgeInsets.only(
-                            top: 24.0,
-                            bottom: 16.0,
-                          ),
-                          actionsAlignment: MainAxisAlignment.center,
-                          buttonPadding:
-                              const EdgeInsets.symmetric(horizontal: 8.0),
-                          actions: [
-                            Row(
-                              children: [
-                                _confirmButton(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  buttonText: '취소',
-                                  isCancel: true,
-                                ),
-                                _confirmButton(
-                                  onTap: () {
-                                    _bookRepository.deleteMyBook(
-                                      context: context,
-                                      userId: _userId,
-                                      myBookId: myBookId!,
-                                    );
+                        ],
+                      ),
+                      contentPadding: const EdgeInsets.only(
+                        top: 24.0,
+                        bottom: 16.0,
+                      ),
+                      actionsAlignment: MainAxisAlignment.center,
+                      buttonPadding:
+                          const EdgeInsets.symmetric(horizontal: 8.0),
+                      actions: [
+                        Row(
+                          children: [
+                            _confirmButton(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              buttonText: '취소',
+                              isCancel: true,
+                            ),
+                            _confirmButton(
+                              onTap: () {
+                                _bookRepository.deleteMyBook(
+                                  context: context,
+                                  userId: _userId,
+                                  myBookId: myBookId!,
+                                );
 
-                                    Future.delayed(
-                                        const Duration(
-                                          milliseconds: 500,
-                                        ), () {
-                                      Navigator.of(context).pop();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            '선택한 도서가 삭제되었습니다.',
-                                            style: commonSnackBarMessageStyle,
-                                          ),
-                                          duration: Duration(seconds: 1),
-                                        ),
-                                      );
-                                      Navigator.of(context).pop();
-                                    });
-                                  },
-                                  buttonText: '삭제',
-                                  isCancel: false,
-                                ),
-                              ],
+                                Future.delayed(
+                                    const Duration(
+                                      milliseconds: 500,
+                                    ), () {
+                                  Navigator.of(context).pop();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        '선택한 도서가 삭제되었습니다.',
+                                        style: commonSnackBarMessageStyle,
+                                      ),
+                                      duration: Duration(seconds: 1),
+                                    ),
+                                  );
+                                  Navigator.of(context).pop();
+                                });
+                              },
+                              buttonText: '삭제',
+                              isCancel: false,
                             ),
                           ],
-                        );
-                      },
+                        ),
+                      ],
                     );
                   },
-                  icon: SvgPicture.asset(
-                    'assets/svg/icon/small/book_remove.svg',
-                  ),
-                ),
+                );
+              },
+              icon: SvgPicture.asset(
+                'assets/svg/icon/small/book_remove.svg',
               ),
-            ],
+            ),
+          ),
+      ],
     );
   }
 

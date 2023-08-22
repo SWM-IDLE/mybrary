@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:mybrary/data/model/profile/follow_status_response.dart';
 import 'package:mybrary/data/model/profile/follower_response.dart';
 import 'package:mybrary/data/model/profile/following_response.dart';
 import 'package:mybrary/data/network/api.dart';
@@ -142,5 +143,33 @@ class FollowDataSource {
     );
 
     return result.data;
+  }
+
+  Future<FollowStatusResponseData> getUserFollowStatus(
+    BuildContext context,
+    String userId,
+    String targetId,
+  ) async {
+    final dio = await authDio(context);
+    final userFollowStatusResponse = await dio.get(
+      '${getApi(API.getUserFollowStatus)}?targetId=$targetId',
+      options: Options(
+        headers: {'User-Id': userId},
+      ),
+    );
+
+    log('팔로우 상태 응답값: $userFollowStatusResponse');
+    final FollowStatusResponse result = commonResponseResult(
+      userFollowStatusResponse,
+      () => FollowStatusResponse(
+        status: userFollowStatusResponse.data['status'],
+        message: userFollowStatusResponse.data['message'],
+        data: FollowStatusResponseData.fromJson(
+          userFollowStatusResponse.data['data'],
+        ),
+      ),
+    );
+
+    return result.data!;
   }
 }

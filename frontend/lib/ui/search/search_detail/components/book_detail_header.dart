@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:html/parser.dart';
@@ -10,6 +8,7 @@ import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/mybook/interest_book_list/interest_book_list_screen.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
+import 'package:mybrary/utils/logics/common_utils.dart';
 
 class BookDetailHeader extends StatefulWidget {
   final String thumbnail;
@@ -238,7 +237,7 @@ class _BookDetailHeaderState extends State<BookDetailHeader> {
     if (!interested && onTapInterestBook) {
       _newInterested = true;
       _newInterestCount = interestCount + 1;
-      _showInterestBookMessage(
+      showInterestBookMessage(
         context: context,
         snackBarText: '관심 도서에 담겼습니다.',
         snackBarAction: _moveNextToInterestBookListScreen(),
@@ -246,14 +245,14 @@ class _BookDetailHeaderState extends State<BookDetailHeader> {
     } else if (interested && onTapInterestBook == false) {
       _newInterested = false;
       _newInterestCount = interestCount - 1;
-      _showInterestBookMessage(
+      showInterestBookMessage(
         context: context,
         snackBarText: '관심 도서가 삭제되었습니다.',
       );
     } else if (interested && onTapInterestBook) {
       _newInterested = true;
       _newInterestCount = interestCount;
-      _showInterestBookMessage(
+      showInterestBookMessage(
         context: context,
         snackBarText: '관심 도서에 담겼습니다.',
         snackBarAction: _moveNextToInterestBookListScreen(),
@@ -261,39 +260,9 @@ class _BookDetailHeaderState extends State<BookDetailHeader> {
     } else {
       _newInterested = false;
       _newInterestCount = interestCount;
-      _showInterestBookMessage(
+      showInterestBookMessage(
         context: context,
         snackBarText: '관심 도서가 삭제되었습니다.',
-      );
-    }
-  }
-
-  void _showInterestBookMessage({
-    required BuildContext context,
-    required String snackBarText,
-    Widget? snackBarAction,
-  }) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          padding: EdgeInsets.symmetric(
-            horizontal: 24.0,
-            vertical: Platform.isAndroid ? 22.0 : 16.0,
-          ),
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                snackBarText,
-                style: commonSnackBarMessageStyle.copyWith(fontSize: 14.0),
-              ),
-              snackBarAction ?? const SizedBox(),
-            ],
-          ),
-          duration: Duration(
-            seconds: snackBarAction == null ? 1 : 2,
-          ),
-        ),
       );
     }
   }

@@ -96,30 +96,39 @@ class _ReviewItemState extends State<ReviewItem> {
           ),
           const SizedBox(height: 4.0),
           if (_isTextOverflow && !_isMore)
-            InkWell(
-              onTap: () {
-                setState(() {
-                  _isMore = true;
-                });
-              },
-              child: Text(
-                '더보기 ⬇️',
-                style: commonSubMediumStyle.copyWith(
-                  fontSize: 13.0,
+            Align(
+              alignment: Alignment.centerRight,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _isMore = true;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(
+                    '더보기',
+                    style: commonSubMediumStyle.copyWith(
+                      fontSize: 13.0,
+                    ),
+                  ),
                 ),
               ),
             ),
           if (_isTextOverflow && _isMore)
-            InkWell(
-              onTap: () {
-                setState(() {
-                  _isMore = false;
-                });
-              },
-              child: Text(
-                '숨기기 ⬆️',
-                style: commonSubMediumStyle.copyWith(
-                  fontSize: 13.0,
+            Align(
+              alignment: Alignment.centerRight,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _isMore = false;
+                  });
+                },
+                child: Text(
+                  '숨기기',
+                  style: commonSubMediumStyle.copyWith(
+                    fontSize: 13.0,
+                  ),
                 ),
               ),
             ),

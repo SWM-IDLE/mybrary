@@ -12,14 +12,18 @@ import 'package:mybrary/ui/common/components/single_data_error.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/profile/follow/components/follow_layout.dart';
 import 'package:mybrary/ui/profile/follow/components/follow_user_info.dart';
+import 'package:mybrary/ui/profile/user_profile/user_profile_screen.dart';
+import 'package:mybrary/utils/logics/common_utils.dart';
 
 class FollowScreen extends StatefulWidget {
   final String nickname;
   final FollowPageType pageType;
+  final String? userId;
 
   const FollowScreen({
     required this.nickname,
     required this.pageType,
+    this.userId,
     super.key,
   });
 
@@ -75,11 +79,11 @@ class _FollowScreenState extends State<FollowScreen>
 
     _followerResponseData = _followRepository.getFollower(
       context: context,
-      userId: _userId,
+      userId: widget.userId ?? _userId,
     );
     _followingResponseData = _followRepository.getFollowings(
       context: context,
-      userId: _userId,
+      userId: widget.userId ?? _userId,
     );
 
     if (widget.pageType == FollowPageType.follower) {
@@ -158,6 +162,9 @@ class _FollowScreenState extends State<FollowScreen>
     return Padding(
       padding: EdgeInsets.only(top: _paddingTopHeight),
       child: ListView.builder(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         itemCount: followers.length,
         itemBuilder: (context, index) {
           Followers follower = followers[index];
@@ -167,29 +174,30 @@ class _FollowScreenState extends State<FollowScreen>
               FollowUserInfo(
                   nickname: follower.nickname!,
                   profileImageUrl: follower.profileImageUrl!),
-              ElevatedButton(
-                onPressed: () => onPressedDeleteFollowerUser(
-                  context: context,
-                  follower: follower,
-                  followers: followers,
-                  index: index,
-                ),
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  backgroundColor: greyDDDDDD,
-                  shape: followButtonRoundStyle,
-                  minimumSize: const Size(60.0, 10.0),
-                  splashFactory: NoSplash.splashFactory,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 8.0,
+              if (widget.userId == null)
+                ElevatedButton(
+                  onPressed: () => onPressedDeleteFollowerUser(
+                    context: context,
+                    follower: follower,
+                    followers: followers,
+                    index: index,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: greyDDDDDD,
+                    shape: followButtonRoundStyle,
+                    minimumSize: const Size(60.0, 10.0),
+                    splashFactory: NoSplash.splashFactory,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                  ),
+                  child: const Text(
+                    '삭제',
+                    style: followButtonTextStyle,
                   ),
                 ),
-                child: const Text(
-                  '삭제',
-                  style: followButtonTextStyle,
-                ),
-              ),
             ],
           );
         },
@@ -201,43 +209,60 @@ class _FollowScreenState extends State<FollowScreen>
     return Padding(
       padding: EdgeInsets.only(top: _paddingTopHeight),
       child: ListView.builder(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         itemCount: followings.length,
         itemBuilder: (context, index) {
           Followings following = followings[index];
           String followingUserId = following.userId!;
 
-          return FollowLayout(
-            children: [
-              FollowUserInfo(
-                nickname: following.nickname!,
-                profileImageUrl: following.profileImageUrl!,
-              ),
-              ElevatedButton(
-                onPressed: () => onPressedAddOrDeleteFollowingUser(
-                  followingUserId: followingUserId,
-                ),
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  backgroundColor:
-                      isFollowing(followingUserId) ? greyDDDDDD : primaryColor,
-                  shape: followButtonRoundStyle,
-                  minimumSize: const Size(60.0, 10.0),
-                  splashFactory: NoSplash.splashFactory,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 8.0,
+          return InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => UserProfileScreen(
+                    userId: followingUserId,
+                    nickname: following.nickname!,
                   ),
                 ),
-                child: Text(
-                  isFollowing(followingUserId) ? '팔로잉' : '팔로우',
-                  style: followButtonTextStyle.copyWith(
-                    color: isFollowing(followingUserId)
-                        ? commonBlackColor
-                        : commonWhiteColor,
-                  ),
+              );
+            },
+            child: FollowLayout(
+              children: [
+                FollowUserInfo(
+                  nickname: following.nickname!,
+                  profileImageUrl: following.profileImageUrl!,
                 ),
-              ),
-            ],
+                if (widget.userId == null)
+                  ElevatedButton(
+                    onPressed: () => onPressedAddOrDeleteFollowingUser(
+                      followingUserId: followingUserId,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: isFollowing(followingUserId)
+                          ? greyDDDDDD
+                          : primaryColor,
+                      shape: followButtonRoundStyle,
+                      minimumSize: const Size(60.0, 10.0),
+                      splashFactory: NoSplash.splashFactory,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                    ),
+                    child: Text(
+                      isFollowing(followingUserId) ? '팔로잉' : '팔로우',
+                      style: followButtonTextStyle.copyWith(
+                        color: isFollowing(followingUserId)
+                            ? commonBlackColor
+                            : commonWhiteColor,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           );
         },
       ),
@@ -257,7 +282,7 @@ class _FollowScreenState extends State<FollowScreen>
     );
 
     if (!mounted) return;
-    _showFollowButtonMessage(
+    showFollowButtonMessage(
       context: context,
       message: '삭제중',
     );
@@ -288,37 +313,6 @@ class _FollowScreenState extends State<FollowScreen>
         targetId: followingUserId,
       );
     }
-  }
-
-  Future<dynamic> _showFollowButtonMessage({
-    required BuildContext context,
-    required String message,
-  }) {
-    return showDialog(
-      context: context,
-      barrierColor: commonBlackColor.withOpacity(0.1),
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Center(
-          child: Container(
-            width: 76.0,
-            height: 38.0,
-            decoration: BoxDecoration(
-              color: grey262626.withOpacity(0.8),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Center(
-              child: Text(
-                message,
-                style: commonSubRegularStyle.copyWith(
-                  color: commonWhiteColor,
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   List<Future<Object>> futureFollowData() => [

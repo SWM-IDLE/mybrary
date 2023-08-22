@@ -62,7 +62,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   void initState() {
     super.initState();
 
-    _refreshProfileData();
     _profileRepository
         .getProfileData(
       context: context,
@@ -76,6 +75,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         text: data.introduction!,
       );
     });
+
+    _refreshProfileData();
   }
 
   @override

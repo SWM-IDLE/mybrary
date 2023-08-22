@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/datasource/profile/follow_datasource.dart';
+import 'package:mybrary/data/model/profile/follow_status_response.dart';
 import 'package:mybrary/data/model/profile/follower_response.dart';
 import 'package:mybrary/data/model/profile/following_response.dart';
 
@@ -42,5 +43,13 @@ class FollowRepository {
     required String sourceId,
   }) {
     return _followDataSource.deleteFollower(context, userId, sourceId);
+  }
+
+  Future<FollowStatusResponseData> getUserFollowStatus({
+    required BuildContext context,
+    required String userId,
+    required String targetId,
+  }) {
+    return _followDataSource.getUserFollowStatus(context, userId, targetId);
   }
 }

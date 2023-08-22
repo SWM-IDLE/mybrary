@@ -9,6 +9,7 @@ import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/error_page.dart';
 import 'package:mybrary/ui/common/components/single_data_error.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
+import 'package:mybrary/ui/profile/user_profile/user_profile_screen.dart';
 import 'package:mybrary/ui/search/components/search_loading.dart';
 import 'package:mybrary/ui/search/search_book_list/components/search_book_list_info.dart';
 import 'package:mybrary/ui/search/search_book_list/components/search_user_info.dart';
@@ -50,6 +51,7 @@ class _SearchBookListState extends State<SearchBookList>
   final String _bookSearchKeywordRequestUrl = getApi(API.getBookSearchKeyword);
 
   late bool _isError = false;
+  late bool _isChangedData = false;
   late bool _isScrollLoading = false;
   late bool _isClearButtonVisible = false;
 
@@ -162,8 +164,11 @@ class _SearchBookListState extends State<SearchBookList>
                   return Column(
                     children: [
                       if (bookSearchResponse.bookSearchResult!.isEmpty) ...[
-                        const SingleDataError(
-                          errorMessage: '검색된 책이 없습니다.',
+                        Padding(
+                          padding: EdgeInsets.only(top: paddingTopHeight * 2),
+                          child: const SingleDataError(
+                            errorMessage: '검색된 책이 없습니다.',
+                          ),
                         ),
                       ] else ...[
                         const SizedBox(height: 8.0),
@@ -204,15 +209,11 @@ class _SearchBookListState extends State<SearchBookList>
 
                 if (snapshot.hasData) {
                   UserSearchResponseData userSearchResponse = snapshot.data!;
-
-                  if (userSearchResponse.searchedUsers!.isNotEmpty &&
-                      _userSearchResultData.isEmpty) {
-                    _userSearchResultData
-                        .addAll(userSearchResponse.searchedUsers!);
-                  }
+                  List<SearchedUsers> searchedUsers =
+                      userSearchResponse.searchedUsers!;
 
                   return searchedUsersScreen(
-                    _userSearchResultData,
+                    _isChangedData ? _userSearchResultData : searchedUsers,
                   );
                 }
                 return const SingleDataError(
@@ -248,15 +249,20 @@ class _SearchBookListState extends State<SearchBookList>
 
           _searchRepository
               .getUserSearchResponse(
-                context: context,
-                nickname: _bookSearchKeywordController.text,
-              )
-              .then((data) => setState(() {
-                    if (data.searchedUsers!.isEmpty) {
-                      return _userSearchResultData.clear();
-                    }
-                    _userSearchResultData = data.searchedUsers!;
-                  }));
+            context: context,
+            nickname: _bookSearchKeywordController.text,
+          )
+              .then((data) {
+            setState(() {
+              _isChangedData = true;
+              if (data.searchedUsers!.isEmpty) {
+                _userSearchResultData.clear();
+              }
+              if (data.searchedUsers!.isNotEmpty) {
+                _userSearchResultData = data.searchedUsers!;
+              }
+            });
+          });
 
           _searchRepository
               .getBookSearchResponse(
@@ -327,7 +333,7 @@ class _SearchBookListState extends State<SearchBookList>
   List<Widget> searchPageSliverBuilder(
     BuildContext context,
     bool innerBoxIsScrolled,
-    List<String> followerTabs,
+    List<String> searchTabs,
     TabController tabController,
   ) {
     return <Widget>[
@@ -360,7 +366,7 @@ class _SearchBookListState extends State<SearchBookList>
         delegate: _SliverAppBarDelegate(
           searchTabBar(
             tabController,
-            followerTabs,
+            searchTabs,
           ),
         ),
         pinned: true,
@@ -399,13 +405,25 @@ class _SearchBookListState extends State<SearchBookList>
           itemBuilder: (context, index) {
             SearchedUsers searchedUser = searchedUsers[index];
 
-            return SearchUserLayout(
-              children: [
-                SearchUserInfo(
-                  nickname: searchedUser.nickname!,
-                  profileImageUrl: searchedUser.profileImageUrl!,
-                ),
-              ],
+            return InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => UserProfileScreen(
+                      userId: searchedUser.userId!,
+                      nickname: searchedUser.nickname!,
+                    ),
+                  ),
+                );
+              },
+              child: SearchUserLayout(
+                children: [
+                  SearchUserInfo(
+                    nickname: searchedUser.nickname!,
+                    profileImageUrl: searchedUser.profileImageUrl!,
+                  ),
+                ],
+              ),
             );
           },
         ),
