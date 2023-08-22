@@ -64,7 +64,7 @@ class MyBookDetailReview extends StatelessWidget {
                     );
                   },
                   child: Text(
-                    '작성하기',
+                    '수정하기',
                     style: bookDetailDescriptionStyle.copyWith(
                       decoration: TextDecoration.underline,
                     ),
