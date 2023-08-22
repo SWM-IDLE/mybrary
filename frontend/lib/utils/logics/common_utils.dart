@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
@@ -45,4 +47,96 @@ SliverAppBar commonSliverAppBar({
     foregroundColor: commonBlackColor,
     actions: appBarActions,
   );
+}
+
+Future<dynamic> showFollowButtonMessage({
+  required BuildContext context,
+  required String message,
+}) {
+  return showDialog(
+    context: context,
+    barrierColor: commonBlackColor.withOpacity(0.1),
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Center(
+        child: Container(
+          width: 76.0,
+          height: 38.0,
+          decoration: BoxDecoration(
+            color: grey262626.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Center(
+            child: Text(
+              message,
+              style: commonSubRegularStyle.copyWith(
+                color: commonWhiteColor,
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Widget confirmButton({
+  required GestureTapCallback? onTap,
+  required String buttonText,
+  required bool isCancel,
+}) {
+  return Expanded(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          height: 46.0,
+          decoration: BoxDecoration(
+            color: isCancel ? greyF1F2F5 : commonRedColor,
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+          child: Center(
+            child: Text(
+              buttonText,
+              style: commonSubBoldStyle.copyWith(
+                color: isCancel ? commonBlackColor : commonWhiteColor,
+                fontSize: 14.0,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+void showInterestBookMessage({
+  required BuildContext context,
+  required String snackBarText,
+  Widget? snackBarAction,
+}) {
+  if (context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        padding: EdgeInsets.symmetric(
+          horizontal: 24.0,
+          vertical: Platform.isAndroid ? 22.0 : 16.0,
+        ),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              snackBarText,
+              style: commonSnackBarMessageStyle.copyWith(fontSize: 14.0),
+            ),
+            snackBarAction ?? const SizedBox(),
+          ],
+        ),
+        duration: Duration(
+          seconds: snackBarAction == null ? 1 : 2,
+        ),
+      ),
+    );
+  }
 }

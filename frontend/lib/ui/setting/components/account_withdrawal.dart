@@ -5,6 +5,7 @@ import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
+import 'package:mybrary/utils/logics/common_utils.dart';
 
 class AccountWithdrawal extends StatefulWidget {
   const AccountWithdrawal({
@@ -131,14 +132,14 @@ class _AccountWithdrawalState extends State<AccountWithdrawal> {
                         actions: [
                           Row(
                             children: [
-                              _confirmButton(
+                              confirmButton(
                                 onTap: () {
                                   Navigator.of(context).pop();
                                 },
                                 buttonText: '취소',
                                 isCancel: true,
                               ),
-                              _confirmButton(
+                              confirmButton(
                                 onTap: () async {
                                   await _profileRepository.deleteAccount(
                                     context: context,
@@ -183,37 +184,6 @@ class _AccountWithdrawalState extends State<AccountWithdrawal> {
               ),
             )
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _confirmButton({
-    required GestureTapCallback? onTap,
-    required String buttonText,
-    required bool isCancel,
-  }) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            height: 46.0,
-            decoration: BoxDecoration(
-              color: isCancel ? greyF1F2F5 : commonRedColor,
-              borderRadius: BorderRadius.circular(4.0),
-            ),
-            child: Center(
-              child: Text(
-                buttonText,
-                style: commonSubBoldStyle.copyWith(
-                  color: isCancel ? commonBlackColor : commonWhiteColor,
-                  fontSize: 14.0,
-                ),
-              ),
-            ),
-          ),
         ),
       ),
     );

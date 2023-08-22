@@ -15,7 +15,12 @@ import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
 
 class InterestBookListScreen extends StatefulWidget {
-  const InterestBookListScreen({super.key});
+  final String? userId;
+
+  const InterestBookListScreen({
+    this.userId,
+    super.key,
+  });
 
   @override
   State<InterestBookListScreen> createState() => _InterestBookListScreenState();
@@ -36,7 +41,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
 
     _bookList = _bookRepository.getInterestBooks(
       context: context,
-      userId: _userId,
+      userId: widget.userId ?? _userId,
     );
     _sortType = SortType.all;
   }
@@ -237,7 +242,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                     case SortType.title:
                       _bookList = _bookRepository.getInterestBooks(
                         context: context,
-                        userId: _userId,
+                        userId: widget.userId ?? _userId,
                         order: 'title',
                       );
                       _sortTitle = '제목순';
@@ -246,7 +251,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                     case SortType.registration:
                       _bookList = _bookRepository.getInterestBooks(
                         context: context,
-                        userId: _userId,
+                        userId: widget.userId ?? _userId,
                         order: 'registration',
                       );
                       _sortTitle = '등록순';
@@ -255,7 +260,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                     case SortType.publication:
                       _bookList = _bookRepository.getInterestBooks(
                         context: context,
-                        userId: _userId,
+                        userId: widget.userId ?? _userId,
                         order: 'publication',
                       );
                       _sortTitle = '발행일순';
@@ -264,7 +269,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
                     default:
                       _bookList = _bookRepository.getInterestBooks(
                         context: context,
-                        userId: _userId,
+                        userId: widget.userId ?? _userId,
                       );
                       _sortTitle = '전체';
                       _order = 'all';
@@ -376,7 +381,7 @@ class _InterestBookListScreenState extends State<InterestBookListScreen> {
       (value) => setState(() {
         _bookList = _bookRepository.getInterestBooks(
           context: context,
-          userId: _userId,
+          userId: widget.userId ?? _userId,
           order: _order,
         );
       }),

@@ -16,11 +16,13 @@ import 'package:mybrary/utils/logics/book_utils.dart';
 import 'package:mybrary/utils/logics/common_utils.dart';
 
 class MyBookListScreen extends StatefulWidget {
+  final String? userId;
   final String bookListTitle;
   final String order;
   final String readStatus;
 
   const MyBookListScreen({
+    this.userId,
     required this.bookListTitle,
     required this.order,
     required this.readStatus,
@@ -46,7 +48,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
 
     _bookList = _bookRepository.getMyBooks(
       context: context,
-      userId: _userId,
+      userId: widget.userId ?? _userId,
       order: widget.order,
       readStatus: widget.readStatus,
     );
@@ -138,13 +140,16 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MyBookDetailScreen(myBookId: myBookId),
+        builder: (_) => MyBookDetailScreen(
+          myBookId: myBookId,
+          userId: widget.userId,
+        ),
       ),
     ).then(
       (value) => setState(() {
         _bookList = _bookRepository.getMyBooks(
           context: context,
-          userId: _userId,
+          userId: widget.userId ?? _userId,
           order: _order,
           readStatus: readStatus,
         );
@@ -270,7 +275,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                     case SortType.title:
                       _bookList = _bookRepository.getMyBooks(
                         context: context,
-                        userId: _userId,
+                        userId: widget.userId ?? _userId,
                         order: 'title',
                         readStatus: widget.readStatus,
                       );
@@ -280,7 +285,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                     case SortType.registration:
                       _bookList = _bookRepository.getMyBooks(
                         context: context,
-                        userId: _userId,
+                        userId: widget.userId ?? _userId,
                         order: 'registration',
                         readStatus: widget.readStatus,
                       );
@@ -290,7 +295,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                     case SortType.publication:
                       _bookList = _bookRepository.getMyBooks(
                         context: context,
-                        userId: _userId,
+                        userId: widget.userId ?? _userId,
                         order: 'publication',
                         readStatus: widget.readStatus,
                       );
@@ -300,7 +305,7 @@ class _MyBookListScreenState extends State<MyBookListScreen> {
                     default:
                       _bookList = _bookRepository.getMyBooks(
                         context: context,
-                        userId: _userId,
+                        userId: widget.userId ?? _userId,
                         order: 'all',
                         readStatus: widget.readStatus,
                       );

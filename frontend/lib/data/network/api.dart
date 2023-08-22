@@ -17,6 +17,7 @@ enum API {
   getUserProfileImage,
   getUserFollowers,
   getUserFollowings,
+  getUserFollowStatus,
   getUserInterests,
   getInterestCategories,
   getUserSearch,
@@ -62,6 +63,7 @@ Map<API, String> apiMap = {
       "/user-service/api/v1/users", // /{userId}/profile/image",
   API.getUserFollowers: "/user-service/api/v1/users", // /{userId}/followers",
   API.getUserFollowings: "/user-service/api/v1/users", // /{userId}/followings",
+  API.getUserFollowStatus: "/user-service/api/v1/users/follow",
   API.getUserInterests: "/user-service/api/v1/users", // '/{userId}/interests'
   API.getInterestCategories: "/user-service/api/v1/interest-categories",
   API.getUserSearch:

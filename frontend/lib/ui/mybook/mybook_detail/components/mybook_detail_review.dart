@@ -11,6 +11,7 @@ class MyBookDetailReview extends StatelessWidget {
   final List<String> authors;
   final TextEditingController contentController;
   final int reviewId;
+  final String? userId;
   final void Function({
     required bool isCreateReview,
     required String thumbnailUrl,
@@ -32,6 +33,7 @@ class MyBookDetailReview extends StatelessWidget {
     required this.reviewId,
     required this.contentController,
     required this.nextToMyBookReview,
+    this.userId,
     super.key,
   });
 
@@ -51,25 +53,26 @@ class MyBookDetailReview extends StatelessWidget {
                   '마이 리뷰',
                   style: commonSubBoldStyle,
                 ),
-                InkWell(
-                  onTap: () {
-                    nextToMyBookReview(
-                      isCreateReview: false,
-                      thumbnailUrl: thumbnailUrl,
-                      title: title,
-                      authors: authors,
-                      contentController: contentController,
-                      starRating: starRating,
-                      reviewId: reviewId,
-                    );
-                  },
-                  child: Text(
-                    '수정하기',
-                    style: bookDetailDescriptionStyle.copyWith(
-                      decoration: TextDecoration.underline,
+                if (userId == null)
+                  InkWell(
+                    onTap: () {
+                      nextToMyBookReview(
+                        isCreateReview: false,
+                        thumbnailUrl: thumbnailUrl,
+                        title: title,
+                        authors: authors,
+                        contentController: contentController,
+                        starRating: starRating,
+                        reviewId: reviewId,
+                      );
+                    },
+                    child: Text(
+                      '수정하기',
+                      style: bookDetailDescriptionStyle.copyWith(
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
             const SizedBox(height: 20.0),

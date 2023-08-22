@@ -18,7 +18,12 @@ import 'package:mybrary/ui/mybook/mybook_list/mybook_list_screen.dart';
 import 'package:mybrary/utils/logics/ui_utils.dart';
 
 class MyBookScreen extends StatefulWidget {
-  const MyBookScreen({super.key});
+  final String? userId;
+
+  const MyBookScreen({
+    this.userId,
+    super.key,
+  });
 
   @override
   State<MyBookScreen> createState() => _MyBookScreenState();
@@ -41,23 +46,23 @@ class _MyBookScreenState extends State<MyBookScreen> {
 
     _profileResponseData = _profileRepository.getProfileData(
       context: context,
-      userId: _userId,
+      userId: widget.userId ?? _userId,
     );
     _myBooksResponseData = _bookRepository.getMyBooks(
       context: context,
-      userId: _userId,
+      userId: widget.userId ?? _userId,
       order: '',
       readStatus: '',
     );
     _completedBooksResponseData = _bookRepository.getMyBooks(
       context: context,
-      userId: _userId,
+      userId: widget.userId ?? _userId,
       order: '',
       readStatus: 'COMPLETED',
     );
     _interestBooksResponseData = _bookRepository.getInterestBooks(
       context: context,
-      userId: _userId,
+      userId: widget.userId ?? _userId,
     );
   }
 
@@ -310,7 +315,7 @@ class _MyBookScreenState extends State<MyBookScreen> {
         ],
       ),
       titleTextStyle: appBarTitleStyle,
-      centerTitle: false,
+      centerTitle: widget.userId == null ? false : true,
       foregroundColor: commonBlackColor,
     );
   }
@@ -345,17 +350,19 @@ class _MyBookScreenState extends State<MyBookScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const InterestBookListScreen(),
+        builder: (_) => InterestBookListScreen(
+          userId: widget.userId,
+        ),
       ),
     ).then(
       (value) => setState(() {
         _interestBooksResponseData = _bookRepository.getInterestBooks(
           context: context,
-          userId: _userId,
+          userId: widget.userId ?? _userId,
         );
         _myBooksResponseData = _bookRepository.getMyBooks(
           context: context,
-          userId: _userId,
+          userId: widget.userId ?? _userId,
           order: '',
           readStatus: '',
         );
@@ -375,6 +382,7 @@ class _MyBookScreenState extends State<MyBookScreen> {
           bookListTitle: status,
           order: order,
           readStatus: readStatus,
+          userId: widget.userId,
         ),
       ),
     ).then(
@@ -382,37 +390,37 @@ class _MyBookScreenState extends State<MyBookScreen> {
         if (readStatus == 'COMPLETED') {
           _completedBooksResponseData = _bookRepository.getMyBooks(
             context: context,
-            userId: _userId,
+            userId: widget.userId ?? _userId,
             order: order,
             readStatus: readStatus,
           );
           _myBooksResponseData = _bookRepository.getMyBooks(
             context: context,
-            userId: _userId,
+            userId: widget.userId ?? _userId,
             order: '',
             readStatus: '',
           );
           _interestBooksResponseData = _bookRepository.getInterestBooks(
             context: context,
-            userId: _userId,
+            userId: widget.userId ?? _userId,
           );
         }
         if (readStatus == '') {
           _myBooksResponseData = _bookRepository.getMyBooks(
             context: context,
-            userId: _userId,
+            userId: widget.userId ?? _userId,
             order: order,
             readStatus: readStatus,
           );
           _completedBooksResponseData = _bookRepository.getMyBooks(
             context: context,
-            userId: _userId,
+            userId: widget.userId ?? _userId,
             order: '',
             readStatus: 'COMPLETED',
           );
           _interestBooksResponseData = _bookRepository.getInterestBooks(
             context: context,
-            userId: _userId,
+            userId: widget.userId ?? _userId,
           );
         }
       }),
