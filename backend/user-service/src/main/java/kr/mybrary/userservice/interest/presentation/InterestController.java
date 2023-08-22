@@ -52,9 +52,10 @@ public class InterestController {
     }
 
     @GetMapping("/interests/book-recommendations/{type}")
-    public ResponseEntity<SuccessResponse> getInterestsAndBookRecommendations(@RequestHeader("USER-ID") String userId,
-                                                                              @PathVariable String type,
-                                                                              @RequestParam int page) {
+    public ResponseEntity<SuccessResponse> getInterestsAndBookRecommendations(
+            @RequestHeader("USER-ID") String userId,
+            @PathVariable String type,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
 
         UserInterestAndBookRecommendationsServiceRequest request =
                 UserInterestAndBookRecommendationsServiceRequest.of(userId, type, page);

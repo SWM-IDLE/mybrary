@@ -347,7 +347,7 @@ class InterestControllerTest {
                         ResourceSnippetParameters.builder()
                                 .tag("user-interest-and-book-recommendations")
                                 .summary("관심사와 책 추천을 함께 조회한다.")
-                                .description("사용자의 모든 관심사와 그 중 첫번쨰 관심사에 대한 추천 도서를 조회한다. 관심사가 없는 경우 빈 리스트를 반환한다.")
+                                .description("사용자의 모든 관심사와 그 중 첫번쨰 관심사에 대한 추천 도서를 조회한다. 관심사가 없는 경우 빈 리스트를 반환한다. page 생략시 1 페이지를 반환합니다.")
                                 .pathParameters(
                                         parameterWithName("type").description("책 추천 타입")
                                 )
@@ -355,7 +355,7 @@ class InterestControllerTest {
                                         headerWithName("USER-ID").description("로그인 된 사용자의 아이디")
                                 )
                                 .queryParameters(
-                                        parameterWithName("page").description("페이지 번호")
+                                        parameterWithName("page").description("페이지 번호").optional()
                                 )
                                 .responseSchema(Schema.schema("get_interests_and_book_recommendations_response_body"))
                                 .responseFields(
