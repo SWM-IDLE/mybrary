@@ -41,9 +41,11 @@ public class InterestController {
     }
 
     @PutMapping("/users/{userId}/interests")
-    public ResponseEntity<SuccessResponse> updateUserInterests(@PathVariable("userId") String userId,
-                                                               @RequestHeader("USER-ID") String loginId,
-                                                               @RequestBody UserInterestUpdateRequest request) {
+    public ResponseEntity<SuccessResponse> updateUserInterests(
+            @PathVariable("userId") String userId,
+            @RequestHeader("USER-ID") String loginId,
+            @RequestBody UserInterestUpdateRequest request) {
+
         return ResponseEntity.ok().body(
                 SuccessResponse.of(HttpStatus.OK.toString(), "사용자의 관심사를 수정했습니다.",
                         interestService.updateUserInterests(
