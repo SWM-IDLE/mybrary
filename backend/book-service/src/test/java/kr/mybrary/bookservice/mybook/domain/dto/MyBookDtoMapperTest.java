@@ -68,6 +68,7 @@ class MyBookDtoMapperTest {
                 () -> assertThat(myBookDetailResponse.isShareable()).isEqualTo(myBook.isShareable()),
                 () -> assertThat(myBookDetailResponse.isShowable()).isEqualTo(myBook.isShowable()),
                 () -> assertThat(myBookDetailResponse.getBook().getId()).isEqualTo(myBook.getBook().getId()),
+                () -> assertThat(myBookDetailResponse.getBook().getIsbn13()).isEqualTo(myBook.getBook().getIsbn13()),
                 () -> assertThat(myBookDetailResponse.getBook().getTitle()).isEqualTo(myBook.getBook().getTitle()),
                 () -> assertThat(myBookDetailResponse.getBook().getDescription()).isEqualTo(myBook.getBook().getDescription()),
                 () -> assertThat(myBookDetailResponse.getBook().getThumbnailUrl()).isEqualTo(myBook.getBook().getThumbnailUrl()),
