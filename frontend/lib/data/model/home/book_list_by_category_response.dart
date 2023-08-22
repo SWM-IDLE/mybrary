@@ -1,3 +1,5 @@
+import 'package:mybrary/data/model/home/book_recommendations_response.dart';
+
 class BookListByCategoryResponse {
   String status;
   String message;
@@ -31,17 +33,19 @@ class BookListByCategoryResponse {
 }
 
 class BookListByCategoryResponseData {
-  List<Books>? books;
-  String? nextRequestUrl;
+  List<BookRecommendations>? books;
 
-  BookListByCategoryResponseData({this.books, this.nextRequestUrl});
+  BookListByCategoryResponseData({
+    this.books,
+  });
 
   factory BookListByCategoryResponseData.fromJson(Map<String, dynamic> json) {
     return BookListByCategoryResponseData(
       books: json['books'] != null
-          ? (json['books'] as List).map((i) => Books.fromJson(i)).toList()
+          ? (json['books'] as List)
+              .map((i) => BookRecommendations.fromJson(i))
+              .toList()
           : null,
-      nextRequestUrl: json['nextRequestUrl'],
     );
   }
 
@@ -50,7 +54,6 @@ class BookListByCategoryResponseData {
     if (books != null) {
       data['books'] = books!.map((v) => v.toJson()).toList();
     }
-    data['nextRequestUrl'] = nextRequestUrl;
     return data;
   }
 }

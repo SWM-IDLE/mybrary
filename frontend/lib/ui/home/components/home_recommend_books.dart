@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/model/home/book_list_by_category_response.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mybrary/data/model/home/book_recommendations_response.dart';
 import 'package:mybrary/res/constants/color.dart';
-import 'package:mybrary/res/constants/config.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class HomeRecommendBooks extends StatelessWidget {
   final String category;
-  final List<Books> bookListByCategory;
+  final List<UserInterests> userInterests;
+  final List<BookRecommendations> bookListByCategory;
   final void Function(String) onTapCategory;
   final void Function(String) onTapBook;
   final ScrollController categoryScrollController;
+  final VoidCallback onTapMyInterests;
 
   const HomeRecommendBooks({
     required this.category,
+    required this.userInterests,
     required this.bookListByCategory,
     required this.onTapCategory,
     required this.onTapBook,
     required this.categoryScrollController,
+    required this.onTapMyInterests,
     super.key,
   });
 
@@ -43,47 +47,80 @@ class HomeRecommendBooks extends StatelessWidget {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 8.0,
-          ),
-          child: Wrap(
-            spacing: 8.0,
-            runSpacing: 8.0,
-            children: List.generate(
-              bookListByInterestedCategory.length,
-              (index) => InkWell(
-                onTap: () {
-                  onTapCategory(bookListByInterestedCategory[index]);
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 19.0,
-                    vertical: 7.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: category == bookListByInterestedCategory[index]
-                        ? grey262626
-                        : commonWhiteColor,
-                    border: Border.all(
-                      color: grey777777,
+        if (bookListByCategory.isEmpty)
+          InkWell(
+            onTap: () {
+              onTapMyInterests();
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 4.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '지금 바로 마이 관심사를 등록해보세요!',
+                    style: commonSubRegularStyle.copyWith(
+                      fontSize: 15.0,
+                      decoration: TextDecoration.underline,
                     ),
-                    borderRadius: BorderRadius.circular(30.0),
                   ),
-                  child: Text(
-                    bookListByInterestedCategory[index],
-                    style: categoryCircularTextStyle.copyWith(
-                      color: category == bookListByInterestedCategory[index]
-                          ? commonWhiteColor
-                          : grey262626,
+                  SizedBox(
+                    child: SvgPicture.asset(
+                      'assets/svg/icon/right_arrow.svg',
+                      width: 14.0,
+                      height: 14.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        if (bookListByCategory.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
+            child: Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: List.generate(
+                userInterests.length,
+                (index) => InkWell(
+                  onTap: () {
+                    onTapCategory(userInterests[index].name!);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 19.0,
+                      vertical: 7.0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: category == userInterests[index].name!
+                          ? grey262626
+                          : commonWhiteColor,
+                      border: Border.all(
+                        color: grey777777,
+                      ),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    child: Text(
+                      userInterests[index].name!,
+                      style: categoryCircularTextStyle.copyWith(
+                        color: category == userInterests[index].name!
+                            ? commonWhiteColor
+                            : grey262626,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
         Expanded(
           child: ListView.builder(
             controller: categoryScrollController,
