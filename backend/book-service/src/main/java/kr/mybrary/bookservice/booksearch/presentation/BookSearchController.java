@@ -44,8 +44,8 @@ public class BookSearchController {
                 .body(SuccessResponse.of(HttpStatus.OK.toString(), "도서 상세 조회에 성공했습니다.", bookService.searchBookDetailWithISBN(request)));
     }
 
-    @GetMapping("/search/book-list-by-category")
-    public ResponseEntity searchBookListByCategory(
+    @GetMapping("/recommendations")
+    public ResponseEntity getBookRecommendations(
             @RequestParam(value = "type") String type,
             @RequestParam(value = "categoryId", required = false, defaultValue = "0") int categoryId,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
@@ -53,11 +53,12 @@ public class BookSearchController {
         BookListByCategorySearchServiceRequest request = BookListByCategorySearchServiceRequest.of(type, categoryId, page);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(FeignClientResponse.of(bookService.searchBookListByCategory(request)));
+                .body(SuccessResponse.of(HttpStatus.OK.toString(), "카테고리별 도서 리스트 조회에 성공했습니다.",
+                        bookService.searchBookListByCategory(request)));
     }
 
     @GetMapping("/recommendations/{type}/categories/{categoryId}")
-    public ResponseEntity getBookListByCategoryIdCalledByFeignClient(
+    public ResponseEntity getBookRecommendationsCalledByFeignClient(
             @PathVariable String type,
             @PathVariable int categoryId,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
