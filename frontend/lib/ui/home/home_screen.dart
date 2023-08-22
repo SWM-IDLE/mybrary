@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/home/book_list_by_category_response.dart';
-import 'package:mybrary/data/model/home/home_common_response.dart';
+import 'package:mybrary/data/model/home/book_recommendations_response.dart';
 import 'package:mybrary/data/model/home/today_registered_book_count_response.dart';
 import 'package:mybrary/data/repository/home_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
@@ -13,6 +14,7 @@ import 'package:mybrary/ui/home/components/home_best_seller.dart';
 import 'package:mybrary/ui/home/components/home_book_count.dart';
 import 'package:mybrary/ui/home/components/home_intro.dart';
 import 'package:mybrary/ui/home/components/home_recommend_books.dart';
+import 'package:mybrary/ui/profile/my_interests/my_interests_screen.dart';
 import 'package:mybrary/ui/search/search_detail/search_detail_screen.dart';
 import 'package:mybrary/utils/logics/common_utils.dart';
 
@@ -30,43 +32,40 @@ class _HomeScreenState extends State<HomeScreen> {
       _todayRegisteredBookCountData;
 
   late Future<BookListByCategoryResponseData> _bookListByCategoryData;
-  late Future<BookListByCategoryResponseData> _bookListByGenreNovelData;
-  late Future<BookListByCategoryResponseData> _bookListByPsychologyData;
-  late Future<BookListByCategoryResponseData> _bookListByTravelData;
+  late Future<BookRecommendationsResponseData> _bookRecommendationsData;
 
-  late String _bookCategory = '장르소설';
-  late List<Books> _bookListByCategory = [];
+  late String _bookCategory = '';
+  late List<BookRecommendations> _bookListByCategory = [];
 
   final ScrollController _categoryScrollController = ScrollController();
+
+  final _userId = UserState.userId;
 
   @override
   void initState() {
     super.initState();
 
+    _homeRepository
+        .getBookListByInterest(
+          context: context,
+          type: 'Bestseller',
+          userId: _userId,
+        )
+        .then(
+          (data) => _bookCategory = data.userInterests![0].name!,
+        );
+
     _todayRegisteredBookCountData = _homeRepository.getTodayRegisteredBookCount(
       context: context,
     );
-
     _bookListByCategoryData = _homeRepository.getBookListByCategory(
       context: context,
       type: 'Bestseller',
     );
-
-    // 홈 화면 카테고리 별 추천 도서 임시 데이터
-    _bookListByGenreNovelData = _homeRepository.getBookListByCategory(
+    _bookRecommendationsData = _homeRepository.getBookListByInterest(
       context: context,
       type: 'Bestseller',
-      categoryId: 112011,
-    );
-    _bookListByPsychologyData = _homeRepository.getBookListByCategory(
-      context: context,
-      type: 'Bestseller',
-      categoryId: 51395,
-    );
-    _bookListByTravelData = _homeRepository.getBookListByCategory(
-      context: context,
-      type: 'Bestseller',
-      categoryId: 1196,
+      userId: _userId,
     );
   }
 
@@ -130,24 +129,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 }),
           ),
           SliverToBoxAdapter(
-            child: FutureBuilder<HomeCommonData>(
-                future: Future.wait(_futureHomeData())
-                    .then((data) => _buildHomeData(data)),
+            child: FutureBuilder<BookRecommendationsResponseData>(
+                future: _bookRecommendationsData,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return buildErrorPage();
                   }
 
                   if (snapshot.hasData) {
-                    final data = snapshot.data!;
-                    final bookListByGenreNovel =
-                        data.bookListByGenreNovelData.books!;
-                    final bookListByPsychology =
-                        data.bookListByPsychologyData.books!;
-                    final bookListByTravel = data.bookListByTravelData.books!;
+                    final result = snapshot.data!;
+                    UserInterests? firstInterest;
+                    UserInterests? secondInterest;
+                    UserInterests? thirdInterest;
+
+                    if (result.userInterests!.length == 1) {
+                      firstInterest = result.userInterests![0];
+                    } else if (result.userInterests!.length == 2) {
+                      firstInterest = result.userInterests![0];
+                      secondInterest = result.userInterests![1];
+                    } else if (result.userInterests!.length == 3) {
+                      firstInterest = result.userInterests![0];
+                      secondInterest = result.userInterests![1];
+                      thirdInterest = result.userInterests![2];
+                    }
 
                     if (_bookListByCategory.isEmpty) {
-                      _bookListByCategory.addAll([...bookListByGenreNovel]);
+                      _bookListByCategory
+                          .addAll([...result.bookRecommendations!]);
                     }
 
                     return Container(
@@ -157,26 +165,30 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: HomeRecommendBooks(
                           category: _bookCategory,
+                          userInterests: result.userInterests!,
                           bookListByCategory: _bookListByCategory,
                           categoryScrollController: _categoryScrollController,
                           onTapBook: (String isbn13) {
                             _nextToBookSearchDetailScreen(isbn13);
                           },
+                          onTapMyInterests: _navigateToMyInterestsScreen,
                           onTapCategory: (String category) {
                             setState(() {
                               _bookCategory = category;
-                              switch (category) {
-                                case '심리학':
-                                  _bookListByCategory = bookListByPsychology;
-                                  _scrollToTop();
-                                  break;
-                                case '여행':
-                                  _bookListByCategory = bookListByTravel;
-                                  _scrollToTop();
-                                  break;
-                                default:
-                                  _bookListByCategory = bookListByGenreNovel;
-                                  _scrollToTop();
+                              if (firstInterest != null &&
+                                  category == firstInterest.name!) {
+                                _refresh(firstInterest);
+                                _scrollToTop();
+                              }
+                              if (secondInterest != null &&
+                                  category == secondInterest.name!) {
+                                _refresh(secondInterest);
+                                _scrollToTop();
+                              }
+                              if (thirdInterest != null &&
+                                  category == thirdInterest.name!) {
+                                _refresh(thirdInterest);
+                                _scrollToTop();
                               }
                             });
                           }),
@@ -208,30 +220,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  List<Future<Object>> _futureHomeData() {
-    return [
-      _bookListByGenreNovelData,
-      _bookListByPsychologyData,
-      _bookListByTravelData
-    ];
-  }
-
-  HomeCommonData _buildHomeData(List<Object> data) {
-    final [
-      bookListByGenreNovelData,
-      bookListByPsychologyData,
-      bookListByTravelData,
-    ] = data;
-    return HomeCommonData(
-      bookListByGenreNovelData:
-          bookListByGenreNovelData as BookListByCategoryResponseData,
-      bookListByPsychologyData:
-          bookListByPsychologyData as BookListByCategoryResponseData,
-      bookListByTravelData:
-          bookListByTravelData as BookListByCategoryResponseData,
-    );
-  }
-
   void _nextToBookSearchDetailScreen(String isbn13) {
     Navigator.push(
       context,
@@ -248,5 +236,36 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           })
         });
+  }
+
+  void _navigateToMyInterestsScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const MyInterestsScreen(),
+      ),
+    ).then(
+      (value) => setState(() {
+        _bookRecommendationsData = _homeRepository.getBookListByInterest(
+          context: context,
+          type: 'Bestseller',
+          userId: _userId,
+        );
+      }),
+    );
+  }
+
+  void _refresh(UserInterests interests) async {
+    await _homeRepository
+        .getBookListByCategory(
+          context: context,
+          type: 'Bestseller',
+          categoryId: interests.code!,
+        )
+        .then(
+          (data) => setState(() {
+            _bookListByCategory = data.books!;
+          }),
+        );
   }
 }

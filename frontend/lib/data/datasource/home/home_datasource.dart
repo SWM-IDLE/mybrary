@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/home/book_list_by_category_response.dart';
+import 'package:mybrary/data/model/home/book_recommendations_response.dart';
 import 'package:mybrary/data/model/home/today_registered_book_count_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/utils/dios/auth_dio.dart';
@@ -48,6 +50,33 @@ class HomeDataSource {
         message: getBookListByCategoryResponse.data['message'],
         data: BookListByCategoryResponseData.fromJson(
           getBookListByCategoryResponse.data['data'],
+        ),
+      ),
+    );
+
+    return result.data!;
+  }
+
+  Future<BookRecommendationsResponseData> getBookListByInterest(
+    BuildContext context,
+    String type,
+    String userId,
+    int? page,
+  ) async {
+    final dio = await authDio(context);
+    final getBookListByInterestResponse = await dio.get(
+      '${getApi(API.getBookListByInterest)}/$type&page=${page ?? 1}',
+      options: Options(headers: {'User-Id': userId}),
+    );
+
+    log('관심사별 추천 도서 조회 응답값: $getBookListByInterestResponse');
+    final BookRecommendationsResponse result = commonResponseResult(
+      getBookListByInterestResponse,
+      () => BookRecommendationsResponse(
+        status: getBookListByInterestResponse.data['status'],
+        message: getBookListByInterestResponse.data['message'],
+        data: BookRecommendationsResponseData.fromJson(
+          getBookListByInterestResponse.data['data'],
         ),
       ),
     );

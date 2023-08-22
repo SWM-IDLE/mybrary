@@ -12,10 +12,10 @@ import 'package:mybrary/ui/profile/my_interests/components/interest_description.
 import 'package:mybrary/ui/profile/my_interests/components/recommend_phrase.dart';
 
 class MyInterestsScreen extends StatefulWidget {
-  final List<UserInterests> userInterests;
+  final List<UserInterests>? userInterests;
 
   const MyInterestsScreen({
-    required this.userInterests,
+    this.userInterests,
     super.key,
   });
 
@@ -40,9 +40,11 @@ class _MyInterestsScreenState extends State<MyInterestsScreen> {
       context: context,
     );
 
-    selectedInterests = widget.userInterests
-        .map((e) => CategoriesResponses(id: e.id, name: e.name))
-        .toList();
+    selectedInterests = widget.userInterests == null
+        ? []
+        : widget.userInterests!
+            .map((e) => CategoriesResponses(id: e.id, name: e.name))
+            .toList();
   }
 
   void _onSelectedInterest(int index, String name) {

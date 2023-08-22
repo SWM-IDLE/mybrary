@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mybrary/data/model/home/book_list_by_category_response.dart';
+import 'package:mybrary/data/model/home/book_recommendations_response.dart';
 import 'package:mybrary/res/constants/style.dart';
 
 class HomeBestSeller extends StatelessWidget {
-  final List<Books> bookListByBestSeller;
+  final List<BookRecommendations> bookListByBestSeller;
   final void Function(String) onTapBook;
 
   const HomeBestSeller({
