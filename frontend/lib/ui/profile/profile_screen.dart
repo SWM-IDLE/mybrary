@@ -182,29 +182,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _profileMenuBottomSheet() {
-    return SizedBox(
-      height: 220,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 28.0,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _profileMenuTab('👤  프로필 편집', const ProfileEditScreen()),
-            _profileMenuTab('🔗️️  설정', const SettingScreen()),
-            const SizedBox(height: 12.0),
-            const Padding(
-              padding: EdgeInsets.only(left: 8.0),
-              child: Text(
-                '🔖  프로필 공유하기',
-                style: bottomSheetMenuTextStyle,
-              ),
-            ),
-            const SizedBox(height: 18.0),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 28.0,
+        vertical: 32.0,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _profileMenuTab('👤  프로필 편집', const ProfileEditScreen()),
+          _profileMenuTab('🔗️️  설정', const SettingScreen()),
+        ],
       ),
     );
   }

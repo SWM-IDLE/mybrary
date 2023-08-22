@@ -78,8 +78,7 @@ class ProfileIntro extends StatelessWidget {
             style: commonEditContentStyle,
           ),
           const SizedBox(height: 42.0),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
+          InkWell(
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(

@@ -47,13 +47,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _homeRepository
         .getBookListByInterest(
-          context: context,
-          type: 'Bestseller',
-          userId: _userId,
-        )
+      context: context,
+      type: 'Bestseller',
+      userId: _userId,
+    )
         .then(
-          (data) => _bookCategory = data.userInterests![0].name!,
-        );
+      (data) {
+        if (data.userInterests!.isNotEmpty) {
+          _bookCategory = data.userInterests![0].name!;
+        }
+      },
+    );
 
     _todayRegisteredBookCountData = _homeRepository.getTodayRegisteredBookCount(
       context: context,
@@ -246,6 +250,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     ).then(
       (value) => setState(() {
+        _homeRepository
+            .getBookListByInterest(
+              context: context,
+              type: 'Bestseller',
+              userId: _userId,
+            )
+            .then(
+              (data) => _bookCategory = data.userInterests![0].name!,
+            );
         _bookRecommendationsData = _homeRepository.getBookListByInterest(
           context: context,
           type: 'Bestseller',

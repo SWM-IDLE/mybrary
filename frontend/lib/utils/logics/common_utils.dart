@@ -140,3 +140,24 @@ void showInterestBookMessage({
     );
   }
 }
+
+void commonBottomSheet({
+  required BuildContext context,
+  required Widget child,
+}) {
+  showModalBottomSheet(
+    shape: bottomSheetStyle,
+    backgroundColor: Colors.white,
+    context: context,
+    builder: (_) {
+      return SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 28.0,
+          ),
+          child: child,
+        ),
+      );
+    },
+  );
+}

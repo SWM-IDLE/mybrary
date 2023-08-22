@@ -121,7 +121,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             final List<MyBooksResponseData> userMyBooksData = data.myBooksData;
 
             return CustomScrollView(
-              physics: const BouncingScrollPhysics(),
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
               slivers: [
                 _userProfileAppBar(),
                 SliverToBoxAdapter(
