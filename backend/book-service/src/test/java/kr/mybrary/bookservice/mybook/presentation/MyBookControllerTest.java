@@ -226,6 +226,7 @@ class MyBookControllerTest {
                                                 fieldWithPath("data.readStatus").type(STRING).description("독서 진행 상태"),
                                                 fieldWithPath("data.startDateOfPossession").type(STRING).description("보유 시작일"),
                                                 fieldWithPath("data.book.id").type(NUMBER).description("도서 ID"),
+                                                fieldWithPath("data.book.isbn13").type(STRING).description("도서 ISBN13"),
                                                 fieldWithPath("data.book.title").type(STRING).description("도서 제목"),
                                                 fieldWithPath("data.book.description").type(STRING).description("도서 설명"),
                                                 fieldWithPath("data.book.thumbnailUrl").type(STRING).description("도서 썸네일 URL"),

@@ -81,6 +81,7 @@ public class MybookDtoTestData {
                 .readStatus(ReadStatus.TO_READ)
                 .book(BookDetailResponse.builder()
                         .id(1L)
+                        .isbn13("9788960773417")
                         .title("토비의 스프링 3.1")
                         .description("스프링의 기본기를 다지기 위한 책")
                         .authors(List.of("토비"))
