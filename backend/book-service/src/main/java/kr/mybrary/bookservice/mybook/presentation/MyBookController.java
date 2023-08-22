@@ -50,7 +50,7 @@ public class MyBookController {
             @RequestParam(value = "order", required = false, defaultValue = "none") String order,
             @RequestParam(value = "readStatus", required = false) String readStatus) {
 
-        MyBookFindAllServiceRequest request = MyBookFindAllServiceRequest.of(userId, loginId, MyBookOrderType.of(order),
+        MyBookFindAllServiceRequest request = MyBookFindAllServiceRequest.of(loginId, userId, MyBookOrderType.of(order),
                 ReadStatus.of(readStatus));
 
         return ResponseEntity.ok(SuccessResponse.of(HttpStatus.OK.toString(), "서재의 도서 목록입니다.",
