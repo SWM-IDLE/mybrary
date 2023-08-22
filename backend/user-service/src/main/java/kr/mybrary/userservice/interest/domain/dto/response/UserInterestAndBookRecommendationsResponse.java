@@ -34,13 +34,13 @@ public class UserInterestAndBookRecommendationsResponse {
             List<BookRecommendationsResponseElement> bookRecommendations) {
 
         return UserInterestAndBookRecommendationsResponse.builder()
-            .userInterests(toUserInterests(userInterests))
-            .bookRecommendations(toBookRecommendations(bookRecommendations))
+            .userInterests(toUserInterestElements(userInterests))
+            .bookRecommendations(toBookRecommendationElements(bookRecommendations))
             .build();
     }
 
     @NotNull
-    private static List<UserInterestElement> toUserInterests(List<Interest> userInterests) {
+    private static List<UserInterestElement> toUserInterestElements(List<Interest> userInterests) {
         return userInterests.stream()
                 .map(interest -> UserInterestElement.builder()
                         .name(interest.getName())
@@ -50,7 +50,9 @@ public class UserInterestAndBookRecommendationsResponse {
     }
 
     @NotNull
-    private static List<BookRecommendationElement> toBookRecommendations(List<BookRecommendationsResponseElement> bookRecommendations) {
+    private static List<BookRecommendationElement> toBookRecommendationElements(
+            List<BookRecommendationsResponseElement> bookRecommendations) {
+
         return bookRecommendations.stream().
                 map(bookRecommendation -> BookRecommendationElement.builder()
                         .thumbnailUrl(bookRecommendation.getThumbnailUrl())
