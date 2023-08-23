@@ -1,0 +1,54 @@
+name: 'apigateway-server upload ecr'
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'backend/apigateway-server/**'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'backend/apigateway-server/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Build with Gradle
+        working-directory: backend/book-service
+        run: |
+          ./gradlew clean build
+          
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ECR_ECS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ECR_ECS_SECRET_KEY }}
+          aws-region: ${{ secrets.ECR_REGION }}
+          
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_APIGATEWAY_SERVER_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+        working-directory: backend/apigateway-server
+        run: |
+          docker build --platform amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
