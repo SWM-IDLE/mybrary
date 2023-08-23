@@ -24,7 +24,14 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-          
+
+      - name: Setup Bootstrap Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/apigateway-server/src/main/resources/bootstrap.yml
+        env:
+          spring.profiles.active: test
+
       - name: Build with Gradle
         working-directory: backend/book-service
         run: |
