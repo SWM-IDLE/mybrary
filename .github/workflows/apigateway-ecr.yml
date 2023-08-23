@@ -25,18 +25,25 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
+      - name: Setup Application Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/apigateway-server/src/main/resources/application.yml
+        env:
+          jwt.secretKey: ${{ secrets.JWT_SECRET_KEY }}
+
       - name: Setup Bootstrap Yaml
         uses: microsoft/variable-substitution@v1
         with:
           files: backend/apigateway-server/src/main/resources/bootstrap.yml
         env:
-          spring.profiles.active: test
+          spring.profiles.active: local
 
       - name: Build with Gradle
-        working-directory: backend/book-service
+        working-directory: backend/apigateway-server
         run: |
-          ./gradlew clean build
-          
+          ./gradlew clean build -x test
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
