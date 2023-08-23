@@ -28,7 +28,7 @@ jobs:
       - name: Setup Application Yaml
         uses: microsoft/variable-substitution@v1
         with:
-          files: backend/apigateway-server/src/main/resources/application.yml
+          files: backend/apigateway-server/src/main/resources/application-local.yml
         env:
           jwt.secretKey: ${{ secrets.JWT_SECRET_KEY }}
 
