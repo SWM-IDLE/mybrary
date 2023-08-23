@@ -10,6 +10,7 @@ class SubPageLayout extends StatelessWidget {
   final AppBar? appBar;
   final Widget? bottomNavigationBar;
   final List<Widget>? appBarActions;
+  final bool? resizeToAvoidBottomInset;
 
   const SubPageLayout({
     required this.child,
@@ -18,12 +19,14 @@ class SubPageLayout extends StatelessWidget {
     this.bottomNavigationBar,
     this.appBar,
     this.appBarActions,
+    this.resizeToAvoidBottomInset,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset ?? true,
       backgroundColor: backgroundColor ?? commonWhiteColor,
       appBar: renderAppBar(),
       body: child,

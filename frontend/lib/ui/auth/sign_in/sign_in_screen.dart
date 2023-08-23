@@ -128,7 +128,6 @@ class _SignInScreenState extends State<SignInScreen> {
         );
       }
     } catch (e) {
-      print(e);
       showSignInFailDialog(e.toString());
     }
   }

@@ -290,4 +290,28 @@ class BookDataSource {
 
     return result.data!;
   }
+
+  Future<CommonResponse> deleteMyBookReview(
+    BuildContext context,
+    String userId,
+    int reviewId,
+  ) async {
+    final dio = await authDio(context);
+    final deleteMyBookReviewResponse = await dio.delete(
+      '${getApi(API.deleteMyBookReview)}/$reviewId',
+      options: Options(headers: {'User-Id': userId}),
+    );
+
+    log('마이북 리뷰 삭제 응답값: $deleteMyBookReviewResponse');
+    final CommonResponse result = commonResponseResult(
+      deleteMyBookReviewResponse,
+      () => CommonResponse(
+        status: deleteMyBookReviewResponse.data['status'],
+        message: deleteMyBookReviewResponse.data['message'],
+        data: null,
+      ),
+    );
+
+    return result;
+  }
 }

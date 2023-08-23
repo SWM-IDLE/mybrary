@@ -112,4 +112,12 @@ class BookRepository {
       starRating,
     );
   }
+
+  Future<CommonResponse> deleteMyBookReview({
+    required BuildContext context,
+    required String userId,
+    required int reviewId,
+  }) {
+    return _bookDataSource.deleteMyBookReview(context, userId, reviewId);
+  }
 }

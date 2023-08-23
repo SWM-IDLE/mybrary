@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/search/book_detail_review_response.dart';
+import 'package:mybrary/data/repository/book_repository.dart';
 import 'package:mybrary/data/repository/search_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/circular_loading.dart';
@@ -25,10 +27,14 @@ class SearchDetailReviewScreen extends StatefulWidget {
 
 class _SearchDetailReviewScreenState extends State<SearchDetailReviewScreen> {
   final _searchRepository = SearchRepository();
+  final _bookRepository = BookRepository();
+
+  final ScrollController _reviewScrollController = ScrollController();
 
   late Future<BookDetailReviewResponseData> _searchBookDetailReviewData;
 
-  final ScrollController _reviewScrollController = ScrollController();
+  late List<MyBookReviewList>? _myBookReviewList = [];
+  final _userId = UserState.userId;
 
   @override
   void initState() {
@@ -71,7 +77,11 @@ class _SearchDetailReviewScreenState extends State<SearchDetailReviewScreen> {
                   if (snapshot.hasData) {
                     final reviewData = snapshot.data!;
 
-                    if (reviewData.reviewCount! > 0) {
+                    if (_myBookReviewList!.isEmpty) {
+                      _myBookReviewList = reviewData.myBookReviewList;
+                    }
+
+                    if (_myBookReviewList!.isNotEmpty) {
                       return Column(
                         children: [
                           _divider(),
@@ -81,13 +91,16 @@ class _SearchDetailReviewScreenState extends State<SearchDetailReviewScreen> {
                             controller: _reviewScrollController,
                             shrinkWrap: true,
                             padding: const EdgeInsets.only(top: 16.0),
-                            itemCount: reviewData.reviewCount!,
+                            itemCount: _myBookReviewList!.length,
                             itemBuilder: (context, index) {
-                              final review =
-                                  reviewData.myBookReviewList![index];
+                              final review = _myBookReviewList![index];
 
                               return ReviewItem(
                                 review: review,
+                                onTapDelete: () => _deleteReview(
+                                  context: context,
+                                  reviewId: _myBookReviewList![index].id!,
+                                ),
                               );
                             },
                             separatorBuilder: (context, index) {
@@ -121,6 +134,10 @@ class _SearchDetailReviewScreenState extends State<SearchDetailReviewScreen> {
   }
 
   Widget _reviewHeader(BookDetailReviewResponseData reviewData) {
+    double originStarRatingAverage = reviewData.starRatingAverage!;
+    double starRatingAverage =
+        double.parse(originStarRatingAverage.toStringAsFixed(1));
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -128,7 +145,7 @@ class _SearchDetailReviewScreenState extends State<SearchDetailReviewScreen> {
           starRatingRow(starRating: reviewData.starRatingAverage!),
           const SizedBox(width: 8.0),
           Text(
-            '${reviewData.starRatingAverage} (${reviewData.reviewCount})',
+            '$starRatingAverage (${reviewData.myBookReviewList!.length})',
             style: starRatingTextStyle,
           ),
         ],
@@ -141,6 +158,71 @@ class _SearchDetailReviewScreenState extends State<SearchDetailReviewScreen> {
       height: 1,
       thickness: 1,
       color: greyF1F2F5,
+    );
+  }
+
+  void _deleteReview({
+    required BuildContext context,
+    required int reviewId,
+  }) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            '삭제',
+            style: commonSubBoldStyle,
+            textAlign: TextAlign.center,
+          ),
+          content: const Text(
+            '정말 리뷰를 삭제하시겠습니까?',
+            style: confirmButtonTextStyle,
+            textAlign: TextAlign.center,
+          ),
+          contentPadding: const EdgeInsets.only(
+            top: 24.0,
+            bottom: 16.0,
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          buttonPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+          actions: [
+            Row(
+              children: [
+                confirmButton(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  buttonText: '취소',
+                  isCancel: true,
+                ),
+                confirmButton(
+                  onTap: () async {
+                    await _bookRepository.deleteMyBookReview(
+                      context: context,
+                      userId: _userId,
+                      reviewId: reviewId,
+                    );
+
+                    if (!mounted) return;
+                    showInterestBookMessage(
+                      context: context,
+                      snackBarText: '마이 리뷰가 삭제되었습니다.',
+                    );
+                    Navigator.of(context).pop();
+                    setState(() {
+                      _myBookReviewList!.removeWhere(
+                        (review) => review.id == reviewId,
+                      );
+                    });
+                  },
+                  buttonText: '삭제하기',
+                  isCancel: false,
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

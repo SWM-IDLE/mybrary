@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
-import 'package:mybrary/ui/search/search_detail_review/search_detail_review_screen.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
 
 class BookDetailInfo extends StatelessWidget {
@@ -15,6 +14,7 @@ class BookDetailInfo extends StatelessWidget {
   final int reviewCount;
   final String link;
   final double aladinStarRating;
+  final GestureTapCallback? onTapReview;
 
   const BookDetailInfo({
     required this.isbn13,
@@ -26,6 +26,7 @@ class BookDetailInfo extends StatelessWidget {
     required this.reviewCount,
     required this.link,
     required this.aladinStarRating,
+    this.onTapReview,
     super.key,
   });
 
@@ -58,15 +59,7 @@ class BookDetailInfo extends StatelessWidget {
                 ],
               ),
               InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => SearchDetailReviewScreen(
-                        isbn13: isbn13,
-                      ),
-                    ),
-                  );
-                },
+                onTap: () => onTapReview!(),
                 child: Text(
                   '리뷰 $reviewCount개',
                   style: bookDetailSubStyle.copyWith(
