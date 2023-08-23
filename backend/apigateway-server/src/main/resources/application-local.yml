@@ -1,0 +1,51 @@
+server:
+  port: 8000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  application:
+    name: apigateway-service
+  cloud:
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway
+            preLogger: true
+            postLogger: true
+
+        - name: AuthorizationHeaderFilter
+
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: book-service
+          uri: lb://BOOK-SERVICE
+          predicates:
+            - Path=/book-service/**
+          filters:
+            - RewritePath=/book-service/(?<segment>.*), /$\{segment}
+
+    config:
+      server:
+        bootstrap: false
+
+# user-service와 동일한 secretKey를 사용해야 한다.
+# TODO: config server로 secretKey를 관리하도록 수정
+jwt:
+  secretKey: ${JWT_SECRET_KEY}

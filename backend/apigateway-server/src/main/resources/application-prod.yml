@@ -6,13 +6,14 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: ${EUREKA_SERVER_URI}
 
 spring:
   data:
     redis:
-      host: localhost
-      port: 6379
+      cluster:
+        nodes: ${REDIS_CLUSTER_NODES}
+
   application:
     name: apigateway-service
   cloud:
@@ -39,6 +40,10 @@ spring:
             - Path=/book-service/**
           filters:
             - RewritePath=/book-service/(?<segment>.*), /$\{segment}
+
+    config:
+      server:
+        bootstrap: true
 
 # user-service와 동일한 secretKey를 사용해야 한다.
 # TODO: config server로 secretKey를 관리하도록 수정

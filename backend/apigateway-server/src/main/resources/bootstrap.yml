@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URI}
+      name: apigateway
+  profiles:
+    active: ${PROFILE}
