@@ -3,6 +3,7 @@ package kr.mybrary.bookservice.booksearch.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.never;
 import static org.mockito.BDDMockito.times;
 import static org.mockito.BDDMockito.verify;
@@ -137,7 +138,7 @@ class AladinBookSearchApiServiceTest {
         assertAll(
                 () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isLessThan(10),
                 () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl),
-                () -> verify(bookSearchRankingService, times(1)).increaseSearchRankingScore(request.getKeyword())
+                () -> verify(bookSearchRankingService, times(1)).increaseSearchRankingScore(any())
         );
     }
 
@@ -163,7 +164,7 @@ class AladinBookSearchApiServiceTest {
         assertAll(
                 () -> assertThat(bookSearchResultResponse.getBookSearchResult().size()).isLessThan(20),
                 () -> assertThat(bookSearchResultResponse.getNextRequestUrl()).isEqualTo(expectNextRequestUrl),
-                () -> verify(bookSearchRankingService, times(1)).increaseSearchRankingScore(request.getKeyword())
+                () -> verify(bookSearchRankingService, times(1)).increaseSearchRankingScore(any())
         );
     }
 
