@@ -1,0 +1,60 @@
+server:
+  port: 8004
+
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URI}
+
+spring:
+  application:
+    name: book-service
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  data:
+    redis:
+      cluster:
+        nodes: ${REDIS_CLUSTER_NODES}
+
+  cloud:
+    config:
+      server:
+        bootstrap: true
+
+kakao:
+  api:
+    key: ${KAKAO_API_KEY}
+
+aladin:
+  api:
+    key: ${ALADIN_API_KEY}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health,beans,busrefresh
+
+logging:
+  level:
+    root: info

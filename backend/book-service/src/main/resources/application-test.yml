@@ -11,7 +11,19 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        default_batch_fetch_size: 1000
+
+    open-in-view: false
     database-platform: org.hibernate.dialect.H2Dialect
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+  cloud:
+    config:
+      enabled: false
 
 kakao:
   api:

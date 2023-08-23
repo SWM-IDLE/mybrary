@@ -1,6 +1,7 @@
 spring:
   application:
     name: book-service
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mybrary
@@ -14,10 +15,16 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 1000
+    open-in-view: false
+
   data:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
+
+  cloud:
+    config:
+      enabled: false
 
 kakao:
   api:
