@@ -4,10 +4,12 @@ import 'package:mybrary/data/model/search/book_search_response.dart';
 import 'package:mybrary/data/model/search/user_search_response.dart';
 import 'package:mybrary/data/network/api.dart';
 import 'package:mybrary/data/repository/search_repository.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/ui/common/components/error_page.dart';
 import 'package:mybrary/ui/common/components/single_data_error.dart';
+import 'package:mybrary/ui/common/layout/root_tab.dart';
 import 'package:mybrary/ui/common/layout/subpage_layout.dart';
 import 'package:mybrary/ui/profile/user_profile/user_profile_screen.dart';
 import 'package:mybrary/ui/search/components/search_loading.dart';
@@ -55,6 +57,8 @@ class _SearchBookListState extends State<SearchBookList>
   late bool _isScrollLoading = false;
   late bool _isClearButtonVisible = false;
 
+  final _userId = UserState.userId;
+
   @override
   void initState() {
     super.initState();
@@ -96,6 +100,7 @@ class _SearchBookListState extends State<SearchBookList>
   @override
   Widget build(BuildContext context) {
     return SubPageLayout(
+      resizeToAvoidBottomInset: false,
       child: NestedScrollView(
         controller: _tabScrollController,
         physics: const BouncingScrollPhysics(
@@ -407,14 +412,26 @@ class _SearchBookListState extends State<SearchBookList>
 
             return InkWell(
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => UserProfileScreen(
-                      userId: searchedUser.userId!,
-                      nickname: searchedUser.nickname!,
+                if (_userId != searchedUser.userId) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => UserProfileScreen(
+                        userId: searchedUser.userId!,
+                        nickname: searchedUser.nickname!,
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
+                if (_userId == searchedUser.userId!) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (_) => const RootTab(
+                        tapIndex: 3,
+                      ),
+                    ),
+                    (route) => false,
+                  );
+                }
               },
               child: SearchUserLayout(
                 children: [

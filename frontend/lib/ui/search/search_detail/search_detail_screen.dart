@@ -23,6 +23,7 @@ import 'package:mybrary/ui/search/search_detail/components/book_detail_header.da
 import 'package:mybrary/ui/search/search_detail/components/book_detail_info.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_detail_provider.dart';
 import 'package:mybrary/ui/search/search_detail/components/book_details.dart';
+import 'package:mybrary/ui/search/search_detail_review/search_detail_review_screen.dart';
 
 class SearchDetailScreen extends StatefulWidget {
   final String isbn13;
@@ -201,6 +202,7 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
                           reviewCount: bookSearchDetail.reviewCount!,
                           link: bookSearchDetail.link!,
                           aladinStarRating: bookSearchDetail.aladinStarRating!,
+                          onTapReview: _navigateToBookReviewScreen,
                         ),
                         const BookDetailDivider(),
                         bookDetailExpansion(
@@ -361,5 +363,25 @@ class _SearchDetailScreenState extends State<SearchDetailScreen> {
     Future.delayed(const Duration(seconds: 1), () {
       Navigator.of(context).pop();
     });
+  }
+
+  void _navigateToBookReviewScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SearchDetailReviewScreen(
+          isbn13: widget.isbn13,
+        ),
+      ),
+    ).then(
+      (value) => setState(() {
+        _bookSearchDetailResponse =
+            _searchRepository.getBookSearchDetailAndSaveBookResponse(
+          context: context,
+          userId: _userId,
+          isbn13: widget.isbn13,
+        );
+      }),
+    );
   }
 }

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:mybrary/data/model/search/book_detail_review_response.dart';
+import 'package:mybrary/provider/user_provider.dart';
 import 'package:mybrary/res/constants/color.dart';
 import 'package:mybrary/res/constants/style.dart';
 import 'package:mybrary/utils/logics/book_utils.dart';
 
 class ReviewItem extends StatefulWidget {
   final MyBookReviewList review;
+  final GestureTapCallback? onTapDelete;
+
   const ReviewItem({
     required this.review,
+    required this.onTapDelete,
     super.key,
   });
 
@@ -18,6 +22,8 @@ class ReviewItem extends StatefulWidget {
 class _ReviewItemState extends State<ReviewItem> {
   bool _isTextOverflow = false;
   bool _isMore = false;
+
+  final _userId = UserState.userId;
 
   @override
   void initState() {
@@ -41,48 +47,66 @@ class _ReviewItemState extends State<ReviewItem> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 16.0,
-                backgroundColor: greyACACAC,
-                backgroundImage: NetworkImage(
-                  widget.review.userPictureUrl!,
-                ),
-              ),
-              const SizedBox(width: 12.0),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 2.0),
-                    child: Text(
-                      widget.review.userNickname!,
-                      style: commonSubMediumStyle.copyWith(
-                        fontSize: 14.0,
-                      ),
+                  CircleAvatar(
+                    radius: 16.0,
+                    backgroundColor: greyACACAC,
+                    backgroundImage: NetworkImage(
+                      widget.review.userPictureUrl!,
                     ),
                   ),
-                  const SizedBox(height: 2.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  const SizedBox(width: 12.0),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      starRatingRow(
-                        starRating: widget.review.starRating!,
-                        width: 16.0,
-                        height: 16.0,
-                      ),
-                      const SizedBox(width: 8.0),
-                      Text(
-                        '$year.$month.$day',
-                        style: commonSubRegularStyle.copyWith(
-                          fontSize: 12.0,
-                          color: grey777777,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2.0),
+                        child: Text(
+                          widget.review.userNickname!,
+                          style: commonSubMediumStyle.copyWith(
+                            fontSize: 14.0,
+                          ),
                         ),
+                      ),
+                      const SizedBox(height: 2.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          starRatingRow(
+                            starRating: widget.review.starRating!,
+                            width: 16.0,
+                            height: 16.0,
+                          ),
+                          const SizedBox(width: 8.0),
+                          Text(
+                            '$year.$month.$day',
+                            style: commonSubRegularStyle.copyWith(
+                              fontSize: 12.0,
+                              color: grey777777,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ],
               ),
+              if (_userId == widget.review.userId)
+                InkWell(
+                  onTap: () {
+                    widget.onTapDelete!();
+                  },
+                  child: Text(
+                    '삭제',
+                    style: commonSubThinStyle.copyWith(
+                      color: commonRedColor,
+                    ),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 16.0),

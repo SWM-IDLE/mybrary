@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mybrary/data/model/book/book_list_response.dart';
 import 'package:mybrary/data/model/book/mybook_common_data.dart';
 import 'package:mybrary/data/model/book/mybooks_response.dart';
+import 'package:mybrary/data/model/profile/profile_image_response.dart';
 import 'package:mybrary/data/model/profile/profile_response.dart';
 import 'package:mybrary/data/repository/book_repository.dart';
 import 'package:mybrary/data/repository/profile_repository.dart';
@@ -34,6 +35,7 @@ class _MyBookScreenState extends State<MyBookScreen> {
   final _bookRepository = BookRepository();
 
   late Future<ProfileResponseData> _profileResponseData;
+  late Future<ProfileImageResponseData> _profileImageResponseData;
   late Future<List<MyBooksResponseData>> _myBooksResponseData;
   late Future<List<MyBooksResponseData>> _completedBooksResponseData;
   late Future<List<BookListResponseData>> _interestBooksResponseData;
@@ -45,6 +47,10 @@ class _MyBookScreenState extends State<MyBookScreen> {
     super.initState();
 
     _profileResponseData = _profileRepository.getProfileData(
+      context: context,
+      userId: widget.userId ?? _userId,
+    );
+    _profileImageResponseData = _profileRepository.getProfileImage(
       context: context,
       userId: widget.userId ?? _userId,
     );
@@ -97,6 +103,8 @@ class _MyBookScreenState extends State<MyBookScreen> {
           if (snapshot.hasData) {
             MyBookCommonData data = snapshot.data!;
             ProfileResponseData profileData = data.profileResponseData;
+            ProfileImageResponseData profileImageData =
+                data.profileImageResponseData;
             List<MyBooksResponseData> myBooksData = data.myBooksResponseData;
             List<MyBooksResponseData> completedBooksData =
                 data.completedBooksResponseData;
@@ -114,7 +122,10 @@ class _MyBookScreenState extends State<MyBookScreen> {
                 parent: AlwaysScrollableScrollPhysics(),
               ),
               slivers: [
-                _myBookAppBar(profileData),
+                _myBookAppBar(
+                  profileData: profileData,
+                  imageUrl: profileImageData.profileImageUrl!,
+                ),
                 MyBookHeader(
                   myBooksData: myBooksData,
                   completedBooksData: completedBooksData,
@@ -277,7 +288,10 @@ class _MyBookScreenState extends State<MyBookScreen> {
     );
   }
 
-  SliverAppBar _myBookAppBar(ProfileResponseData profileData) {
+  SliverAppBar _myBookAppBar({
+    required ProfileResponseData profileData,
+    required String imageUrl,
+  }) {
     return SliverAppBar(
       toolbarHeight: 80.0,
       backgroundColor: commonWhiteColor,
@@ -288,9 +302,7 @@ class _MyBookScreenState extends State<MyBookScreen> {
           CircleAvatar(
             radius: 20.0,
             backgroundColor: greyACACAC,
-            backgroundImage: NetworkImage(
-              profileData.profileImageUrl!,
-            ),
+            backgroundImage: NetworkImage(imageUrl),
           ),
           const SizedBox(
             width: 12.0,
@@ -323,6 +335,7 @@ class _MyBookScreenState extends State<MyBookScreen> {
   List<Future<Object>> _futureMyBookData() {
     return [
       _profileResponseData,
+      _profileImageResponseData,
       _myBooksResponseData,
       _completedBooksResponseData,
       _interestBooksResponseData,
@@ -332,12 +345,15 @@ class _MyBookScreenState extends State<MyBookScreen> {
   MyBookCommonData _futureMyBookResponseData(List<Object> data) {
     final [
       profileResponseData,
+      profileImageResponseData,
       myBooksResponseData,
       completedBooksResponseData,
       interestBooksResponseData
     ] = data;
     return MyBookCommonData(
       profileResponseData: profileResponseData as ProfileResponseData,
+      profileImageResponseData:
+          profileImageResponseData as ProfileImageResponseData,
       myBooksResponseData: myBooksResponseData as List<MyBooksResponseData>,
       completedBooksResponseData:
           completedBooksResponseData as List<MyBooksResponseData>,

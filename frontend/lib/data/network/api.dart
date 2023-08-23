@@ -50,6 +50,7 @@ enum API {
   updateMyBookRecord,
   updateMyBookReview,
   deleteMyBook,
+  deleteMyBookReview,
 }
 
 Map<API, String> apiMap = {
@@ -110,6 +111,7 @@ Map<API, String> apiMap = {
   API.updateMyBookRecord: "/book-service/api/v1/mybooks", // '/{mybookId}'
   API.updateMyBookReview: "/book-service/api/v1/reviews", // '/{reviewId}'
   API.deleteMyBook: "/book-service/api/v1/mybooks", // '/{mybookId}'
+  API.deleteMyBookReview: "/book-service/api/v1/reviews", // '/{reviewId}'
 };
 
 String getApi(API apiType) {

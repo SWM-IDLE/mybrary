@@ -70,7 +70,7 @@ class ProfileDataSource {
   ) async {
     final dio = await authDio(context);
     final profileImageResponse = await dio.get(
-        '${getApi(API.getUserProfileImage)}/$userId/profile/image',
+        '${getApi(API.getUserProfileImage)}/$userId/profile/image?size=small',
         options: Options(headers: {'User-Id': 'testId'}));
 
     log('프로필 이미지 조회 응답값: $profileImageResponse');
