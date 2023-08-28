@@ -1,5 +1,6 @@
 package kr.mybrary.bookservice.booksearch.domain;
 
+import io.github.resilience4j.retry.annotation.Retry;
 import java.util.List;
 import java.util.Objects;
 import kr.mybrary.bookservice.booksearch.domain.dto.BookSearchDtoMapper;
@@ -8,6 +9,7 @@ import kr.mybrary.bookservice.booksearch.domain.dto.request.BookSearchServiceReq
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookListByCategorySearchResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchDetailResponse;
 import kr.mybrary.bookservice.booksearch.domain.dto.response.aladinapi.AladinBookSearchResponse;
+import kr.mybrary.bookservice.booksearch.domain.exception.AladinApiUnavailableException;
 import kr.mybrary.bookservice.booksearch.domain.exception.BookSearchResultNotFoundException;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategoryResponseElement;
 import kr.mybrary.bookservice.booksearch.presentation.dto.response.BookListByCategorySearchResultResponse;
@@ -60,6 +62,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
 
     @Override
     @Cacheable(cacheNames = "bookListBySearchKeyword", key = "#request.keyword + '_' + #request.sort + '_' + #request.page", cacheManager = "cacheManager")
+    @Retry(name = "aladinAPIRetryConfig", fallbackMethod = "searchWithKeywordFallback")
     public BookSearchResultResponse searchWithKeyword(BookSearchServiceRequest request) {
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(BOOK_SEARCH_URL)
@@ -99,6 +102,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
     }
 
     @Override
+    @Retry(name = "aladinAPIRetryConfig", fallbackMethod = "searchBookDetailWithISBNFallback")
     public BookSearchDetailResponse searchBookDetailWithISBN(BookSearchServiceRequest request) {
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(BOOK_DETAIL_SEARCH_URL)
@@ -125,6 +129,7 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
 
     @Override
     @Cacheable(cacheNames = "bookListByCategory", key = "#request.type + '_' + #request.categoryId + '_' + #request.page", cacheManager = "cacheManager")
+    @Retry(name = "aladinAPIRetryConfig", fallbackMethod = "searchBookListByCategoryFallback")
     public BookListByCategorySearchResultResponse searchBookListByCategory(BookListByCategorySearchServiceRequest request) {
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(BOOK_LIST_BY_CATEGORY_SEARCH_URL)
@@ -155,6 +160,24 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
                 .toList();
 
         return BookListByCategorySearchResultResponse.of(bookSearchResultServiceResponses);
+    }
+
+    private BookSearchResultResponse searchWithKeywordFallback(BookSearchServiceRequest request, Exception ex) {
+        log.info("retry fallback, the request is searchWithKeyword with '{}' keyword", request.getKeyword());
+        log.info("exception message is {}", ex.getMessage());
+        throw new AladinApiUnavailableException();
+    }
+
+    private BookSearchDetailResponse searchBookDetailWithISBNFallback(BookSearchServiceRequest request, Exception ex) {
+        log.info("retry fallback, the request is searchBookDetailWithISBN with '{}' isbn13", request.getKeyword());
+        log.info("exception message is {}", ex.getMessage());
+        throw new AladinApiUnavailableException();
+    }
+
+    private BookListByCategorySearchResultResponse searchBookListByCategoryFallback(BookListByCategorySearchServiceRequest request, Exception ex) {
+        log.info("retry fallback, the request is searchBookListByCategory with '{}' categoryId", request.getCategoryId());
+        log.info("exception message is {}", ex.getMessage());
+        throw new AladinApiUnavailableException();
     }
 
     private void checkIfSearchResultExists(int totalResults) {
