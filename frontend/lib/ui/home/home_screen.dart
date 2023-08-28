@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: HomeBestSeller(
                         bookListByBestSeller: snapshot.data!.books!,
                         onTapBook: (String isbn13) {
-                          _nextToBookSearchDetailScreen(isbn13);
+                          _navigateToBookSearchDetailScreen(isbn13);
                         },
                       ),
                     );
@@ -142,20 +142,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   if (snapshot.hasData) {
                     final result = snapshot.data!;
-                    UserInterests? firstInterest;
-                    UserInterests? secondInterest;
-                    UserInterests? thirdInterest;
-
-                    if (result.userInterests!.length == 1) {
-                      firstInterest = result.userInterests![0];
-                    } else if (result.userInterests!.length == 2) {
-                      firstInterest = result.userInterests![0];
-                      secondInterest = result.userInterests![1];
-                    } else if (result.userInterests!.length == 3) {
-                      firstInterest = result.userInterests![0];
-                      secondInterest = result.userInterests![1];
-                      thirdInterest = result.userInterests![2];
-                    }
+                    final interests = _getUserInterests(result.userInterests);
+                    final [firstInterest, secondInterest, thirdInterest] =
+                        interests;
 
                     if (_bookListByCategory.isEmpty) {
                       _bookListByCategory
@@ -173,27 +162,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           bookListByCategory: _bookListByCategory,
                           categoryScrollController: _categoryScrollController,
                           onTapBook: (String isbn13) {
-                            _nextToBookSearchDetailScreen(isbn13);
+                            _navigateToBookSearchDetailScreen(isbn13);
                           },
                           onTapMyInterests: _navigateToMyInterestsScreen,
                           onTapCategory: (String category) {
                             setState(() {
                               _bookCategory = category;
-                              if (firstInterest != null &&
-                                  category == firstInterest.name!) {
-                                _refresh(firstInterest);
-                                _scrollToTop();
-                              }
-                              if (secondInterest != null &&
-                                  category == secondInterest.name!) {
-                                _refresh(secondInterest);
-                                _scrollToTop();
-                              }
-                              if (thirdInterest != null &&
-                                  category == thirdInterest.name!) {
-                                _refresh(thirdInterest);
-                                _scrollToTop();
-                              }
+                              _setInterests(firstInterest, category);
+                              _setInterests(secondInterest, category);
+                              _setInterests(thirdInterest, category);
                             });
                           }),
                     );
@@ -224,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _nextToBookSearchDetailScreen(String isbn13) {
+  void _navigateToBookSearchDetailScreen(String isbn13) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -268,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _refresh(UserInterests interests) async {
+  void _refreshBookLists(UserInterests interests) async {
     await _homeRepository
         .getBookListByCategory(
           context: context,
@@ -280,5 +257,27 @@ class _HomeScreenState extends State<HomeScreen> {
             _bookListByCategory = data.books!;
           }),
         );
+  }
+
+  List<UserInterests> _getUserInterests(List<UserInterests>? userInterests) {
+    List<UserInterests> interests = userInterests ?? [];
+    List<UserInterests> assignedInterests = List.filled(
+        3,
+        UserInterests.fromJson(
+          UserInterests().toJson(),
+        ));
+
+    for (int i = 0; i < interests.length && i < 3; i++) {
+      assignedInterests[i] = interests[i];
+    }
+
+    return assignedInterests;
+  }
+
+  void _setInterests(UserInterests interest, String category) {
+    if (interest.name != null && category == interest.name!) {
+      _refreshBookLists(interest);
+      _scrollToTop();
+    }
   }
 }
