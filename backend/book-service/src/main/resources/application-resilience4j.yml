@@ -1,0 +1,13 @@
+resilience4j.retry:
+  configs:
+    aladinApiRetryConfig:
+      maxAttempts: 3
+      waitDuration: 1000
+      retryExceptions:
+        - org.springframework.web.client.HttpServerErrorException
+        - org.springframework.web.client.ResourceAccessException
+        - java.net.SocketTimeoutException
+
+  instances:
+    aladinAPIRetryConfig:
+      baseConfig: aladinApiRetryConfig

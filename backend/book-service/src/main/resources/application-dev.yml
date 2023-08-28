@@ -5,6 +5,9 @@ spring:
   application:
     name: book-service
 
+  config:
+    import: classpath:application-resilience4j.yml
+
   jpa:
     hibernate:
       ddl-auto: create
