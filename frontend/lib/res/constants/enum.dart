@@ -9,3 +9,9 @@ enum SortType {
   registration,
   publication,
 }
+
+enum UserInterestType {
+  first,
+  second,
+  third,
+}
