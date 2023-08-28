@@ -7,7 +7,19 @@ resilience4j.retry:
         - org.springframework.web.client.HttpServerErrorException
         - org.springframework.web.client.ResourceAccessException
         - java.net.SocketTimeoutException
+    userServiceFeignClientRetryConfig:
+      maxAttempts: 3
+      waitDuration: 1000
+      retryExceptions:
+        - java.net.UnknownHostException
+        - feign.RetryableException
+        - feign.FeignException.InternalServerError
+        - feign.FeignException.BadGateway
+        - feign.FeignException.GatewayTimeout
+        - feign.FeignException.TooManyRequests
 
   instances:
     aladinAPIRetryConfig:
       baseConfig: aladinApiRetryConfig
+    userServiceRetryConfig:
+      baseConfig: userServiceFeignClientRetryConfig
