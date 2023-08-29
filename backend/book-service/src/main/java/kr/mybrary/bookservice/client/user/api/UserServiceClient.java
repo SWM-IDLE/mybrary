@@ -1,6 +1,7 @@
 package kr.mybrary.bookservice.client.user.api;
 
 import feign.Headers;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import kr.mybrary.bookservice.client.user.dto.request.UserInfoRequest;
 import kr.mybrary.bookservice.client.user.dto.response.UserInfoServiceResponse;
@@ -18,6 +19,7 @@ public interface UserServiceClient {
     @PostMapping("/api/v1/users/info")
     @Headers("Content-Type: application/json")
     @Retry(name = "userServiceRetryConfig", fallbackMethod = "getUsersInfoFallback")
+    @CircuitBreaker(name = "userServiceCircuitBreakerConfig", fallbackMethod = "getUsersInfoFallback")
     UserInfoServiceResponse getUsersInfo(@RequestBody UserInfoRequest userInfoRequest);
 
     default UserInfoServiceResponse getUsersInfoFallback(UserInfoRequest userInfoRequest, Exception ex) {
