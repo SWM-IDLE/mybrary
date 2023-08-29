@@ -7,11 +7,14 @@ resilience4j.retry:
         - org.springframework.web.client.HttpServerErrorException
         - org.springframework.web.client.ResourceAccessException
         - java.net.SocketTimeoutException
+        - java.net.ConnectException
     userServiceFeignClientRetryConfig:
       maxAttempts: 3
       waitDuration: 1000
       retryExceptions:
         - java.net.UnknownHostException
+        - java.net.SocketTimeoutException
+        - java.net.ConnectException
         - feign.RetryableException
         - feign.FeignException.InternalServerError
         - feign.FeignException.BadGateway
@@ -23,3 +26,30 @@ resilience4j.retry:
       baseConfig: aladinApiRetryConfig
     userServiceRetryConfig:
       baseConfig: userServiceFeignClientRetryConfig
+
+resilience4j.circuitbreaker:
+  configs:
+    aladinApiCircuitBreakerConfig:
+      slidingWindowType: COUNT_BASED
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      waitDurationInOpenState: 10s
+
+      failureRateThreshold: 50
+
+      slowCallDurationThreshold: 10000
+      slowCallRateThreshold: 100
+
+      permittedNumberOfCallsInHalfOpenState: 10
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+
+      eventConsumerBufferSize: 100
+
+      recordExceptions:
+        - org.springframework.web.client.HttpServerErrorException
+        - org.springframework.web.client.ResourceAccessException
+        - java.net.SocketTimeoutException
+        - java.net.ConnectException
+  instances:
+    aladinAPICircuitBreakerConfig:
+      baseConfig: aladinApiCircuitBreakerConfig
