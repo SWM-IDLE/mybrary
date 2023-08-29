@@ -1,5 +1,6 @@
 package kr.mybrary.bookservice.booksearch.domain;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import java.util.List;
 import java.util.Objects;
@@ -43,6 +44,8 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
     private static final String REQUEST_MAX_RESULTS_20 = "20";
     private static final String REQUEST_COVER_SIZE = "Big";
     private static final String REQUEST_COVER_MID_BIG_SIZE = "MidBig";
+    private static final String CIRCUIT_BREAKER_CONFIG = "aladinAPICircuitBreakerConfig";
+    private static final String RETRY_CONFIG = "aladinAPIRetryConfig";
 
     private final RestTemplate restTemplate;
     private final BookSearchRankingService bookSearchRankingService;
@@ -62,7 +65,8 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
 
     @Override
     @Cacheable(cacheNames = "bookListBySearchKeyword", key = "#request.keyword + '_' + #request.sort + '_' + #request.page", cacheManager = "cacheManager")
-    @Retry(name = "aladinAPIRetryConfig", fallbackMethod = "searchWithKeywordFallback")
+    @Retry(name = RETRY_CONFIG, fallbackMethod = "searchWithKeywordFallback")
+    @CircuitBreaker(name = CIRCUIT_BREAKER_CONFIG, fallbackMethod = "searchWithKeywordFallback")
     public BookSearchResultResponse searchWithKeyword(BookSearchServiceRequest request) {
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(BOOK_SEARCH_URL)
@@ -102,7 +106,8 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
     }
 
     @Override
-    @Retry(name = "aladinAPIRetryConfig", fallbackMethod = "searchBookDetailWithISBNFallback")
+    @Retry(name = RETRY_CONFIG, fallbackMethod = "searchBookDetailWithISBNFallback")
+    @CircuitBreaker(name = CIRCUIT_BREAKER_CONFIG, fallbackMethod = "searchWithKeywordFallback")
     public BookSearchDetailResponse searchBookDetailWithISBN(BookSearchServiceRequest request) {
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(BOOK_DETAIL_SEARCH_URL)
@@ -129,7 +134,8 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
 
     @Override
     @Cacheable(cacheNames = "bookListByCategory", key = "#request.type + '_' + #request.categoryId + '_' + #request.page", cacheManager = "cacheManager")
-    @Retry(name = "aladinAPIRetryConfig", fallbackMethod = "searchBookListByCategoryFallback")
+    @Retry(name = RETRY_CONFIG, fallbackMethod = "searchBookListByCategoryFallback")
+    @CircuitBreaker(name = CIRCUIT_BREAKER_CONFIG, fallbackMethod = "searchWithKeywordFallback")
     public BookListByCategorySearchResultResponse searchBookListByCategory(BookListByCategorySearchServiceRequest request) {
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(BOOK_LIST_BY_CATEGORY_SEARCH_URL)
@@ -163,19 +169,19 @@ public class AladinBookSearchApiService implements PlatformBookSearchApiService 
     }
 
     private BookSearchResultResponse searchWithKeywordFallback(BookSearchServiceRequest request, Exception ex) {
-        log.info("retry fallback, the request is searchWithKeyword with '{}' keyword", request.getKeyword());
+        log.info("fallback, the request is searchWithKeyword with '{}' keyword", request.getKeyword());
         log.info("exception message is {}", ex.getMessage());
         throw new AladinApiUnavailableException();
     }
 
     private BookSearchDetailResponse searchBookDetailWithISBNFallback(BookSearchServiceRequest request, Exception ex) {
-        log.info("retry fallback, the request is searchBookDetailWithISBN with '{}' isbn13", request.getKeyword());
+        log.info("fallback, the request is searchBookDetailWithISBN with '{}' isbn13", request.getKeyword());
         log.info("exception message is {}", ex.getMessage());
         throw new AladinApiUnavailableException();
     }
 
     private BookListByCategorySearchResultResponse searchBookListByCategoryFallback(BookListByCategorySearchServiceRequest request, Exception ex) {
-        log.info("retry fallback, the request is searchBookListByCategory with '{}' categoryId", request.getCategoryId());
+        log.info("fallback, the request is searchBookListByCategory with '{}' categoryId", request.getCategoryId());
         log.info("exception message is {}", ex.getMessage());
         throw new AladinApiUnavailableException();
     }
