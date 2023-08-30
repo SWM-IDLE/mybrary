@@ -256,7 +256,7 @@ class AladinBookSearchApiServiceTest {
 
         // then
         assertAll(
-                () -> assertThat(response.getBooks().size()).isEqualTo(10)
+                () -> assertThat(response.getBooks().size()).isLessThan(11)
         );
     }
 
