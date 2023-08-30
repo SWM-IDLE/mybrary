@@ -25,19 +25,12 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Setup Application Yaml
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: backend/apigateway-server/src/main/resources/application-local.yml
-        env:
-          jwt.secretKey: ${{ secrets.JWT_SECRET_KEY }}
-
       - name: Setup Bootstrap Yaml
         uses: microsoft/variable-substitution@v1
         with:
           files: backend/apigateway-server/src/main/resources/bootstrap.yml
         env:
-          spring.profiles.active: local
+          spring.profiles.active: prod
 
       - name: Build with Gradle
         working-directory: backend/apigateway-server
