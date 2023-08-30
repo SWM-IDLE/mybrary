@@ -39,7 +39,7 @@ public class RequestLoggingAspect {
             return pjp.proceed(pjp.getArgs());
         } finally {
             long end = System.currentTimeMillis();
-            log.info("Request: {} {}{} < {} ({}ms)", request.getMethod(), request.getRequestURI(),
+            log.info("{}'s Request: {} {}{} < {} ({}ms)", request.getHeader("USER-ID"), request.getMethod(), request.getRequestURI(),
                     params, request.getRemoteHost(), end - start);
         }
     }
