@@ -45,7 +45,5 @@ spring:
       server:
         bootstrap: true
 
-# user-service와 동일한 secretKey를 사용해야 한다.
-# TODO: config server로 secretKey를 관리하도록 수정
 jwt:
   secretKey: ${JWT_SECRET_KEY}
