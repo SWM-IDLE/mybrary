@@ -33,18 +33,30 @@ jobs:
           aladin.api.key: ${{ secrets.ALADIN_API_KEY }}
           kakao.api.key: ${{ secrets.KAKAO_API_KEY }}
 
-      - name: Setup Bootstrap Yaml
+      - name: Setup Bootstrap Yaml For Test
         uses: microsoft/variable-substitution@v1
         with:
           files: backend/book-service/src/main/resources/bootstrap.yml
         env:
           spring.profiles.active: test
 
+      - name: Test with Gradle
+        working-directory: backend/book-service
+        run: |
+          ./gradlew test
+
+      - name: Setup Bootstrap Yaml For Build
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/book-service/src/main/resources/bootstrap.yml
+        env:
+          spring.profiles.active: prod
+
       - name: Build with Gradle
         working-directory: backend/book-service
         run: |
-          ./gradlew clean build
-          
+          ./gradlew clean build -x test
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

@@ -41,18 +41,30 @@ jobs:
           spring.cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_KEY }}
           jwt.secretKey: ${{ secrets.JWT_SECRET_KEY }}
 
-      - name: Setup Bootstrap Yaml
+      - name: Setup Bootstrap Yaml For Test
         uses: microsoft/variable-substitution@v1
         with:
           files: backend/user-service/src/main/resources/bootstrap.yml
         env:
           spring.profiles.active: test
 
-      - name: Build with Gradle
+      - name: Test with Gradle
         working-directory: backend/user-service
         run: |
-          ./gradlew clean build
-          
+          ./gradlew test
+
+      - name: Setup Bootstrap Yaml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: backend/user-service/src/main/resources/bootstrap.yml
+        env:
+          spring.profiles.active: prod
+
+      - name: Build with Gradle For Build
+        working-directory: backend/user-service
+        run: |
+          ./gradlew clean build -x test
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
