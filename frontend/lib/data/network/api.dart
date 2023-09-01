@@ -2,9 +2,8 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
-const mybraryUrl = "http://mybrary.kr";
+const baseUrl = "https://mybrary.kr";
 const mybraryUrlScheme = "kr.mybrary";
-const baseUrl = "$mybraryUrl:8000";
 
 enum API {
   // oauth
