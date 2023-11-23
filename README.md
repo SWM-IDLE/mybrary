@@ -4,6 +4,8 @@
   <li><a href="https://github.com/SWM-IDLE/mybrary-application">Flutter 기반 앱 레포지토리</a></li>
   <li><a href="https://github.com/SWM-IDLE/mybrary-user-service">유저 서비스 레포지토리</a></li>
   <li><a href="https://github.com/SWM-IDLE/mybrary-book-service">도서 서비스 레포지토리</a></li>
+  <li><a href="https://github.com/SWM-IDLE/mybrary-notification-service">푸시 알림 서버 레포지토리</a></li>
+  <li><a href="https://github.com/SWM-IDLE/mybrary-multi-book-recognition-service">다중 도서 인식 서버 레포지토리</a></li>
   <li><a href="https://github.com/SWM-IDLE/mybrary-apigateway-server">API Gateway 서버 레포지토리</a></li>
   <li><a href="https://github.com/SWM-IDLE/mybrary-eureka-server">Eureka 서버 레포지토리</a></li>
   <li><a href="https://github.com/SWM-IDLE/mybrary-config-server">Config 서버 레포지토리</a></li>
