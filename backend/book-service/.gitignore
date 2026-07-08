@@ -36,5 +36,10 @@ out/
 ### VS Code ###
 .vscode/
 
+### Generated ###
+src/main/generated
+
+### HTTP Client ###
+http-client.private.env.json
+
 .DS_Store
-../.DS_Store
