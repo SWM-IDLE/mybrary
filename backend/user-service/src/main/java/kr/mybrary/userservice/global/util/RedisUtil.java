@@ -12,7 +12,6 @@ import java.time.Duration;
 public class RedisUtil {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private final RedisTemplate<String, Object> redisBlackListTemplate;
 
     public void set(String key, Object object, Duration duration) {
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(object.getClass()));
