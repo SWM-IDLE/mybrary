@@ -27,10 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -50,17 +50,14 @@ class AladinBookSearchApiServiceTest {
     @Autowired
     private AladinBookSearchApiService aladinBookSearchApiService;
 
-    @Autowired
-    private RestTemplateBuilder restTemplateBuilder;
-
     @MockBean
     private BookSearchRankingService bookSearchRankingService;
 
     private MockRestServiceServer mockServer;
 
     @BeforeEach
-    public void setup() {
-        RestTemplate restTemplate = restTemplateBuilder.build();
+    void setup() {
+        RestTemplate restTemplate = (RestTemplate) ReflectionTestUtils.getField(aladinBookSearchApiService, "restTemplate");
         mockServer = MockRestServiceServer.createServer(restTemplate);
     }
 
@@ -75,8 +72,8 @@ class AladinBookSearchApiServiceTest {
 
         mockServer
                 .expect(requestTo(BOOK_SEARCH_URL
-                        + "?query=Docker&MaxResults=20&start=1&output=js&Version=20131101&Sort=accuracy&TTBKey="
-                        + API_KEY))
+                        + "?TTBKey=" + API_KEY
+                        + "&Output=js&Version=20131101&Query=Docker&Start=1&MaxResults=20&Cover=MidBig&Sort=accuracy"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
@@ -101,8 +98,8 @@ class AladinBookSearchApiServiceTest {
 
         mockServer
                 .expect(requestTo(BOOK_SEARCH_URL
-                        + "?query=Docker&MaxResults=20&start=2&output=js&Version=20131101&Sort=accuracy&TTBKey="
-                        + API_KEY))
+                        + "?TTBKey=" + API_KEY
+                        + "&Output=js&Version=20131101&Query=Docker&Start=2&MaxResults=20&Cover=MidBig&Sort=accuracy"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
@@ -127,8 +124,8 @@ class AladinBookSearchApiServiceTest {
 
         mockServer
                 .expect(requestTo(BOOK_SEARCH_URL
-                        + "?query=알라&MaxResults=20&start=10&output=js&Version=20131101&Sort=accuracy&TTBKey="
-                        + API_KEY))
+                        + "?TTBKey=" + API_KEY
+                        + "&Output=js&Version=20131101&Query=%EC%95%8C%EB%9D%BC&Start=10&MaxResults=20&Cover=MidBig&Sort=accuracy"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
@@ -153,8 +150,8 @@ class AladinBookSearchApiServiceTest {
 
         mockServer
                 .expect(requestTo(BOOK_SEARCH_URL
-                        + "?query=알라&MaxResults=20&start=10&output=js&Version=20131101&Sort=accuracy&TTBKey="
-                        + API_KEY))
+                        + "?TTBKey=" + API_KEY
+                        + "&Output=js&Version=20131101&Query=%EC%95%8C%EB%9D%BC&Start=10&MaxResults=20&Cover=MidBig&Sort=accuracy"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
@@ -178,8 +175,8 @@ class AladinBookSearchApiServiceTest {
 
         mockServer
                 .expect(requestTo(BOOK_SEARCH_URL
-                        + "?query=JPA알라&MaxResults=20&start=1&output=js&Version=20131101&Sort=accuracy&TTBKey="
-                        + API_KEY))
+                        + "?TTBKey=" + API_KEY
+                        + "&Output=js&Version=20131101&Query=JPA%EC%95%8C%EB%9D%BC&Start=1&MaxResults=20&Cover=MidBig&Sort=accuracy"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
@@ -203,8 +200,8 @@ class AladinBookSearchApiServiceTest {
 
         mockServer
                 .expect(requestTo(BOOK_DETAIL_SEARCH_URL
-                        + "?itemIdType=ISBN13&ItemId=9788965402602&output=js&Version=20131101&OptResult=packing,ratingInfo,authors,fulldescription,Toc&ttbkey="
-                        + API_KEY))
+                        + "?TTBKey=" + API_KEY
+                        + "&Output=js&Version=20131101&ItemId=9788965402602&Cover=Big&ItemIdType=ISBN13&OptResult=packing,ratingInfo,authors,fulldescription,Toc"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
@@ -227,8 +224,8 @@ class AladinBookSearchApiServiceTest {
 
         mockServer
                 .expect(requestTo(BOOK_DETAIL_SEARCH_URL
-                        + "?cover=big&itemIdType=ISBN13&ItemId=978898078297011&output=js&Version=20131101&OptResult=packing,ratingInfo,authors,fulldescription,Toc&ttbkey="
-                        + API_KEY))
+                        + "?TTBKey=" + API_KEY
+                        + "&Output=js&Version=20131101&ItemId=978898078297011&Cover=Big&ItemIdType=ISBN13&OptResult=packing,ratingInfo,authors,fulldescription,Toc"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when, then
@@ -247,8 +244,8 @@ class AladinBookSearchApiServiceTest {
 
         mockServer
                 .expect(requestTo(BOOK_LIST_BY_CATEGORY_SEARCH_URL
-                        + "?QueryType=bestseller&MaxResults=10&Start=1&Output=js&Version=20131101&Cover=Big&CategoryId=0&SearchTarget=BOOK&TTBKey="
-                        + API_KEY))
+                        + "?TTBKey=" + API_KEY
+                        + "&QueryType=bestseller&MaxResults=10&Start=1&Output=js&Version=20131101&CategoryId=0&SearchTarget=BOOK&Cover=Big"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when

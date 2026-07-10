@@ -1,5 +1,8 @@
 {
-  "bookSearchResult": [
-  ],
-  "nextRequestUrl": ""
+  "documents": [],
+  "meta": {
+    "total_count": 0,
+    "pageable_count": 0,
+    "is_end": true
+  }
 }

@@ -24,4 +24,10 @@ logging:
     root: info
 
 jwt:
-  secretKey: testSecretKey
+  secretKey: testSecretKey1234567890abcdefghijk
+  access:
+    expiration: 3600000
+    header: Authorization
+  refresh:
+    expiration: 1209600000
+    header: Authorization-Refresh
