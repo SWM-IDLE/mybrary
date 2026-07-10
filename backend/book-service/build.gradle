@@ -56,6 +56,10 @@ dependencies {
 	testImplementation 'org.testcontainers:mysql'
 	testImplementation 'org.testcontainers:junit-jupiter'
 
+	// wiremock
+	testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock'
+	testImplementation 'io.github.openfeign:feign-jackson:12.3'
+
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
 	annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
 	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
