@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p /Users/kangminseong/repository/mybrary/.claude/logs && jq -r '\"[\" + (now | strftime(\"%Y-%m-%dT%H:%M:%S\")) + \"] \" + (.prompt // \"\")' >> /Users/kangminseong/repository/mybrary/.claude/logs/prompts.log"
+          }
+        ]
+      }
+    ]
+  }
+}

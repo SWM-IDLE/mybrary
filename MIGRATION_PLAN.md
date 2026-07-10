@@ -1,5 +1,48 @@
 # Mybrary 마이그레이션 계획
 
+## 마이그레이션 체크리스트
+
+> `/migration-next` 스킬로 관리한다.  
+> 각 항목은 **브랜치 1개 + PR 1개** 단위. PR이 master-new에 머지되면 `- [ ]` → `- [x]` 로 변경 후 커밋한다.  
+> 브랜치명은 항목 끝 백틱(`` ` ``) 안에 명시되어 있다.
+
+### Phase 0 — 테스트 강화
+
+- [ ] **P0-01** Testcontainers 환경 구성 (MySQL + Redis) — `phase0/testcontainers-setup`
+- [ ] **P0-02** user-service Redis 블랙리스트 + Refresh Token 통합 테스트 — `phase0/user-redis-tests`
+- [ ] **P0-03** book-service UserServiceClient WireMock 계약 테스트 + Resilience4j Fallback — `phase0/book-feign-tests`
+- [ ] **P0-04** user-service BookServiceClient WireMock 계약 테스트 — `phase0/user-feign-tests`
+- [ ] **P0-05** user-service 커버리지 80% 달성 — `phase0/user-coverage`
+- [ ] **P0-06** book-service 커버리지 80% 달성 — `phase0/book-coverage`
+
+### Phase 1 — 백엔드 모놀리식 전환
+
+- [ ] **P1-01** mybrary-server 프로젝트 뼈대 생성 + Spring Cloud 의존성 제거 — `phase1/project-init`
+- [ ] **P1-02** user 도메인 패키지 이전 — `phase1/migrate-user-domain`
+- [ ] **P1-03** book 도메인 패키지 이전 — `phase1/migrate-book-domain`
+- [ ] **P1-04** OpenFeign → 포트 인터페이스 기반 내부 호출 전환 (순환 참조 방지) — `phase1/remove-feign`
+- [ ] **P1-05** JWT Filter 통합 (apigateway AuthorizationHeaderFilter → Spring Security) — `phase1/jwt-security-filter`
+- [ ] **P1-06** Config Server 제거 + application.yml 설정 통합 — `phase1/remove-config-server`
+- [ ] **P1-07** DB 스키마 통합 Flyway 마이그레이션 스크립트 — `phase1/db-schema-merge`
+- [ ] **P1-08** API 경로 재설계 (/user-service/, /book-service/ 프리픽스 제거) — `phase1/api-path-refactor`
+- [ ] **P1-09** CI/CD 파이프라인 통합 (ECS/ECR 단일화) — `phase1/cicd-setup`
+
+### Phase 2 — 프론트엔드 WebView 전환
+
+- [ ] **P2-01** Flutter webview_flutter 도입 + Shell 구조 변경 — `phase2/webview-shell`
+- [ ] **P2-02** JS Bridge 구현 (Flutter ↔ Web 양방향) — `phase2/js-bridge`
+- [ ] **P2-03** 소셜 로그인 JS Bridge 연동 (Kakao/Naver/Google) — `phase2/social-login-bridge`
+- [ ] **P2-04** API 경로 업데이트 + 웹 프론트엔드 API 설정 — `phase2/api-path-update`
+- [ ] **P2-05** FCM 푸시 알림 + 카메라·갤러리 네이티브 연동 검증 — `phase2/native-features`
+
+### Phase 3 — 정리 및 배포
+
+- [ ] **P3-01** 구 MSA 서비스 코드 제거 (apigateway, eureka, config-server) — `phase3/remove-msa-services`
+- [ ] **P3-02** CI/CD 파이프라인 정리 및 GitHub Actions 통합 — `phase3/cicd-cleanup`
+- [ ] **P3-03** 스테이징 검증 + 운영 배포 — `phase3/production-deploy`
+
+---
+
 ## 목표
 
 MSA(마이크로서비스 아키텍처) → 모놀리식 전환 + Flutter 앱 WebView 기반 전환.
