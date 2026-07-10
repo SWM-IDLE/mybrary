@@ -8,7 +8,7 @@
 
 ### Phase 0 — 테스트 강화
 
-- [ ] **P0-01** Testcontainers 환경 구성 (MySQL + Redis) — `phase0/testcontainers-setup`
+- [x] **P0-01** Testcontainers 환경 구성 (MySQL + Redis) — `phase0/testcontainers-setup`
 - [ ] **P0-02** user-service Redis 블랙리스트 + Refresh Token 통합 테스트 — `phase0/user-redis-tests`
 - [ ] **P0-03** book-service UserServiceClient WireMock 계약 테스트 + Resilience4j Fallback — `phase0/book-feign-tests`
 - [ ] **P0-04** user-service BookServiceClient WireMock 계약 테스트 — `phase0/user-feign-tests`
