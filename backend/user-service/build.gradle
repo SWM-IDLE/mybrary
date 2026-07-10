@@ -69,6 +69,10 @@ dependencies {
 	testImplementation 'org.testcontainers:mysql'
 	testImplementation 'org.testcontainers:junit-jupiter'
 
+	// wiremock
+	testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock'
+	testImplementation 'io.github.openfeign:feign-jackson:12.3'
+
 	// querydsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
