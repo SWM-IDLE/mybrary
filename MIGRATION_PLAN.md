@@ -12,8 +12,8 @@
 - [x] **P0-02** user-service Redis 블랙리스트 + Refresh Token 통합 테스트
 - [x] **P0-03** book-service UserServiceClient WireMock 계약 테스트 + Resilience4j Fallback
 - [x] **P0-04** user-service BookServiceClient WireMock 계약 테스트
-- [ ] **P0-05** user-service 커버리지 80% 달성
-- [ ] **P0-06** book-service 커버리지 80% 달성
+- [x] **P0-05** user-service 커버리지 80% 달성
+- [x] **P0-06** book-service 커버리지 80% 달성
 
 ### Phase 1 — 백엔드 모놀리식 전환 — `phase1/monolithic`
 

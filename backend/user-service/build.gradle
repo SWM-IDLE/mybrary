@@ -101,6 +101,22 @@ tasks.named('processTestAot') {
 	enabled = false
 }
 
+jacocoTestReport {
+	reports {
+		xml.required = true
+		html.required = true
+	}
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, excludes: [
+					'**/Q*.class',           // QueryDSL 생성 Q-클래스
+					'**/*Builder*.class',     // Lombok @Builder 생성 빌더
+					'**/generated/**'         // 기타 생성 소스
+			])
+		}))
+	}
+}
+
 // Task 및 설정 추가
 // GenerateSwaggerUI 태스크가, openapi3 task 를 의존하도록 설정
 tasks.withType(GenerateSwaggerUI) {

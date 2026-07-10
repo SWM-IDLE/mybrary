@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -44,17 +44,14 @@ class KakaoBookSearchApiServiceTest {
     @Autowired
     private KakaoBookSearchApiService kakaoBookSearchApiService;
 
-    @Autowired
-    private RestTemplateBuilder restTemplateBuilder;
-
     @MockBean
     private BookSearchRankingService bookSearchRankingService;
 
     private MockRestServiceServer mockServer;
 
     @BeforeEach
-    public void setup() {
-        RestTemplate restTemplate = restTemplateBuilder.build();
+    void setup() {
+        RestTemplate restTemplate = (RestTemplate) ReflectionTestUtils.getField(kakaoBookSearchApiService, "restTemplate");
         mockServer = MockRestServiceServer.createServer(restTemplate);
     }
 
@@ -93,7 +90,7 @@ class KakaoBookSearchApiServiceTest {
         String expectResult = readJsonFile("resultLessThan10FromKeyword.json");
 
         mockServer
-                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "?query=Docker Container&sort=accuracy&page=1"))
+                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "?query=Docker%20Container&sort=accuracy&page=1"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         // when
@@ -117,7 +114,7 @@ class KakaoBookSearchApiServiceTest {
         String expectResult = readJsonFile("resultFromISBN.json");
 
         mockServer
-                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "/isbn?isbn=" + EXIST_ISBN))
+                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "?query=" + EXIST_ISBN + "&sort=accuracy&page=1"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         BookSearchServiceRequest request = BookSearchServiceRequest.of(EXIST_ISBN);
@@ -140,7 +137,7 @@ class KakaoBookSearchApiServiceTest {
         String expectResult = readJsonFile("resultEmpty.json");
 
         mockServer
-                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "?query=empty keywordr&sort=accuracy&page=1"))
+                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "?query=empty%20keyword&sort=accuracy&page=1"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         BookSearchServiceRequest request = BookSearchServiceRequest.of("empty keyword", "accuracy", 1);
@@ -163,7 +160,7 @@ class KakaoBookSearchApiServiceTest {
         String expectResult = readJsonFile("resultFromISBN.json");
 
         mockServer
-                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "/isbn?isbn=" + EXIST_ISBN))
+                .expect(requestTo(KAKAO_BOOK_SEARCH_API_URL + "?target=isbn&query=" + EXIST_ISBN + "&sort=accuracy&page=1"))
                 .andRespond(withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
         BookSearchServiceRequest request = BookSearchServiceRequest.of(EXIST_ISBN);

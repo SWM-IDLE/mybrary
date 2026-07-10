@@ -8,6 +8,7 @@ plugins {
 
 	id 'com.epages.restdocs-api-spec' version "0.17.1"
 	id 'org.hidetake.swagger.generator' version '2.18.2'
+	id 'jacoco'
 }
 
 group = 'kr.mybrary'
@@ -94,6 +95,22 @@ tasks.named('test') {
 // GraalVM 네이티브 AOT는 일반 테스트에서 불필요 (Testcontainers와 충돌)
 tasks.named('processTestAot') {
 	enabled = false
+}
+
+jacocoTestReport {
+	reports {
+		xml.required = true
+		html.required = true
+	}
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, excludes: [
+					'**/Q*.class',
+					'**/*Builder*.class',
+					'**/generated/**'
+			])
+		}))
+	}
 }
 
 tasks.withType(GenerateSwaggerUI) {
