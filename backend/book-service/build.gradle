@@ -51,6 +51,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	// testcontainers
+	testImplementation(platform('org.testcontainers:testcontainers-bom:1.19.3'))
+	testImplementation 'org.testcontainers:mysql'
+	testImplementation 'org.testcontainers:junit-jupiter'
+
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
 	annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
 	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
@@ -78,6 +83,13 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	// Testcontainers가 Docker Desktop 소켓을 찾을 수 있도록 설정
+	environment 'DOCKER_HOST', "unix://${System.getProperty('user.home')}/.docker/run/docker.sock"
+}
+
+// GraalVM 네이티브 AOT는 일반 테스트에서 불필요 (Testcontainers와 충돌)
+tasks.named('processTestAot') {
+	enabled = false
 }
 
 tasks.withType(GenerateSwaggerUI) {
