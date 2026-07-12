@@ -10,6 +10,7 @@ import kr.mybrary.authentication.domain.logout.handler.CustomLogoutHandler;
 import kr.mybrary.authentication.domain.oauth2.handler.OAuth2LoginFailureHandler;
 import kr.mybrary.authentication.domain.oauth2.handler.OAuth2LoginSuccessHandler;
 import kr.mybrary.authentication.domain.oauth2.service.CustomOAuth2UserService;
+import kr.mybrary.global.jwt.JwtAuthenticationFilter;
 import kr.mybrary.global.util.JwtUtil;
 import kr.mybrary.global.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
@@ -52,7 +54,9 @@ public class WebSecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint(objectMapper)))
                 .authorizeHttpRequests(request -> request
-                        .anyRequest().permitAll()
+                        .requestMatchers("/sign-up", "/auth/**", "/oauth2/**", "/login").permitAll()
+                        .requestMatchers("/actuator/**", "/docs/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oAuth2LoginSuccessHandler)
@@ -66,7 +70,8 @@ public class WebSecurityConfig {
                         .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
                 );
 
-        // LogoutExceptionFilter -> LogoutFilter -> AbstractAuthenticationProcessingFilter
+        // JwtAuthenticationFilter -> LogoutExceptionFilter -> LogoutFilter -> AbstractAuthenticationProcessingFilter
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(logoutExceptionFilter(), LogoutFilter.class);
         http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
 
@@ -105,6 +110,11 @@ public class WebSecurityConfig {
         customJsonUsernamePasswordLoginFilter.setAuthenticationSuccessHandler(loginSuccessHandler());
         customJsonUsernamePasswordLoginFilter.setAuthenticationFailureHandler(loginFailureHandler());
         return customJsonUsernamePasswordLoginFilter;
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtUtil, redisUtil, userDetailsService, objectMapper);
     }
 
     @Bean
