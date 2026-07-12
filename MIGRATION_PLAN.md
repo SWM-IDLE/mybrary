@@ -24,7 +24,7 @@
 - [x] **P1-05** JWT Filter 통합 (apigateway AuthorizationHeaderFilter → Spring Security)
 - [x] **P1-06** Config Server 제거 + application.yml 설정 통합
 - [x] **P1-07** DB 스키마 통합 Flyway 마이그레이션 스크립트
-- [ ] **P1-08** API 경로 재설계 (/user-service/, /book-service/ 프리픽스 제거)
+- [x] **P1-08** API 경로 재설계 (/user-service/, /book-service/ 프리픽스 제거)
 - [ ] **P1-09** CI/CD 파이프라인 통합 (ECS/ECR 단일화)
 
 ### Phase 2 — 프론트엔드 WebView 전환 — `phase2/webview`
