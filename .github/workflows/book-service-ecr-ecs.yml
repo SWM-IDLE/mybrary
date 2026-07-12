@@ -1,14 +1,16 @@
+# [DEPRECATED] MSA → Monolithic 전환으로 이 워크플로우는 비활성화됨
+# mybrary-server-ecr-ecs.yml 참조. Phase 3(P3-02)에서 삭제 예정.
 name: 'book-service upload ecr & ecs'
 
 on:
   push:
     branches:
-      - master
+      - 'deprecated-never-trigger'  # DEPRECATED
     paths:
       - 'backend/book-service/**'
   pull_request:
     branches:
-      - master
+      - 'deprecated-never-trigger'  # DEPRECATED
     paths:
       - 'backend/book-service/**'
 
