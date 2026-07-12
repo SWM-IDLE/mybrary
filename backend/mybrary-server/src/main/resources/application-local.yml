@@ -9,6 +9,9 @@ spring:
     hibernate:
       ddl-auto: update
 
+  flyway:
+    enabled: false
+
 logging:
   level:
     root: debug

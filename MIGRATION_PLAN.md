@@ -23,7 +23,7 @@
 - [x] **P1-04** OpenFeign → 포트 인터페이스 기반 내부 호출 전환 (순환 참조 방지)
 - [x] **P1-05** JWT Filter 통합 (apigateway AuthorizationHeaderFilter → Spring Security)
 - [x] **P1-06** Config Server 제거 + application.yml 설정 통합
-- [ ] **P1-07** DB 스키마 통합 Flyway 마이그레이션 스크립트
+- [x] **P1-07** DB 스키마 통합 Flyway 마이그레이션 스크립트
 - [ ] **P1-08** API 경로 재설계 (/user-service/, /book-service/ 프리픽스 제거)
 - [ ] **P1-09** CI/CD 파이프라인 통합 (ECS/ECR 단일화)
 
