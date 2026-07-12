@@ -19,7 +19,7 @@
 
 - [x] **P1-01** mybrary-server 프로젝트 뼈대 생성 + Spring Cloud 의존성 제거
 - [x] **P1-02** user 도메인 패키지 이전
-- [ ] **P1-03** book 도메인 패키지 이전
+- [x] **P1-03** book 도메인 패키지 이전
 - [ ] **P1-04** OpenFeign → 포트 인터페이스 기반 내부 호출 전환 (순환 참조 방지)
 - [ ] **P1-05** JWT Filter 통합 (apigateway AuthorizationHeaderFilter → Spring Security)
 - [ ] **P1-06** Config Server 제거 + application.yml 설정 통합
