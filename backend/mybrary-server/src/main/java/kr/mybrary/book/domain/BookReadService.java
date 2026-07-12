@@ -1,0 +1,46 @@
+package kr.mybrary.book.domain;
+
+import java.util.Optional;
+import kr.mybrary.book.domain.dto.BookDtoMapper;
+import kr.mybrary.book.domain.dto.request.BookDetailServiceRequest;
+import kr.mybrary.book.domain.exception.BookNotFoundException;
+import kr.mybrary.book.persistence.Book;
+import kr.mybrary.book.persistence.repository.BookRepository;
+import kr.mybrary.book.presentation.dto.response.BookDetailResponse;
+import kr.mybrary.booksearch.domain.PlatformBookSearchApiService;
+import kr.mybrary.booksearch.domain.dto.request.BookSearchServiceRequest;
+import kr.mybrary.booksearch.presentation.dto.response.BookSearchDetailResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+public class BookReadService {
+
+    private final BookRepository bookRepository;
+    private final PlatformBookSearchApiService platformBookSearchApiService;
+    private final BookWriteService bookWriteService;
+
+    public BookDetailResponse getBookDetailByISBN(BookDetailServiceRequest request) {
+
+        return bookRepository.findByISBNWithAuthorAndCategoryUsingFetchJoin(request.getIsbn10(), request.getIsbn13())
+                .map(BookDtoMapper.INSTANCE::bookToDetailServiceResponse)
+                .orElseGet(() -> {
+                    BookSearchDetailResponse bookSearchDetailResponse = platformBookSearchApiService.searchBookDetailWithISBN(
+                            BookSearchServiceRequest.of(request.getIsbn13()));
+
+                    bookWriteService.create(BookDtoMapper.INSTANCE.bookSearchDetailToBookCreateServiceRequest(bookSearchDetailResponse));
+                    return BookDtoMapper.INSTANCE.bookSearchDetailToDetailServiceResponse(bookSearchDetailResponse);
+                });
+    }
+
+    public Book getRegisteredBookByISBN13(String isbn13) {
+        return bookRepository.findByIsbn13(isbn13).orElseThrow(BookNotFoundException::new);
+    }
+
+    public Optional<Book> findOptionalBookByISBN13(String isbn13) {
+        return bookRepository.findByIsbn13(isbn13);
+    }
+}
