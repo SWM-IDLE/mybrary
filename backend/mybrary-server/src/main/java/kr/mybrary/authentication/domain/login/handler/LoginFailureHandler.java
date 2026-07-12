@@ -2,7 +2,7 @@ package kr.mybrary.authentication.domain.login.handler;
 
 import static kr.mybrary.authentication.domain.login.LoginException.CONTENT_TYPE_NOT_JSON;
 import static kr.mybrary.authentication.domain.login.LoginException.LOGIN_ID_NOT_FOUND;
-import static kr.mybrary.authentication.domain.login.LoginException.PASSWORD_NOT_MATCH;
+import static kr.mybrary.authentication.domain.login.LoginException.CREDENTIALS_MISMATCH;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,7 +54,7 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
             return LOGIN_ID_NOT_FOUND.getErrorCode();
         }
         if (exception instanceof BadCredentialsException) {
-            return PASSWORD_NOT_MATCH.getErrorCode();
+            return CREDENTIALS_MISMATCH.getErrorCode();
         }
         return null;
     }
@@ -67,7 +67,7 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
             return String.format(LOGIN_ID_NOT_FOUND.getErrorMessage(), exception.getMessage());
         }
         if (exception instanceof BadCredentialsException) {
-            return PASSWORD_NOT_MATCH.getErrorMessage();
+            return CREDENTIALS_MISMATCH.getErrorMessage();
         }
         return exception.getMessage();
     }
