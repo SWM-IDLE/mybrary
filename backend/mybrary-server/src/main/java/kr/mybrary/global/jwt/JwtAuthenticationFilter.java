@@ -35,7 +35,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
     private static final List<String> WHITELIST = List.of(
-            "/sign-up", "/auth", "/oauth2/authorization", "/login"
+            // 회원가입
+            "/api/v1/users/sign-up",
+            // 로그인 (CustomJsonUsernamePasswordAuthenticationFilter 처리)
+            "/api/v1/auth/login",
+            // 로그아웃 (CustomLogoutHandler 처리 — JWT 검증 없이 핸들러가 토큰 추출)
+            "/api/v1/auth/logout",
+            // 토큰 갱신 (Refresh Token 처리)
+            "/auth/v1/refresh",
+            // 소셜 로그인 시작 및 OAuth2 콜백
+            "/oauth2/authorization",
+            "/login/oauth2/code"
     );
 
     private static final String USER_ID_HEADER = "USER-ID";
@@ -64,20 +74,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = tokenOpt.get();
 
-        // 4a. /refresh 경로이면 Refresh Token 처리이므로 Access Token 검증 생략
-        if (requestURI.contains("/refresh")) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        // 4b. Redis 블랙리스트 확인 (로그아웃된 토큰)
+        // 4. Redis 블랙리스트 확인 (로그아웃된 토큰)
         if (redisUtil.hasKey(token)) {
             log.warn("로그아웃된 Access Token 사용 시도. URI: {}", requestURI);
             writeUnauthorizedResponse(response, "AU-01", "이미 로그아웃된 토큰입니다.");
             return;
         }
 
-        // 4c~d. JWT 검증 및 loginId 추출 후 SecurityContext 설정
+        // 5. JWT 검증 및 loginId 추출 후 SecurityContext 설정
         try {
             Optional<String> loginIdOpt = jwtUtil.getLoginIdFromValidAccessToken(token);
 

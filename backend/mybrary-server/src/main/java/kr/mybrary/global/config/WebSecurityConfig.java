@@ -54,7 +54,17 @@ public class WebSecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint(objectMapper)))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/sign-up", "/auth/**", "/oauth2/**", "/login").permitAll()
+                        // 회원가입 (JWT 불필요)
+                        .requestMatchers("/api/v1/users/sign-up").permitAll()
+                        // 로그인 (CustomJsonUsernamePasswordAuthenticationFilter 에서 처리)
+                        .requestMatchers("/api/v1/auth/login").permitAll()
+                        // 토큰 갱신 (Refresh Token으로 처리, JWT Access Token 불필요)
+                        .requestMatchers("/auth/v1/refresh").permitAll()
+                        // 소셜 로그인 시작 및 콜백
+                        .requestMatchers("/oauth2/authorization/**", "/login/oauth2/code/**").permitAll()
+                        // 로그아웃 (CustomLogoutHandler 에서 처리)
+                        .requestMatchers("/api/v1/auth/logout").permitAll()
+                        // 헬스체크 및 API 문서
                         .requestMatchers("/actuator/**", "/docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
