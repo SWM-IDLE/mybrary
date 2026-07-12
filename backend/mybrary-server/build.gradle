@@ -1,0 +1,127 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.1.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'jacoco'
+}
+
+group = 'kr.mybrary'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Web / Core
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Security + OAuth2
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // JWT (auth0 java-jwt — user-service와 동일 버전)
+    implementation 'com.auth0:java-jwt:4.2.1'
+
+    // Data
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // Flyway (MySQL)
+    implementation 'org.flywaydb:flyway-mysql'
+
+    // QueryDSL (Jakarta)
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // MapStruct + Lombok (어노테이션 프로세서 순서 중요)
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+    annotationProcessor "org.mapstruct:mapstruct-processor:1.5.5.Final"
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // Resilience4j — 외부 API(Kakao/Aladin) 장애 대응용으로 유지
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.1.0'
+
+    // AWS S3 (프로필 이미지)
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.0.2'
+
+    // Apache Commons
+    implementation 'org.apache.commons:commons-lang3'
+
+    // Actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // Testcontainers (MySQL + JUnit5)
+    testImplementation(platform('org.testcontainers:testcontainers-bom:1.19.3'))
+    testImplementation 'org.testcontainers:mysql'
+    testImplementation 'org.testcontainers:junit-jupiter'
+
+    // H2 (단위 테스트용 in-memory)
+    testRuntimeOnly 'com.h2database:h2'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    environment 'DOCKER_HOST', "unix://${System.getProperty('user.home')}/.docker/run/docker.sock"
+}
+
+// GraalVM 네이티브 플러그인이 없을 때는 processTestAot 태스크가 존재하지 않으므로 조건부 적용
+if (tasks.findByName('processTestAot')) {
+    tasks.named('processTestAot') {
+        enabled = false
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, excludes: [
+                    '**/Q*.class',
+                    '**/*Builder*.class',
+                    '**/generated/**'
+            ])
+        }))
+    }
+}
+
+// QueryDSL 생성 소스 디렉터리 추가
+sourceSets {
+    main {
+        java {
+            srcDirs += ['src/main/generated']
+        }
+    }
+}
+
+clean {
+    delete file('src/main/generated')
+}
