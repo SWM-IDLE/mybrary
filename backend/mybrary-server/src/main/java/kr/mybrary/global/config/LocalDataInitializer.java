@@ -65,7 +65,15 @@ public class LocalDataInitializer implements CommandLineRunner {
     }
 
     private void initBooks(User admin) {
-        if (bookRepository.count() > 0) return;
+        // 도서가 이미 있어도 admin MyBook이 없으면 등록
+        if (bookRepository.count() > 0) {
+            if (myBookRepository.countByUserId(ADMIN_LOGIN_ID) == 0) {
+                bookRepository.findAll().forEach(book ->
+                        myBookRepository.save(MyBook.of(book, ADMIN_LOGIN_ID)));
+                log.info("===== [LOCAL] admin MyBook {}권 재등록 완료 =====", bookRepository.count());
+            }
+            return;
+        }
 
         BookCategory novel = bookCategoryRepository.save(BookCategory.builder().cid(1).name("소설").build());
         BookCategory selfHelp = bookCategoryRepository.save(BookCategory.builder().cid(2).name("자기계발").build());

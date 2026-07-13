@@ -11,6 +11,8 @@ public interface MyBookRepository extends JpaRepository<MyBook, Long>, MyBookRep
 
     boolean existsByUserIdAndBook(String userId, Book book);
 
+    long countByUserId(String userId);
+
     List<MyBook> findAllByUserId(String userId);
 
     @Query("select m from MyBook m "
