@@ -27,13 +27,15 @@
 - [x] **P1-08** API 경로 재설계 (/user-service/, /book-service/ 프리픽스 제거)
 - [x] **P1-09** CI/CD 파이프라인 통합 (ECS/ECR 단일화)
 
-### Phase 2 — 프론트엔드 WebView 전환 — `phase2/webview`
+### Phase 2 — 프론트엔드 Thymeleaf MPA 전환 — `phase2/webview`
 
-- [x] **P2-01** Flutter webview_flutter 도입 + Shell 구조 변경
-- [ ] **P2-02** JS Bridge 구현 (Flutter ↔ Web 양방향)
-- [ ] **P2-03** 소셜 로그인 JS Bridge 연동 (Kakao/Naver/Google)
-- [ ] **P2-04** API 경로 업데이트 + 웹 프론트엔드 API 설정
-- [ ] **P2-05** FCM 푸시 알림 + 카메라·갤러리 네이티브 연동 검증
+> Flutter WebView 대신 Thymeleaf MPA(서버사이드 렌더링)로 방향 변경
+
+- [x] **P2-01** Thymeleaf MPA 전체 페이지 구현 (login/signup/home/search/mybook/profile/interests/settings 등 14개 화면)
+- [x] **P2-02** 로컬 개발 환경 세팅 (Docker Compose MySQL+Redis + 파일 기반 로컬 스토리지)
+- [x] **P2-03** 로컬 시드 데이터 자동 초기화 (admin 계정 + 샘플 도서 10권 + MyBook 등록)
+- [x] **P2-04** 이중 SecurityFilterChain (/web/** 세션 기반 / /api/v1/** JWT 기반)
+- [x] **P2-05** Thymeleaf 3.1 #request 비활성화 이슈 수정 (@ModelAttribute currentPath 주입)
 
 ### Phase 3 — 정리 및 배포 — `phase3/cleanup`
 
