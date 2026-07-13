@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - Mybrary">Mybrary</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --mybrary-primary: #19C568;
+            --mybrary-primary-light: #CDE7BE;
+            --mybrary-orange: #FF6846;
+            --mybrary-star: #FFBB36;
+            --mybrary-grey: #A0A0A0;
+            --mybrary-light-grey: #F1F2F5;
+            --mybrary-dark: #313333;
+        }
+
+        body {
+            background-color: var(--mybrary-light-grey);
+            font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+            padding-bottom: 80px;
+        }
+
+        .navbar-brand .brand-text {
+            color: var(--mybrary-primary);
+            font-weight: 700;
+            font-size: 1.4rem;
+        }
+
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        /* 하단 네비게이션 (모바일) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 1px solid #E7E7E7;
+            display: flex;
+            z-index: 1000;
+        }
+
+        .bottom-nav a {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0 8px;
+            color: var(--mybrary-grey);
+            text-decoration: none;
+            font-size: 0.7rem;
+        }
+
+        .bottom-nav a.active {
+            color: var(--mybrary-primary);
+        }
+
+        .bottom-nav a i {
+            font-size: 1.3rem;
+            margin-bottom: 2px;
+        }
+
+        /* 도서 카드 */
+        .book-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: transform 0.15s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .book-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background: #F1F2F5;
+        }
+
+        .book-card-body {
+            padding: 10px 12px;
+        }
+
+        .book-card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--mybrary-dark);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .book-card-author {
+            font-size: 0.75rem;
+            color: var(--mybrary-grey);
+            margin-top: 2px;
+        }
+
+        .star-rating {
+            color: var(--mybrary-star);
+            font-size: 0.8rem;
+        }
+
+        /* 프라이머리 버튼 */
+        .btn-mybrary {
+            background-color: var(--mybrary-primary);
+            border-color: var(--mybrary-primary);
+            color: #fff;
+        }
+
+        .btn-mybrary:hover {
+            background-color: #15b05e;
+            color: #fff;
+        }
+
+        .btn-mybrary-outline {
+            border-color: var(--mybrary-primary);
+            color: var(--mybrary-primary);
+        }
+
+        .btn-mybrary-outline:hover {
+            background-color: var(--mybrary-primary);
+            color: #fff;
+        }
+
+        /* 섹션 헤더 */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--mybrary-dark);
+        }
+
+        /* 알림 / 플래시 메시지 */
+        .flash-alert {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            min-width: 280px;
+            max-width: 90%;
+        }
+
+        .page-container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* 배지 */
+        .badge-mybrary {
+            background-color: var(--mybrary-primary-light);
+            color: var(--mybrary-primary);
+            font-weight: 600;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+    </style>
+
+    <!-- 페이지 고유 스타일 슬롯 -->
+    <th:block layout:fragment="page-styles"></th:block>
+</head>
+<body>
+
+<!-- 상단 네비게이션 -->
+<nav class="navbar navbar-light sticky-top">
+    <div class="container-fluid px-3">
+        <a class="navbar-brand" href="/web">
+            <span class="brand-text">mybrary</span>
+        </a>
+        <div class="d-flex align-items-center gap-2">
+            <span class="text-muted small" sec:authentication="name">사용자</span>
+            <a href="/web/settings" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-gear"></i>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- 플래시 메시지 (성공) -->
+<div th:if="${successMessage}" class="flash-alert alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-1"></i>
+    <span th:text="${successMessage}">성공</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
+<!-- 플래시 메시지 (에러) -->
+<div th:if="${errorMessage}" class="flash-alert alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+    <span th:text="${errorMessage}">오류</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
+<!-- 페이지 콘텐츠 -->
+<main>
+    <th:block layout:fragment="content"></th:block>
+</main>
+
+<!-- 하단 네비게이션 -->
+<nav class="bottom-nav">
+    <a href="/web" th:classappend="${#httpServletRequest.requestURI == '/web' or #httpServletRequest.requestURI == '/web/'} ? 'active' : ''">
+        <i class="bi bi-house-fill"></i>
+        홈
+    </a>
+    <a href="/web/search" th:classappend="${#httpServletRequest.requestURI.startsWith('/web/search')} ? 'active' : ''">
+        <i class="bi bi-search"></i>
+        검색
+    </a>
+    <a href="/web/mybooks" th:classappend="${#httpServletRequest.requestURI.startsWith('/web/mybooks')} ? 'active' : ''">
+        <i class="bi bi-book-fill"></i>
+        내 책
+    </a>
+    <a href="/web/profile" th:classappend="${#httpServletRequest.requestURI.startsWith('/web/profile')} ? 'active' : ''">
+        <i class="bi bi-person-fill"></i>
+        프로필
+    </a>
+    <a href="/web/interests" th:classappend="${#httpServletRequest.requestURI.startsWith('/web/interests')} ? 'active' : ''">
+        <i class="bi bi-heart-fill"></i>
+        관심사
+    </a>
+</nav>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 페이지 고유 스크립트 슬롯 -->
+<th:block layout:fragment="page-scripts"></th:block>
+
+<!-- 플래시 메시지 자동 닫기 -->
+<script>
+    document.querySelectorAll('.flash-alert').forEach(function(el) {
+        setTimeout(function() {
+            var bsAlert = bootstrap.Alert.getOrCreateInstance(el);
+            bsAlert.close();
+        }, 3000);
+    });
+</script>
+</body>
+</html>

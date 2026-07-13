@@ -29,7 +29,7 @@
 
 ### Phase 2 — 프론트엔드 WebView 전환 — `phase2/webview`
 
-- [ ] **P2-01** Flutter webview_flutter 도입 + Shell 구조 변경
+- [x] **P2-01** Flutter webview_flutter 도입 + Shell 구조 변경
 - [ ] **P2-02** JS Bridge 구현 (Flutter ↔ Web 양방향)
 - [ ] **P2-03** 소셜 로그인 JS Bridge 연동 (Kakao/Naver/Google)
 - [ ] **P2-04** API 경로 업데이트 + 웹 프론트엔드 API 설정

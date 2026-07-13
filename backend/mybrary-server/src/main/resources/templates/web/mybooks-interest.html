@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>관심 도서</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="page-container">
+
+        <div class="section-header mb-3">
+            <span class="section-title">관심 도서</span>
+            <a href="/web/mybooks" class="btn btn-sm btn-outline-secondary" style="font-size:0.75rem;">
+                <i class="bi bi-arrow-left me-1"></i>내 책
+            </a>
+        </div>
+
+        <!-- 정렬 -->
+        <div class="d-flex gap-2 mb-3">
+            <a th:href="@{/web/mybooks/interest(orderType='NONE')}"
+               th:classappend="${orderType == 'NONE' or orderType == null} ? 'active' : ''"
+               class="filter-chip">기본</a>
+            <a th:href="@{/web/mybooks/interest(orderType='PUBLICATION')}"
+               th:classappend="${orderType == 'PUBLICATION'} ? 'active' : ''"
+               class="filter-chip">출판일순</a>
+        </div>
+
+        <!-- 관심 도서 목록 -->
+        <div th:if="${interestBooks != null and !#lists.isEmpty(interestBooks)}">
+            <div class="row g-2">
+                <div class="col-6 col-sm-4" th:each="book : ${interestBooks}">
+                    <a th:href="@{/web/search/detail(isbn13=${book.isbn13})}" class="text-decoration-none">
+                        <div class="book-card h-100">
+                            <div class="position-relative">
+                                <img th:src="${book.thumbnailUrl}"
+                                     th:alt="${book.title}"
+                                     onerror="this.src='https://via.placeholder.com/180x160?text=N/A'">
+                                <button class="btn btn-sm position-absolute top-0 end-0 m-1 p-1"
+                                        style="background:rgba(255,255,255,0.9); border:none;">
+                                    <i class="bi bi-heart-fill text-danger" style="font-size:0.8rem;"></i>
+                                </button>
+                            </div>
+                            <div class="book-card-body">
+                                <div class="book-card-title" th:text="${book.title}">제목</div>
+                                <div class="book-card-author" th:text="${book.author}">저자</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${interestBooks == null or #lists.isEmpty(interestBooks)}" class="text-center text-muted py-5">
+            <i class="bi bi-heart" style="font-size:3rem; color:#CCC;"></i>
+            <p class="mt-3 fw-semibold">관심 도서가 없어요</p>
+            <a href="/web/search" class="btn btn-mybrary btn-sm mt-2">
+                <i class="bi bi-search me-1"></i>도서 검색
+            </a>
+        </div>
+
+    </div>
+</div>
+<th:block layout:fragment="page-styles">
+<style>
+    .filter-chip { border-radius:20px; padding:5px 14px; font-size:0.78rem; border:1.5px solid #DDD; background:#fff; color:#555; cursor:pointer; text-decoration:none; }
+    .filter-chip.active { background:#19C568; border-color:#19C568; color:#fff; }
+</style>
+</th:block>
+</body>
+</html>
