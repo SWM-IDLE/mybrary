@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>설정</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="page-container">
+
+        <div class="section-title mb-4">설정</div>
+
+        <!-- 계정 정보 -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="fw-semibold mb-1" style="font-size:0.85rem; color:#555;">현재 계정</div>
+                <div class="fw-bold" th:text="${loginId}">아이디</div>
+            </div>
+        </div>
+
+        <!-- 계정 메뉴 -->
+        <div class="card mb-3">
+            <div class="list-group list-group-flush rounded-3">
+                <a href="/web/profile" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                    <i class="bi bi-person-circle text-success"></i>
+                    <span>프로필 보기</span>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
+                <a href="/web/profile/edit" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                    <i class="bi bi-pencil-square text-primary"></i>
+                    <span>프로필 수정</span>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
+                <a href="/web/interests" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                    <i class="bi bi-heart text-danger"></i>
+                    <span>관심사 설정</span>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 로그아웃 -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <form th:action="@{/web/logout}" method="post">
+                    <button type="submit" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-box-arrow-right me-1"></i>로그아웃
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 계정 탈퇴 -->
+        <div class="card border-danger">
+            <div class="card-body">
+                <div class="fw-semibold text-danger mb-2">
+                    <i class="bi bi-exclamation-triangle me-1"></i>위험 구역
+                </div>
+                <p class="text-muted small mb-3">
+                    계정을 탈퇴하면 모든 데이터(내 책, 리뷰, 팔로우 정보)가 삭제되며 복구할 수 없습니다.
+                </p>
+                <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="bi bi-trash me-1"></i>계정 탈퇴
+                </button>
+            </div>
+        </div>
+
+        <!-- 앱 정보 -->
+        <div class="text-center text-muted small mt-4 mb-2">
+            <div>mybrary v1.0.0</div>
+            <div>책으로 이어지는 사람들</div>
+        </div>
+
+    </div>
+
+    <!-- 탈퇴 확인 모달 -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-danger">
+                        <i class="bi bi-exclamation-triangle me-1"></i>계정 탈퇴
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>정말로 탈퇴하시겠습니까?</p>
+                    <p class="small text-muted">모든 데이터가 영구적으로 삭제됩니다.</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                    <form th:action="@{/web/settings/delete-account}" method="post">
+                        <button type="submit" class="btn btn-danger">탈퇴 확인</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>도서 상세</title>
+    <th:block layout:fragment="page-styles">
+    <style>
+        .book-cover { width:120px; height:170px; object-fit:cover; border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.15); flex-shrink:0; }
+        .tag-badge { background:#F1F2F5; color:#555; border-radius:16px; padding:4px 10px; font-size:0.75rem; }
+        .review-card { background:#fff; border-radius:10px; padding:14px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+        .star-icon { color:#FFBB36; }
+    </style>
+    </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="page-container">
+
+        <!-- 에러 -->
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <!-- 도서 정보 -->
+        <div th:if="${book != null}">
+
+            <!-- 헤더 (표지 + 기본정보) -->
+            <div class="d-flex gap-3 mb-4">
+                <img th:src="${book.thumbnail}"
+                     alt="도서 표지"
+                     class="book-cover"
+                     onerror="this.src='https://via.placeholder.com/120x170?text=No+Image'">
+                <div class="flex-grow-1">
+                    <h6 class="fw-bold mb-1 lh-sm" style="color:#313333;" th:text="${book.title}">제목</h6>
+                    <div class="text-muted small mb-1">
+                        <span th:if="${book.subTitle}" th:text="${book.subTitle + ' | '}"></span>
+                    </div>
+                    <div class="small text-muted mb-1" th:if="${book.authors != null and !#lists.isEmpty(book.authors)}">
+                        <i class="bi bi-person me-1"></i>
+                        <span th:each="a, stat : ${book.authors}">
+                            <span th:text="${a.name}">저자</span><span th:unless="${stat.last}">, </span>
+                        </span>
+                    </div>
+                    <div class="small text-muted mb-1" th:if="${book.publisher}" th:text="'출판: ' + ${book.publisher}">출판사</div>
+                    <div class="small text-muted mb-2" th:if="${book.publicationDate}" th:text="${book.publicationDate}">출판일</div>
+                    <div class="d-flex align-items-center gap-1 mb-2">
+                        <span class="star-icon"><i class="bi bi-star-fill"></i></span>
+                        <span class="fw-bold small" th:text="${book.starRating != null ? #numbers.formatDecimal(book.starRating,1,1) : '-'}">0.0</span>
+                        <span class="text-muted small" th:if="${book.reviewCount != null}" th:text="'(' + ${book.reviewCount} + '리뷰)'"></span>
+                    </div>
+                    <div class="d-flex gap-2 small text-muted">
+                        <span><i class="bi bi-people me-1"></i><span th:text="${book.holderCount != null ? book.holderCount : 0}">0</span>소장</span>
+                        <span><i class="bi bi-heart me-1"></i><span th:text="${book.interestCount != null ? book.interestCount : 0}">0</span>관심</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 액션 버튼 -->
+            <div class="d-flex gap-2 mb-3">
+                <!-- 관심 도서 토글 -->
+                <form th:action="@{/web/search/interest}" method="post" class="flex-fill">
+                    <input type="hidden" name="isbn13" th:value="${book.isbn13}">
+                    <input type="hidden" name="returnUrl" th:value="${#httpServletRequest.requestURI + '?' + (#httpServletRequest.queryString != null ? #httpServletRequest.queryString : '')}">
+                    <button type="submit" class="btn w-100"
+                            th:classappend="${interested} ? 'btn-danger' : 'btn-outline-danger'">
+                        <i class="bi" th:classappend="${interested} ? 'bi-heart-fill' : 'bi-heart'"></i>
+                        <span th:text="${interested} ? '관심 해제' : '관심 도서'">관심</span>
+                    </button>
+                </form>
+
+                <!-- MyBook 등록 -->
+                <form th:action="@{/web/search/mybook}" method="post" class="flex-fill" th:if="${!registered}">
+                    <input type="hidden" name="isbn13" th:value="${book.isbn13}">
+                    <button type="submit" class="btn btn-mybrary w-100">
+                        <i class="bi bi-plus-circle me-1"></i>내 책 등록
+                    </button>
+                </form>
+                <div class="flex-fill" th:if="${registered}">
+                    <a href="/web/mybooks" class="btn btn-mybrary-outline btn-outline-success w-100">
+                        <i class="bi bi-check-circle me-1"></i>등록됨
+                    </a>
+                </div>
+            </div>
+
+            <!-- 태그 -->
+            <div class="d-flex flex-wrap gap-2 mb-3" th:if="${book.category}">
+                <span class="tag-badge" th:text="${book.category}">카테고리</span>
+                <span class="tag-badge" th:if="${book.pages}" th:text="${book.pages} + 'p'">0p</span>
+                <span class="tag-badge" th:if="${book.priceSales}" th:text="${#numbers.formatInteger(book.priceSales, 0, 'COMMA')} + '원'">0원</span>
+            </div>
+
+            <!-- 책 소개 -->
+            <div class="card mb-3 p-3" th:if="${book.description}">
+                <div class="section-title mb-2">책 소개</div>
+                <div style="font-size:0.85rem; color:#535353; line-height:1.6;" th:text="${book.description}">설명</div>
+            </div>
+
+            <!-- 목차 -->
+            <div class="card mb-3 p-3" th:if="${book.toc}">
+                <div class="section-title mb-2">목차</div>
+                <div style="font-size:0.82rem; color:#555; line-height:1.5; white-space:pre-line;" th:text="${book.toc}">목차</div>
+            </div>
+
+            <!-- 리뷰 -->
+            <div class="section-header mt-2">
+                <span class="section-title">리뷰</span>
+                <span class="text-muted small" th:if="${reviews != null}"
+                      th:text="'평균 ' + ${#numbers.formatDecimal(reviews.starRatingAverage,1,1)} + '점'">평균</span>
+            </div>
+
+            <div th:if="${reviews != null and reviews.myBookReviewList != null and !#lists.isEmpty(reviews.myBookReviewList)}">
+                <div class="d-flex flex-column gap-2">
+                    <div class="review-card" th:each="review : ${reviews.myBookReviewList}">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <img th:src="${review.userPictureUrl}"
+                                 alt="프로필"
+                                 class="rounded-circle"
+                                 style="width:32px;height:32px;object-fit:cover;"
+                                 onerror="this.src='https://via.placeholder.com/32?text=?'">
+                            <div>
+                                <div class="fw-semibold" style="font-size:0.82rem;" th:text="${review.userNickname}">닉네임</div>
+                                <div class="text-muted" style="font-size:0.72rem;" th:text="${review.createdAt}">날짜</div>
+                            </div>
+                            <div class="ms-auto">
+                                <span class="star-icon" style="font-size:0.8rem;" th:text="${'★'.repeat(review.starRating != null ? review.starRating.intValue() : 0)}">★</span>
+                                <span class="text-muted small" th:text="${review.starRating != null ? #numbers.formatDecimal(review.starRating,1,1) : ''}"></span>
+                            </div>
+                        </div>
+                        <div style="font-size:0.83rem; color:#535353;" th:text="${review.content}">리뷰 내용</div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${reviews == null or reviews.myBookReviewList == null or #lists.isEmpty(reviews.myBookReviewList)}"
+                 class="text-center text-muted py-3 small">
+                <i class="bi bi-chat-left-text" style="font-size:1.5rem; color:#CCC;"></i>
+                <p class="mt-1">아직 리뷰가 없습니다.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>팔로우 목록</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="page-container">
+
+        <div class="section-header mb-3">
+            <span class="section-title" th:text="${followers != null ? '팔로워' : '팔로잉'}">목록</span>
+            <a th:href="@{/web/profile/{uid}(uid=${targetUserId})}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>프로필
+            </a>
+        </div>
+
+        <!-- 팔로워 목록 -->
+        <div th:if="${followers != null}">
+            <div th:if="${!#lists.isEmpty(followers)}" class="d-flex flex-column gap-2">
+                <div class="card p-3 d-flex flex-row align-items-center gap-3" th:each="user : ${followers}">
+                    <img th:src="${user.profileImageUrl}"
+                         alt="프로필"
+                         class="rounded-circle"
+                         style="width:48px;height:48px;object-fit:cover;background:#EEE;"
+                         onerror="this.src='https://via.placeholder.com/48?text=?'">
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold small" th:text="${user.nickname}">닉네임</div>
+                        <div class="text-muted" style="font-size:0.75rem;" th:text="${user.userId}">아이디</div>
+                    </div>
+                    <a th:href="@{/web/profile/{uid}(uid=${user.userId})}"
+                       class="btn btn-sm btn-mybrary-outline btn-outline-success">프로필</a>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(followers)}" class="text-center text-muted py-5">
+                <i class="bi bi-people" style="font-size:2.5rem;color:#CCC;"></i>
+                <p class="mt-2">팔로워가 없어요</p>
+            </div>
+        </div>
+
+        <!-- 팔로잉 목록 -->
+        <div th:if="${followings != null}">
+            <div th:if="${!#lists.isEmpty(followings)}" class="d-flex flex-column gap-2">
+                <div class="card p-3 d-flex flex-row align-items-center gap-3" th:each="user : ${followings}">
+                    <img th:src="${user.profileImageUrl}"
+                         alt="프로필"
+                         class="rounded-circle"
+                         style="width:48px;height:48px;object-fit:cover;background:#EEE;"
+                         onerror="this.src='https://via.placeholder.com/48?text=?'">
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold small" th:text="${user.nickname}">닉네임</div>
+                        <div class="text-muted" style="font-size:0.75rem;" th:text="${user.userId}">아이디</div>
+                    </div>
+                    <a th:href="@{/web/profile/{uid}(uid=${user.userId})}"
+                       class="btn btn-sm btn-mybrary-outline btn-outline-success">프로필</a>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(followings)}" class="text-center text-muted py-5">
+                <i class="bi bi-people" style="font-size:2.5rem;color:#CCC;"></i>
+                <p class="mt-2">팔로잉이 없어요</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

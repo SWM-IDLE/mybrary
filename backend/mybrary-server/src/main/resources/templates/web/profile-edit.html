@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>프로필 수정</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="page-container">
+
+        <div class="section-header mb-3">
+            <span class="section-title">프로필 수정</span>
+            <a href="/web/profile" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>뒤로
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <!-- 현재 프로필 이미지 -->
+                <div class="text-center mb-4">
+                    <img th:src="${profile != null ? profile.profileImageUrl : ''}"
+                         alt="프로필"
+                         class="rounded-circle mb-2"
+                         style="width:80px; height:80px; object-fit:cover; border:3px solid #19C568;"
+                         onerror="this.src='https://via.placeholder.com/80?text=?'">
+                    <div class="text-muted small">
+                        이미지 변경은 모바일 앱에서 지원됩니다
+                    </div>
+                </div>
+
+                <form th:action="@{/web/profile/edit}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">닉네임</label>
+                        <input type="text" class="form-control" name="nickname"
+                               th:value="${profile != null ? profile.nickname : ''}"
+                               placeholder="닉네임 (특수문자 제외 2~20자)" required>
+                        <div class="form-text">한글, 영문, 숫자, -, _만 사용 가능</div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small">소개</label>
+                        <textarea class="form-control" name="introduction" rows="3" maxlength="100"
+                                  placeholder="자신을 소개해보세요 (최대 100자)"
+                                  th:text="${profile != null ? profile.introduction : ''}"></textarea>
+                        <div class="form-text">최대 100자</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="/web/profile" class="btn btn-outline-secondary flex-fill">취소</a>
+                        <button type="submit" class="btn btn-mybrary flex-fill">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

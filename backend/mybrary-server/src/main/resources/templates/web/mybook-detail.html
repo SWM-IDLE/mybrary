@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>내 책 상세</title>
+    <th:block layout:fragment="page-styles">
+    <style>
+        .book-cover { width:100px; height:140px; object-fit:cover; border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,0.12); flex-shrink:0; }
+        .tag-chip { display:inline-block; padding:4px 12px; border-radius:16px; font-size:0.75rem; font-weight:600; color:#fff; }
+        .star-btn { background:none; border:none; font-size:1.6rem; color:#DDD; cursor:pointer; padding:0 3px; }
+        .star-btn.active { color:#FFBB36; }
+        .form-check-label { font-size:0.85rem; }
+    </style>
+    </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="page-container">
+
+        <a href="/web/mybooks" class="btn btn-sm btn-outline-secondary mb-3">
+            <i class="bi bi-arrow-left me-1"></i>목록으로
+        </a>
+
+        <div th:if="${mybook != null}">
+
+            <!-- 도서 헤더 -->
+            <div class="d-flex gap-3 mb-4">
+                <img th:src="${mybook.book.thumbnailUrl}"
+                     alt="표지"
+                     class="book-cover"
+                     onerror="this.src='https://via.placeholder.com/100x140?text=No+Image'">
+                <div class="flex-grow-1">
+                    <h6 class="fw-bold mb-1" style="color:#313333; line-height:1.4;" th:text="${mybook.book.title}">제목</h6>
+                    <div class="text-muted small mb-1" th:if="${mybook.book.authors != null}"
+                         th:text="${#strings.listJoin(mybook.book.authors, ', ')}">저자</div>
+                    <div class="text-muted small mb-1" th:if="${mybook.book.publisher}" th:text="${mybook.book.publisher}">출판사</div>
+                    <div class="d-flex align-items-center gap-1 mb-2">
+                        <span style="color:#FFBB36;"><i class="bi bi-star-fill"></i></span>
+                        <span class="small fw-bold" th:text="${mybook.book.starRating != null ? #numbers.formatDecimal(mybook.book.starRating,1,1) : '-'}">0.0</span>
+                    </div>
+                    <!-- 의미태그 표시 -->
+                    <div th:if="${mybook.meaningTag != null and mybook.meaningTag.quote != null and !#strings.isEmpty(mybook.meaningTag.quote)}">
+                        <span class="tag-chip" th:style="'background:#' + (mybook.meaningTag.colorCode != null ? mybook.meaningTag.colorCode : '19C568')"
+                              th:text="${mybook.meaningTag.quote}">의미태그</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 편집 폼 -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="section-title mb-3">독서 정보 수정</div>
+                    <form th:action="@{/web/mybooks/{id}/update(id=${mybook.id})}" method="post">
+
+                        <!-- 독서 상태 -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">독서 상태</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <div th:each="status : ${readStatusValues}">
+                                    <input type="radio" class="btn-check" name="readStatus"
+                                           th:id="${'rs-' + status.name()}"
+                                           th:value="${status.name()}"
+                                           th:checked="${mybook.readStatus != null and mybook.readStatus.name() == status.name()}">
+                                    <label class="btn btn-outline-success btn-sm" th:for="${'rs-' + status.name()}"
+                                           th:text="${status.status}">상태</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 공개 설정 -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">공개 설정</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="showable" id="showable"
+                                           th:checked="${mybook.showable}">
+                                    <label class="form-check-label" for="showable">공개</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="exchangeable" id="exchangeable"
+                                           th:checked="${mybook.exchangeable}">
+                                    <label class="form-check-label" for="exchangeable">교환</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="shareable" id="shareable"
+                                           th:checked="${mybook.shareable}">
+                                    <label class="form-check-label" for="shareable">나눔</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 의미태그 -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">의미태그 (문구)</label>
+                            <input type="text" class="form-control form-control-sm" name="meaningTagQuote"
+                                   th:value="${mybook.meaningTag != null ? mybook.meaningTag.quote : ''}"
+                                   placeholder="이 책을 나타내는 한 마디">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">태그 색상</label>
+                            <div class="d-flex gap-2 flex-wrap" id="colorPicker">
+                                <th:block th:each="c : ${ {'6F5DDE','2CCD80','FFB525','FA9993','EC6DD0'} }">
+                                    <input type="radio" class="btn-check" name="meaningTagColorCode"
+                                           th:id="${'color-' + c}"
+                                           th:value="${c}"
+                                           th:checked="${mybook.meaningTag != null and mybook.meaningTag.colorCode == c}">
+                                    <label th:for="${'color-' + c}"
+                                           class="rounded-circle border-2"
+                                           th:style="'width:28px;height:28px;display:inline-block;background:#' + c + ';cursor:pointer;'"
+                                           title="">
+                                    </label>
+                                </th:block>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-mybrary flex-fill">저장</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 책 소개 -->
+            <div class="card mb-3 p-3" th:if="${mybook.book.description}">
+                <div class="section-title mb-2">책 소개</div>
+                <div style="font-size:0.83rem; color:#535353; line-height:1.6;" th:text="${mybook.book.description}">설명</div>
+            </div>
+
+            <!-- 내 리뷰 -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="section-title mb-3">내 리뷰</div>
+
+                    <!-- 기존 리뷰 있을 때 -->
+                    <div th:if="${review != null}">
+                        <div class="d-flex align-items-center gap-1 mb-2">
+                            <span style="color:#FFBB36; font-size:1.1rem;" th:text="${'★'.repeat(review.starRating != null ? review.starRating.intValue() : 0)}">★</span>
+                            <span class="small text-muted" th:text="${review.starRating}">0.0</span>
+                        </div>
+                        <p style="font-size:0.85rem; color:#333;" th:text="${review.content}">리뷰 내용</p>
+                        <div class="text-muted" style="font-size:0.72rem;" th:text="${review.createdAt}">작성일</div>
+
+                        <!-- 수정 폼 토글 -->
+                        <button class="btn btn-sm btn-outline-secondary mt-2 me-1" data-bs-toggle="collapse" data-bs-target="#editReview">
+                            <i class="bi bi-pencil me-1"></i>수정
+                        </button>
+                        <form th:action="@{/web/mybooks/{id}/review/{rid}/delete(id=${mybook.id},rid=${review.id})}"
+                              method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger mt-2"
+                                    onclick="return confirm('리뷰를 삭제할까요?')">
+                                <i class="bi bi-trash me-1"></i>삭제
+                            </button>
+                        </form>
+
+                        <div class="collapse mt-3" id="editReview">
+                            <form th:action="@{/web/mybooks/{id}/review/{rid}/update(id=${mybook.id},rid=${review.id})}"
+                                  method="post">
+                                <div class="mb-2">
+                                    <label class="form-label small fw-semibold">별점</label>
+                                    <select class="form-select form-select-sm" name="starRating">
+                                        <option value="1.0" th:selected="${review.starRating == 1.0}">★ 1.0</option>
+                                        <option value="2.0" th:selected="${review.starRating == 2.0}">★★ 2.0</option>
+                                        <option value="3.0" th:selected="${review.starRating == 3.0}">★★★ 3.0</option>
+                                        <option value="4.0" th:selected="${review.starRating == 4.0}">★★★★ 4.0</option>
+                                        <option value="5.0" th:selected="${review.starRating == 5.0}">★★★★★ 5.0</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <textarea class="form-control form-control-sm" name="content" rows="3"
+                                              th:text="${review.content}" placeholder="리뷰 내용"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-mybrary w-100">수정 저장</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 리뷰 없을 때 작성 폼 -->
+                    <div th:if="${review == null}">
+                        <p class="text-muted small mb-3">이 책에 대한 리뷰를 작성해보세요.</p>
+                        <form th:action="@{/web/mybooks/{id}/review(id=${mybook.id})}" method="post">
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold">별점</label>
+                                <select class="form-select form-select-sm" name="starRating">
+                                    <option value="1.0">★ 1.0</option>
+                                    <option value="2.0">★★ 2.0</option>
+                                    <option value="3.0">★★★ 3.0</option>
+                                    <option value="4.0" selected>★★★★ 4.0</option>
+                                    <option value="5.0">★★★★★ 5.0</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <textarea class="form-control form-control-sm" name="content" rows="3"
+                                          placeholder="이 책의 감상을 남겨보세요..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-mybrary btn-sm w-100">리뷰 등록</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 삭제 버튼 -->
+            <form th:action="@{/web/mybooks/{id}/delete(id=${mybook.id})}" method="post">
+                <button type="submit" class="btn btn-outline-danger w-100 mb-3"
+                        onclick="return confirm('내 책 목록에서 삭제할까요?')">
+                    <i class="bi bi-trash me-1"></i>내 책에서 삭제
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>관심사 설정</title>
+    <th:block layout:fragment="page-styles">
+    <style>
+        .interest-chip {
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.82rem;
+            border: 1.5px solid #DDD;
+            background: #fff;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+        }
+        .interest-chip input { display:none; }
+        .interest-chip.selected {
+            background: #19C568;
+            border-color: #19C568;
+            color: #fff;
+        }
+        .category-title { font-size: 0.9rem; font-weight: 700; color: #313333; margin-bottom: 10px; }
+    </style>
+    </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="page-container">
+
+        <div class="section-header mb-4">
+            <span class="section-title">관심사 설정</span>
+        </div>
+
+        <p class="text-muted small mb-4">관심 있는 분야를 선택하면 맞춤 도서를 추천해드려요. (최대 5개)</p>
+
+        <form th:action="@{/web/interests}" method="post" id="interestForm">
+            <div th:each="category : ${categories}" class="mb-4">
+                <div class="category-title" th:text="${category.name}">카테고리</div>
+                <div class="d-flex flex-wrap gap-2">
+                    <label th:each="interest : ${category.interestResponses}"
+                           class="interest-chip"
+                           th:classappend="${userInterestIds != null and #lists.contains(userInterestIds, interest.id)} ? 'selected' : ''"
+                           th:for="${'interest-' + interest.id}">
+                        <input type="checkbox"
+                               name="interestIds"
+                               th:id="${'interest-' + interest.id}"
+                               th:value="${interest.id}"
+                               th:checked="${userInterestIds != null and #lists.contains(userInterestIds, interest.id)}">
+                        <span th:text="${interest.name}">관심사명</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="position-sticky" style="bottom:90px;">
+                <button type="submit" class="btn btn-mybrary w-100 py-3 fw-bold">
+                    <i class="bi bi-check-circle me-1"></i>관심사 저장
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+<th:block layout:fragment="page-scripts">
+<script>
+    // 칩 클릭 시 선택 토글
+    document.querySelectorAll('.interest-chip').forEach(function(chip) {
+        chip.addEventListener('click', function() {
+            const input = chip.querySelector('input[type="checkbox"]');
+            chip.classList.toggle('selected');
+        });
+    });
+
+    // 최대 5개 제한
+    document.getElementById('interestForm').addEventListener('submit', function(e) {
+        const checked = document.querySelectorAll('.interest-chip input:checked');
+        if (checked.length > 5) {
+            e.preventDefault();
+            alert('관심사는 최대 5개까지 선택 가능합니다.');
+        }
+    });
+</script>
+</th:block>
+</body>
+</html>
