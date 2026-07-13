@@ -34,9 +34,9 @@ public class LocalDataInitializer implements CommandLineRunner {
     private final BookCategoryRepository bookCategoryRepository;
     private final MyBookRepository myBookRepository;
 
-    private static final String ADMIN_LOGIN_ID = "admin@mybrary.kr";
+    private static final String ADMIN_LOGIN_ID = "admin";
     private static final String ADMIN_NICKNAME = "admin";
-    private static final String ADMIN_PASSWORD = "admin1234!";
+    private static final String ADMIN_PASSWORD = "admin";
 
     @Override
     @Transactional
