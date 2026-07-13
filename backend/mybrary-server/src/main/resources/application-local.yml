@@ -1,9 +1,12 @@
+server:
+  port: 8090
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mybrary?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:}
+    password: ${DB_PASSWORD:mybrary}
 
   jpa:
     hibernate:
@@ -12,7 +15,51 @@ spring:
   flyway:
     enabled: false
 
+  # 소셜 로그인 로컬 더미값 (이메일/비밀번호 로그인은 정상 동작)
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:local-dummy}
+            client-secret: ${GOOGLE_CLIENT_SECRET:local-dummy}
+          naver:
+            client-id: ${NAVER_CLIENT_ID:local-dummy}
+            client-secret: ${NAVER_CLIENT_SECRET:local-dummy}
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID:local-dummy}
+            client-secret: ${KAKAO_CLIENT_SECRET:local-dummy}
+
+# JWT 로컬 전용 시크릿 (최소 32자 이상 필요)
+jwt:
+  secretKey: ${JWT_SECRET_KEY:local-dev-secret-key-for-mybrary-development-only-not-for-production}
+
+# 도서 검색 API (더미값이면 검색 결과 없음, 실제 키 있으면 .env에 설정)
+kakao:
+  api:
+    key: ${KAKAO_BOOK_API_KEY:local-dummy}
+
+aladin:
+  api:
+    key: ${ALADIN_API_KEY:local-dummy}
+
+# 로컬 파일 기반 스토리지 (S3 대신 ./local-uploads/ 디렉토리에 저장)
+# 업로드된 파일: http://localhost:8080/uploads/{path} 로 접근 가능
+local:
+  storage:
+    upload-dir: ./local-uploads
+
+# S3 자동 설정에 필요한 더미값 (local 프로파일에서는 AmazonS3Service 비활성화됨)
+cloud:
+  aws:
+    s3:
+      bucket: mybrary-local
+    credentials:
+      access-key: local-dummy
+      secret-key: local-dummy
+
 logging:
   level:
-    root: debug
+    root: info
     org.hibernate.SQL: debug
+    kr.mybrary: debug
