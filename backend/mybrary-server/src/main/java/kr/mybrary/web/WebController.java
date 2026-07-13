@@ -56,6 +56,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -78,6 +79,11 @@ public class WebController {
     private final InterestService interestService;
     private final MyReviewReadService myReviewReadService;
     private final MyReviewWriteService myReviewWriteService;
+
+    @ModelAttribute("currentPath")
+    public String currentPath(HttpServletRequest request) {
+        return request.getRequestURI();
+    }
 
     // ===========================
     // 인증 (로그인 / 회원가입)
