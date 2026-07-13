@@ -228,23 +228,23 @@
 
 <!-- 하단 네비게이션 -->
 <nav class="bottom-nav">
-    <a href="/web" th:classappend="${#httpServletRequest.requestURI == '/web' or #httpServletRequest.requestURI == '/web/'} ? 'active' : ''">
+    <a href="/web" th:classappend="${currentPath == '/web' or currentPath == '/web/'} ? 'active' : ''">
         <i class="bi bi-house-fill"></i>
         홈
     </a>
-    <a href="/web/search" th:classappend="${#httpServletRequest.requestURI.startsWith('/web/search')} ? 'active' : ''">
+    <a href="/web/search" th:classappend="${currentPath != null and currentPath.startsWith('/web/search')} ? 'active' : ''">
         <i class="bi bi-search"></i>
         검색
     </a>
-    <a href="/web/mybooks" th:classappend="${#httpServletRequest.requestURI.startsWith('/web/mybooks')} ? 'active' : ''">
+    <a href="/web/mybooks" th:classappend="${currentPath != null and currentPath.startsWith('/web/mybooks')} ? 'active' : ''">
         <i class="bi bi-book-fill"></i>
         내 책
     </a>
-    <a href="/web/profile" th:classappend="${#httpServletRequest.requestURI.startsWith('/web/profile')} ? 'active' : ''">
+    <a href="/web/profile" th:classappend="${currentPath != null and currentPath.startsWith('/web/profile')} ? 'active' : ''">
         <i class="bi bi-person-fill"></i>
         프로필
     </a>
-    <a href="/web/interests" th:classappend="${#httpServletRequest.requestURI.startsWith('/web/interests')} ? 'active' : ''">
+    <a href="/web/interests" th:classappend="${currentPath != null and currentPath.startsWith('/web/interests')} ? 'active' : ''">
         <i class="bi bi-heart-fill"></i>
         관심사
     </a>
