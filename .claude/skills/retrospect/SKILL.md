@@ -29,7 +29,7 @@ git diff --stat HEAD~5..HEAD 2>/dev/null || git diff --stat
 tail -50 LESSONS.md 2>/dev/null || echo "(LESSONS.md 없음)"
 ```
 
-### 2단계: 회고 내용 작성
+### 2단계: 회고 내용 도출
 
 수집한 맥락 + 현재 대화 기록을 바탕으로 아래 항목을 도출한다.
 
@@ -48,11 +48,17 @@ tail -50 LESSONS.md 2>/dev/null || echo "(LESSONS.md 없음)"
 - 다음에 이 프로젝트를 열면 먼저 확인해야 할 것들
 - 미완료 작업, 알려진 제한사항, 주의사항
 
-**기억할 패턴**
-- 이번에 새로 알게 된 코드 패턴, 라이브러리 quirk, 설정 gotcha
-- *이미 LESSONS.md에 있는 내용은 중복 기록하지 않는다*
+**팀 공유 패턴 (CONTRIBUTING.md 후보)**
+이번 세션에서 새로 발견한 내용 중 아래 기준을 하나라도 충족하면 `CONTRIBUTING.md`에 추가한다:
+- 팀원 누구나 처음 셋업할 때 막힐 수 있는 환경 설정
+- 라이브러리/프레임워크 버전 업 후 생긴 동작 변화
+- 실제 버그를 유발한 설계 함정 (아키텍처 레벨 gotcha)
 
-### 3단계: LESSONS.md에 추가
+기준 미충족(개인 선호, 개인 로컬 설정 등)은 LESSONS.md에만 남긴다.
+
+### 3단계: LESSONS.md에 추가 (로컬 전용)
+
+`LESSONS.md`는 `.gitignore`에 등록된 개인 파일이다. 팀원과 공유되지 않는다.
 
 LESSONS.md가 없으면 헤더를 포함해 새로 만든다.
 
@@ -61,6 +67,7 @@ LESSONS.md가 없으면 헤더를 포함해 새로 만든다.
 # LESSONS.md
 
 이 프로젝트에서 세션별로 배운 내용 누적. `/retrospect` 스킬이 유지 관리한다.
+이 파일은 .gitignore에 등록된 개인 로컬 파일이다.
 
 ---
 
@@ -75,15 +82,27 @@ LESSONS.md가 없으면 헤더를 포함해 새로 만든다.
 ### 다음 세션 체크리스트
 ...
 
-### 기억할 패턴
-...
-
 ---
 ```
 
 새 엔트리는 **파일 상단 `---` 바로 아래에 추가** (최신이 위에 오도록).
 
-### 4단계: 메모리 업데이트 판단
+### 4단계: CONTRIBUTING.md 업데이트 (팀 공유)
+
+2단계에서 식별한 팀 공유 패턴이 있으면 `CONTRIBUTING.md`의 `## 알려진 함정 (Gotchas)` 섹션에 추가한다.
+
+작성 기준:
+- 재현 가능한 수준으로 구체적으로 기록 (에러 메시지, 해결 코드 포함)
+- 이미 있는 내용은 중복 추가하지 않는다
+- 개인 로컬 설정(포트, 계정 등)은 넣지 않는다
+
+추가 후 커밋까지 수행한다:
+```bash
+git add CONTRIBUTING.md
+git commit -m "docs: CONTRIBUTING.md 알려진 함정 추가 — <한 줄 요약>"
+```
+
+### 5단계: 메모리 업데이트 판단
 
 아래 조건 중 하나라도 해당하면 `/Users/kangminseong/.claude/projects/-Users-kangminseong-repository-mybrary/memory/` 안의 관련 파일을 업데이트한다.
 
@@ -105,19 +124,19 @@ metadata:
 내용 본문
 ```
 
-### 5단계: 완료 보고
+### 6단계: 완료 보고
 
 아래 형식으로 사용자에게 보고한다.
 
 ```
 /retrospect 완료
 
-LESSONS.md에 추가된 항목:
+LESSONS.md (로컬):
 - 작업: N개
 - 이슈 & 해결: N개
 - 다음 세션 체크리스트: N개
-- 기억할 패턴: N개
 
+CONTRIBUTING.md (팀 공유): <추가된 Gotcha 항목 또는 "없음">
 메모리 업데이트: <업데이트한 파일 목록 또는 "없음">
 ```
 
