@@ -39,8 +39,8 @@
 
 ### Phase 3 — 정리 및 배포 — `phase3/cleanup`
 
-- [ ] **P3-01** 구 MSA 서비스 코드 제거 (apigateway, eureka, config-server)
-- [ ] **P3-02** CI/CD 파이프라인 정리 및 GitHub Actions 통합
+- [x] **P3-01** 구 MSA 서비스 코드 제거 (apigateway, eureka, config-server)
+- [x] **P3-02** CI/CD 파이프라인 정리 및 GitHub Actions 통합
 - [ ] **P3-03** 스테이징 검증 + 운영 배포
 
 ---
