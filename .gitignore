@@ -2,3 +2,11 @@
 
 # 개인 세션 회고 로그 (팀 공유 불필요)
 LESSONS.md
+
+# 빌드 아티팩트
+backend/mybrary-server/.gradle/
+backend/mybrary-server/build/
+out/
+
+# Claude Code 로컬 로그
+.claude/logs/
