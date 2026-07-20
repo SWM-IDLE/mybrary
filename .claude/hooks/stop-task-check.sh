@@ -11,9 +11,6 @@ if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
   exit 0
 fi
 
-# 정상 종료(end_turn)일 때 retrospect 알림만 출력 (수동 호출 유도)
-if [[ "$STOP_REASON" == "end_turn" ]]; then
-  echo "📋 세션을 마무리하려면 /retrospect 를 실행해주세요."
-fi
+# /retrospect 는 사용자가 직접 호출
 
 exit 0
